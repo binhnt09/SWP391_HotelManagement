@@ -1,0 +1,461 @@
+/*
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css to edit this template
+*/
+/* 
+    Created on : Jun 1, 2025, 1:26:41 PM
+    Author     : ASUS
+*/
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f5f7fa;
+    color: #333;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.header {
+    background: linear-gradient(135deg, #0770CD, #1E88E5);
+    color: white;
+    padding: 15px 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.logo {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.bird-icon {
+    width: 30px;
+    height: 30px;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white"><path d="M23 4.6c0-.8-.6-1.4-1.4-1.4H18c-.8 0-1.4.6-1.4 1.4v3.8L12 4.6c-.8-.8-2-.8-2.8 0L4.6 9.2c-.8.8-.8 2 0 2.8l4.6 4.6v3.8c0 .8.6 1.4 1.4 1.4h11.6c.8 0 1.4-.6 1.4-1.4V4.6z"/></svg>') no-repeat center;
+    background-size: contain;
+}
+
+.main-content {
+    display: grid;
+    grid-template-columns: 1fr 350px;
+    gap: 20px;
+}
+
+.payment-section {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    /*min-width: 100px;*/
+}
+
+.section-title {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: #1a1a1a;
+}
+.payment-badge {
+    display: inline-block;
+    background-color: #e6f2ff;
+    color: #0064d2;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    margin-bottom: 5px;
+}
+
+.payment-method {
+    border: 2px solid #e0e6ed;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    padding: 15px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.payment-method:hover {
+    border-color: #0770CD;
+}
+
+.payment-method.selected {
+    border-color: #0770CD;
+    background-color: #f8fbff;
+}
+
+.payment-method-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.radio-btn {
+    width: 20px;
+    height: 20px;
+    border: 2px solid #ddd;
+    border-radius: 50%;
+    position: relative;
+}
+
+.radio-btn.checked {
+    border-color: #0770CD;
+}
+
+.radio-btn.checked::after {
+    content: '';
+    width: 10px;
+    height: 10px;
+    background: #0770CD;
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.payment-icons {
+    display: flex;
+    gap: 8px;
+    margin-left: auto;
+}
+
+.payment-icon {
+    width: 32px;
+    height: 20px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 9px;
+    font-weight: bold;
+    color: white;
+}
+.vnpay-logo {
+    width: 32px;
+    height: 20px;
+    background: white;
+    border-radius: 4px;
+    position: relative;
+    font-weight: bold;
+    font-size: 9px;
+    font-family: Arial, sans-serif;
+    color: #E30613; /* VN màu đỏ */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 4px rgba(0,0,0,0.1);
+    overflow: hidden;
+}
+
+/* Pay màu xanh */
+.vnpay-logo span {
+    color: #004A99;
+}
+
+/* Dải xanh ở góc dưới */
+.vnpay-logo::after {
+    content: "";
+    position: absolute;
+    bottom: 0px;
+    left: 50%;
+    width: 100%;
+    height: 2px;
+    background: #0068FF;
+    border-bottom-left-radius: 6px;
+    border-bottom-right-radius: 6px;
+}
+
+.momo {
+    background: linear-gradient(135deg, #9C27B0, #E91E63);;
+}
+.zalopay {
+    background: #0068FF;
+}
+.shopee {
+    background: #EE4D2D;
+}
+.momo {
+    background: #A50064;
+}
+.visa {
+    background: #1A1F71;
+}
+.mastercard {
+    background: #EB001B;
+}
+.jcb {
+    background: #005B9A;
+}
+.amex {
+    background: #006FCF;
+}
+
+.qr-info {
+    display: none;
+    background: #e8f4fd;
+    border-left: 4px solid #0770CD;
+    padding: 15px;
+    margin-top: 15px;
+    border-radius: 4px;
+}
+
+.qr-info.active {
+    display: block;
+}
+
+.qr-info ul {
+    margin-left: 20px;
+    color: #666;
+}
+
+.qr-info li {
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.booking-summary {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    height: fit-content;
+}
+
+.hotel-info {
+    margin-bottom: 20px;
+}
+
+.hotel-name {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.date-info {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 6px;
+    margin-bottom: 15px;
+}
+
+.date-item {
+    text-align: center;
+}
+
+.date-label {
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 5px;
+}
+
+.date-value {
+    font-weight: bold;
+    color: #333;
+}
+
+.room-info {
+    margin-bottom: 20px;
+}
+
+.room-title {
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.room-details {
+    color: #666;
+    font-size: 14px;
+    margin-bottom: 5px;
+}
+
+.guest-info {
+    margin-bottom: 20px;
+}
+
+.guest-name {
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    margin-bottom: 5px;
+}
+
+.no-refund {
+    background: #ffebee;
+    color: #d32f2f;
+}
+
+.no-reschedule {
+    background: #fff3e0;
+    color: #f57c00;
+}
+
+.contact-note {
+    background: #e8f5e8;
+    color: #2e7d32;
+    padding: 10px;
+    border-radius: 6px;
+    font-size: 14px;
+    text-align: center;
+}
+
+/*.coupon-section {
+    margin: 20px 0;
+    padding: 15px;
+    border: 2px dashed #ddd;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}*/
+.coupon-section {
+    margin-top: 20px;
+    background-color: #fff;
+    border: 2px dashed #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.coupon-input {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-size: 14px;
+}
+
+.coupon-btn {
+    color: #0770CD;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+/*voucher*/
+.coupon-header {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    cursor: pointer;
+}
+.coupon-header input[type="checkbox"] {
+    margin-right: 15px;
+}
+.coupon-label {
+    flex-grow: 1;
+    font-weight: bold;
+}
+.toggle-button {
+    color: #0064d2;
+    font-weight: bold;
+}
+.coupon-input-container {
+    padding: 0 15px 15px;
+    display: flex;
+    gap: 10px;
+}
+.voucher-list label {
+    display: inline-block;
+    margin-bottom: 5px;
+    margin-top: 10px;
+    cursor: pointer;
+}
+#coupon-input {
+    flex-grow: 1;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+#apply-coupon {
+    padding: 10px 15px;
+    background-color: #0770CD;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.price-summary {
+    border-top: 2px solid #eee;
+    padding-top: 20px;
+    margin-top: 20px;
+}
+
+.total-price {
+    font-size: 24px;
+    font-weight: bold;
+    color: #0770CD;
+    text-align: right;
+}
+
+.payment-btn {
+    width: 100%;
+    background: linear-gradient(135deg, #FF6B35, #F7931E);
+    color: white;
+    border: none;
+    padding: 15px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: transform 0.2s ease;
+}
+
+.payment-btn:hover {
+    transform: translateY(-2px);
+}
+
+.terms-text {
+    font-size: 12px;
+    color: #666;
+    text-align: center;
+    margin-top: 15px;
+    line-height: 1.4;
+}
+
+.link {
+    color: #0770CD;
+    text-decoration: none;
+}
+
+.points-info {
+    background: #fff9c4;
+    padding: 10px 15px;
+    border-radius: 6px;
+    font-size: 12px;
+    color: #795548;
+    margin-top: 15px;
+}
+
+@media (max-width: 768px) {
+    .main-content {
+        grid-template-columns: 1fr;
+    }
+
+    .container {
+        padding: 10px;
+    }
+}
+
