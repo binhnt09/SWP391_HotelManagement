@@ -65,7 +65,7 @@
                                     <ul>
                                         <li class="${pageContext.request.requestURI.endsWith('home.jsp') ? 'active' : ''}"><a href="home.jsp">Home</a></li>
                                         <li class="${pageContext.request.requestURI.endsWith('rooms.jsp') ? 'active' : ''}"><a href="rooms.jsp">Room</a></li>
-                                        <li><a href="#">Pages</a>
+                                        <li><a href="#">More</a>
                                             <ul class="dropdown">
                                                 <li><a href="home.jsp">Home</a></li>
                                                 <li><a href="about-us.jsp">About Us</a></li>
@@ -74,6 +74,7 @@
                                                 <li><a href="blog.jsp">News</a></li>
                                                 <li><a href="contact.jsp">Contact</a></li>
                                                 <li><a href="elements.jsp">Elements</a></li>
+                                                <li><a href="payment.jsp">Payment</a></li>
                                             </ul>
                                         </li>
                                         <li class="${pageContext.request.requestURI.endsWith('about-us.jsp') ? 'active' : ''}"><a href="about-us.jsp">About Us</a></li>
