@@ -3,7 +3,8 @@
     Created on : May 25, 2025, 12:16:13 PM
     Author     : ASUS
 --%>
-
+<%@ page import="java.util.List" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html lang="en">
@@ -23,7 +24,15 @@
 
         <!-- Core Stylesheet -->
         <link rel="stylesheet" href="style.css">
-        
+        <!--        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+                <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+                <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+                <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>-->
+
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
         <script src="${pageContext.request.contextPath}/assets/js/jquery.magnific-popup.min.js"></script>
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/magnific-popup.css">
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/style.css">
@@ -41,275 +50,146 @@
         <!-- ##### Header Area Start ##### -->
         <%--<jsp:include page="common/header.jsp"></jsp:include>--%>
         <jsp:include page="common/header.jsp"></jsp:include>
-        <!-- ##### Header Area End ##### -->
+            <!-- ##### Header Area End ##### -->
 
-        <!-- ##### Breadcumb Area Start ##### -->
-        <section class="breadcumb-area bg-img d-flex align-items-center justify-content-center" style="background-image: url(img/bg-img/bg-6.jpg);">
-            <div class="bradcumbContent">
-                <h2>Rooms</h2>
-            </div>
-        </section>
-        <!-- ##### Breadcumb Area End ##### -->
+            <!-- ##### Breadcumb Area Start ##### -->
+            <section class="breadcumb-area bg-img d-flex align-items-center justify-content-center" style="background-image: url(img/bg-img/bg-6.jpg);">
+                <div class="bradcumbContent">
+                    <h2>Rooms</h2>
+                </div>
+            </section>
+            <!-- ##### Breadcumb Area End ##### -->
 
-        <!-- ##### Book Now Area Start ##### -->
-        <div class="book-now-area">
-            <div class="container">
-                <div class="row justify-content-center">
-                    <div class="col-12 col-lg-10">
-                        <div class="book-now-form">
-                            <form action="#">
-                                <!-- Form Group -->
-                                <div class="form-group">
-                                    <label for="select1">Check In</label>
-                                    <select class="form-control" id="select1">
-                                        <option>19 June</option>
-                                        <option>20 June</option>
-                                        <option>21 June</option>
-                                        <option>22 June</option>
-                                        <option>23 June</option>
-                                        <option>24 June</option>
-                                        <option>25 June</option>
-                                    </select>
-                                </div>
+            <!-- ##### Book Now Area Start ##### -->
+            <style>
 
-                                <!-- Form Group -->
-                                <div class="form-group">
-                                    <label for="select2">Check Out</label>
-                                    <select class="form-control" id="select2">
-                                        <option>20 June</option>
-                                        <option>21 June</option>
-                                        <option>22 June</option>
-                                        <option>23 June</option>
-                                        <option>24 June</option>
-                                        <option>25 June</option>
-                                        <option>26 June</option>
-                                        <option>27 June</option>
-                                    </select>
-                                </div>
+                .booking-frame {
+                    background-color: #ffffff;
+                    border-radius: 12px;
+                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+                    padding: 30px;
+                    width: 100%;
+                    max-width: 1000px;
+                }
+            </style>
+            <div class="book-now-area">
+                <div class="container">
+                    <div class="row justify-content-center" >
+                        <div class="col-12 col-lg-10" >
+                            <div class="book-now-form" >
+                                <form action="searchroom">
 
-                                <!-- Form Group -->
-                                <div class="form-group">
-                                    <label for="select3">Adults</label>
-                                    <select class="form-control" id="select3">
-                                        <option>02</option>
-                                        <option>03</option>
-                                        <option>04</option>
-                                        <option>05</option>
-                                        <option>06</option>
-                                    </select>
-                                </div>
+                                    <div class="booking-frame">
+                                        <div class="row">
+                                            <div class="col-4 col-lg-4">
+                                                <label style="font-weight: 600;">Nhập check-in:</label>
+                                                <input type="date" name="checkin"  placeholder="Chọn ngày đến" class="form-control time-input" />
 
-                                <!-- Form Group -->
-                                <div class="form-group">
-                                    <label for="select4">Childrens</label>
-                                    <select class="form-control" id="select4">
-                                        <option>01</option>
-                                        <option>02</option>
-                                        <option>03</option>
-                                        <option>04</option>
-                                        <option>05</option>
-                                    </select>
-                                </div>
+                                            </div>
+                                            <div class="col-4 col-lg-4">
+                                                <label style="font-weight: 600;">Nhập check-out:</label>
+                                                <input type="date" name="checkout" placeholder="Chọn ngày đi" class="form-control time-input" />
+                                            </div>
+                                            <div class="col-3 col-lg-3">
+                                                <label style="font-weight: 600;">Giá mỗi đêm:</label>
+                                                <div class="d-flex align-items-center gap-2">
+                                                    <input type="number" name="priceto" step="100" placeholder="$ To" class="form-control" style="max-width: 150px;">
+                                                    <span>&nbsp;&mdash;&nbsp;</span>
+                                                    <input type="number" name="pricefrom" step="100" placeholder="$ From" class="form-control" style="max-width: 150px;">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
 
-                                <!-- Button -->
-                                <button type="submit">Book Now</button>
-                            </form>
+                                            <div class="col-4 col-lg-4">
+                                                <label style="font-weight: 600; font-size: initial; margin-top: 20px">Số lượng thành viên:</label>
+                                                <input type="number" name="numberpeople"   placeholder="Nhập số thành viên" class="form-control" />
+
+                                            </div>
+
+                                            <div class="col-2 col-lg-2 d-flex align-items-end">
+                                                <input type="submit" value="Tìm kiếm" class="btn btn-primary w-100" />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <!-- ##### Book Now Area End ##### -->
+            <!-- ##### Book Now Area End ##### -->
 
-        <!-- ##### Rooms Area Start ##### -->
-        <section class="rooms-area section-padding-0-100">
-            <div class="container">
-                <div class="row justify-content-center">
-                    <div class="col-12 col-lg-6">
-                        <div class="section-heading text-center">
-                            <div class="line-"></div>
-                            <h2>Choose a room</h2>
-                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec malesuada lorem maximus mauris sceleri sque, at rutrum nulla dictum. Ut ac ligula sapien.</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="row">
-
-                    <!-- Single Rooms Area -->
-                    <div class="col-12 col-md-6 col-lg-4">
-                        <div class="single-rooms-area wow fadeInUp" data-wow-delay="100ms">
-                            <!-- Thumbnail -->
-                            <div class="bg-thumbnail bg-img" style="background-image: url(img/bg-img/1.jpg);"></div>
-                            <!-- Price -->
-                            <p class="price-from">From $150/night</p>
-                            <!-- Rooms Text -->
-                            <div class="rooms-text">
-                                <div class="line"></div>
-                                <h4>Deluxe Room</h4>
-                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec malesuada lorem maximus mauris sceleri sque.</p>
+            <!-- ##### Rooms Area Start ##### -->
+            <section class="rooms-area section-padding-0-100">
+                <div class="container">
+                    <div class="row justify-content-center">
+                        <div class="col-12 col-lg-6">
+                            <div class="section-heading text-center">
+                                <div class="line-"></div>
+                                <h2>Choose a room</h2>
+                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec malesuada lorem maximus mauris sceleri sque, at rutrum nulla dictum. Ut ac ligula sapien.</p>
                             </div>
-                            <!-- Book Room -->
-                            <a href="#" class="book-room-btn btn palatin-btn">Book Room</a>
                         </div>
                     </div>
 
-                    <!-- Single Rooms Area -->
-                    <div class="col-12 col-md-6 col-lg-4">
-                        <div class="single-rooms-area wow fadeInUp" data-wow-delay="200ms">
-                            <!-- Thumbnail -->
-                            <div class="bg-thumbnail bg-img" style="background-image: url(img/bg-img/8.jpg);"></div>
-                            <!-- Price -->
-                            <p class="price-from">From $150/night</p>
-                            <!-- Rooms Text -->
-                            <div class="rooms-text">
-                                <div class="line"></div>
-                                <h4>Double Suite</h4>
-                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec malesuada lorem maximus mauris sceleri sque.</p>
+                    <div class="row">
+
+                        <!-- Single Rooms Area -->
+                    <c:forEach items="${listRoom}" var="i">
+                        <%
+                            entity.Room room = (entity.Room) pageContext.getAttribute("i"); 
+                            
+                            int roomDetailId = room.getRoomDetail().getRoomDetailID();
+                            List<entity.RoomImage> roomImgList = new dao.RoomImageDAO().getListRoomImgByDetailID(roomDetailId);
+                            pageContext.setAttribute("roomImgList",roomImgList);
+                            
+                        %>
+                        <div class="col-12 col-md-6 col-lg-4">
+                            <div class="single-rooms-area wow fadeInUp" data-wow-delay="100ms">
+                                <!-- Thumbnail -->
+                                <!--                                <a href="#" data-bs-toggle="modal" data-bs-target="#roomDetailModal">
+                                                                    <div class="bg-thumbnail bg-img" >
+                                                                        <img src="images/ten_anh.jpg" alt="Mô tả hình ảnh" width="200" height="150">
+                                                                    </div></a>-->
+
+                                <a href="#" onclick="showRoomDetail(this)" 
+                                   data-bs-toggle="modal"
+                                   data-bs-target="#roomDetailModal"
+                                   data-roomID ="${i.getRoomID()}"
+                                   data-roomNumber ="${i.getRoomNumber()}"
+                                   data-roomPrice ="${i.price}"
+                                   data-bedType ="${i.getRoomDetail().getBedType()}"
+                                   data-area ="${i.getRoomDetail().getArea()}"
+                                   data-maxGuest ="${i.getRoomDetail().getMaxGuest()}"
+                                   data-description ="${i.getRoomDetail().getDescription()}"
+                                   data-img="${not empty roomImgList and roomImgList.size() > 0 ? roomImgList[0].imageURL : ''}"
+                                   data-img1="${not empty roomImgList and roomImgList.size() > 1 ? roomImgList[1].imageURL : ''}"
+                                   data-img2="${not empty roomImgList and roomImgList.size() > 2 ? roomImgList[2].imageURL : ''}"
+                                   data-img3="${not empty roomImgList and roomImgList.size() > 3 ? roomImgList[3].imageURL : ''}"
+
+                                   >
+                                    <div class="bg-thumbnail bg-img">
+                                        <img src="${roomImgList[0].imageURL}" alt="Mô tả hình ảnh" width="200" height="150">
+                                    </div>
+                                </a>
+
+                                <!-- Price -->
+                                <p class="price-from">From $${i.getPrice()}/night</p>
+                                <!-- Rooms Text -->
+                                <div class="rooms-text">
+                                    <div class="line"></div>
+                                    <h4>Deluxe Room</h4>
+                                    <p>${i.getRoomDetail().getDescription()}.</p>
+                                </div>
+                                <!-- Book Room -->
+                                <a href="#" class="book-room-btn btn palatin-btn">Book Room</a>
                             </div>
-                            <!-- Book Room -->
-                            <a href="#" class="book-room-btn btn palatin-btn">Book Room</a>
                         </div>
-                    </div>
+                    </c:forEach>
 
-                    <!-- Single Rooms Area -->
-                    <div class="col-12 col-md-6 col-lg-4">
-                        <div class="single-rooms-area wow fadeInUp" data-wow-delay="300ms">
-                            <!-- Thumbnail -->
-                            <div class="bg-thumbnail bg-img" style="background-image: url(img/bg-img/9.jpg);"></div>
-                            <!-- Price -->
-                            <p class="price-from">From $100/night</p>
-                            <!-- Rooms Text -->
-                            <div class="rooms-text">
-                                <div class="line"></div>
-                                <h4>Single Room</h4>
-                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec malesuada lorem maximus mauris sceleri sque.</p>
-                            </div>
-                            <!-- Book Room -->
-                            <a href="#" class="book-room-btn btn palatin-btn">Book Room</a>
-                        </div>
-                    </div>
 
-                    <!-- Single Rooms Area -->
-                    <div class="col-12 col-md-6 col-lg-4">
-                        <div class="single-rooms-area wow fadeInUp" data-wow-delay="100ms">
-                            <!-- Thumbnail -->
-                            <div class="bg-thumbnail bg-img" style="background-image: url(img/bg-img/15.jpg);"></div>
-                            <!-- Price -->
-                            <p class="price-from">From $150/night</p>
-                            <!-- Rooms Text -->
-                            <div class="rooms-text">
-                                <div class="line"></div>
-                                <h4>Deluxe Room</h4>
-                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec malesuada lorem maximus mauris sceleri sque.</p>
-                            </div>
-                            <!-- Book Room -->
-                            <a href="#" class="book-room-btn btn palatin-btn">Book Room</a>
-                        </div>
-                    </div>
-
-                    <!-- Single Rooms Area -->
-                    <div class="col-12 col-md-6 col-lg-4">
-                        <div class="single-rooms-area wow fadeInUp" data-wow-delay="200ms">
-                            <!-- Thumbnail -->
-                            <div class="bg-thumbnail bg-img" style="background-image: url(img/bg-img/16.jpg);"></div>
-                            <!-- Price -->
-                            <p class="price-from">From $150/night</p>
-                            <!-- Rooms Text -->
-                            <div class="rooms-text">
-                                <div class="line"></div>
-                                <h4>Double Suite</h4>
-                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec malesuada lorem maximus mauris sceleri sque.</p>
-                            </div>
-                            <!-- Book Room -->
-                            <a href="#" class="book-room-btn btn palatin-btn">Book Room</a>
-                        </div>
-                    </div>
-
-                    <!-- Single Rooms Area -->
-                    <div class="col-12 col-md-6 col-lg-4">
-                        <div class="single-rooms-area wow fadeInUp" data-wow-delay="300ms">
-                            <!-- Thumbnail -->
-                            <div class="bg-thumbnail bg-img" style="background-image: url(img/bg-img/17.jpg);"></div>
-                            <!-- Price -->
-                            <p class="price-from">From $100/night</p>
-                            <!-- Rooms Text -->
-                            <div class="rooms-text">
-                                <div class="line"></div>
-                                <h4>Single Room</h4>
-                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec malesuada lorem maximus mauris sceleri sque.</p>
-                            </div>
-                            <!-- Book Room -->
-                            <a href="#" class="book-room-btn btn palatin-btn">Book Room</a>
-                        </div>
-                    </div>
-
-                    <!-- Single Rooms Area -->
-                    <div class="col-12 col-md-6 col-lg-4">
-                        <div class="single-rooms-area wow fadeInUp" data-wow-delay="100ms">
-                            <!-- Thumbnail -->
-                            <div class="bg-thumbnail bg-img" style="background-image: url(img/bg-img/18.jpg);"></div>
-                            <!-- Price -->
-                            <p class="price-from">From $150/night</p>
-                            <!-- Rooms Text -->
-                            <div class="rooms-text">
-                                <div class="line"></div>
-                                <h4>Deluxe Room</h4>
-                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec malesuada lorem maximus mauris sceleri sque.</p>
-                            </div>
-                            <!-- Book Room -->
-                            <a href="#" class="book-room-btn btn palatin-btn">Book Room</a>
-                        </div>
-                    </div>
-
-                    <!-- Single Rooms Area -->
-                    <div class="col-12 col-md-6 col-lg-4">
-                        <div class="single-rooms-area wow fadeInUp" data-wow-delay="200ms">
-                            <!-- Thumbnail -->
-                            <div class="bg-thumbnail bg-img" style="background-image: url(img/bg-img/19.jpg);"></div>
-                            <!-- Price -->
-                            <p class="price-from">From $150/night</p>
-                            <!-- Rooms Text -->
-                            <div class="rooms-text">
-                                <div class="line"></div>
-                                <h4>Double Suite</h4>
-                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec malesuada lorem maximus mauris sceleri sque.</p>
-                            </div>
-                            <!-- Book Room -->
-                            <a href="#" class="book-room-btn btn palatin-btn">Book Room</a>
-                        </div>
-                    </div>
-
-                    <!-- Single Rooms Area -->
-                    <div class="col-12 col-md-6 col-lg-4">
-                        <div class="single-rooms-area wow fadeInUp" data-wow-delay="300ms">
-                            <!-- Thumbnail -->
-                            <div class="bg-thumbnail bg-img" style="background-image: url(img/bg-img/20.jpg);"></div>
-                            <!-- Price -->
-                            <p class="price-from">From $100/night</p>
-                            <!-- Rooms Text -->
-                            <div class="rooms-text">
-                                <div class="line"></div>
-                                <h4>Single Room</h4>
-                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec malesuada lorem maximus mauris sceleri sque.</p>
-                            </div>
-                            <!-- Book Room -->
-                            <a href="#" class="book-room-btn btn palatin-btn">Book Room</a>
-                        </div>
-                    </div>
-
-                    <div class="col-12">
-                        <!-- Pagination -->
-                        <div class="pagination-area wow fadeInUp" data-wow-delay="400ms">
-                            <nav>
-                                <ul class="pagination">
-                                    <li class="page-item active"><a class="page-link" href="#">01.</a></li>
-                                    <li class="page-item"><a class="page-link" href="#">02.</a></li>
-                                    <li class="page-item"><a class="page-link" href="#">03.</a></li>
-                                </ul>
-                            </nav>
-                        </div>
-                    </div>
 
                 </div>
             </div>
@@ -359,79 +239,190 @@
                 </div>
             </div>
         </footer>
+
+
+        <!--CHI TIẾT PHÒNG-->
+        <div class="modal fade" id="roomDetailModal" tabindex="-1" aria-labelledby="roomDetailLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="roomNumber"></h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="row modal-body mainbody">
+                        <!-- Hình ảnh phòng -->
+                        <div class="a col-6 ">
+                            <div class="mainImg">
+                                <img id="imgDetail"  class="img-fluid" alt="Room luxury" >
+                            </div>
+                            <div class="moreImg row">
+                                <img id="imgDetail1" class="img-fluid" alt="Room luxury">
+                                <img id="imgDetail2" class="img-fluid" alt="Room luxury">
+                                <img id="imgDetail3" class="img-fluid" alt="Room luxury">
+                            </div>
+                        </div>
+
+                        <!-- Thông tin chi tiết -->
+                        <div class="mainInfo col-6">
+                            <h3>Room Information</h3>
+                            <input type="hidden" id="typeID">
+                            <input type="hidden" id="roomID">
+
+                            <span>
+                                <i style="font-size: 28px;" class="fa-duotone fa-solid fa-chart-area"></i>
+                            </span> 
+                            <p id="area" style="margin-left: 10px;display: inline;"></p>
+                            <br>
+                            <i style="font-size: 25px;margin-top :8px;" class="fa-duotone fa-solid fa-people-group"></i>
+                            <p id="maxGuest" style="margin-left: 8px;display: inline;"></p>
+                            <hr style="width: 330px">
+
+                            <h3>Customer Benefits</h3>
+
+                            <div id="description" ></div>
+                            <div id="bedType" style="margin-top: 10px"></div>
+
+<!--                            <div style="display: flex; align-items: center; flex-wrap: wrap; margin-top: 10px">
+                                <p class="benefit" style="margin: 0; font-weight: 600;">Other: </p>
+                                <p id="other" style="margin: 0;">&nbsp;Breakfast, Gym, Pool, Laundry service...</p>
+                            </div>-->
+
+                            <p id="price" style="margin-top: 10px;"></p>
+
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <c:if test="${not empty sessionScope.acc && sessionScope.acc.role != null && sessionScope.acc.role == 'Admin'}">
+                            <button type="button" class="btn btn-secondary" onclick="deleteRoom()" data-bs-dismiss="modal">Delete</button>
+
+                            <button type="button" onclick="getRoomInfo()" class="btn btn-primary" 
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#updateroominfo"
+                                    >
+                                Update
+                            </button>
+                        </c:if>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                        <a href="bookingguest" style="border-radius: 10px; background-color: #80bdff" class="btn theme_btn button_hover">Book Now</a>
+                    </div>
+                </div>
+            </div>
+        </div>
         <!-- ##### Footer Area End ##### -->
 
         <!-- ##### All Javascript Script ##### -->
         <!-- jQuery-2.2.4 js -->
-        <!--<script src="js/jquery/jquery-2.2.4.min.js"></script>-->
-        <!-- Popper js -->
+        <!-- jQuery của bạn -->
+        <script src="js/jquery/jquery-2.2.4.min.js"></script>
+
+        <!-- Thêm Moment + Daterangepicker -->
+        <script src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+
+        <!-- Popper + Bootstrap + Plugin + Active -->
         <script src="js/bootstrap/popper.min.js"></script>
-        <!-- Bootstrap js -->
         <script src="js/bootstrap/bootstrap.min.js"></script>
-        <!-- All Plugins js -->
         <script src="js/plugins/plugins.js"></script>
-        <!-- Active js -->
         <script src="js/active.js"></script>
-    </body>
-<script>
 
-    </script>
-    <script>
-        $(document).ready(function () {
-            // Khởi tạo popup cho nút mở login/register
-            $('.login-modal-btn, .register-modal-btn').magnificPopup({
-                type: 'inline',
-                midClick: true
-            });
+  
+        <script>
+            function showRoomDetail(info){
+                let roomID = info.getAttribute("data-roomID");
+                let roomNumber = info.getAttribute("data-roomNumber");
+                let roomPrice = info.getAttribute("data-roomPrice");
+                let bedType = info.getAttribute("data-bedType");
+                let area = info.getAttribute("data-area");
+                let maxGuest = info.getAttribute("data-maxGuest");
+                let description = info.getAttribute("data-description");
+                
+                let imgSrc = info.getAttribute("data-img");
+                let imgSrc1 = info.getAttribute("data-img1");
+                let imgSrc2 = info.getAttribute("data-img2");
+                let imgSrc3 = info.getAttribute("data-img3");
+                
+                
+                document.getElementById("roomNumber").innerHTML = roomNumber;
+                
+                //IMG
+                document.getElementById("imgDetail").src = imgSrc;
+                document.getElementById("imgDetail").style.width = "400px";// Đổi chiều cao thành 200px
 
-            // Xử lý chuyển đổi giữa login <-> register
-            $(document).on('click', '.switch-modal', function (e) {
-                e.preventDefault();
-                const target = $(this).attr('href');
+                document.getElementById("imgDetail1").src = imgSrc1;
+                document.getElementById("imgDetail1").style.width = "130px";
+                document.getElementById("imgDetail1").style.height = "90px";
+                document.getElementById("imgDetail2").src = imgSrc2;
+                document.getElementById("imgDetail2").style.width = "130px";
+                document.getElementById("imgDetail2").style.height = "90px";
+                document.getElementById("imgDetail3").src = imgSrc3;
+                document.getElementById("imgDetail3").style.width = "130px";
+                document.getElementById("imgDetail3").style.height = "90px";
 
-                // Cập nhật URL hash mà không reload
-                history.pushState(null, '', target);
-
-                // Đóng popup hiện tại rồi mở cái mới ngay lập tức
-                $.magnificPopup.close();
-
-                // Mở popup mới ngay lập tức (không delay, không hiệu ứng)
-                $.magnificPopup.open({
-                    items: {
-                        src: target,
-                        type: 'inline'
-                    },
+                //Room Info
+                document.getElementById("area").innerHTML = area;
+                document.getElementById("maxGuest").innerHTML = maxGuest;
+                document.getElementById("description").innerHTML = description;
+                document.getElementById("bedType").innerHTML = bedType;
+                document.getElementById("price").innerHTML = roomPrice;
+            }
+            
+            
+            $(document).ready(function () {
+                // Khởi tạo popup cho nút mở login/register
+                $('.login-modal-btn, .register-modal-btn').magnificPopup({
+                    type: 'inline',
                     midClick: true
                 });
-            });
 
-            // Khi người dùng nhấn nút back (quay lại)
-            window.addEventListener('popstate', function () {
-                const hash = window.location.hash;
-                $.magnificPopup.close();
+                // Xử lý chuyển đổi giữa login <-> register
+                $(document).on('click', '.switch-modal', function (e) {
+                    e.preventDefault();
+                    const target = $(this).attr('href');
 
-                if ($(hash).length) {
+                    // Cập nhật URL hash mà không reload
+                    history.pushState(null, '', target);
+
+                    // Đóng popup hiện tại rồi mở cái mới ngay lập tức
+                    $.magnificPopup.close();
+
+                    // Mở popup mới ngay lập tức (không delay, không hiệu ứng)
                     $.magnificPopup.open({
                         items: {
-                            src: hash,
+                            src: target,
+                            type: 'inline'
+                        },
+                        midClick: true
+                    });
+                });
+
+                // Khi người dùng nhấn nút back (quay lại)
+                window.addEventListener('popstate', function () {
+                    const hash = window.location.hash;
+                    $.magnificPopup.close();
+
+                    if ($(hash).length) {
+                        $.magnificPopup.open({
+                            items: {
+                                src: hash,
+                                type: 'inline'
+                            },
+                            midClick: true
+                        });
+                    }
+                });
+
+                // Khi người dùng load trang kèm theo #login-modal hoặc #register-modal
+                const initialHash = window.location.hash;
+                if ($(initialHash).length) {
+                    $.magnificPopup.open({
+                        items: {
+                            src: initialHash,
                             type: 'inline'
                         },
                         midClick: true
                     });
                 }
             });
-
-            // Khi người dùng load trang kèm theo #login-modal hoặc #register-modal
-            const initialHash = window.location.hash;
-            if ($(initialHash).length) {
-                $.magnificPopup.open({
-                    items: {
-                        src: initialHash,
-                        type: 'inline'
-                    },
-                    midClick: true
-                });
-            }
-        });
-    </script>
+        </script>
 </html>
