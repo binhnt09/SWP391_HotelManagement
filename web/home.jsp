@@ -107,67 +107,109 @@
         <!-- ##### Hero Area End ##### -->
 
         <!-- ##### Book Now Area Start ##### -->
+        <style>
+
+            .booking-frame {
+                background-color: #ffffff;
+                border-radius: 12px;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+                padding: 30px;
+                width: 100%;
+                max-width: 1000px;
+            }
+        </style>
         <div class="book-now-area">
             <div class="container">
-                <div class="row justify-content-center">
-                    <div class="col-12 col-lg-10">
-                        <div class="book-now-form">
+                <div class="row justify-content-center" >
+                    <div class="col-12 col-lg-10" >
+                        <div class="book-now-form" >
                             <form action="#">
-                                <!-- Form Group -->
-                                <div class="form-group">
-                                    <label for="select1">Check In</label>
-                                    <select class="form-control" id="select1">
-                                        <option>19 June</option>
-                                        <option>20 June</option>
-                                        <option>21 June</option>
-                                        <option>22 June</option>
-                                        <option>23 June</option>
-                                        <option>24 June</option>
-                                        <option>25 June</option>
-                                    </select>
+
+                                <div class="booking-frame">
+                                    <div class="row">
+                                        <div class="col-4 col-lg-4">
+                                            <label style="font-weight: 600;">Nhập check-in:</label>
+                                            <input type="text" name="birthday" placeholder="Chọn ngày đến" class="form-control time-input" />
+
+                                        </div>
+                                        <div class="col-4 col-lg-4">
+                                            <label style="font-weight: 600;">Nhập check-out:</label>
+                                            <input type="text" name="birthday" placeholder="Chọn ngày đi" class="form-control time-input" />
+
+                                        </div>
+                                        <div class="col-3 col-lg-3">
+                                            <label style="font-weight: 600;">Giá mỗi đêm:</label>
+                                            <div class="d-flex align-items-center gap-2">
+                                                <input type="number" step="100" placeholder="$ To" class="form-control" style="max-width: 150px;">
+                                                <span>&nbsp;&mdash;&nbsp;</span>
+                                                <input type="number" step="100" placeholder="$ From" class="form-control" style="max-width: 150px;">
+                                            </div>
+
+
+
+                                        </div>
+                                        <div class="col-4 col-lg-4">
+                                            <label style="font-weight: 600; font-size: initial; margin-top: 20px">Số lượng thành viên:</label>
+                                            <input type="number"   placeholder="Nhập số thành viên" class="form-control" />
+
+                                        </div>
+
+                                        <div class="col-2 col-lg-2 d-flex align-items-end">
+                                            <input type="submit" value="Tìm kiếm" class="btn btn-primary w-100" />
+                                        </div>
+
+
+                                    </div>
+                                    <div class="row"></div>
                                 </div>
 
-                                <!-- Form Group -->
-                                <div class="form-group">
-                                    <label for="select2">Check Out</label>
-                                    <select class="form-control" id="select2">
-                                        <option>20 June</option>
-                                        <option>21 June</option>
-                                        <option>22 June</option>
-                                        <option>23 June</option>
-                                        <option>24 June</option>
-                                        <option>25 June</option>
-                                        <option>26 June</option>
-                                        <option>27 June</option>
-                                    </select>
-                                </div>
 
                                 <!-- Form Group -->
-                                <div class="form-group">
-                                    <label for="select3">Adults</label>
-                                    <select class="form-control" id="select3">
-                                        <option>02</option>
-                                        <option>03</option>
-                                        <option>04</option>
-                                        <option>05</option>
-                                        <option>06</option>
-                                    </select>
-                                </div>
-
-                                <!-- Form Group -->
-                                <div class="form-group">
-                                    <label for="select4">Childrens</label>
-                                    <select class="form-control" id="select4">
-                                        <option>01</option>
-                                        <option>02</option>
-                                        <option>03</option>
-                                        <option>04</option>
-                                        <option>05</option>
-                                    </select>
-                                </div>
-
-                                <!-- Button -->
-                                <button type="submit">Book Now</button>
+                                <!--                                <div class="form-group">
+                                                                    <label for="select1">Check In</label>
+                                                                    <select class="form-control" id="select1">
+                                                                        <option>19 June</option>
+                                                                        <option>20 June</option>
+                                                                        <option>21 June</option>
+                                                                        <option>22 June</option>
+                                                                        <option>23 June</option>
+                                                                        <option>24 June</option>
+                                                                        <option>25 June</option>
+                                                                    </select>
+                                                                </div>
+                                
+                                                                 Form Group 
+                                                                <div class="form-group">
+                                                                    <input type="text" name="daterange" placeholder="Chọn ngày đến - ngày đi" class="form-control" />
+                                
+                                                                </div>
+                                
+                                                                 Form Group 
+                                                                <div class="form-group">
+                                                                    <label for="select3">Adults</label>
+                                                                    <select class="form-control" id="select3">
+                                                                        <option>02</option>
+                                                                        <option>03</option>
+                                                                        <option>04</option>
+                                                                        <option>05</option>
+                                                                        <option>06</option>
+                                                                    </select>
+                                                                </div>
+                                
+                                                                 Form Group 
+                                                                <div class="form-group">
+                                                                    <label for="select4">Childrens</label>
+                                                                    <select class="form-control" id="select4">
+                                                                        <option>01</option>
+                                                                        <option>02</option>
+                                                                        <option>03</option>
+                                                                        <option>04</option>
+                                                                        <option>05</option>
+                                                                    </select>
+                                                                </div>
+                                
+                                                                 Button 
+                                                                <button type="submit">Book Now</button>-->
                             </form>
                         </div>
                     </div>
@@ -407,14 +449,29 @@
 
         <!-- ##### All Javascript Script ##### -->
         <!-- jQuery-2.2.4 js -->
-<!--        <script src="js/jquery/jquery-2.2.4.min.js"></script>-->
-        <!-- Popper js -->
+        <!-- jQuery của bạn -->
+        <script src="js/jquery/jquery-2.2.4.min.js"></script>
+
+        <!-- Thêm Moment + Daterangepicker -->
+        <script src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+
+        <!-- Popper + Bootstrap + Plugin + Active -->
         <script src="js/bootstrap/popper.min.js"></script>
-        <!-- Bootstrap js -->
         <script src="js/bootstrap/bootstrap.min.js"></script>
-        <!-- All Plugins js -->
         <script src="js/plugins/plugins.js"></script>
-        <!-- Active js -->
         <script src="js/active.js"></script>
+
+        <!-- Script khởi tạo -->
+        <script>
+                                        $(function () {
+                                            $('input[name="birthday"]').daterangepicker({
+                                                singleDatePicker: true,
+                                                minYear: 1901,
+                                                maxYear: parseInt(moment().format('YYYY'), 10)
+                                            });
+                                        });
+        </script>
     </body>
 </html>
