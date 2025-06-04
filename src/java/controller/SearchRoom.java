@@ -69,6 +69,7 @@ public class SearchRoom extends HttpServlet {
         
         int numberPeople = validation.Validation.parseStringToInt(numberPeople_raw);
         
+        request.setAttribute("listRoom", new dao.RoomDAO().getListRoom());
         
         request.getRequestDispatcher("rooms.jsp").forward(request, response);
     }

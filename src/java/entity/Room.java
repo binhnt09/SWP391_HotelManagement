@@ -14,6 +14,7 @@ public class Room {
     private int roomID;
     private String roomNumber ; // Tên phòng: VD 101 ,...
     private RoomDetail roomDetail;
+    private RoomType roomTypeID;
     private String status;
     private double price;
     
@@ -40,6 +41,29 @@ public class Room {
         this.deletedAt = deletedAt;
         this.deletedBy = deletedBy;
         this.isDeleted = isDeleted;
+    }
+
+    public Room(int roomID, String roomNumber, RoomDetail roomDetail, RoomType roomTypeID, String status, double price, Hotel hotel, Date createdAt, Date updatedAt, Date deletedAt, int deletedBy, boolean isDeleted) {
+        this.roomID = roomID;
+        this.roomNumber = roomNumber;
+        this.roomDetail = roomDetail;
+        this.roomTypeID = roomTypeID;
+        this.status = status;
+        this.price = price;
+        this.hotel = hotel;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.deletedAt = deletedAt;
+        this.deletedBy = deletedBy;
+        this.isDeleted = isDeleted;
+    }
+
+    public RoomType getRoomTypeID() {
+        return roomTypeID;
+    }
+
+    public void setRoomTypeID(RoomType roomTypeID) {
+        this.roomTypeID = roomTypeID;
     }
 
     public int getRoomID() {
@@ -130,7 +154,4 @@ public class Room {
         this.isDeleted = isDeleted;
     }
 
-    
- 
-    
 }
