@@ -64,7 +64,7 @@
                                 <div class="classynav">
                                     <ul>
                                         <li class="${pageContext.request.requestURI.endsWith('home.jsp') ? 'active' : ''}"><a href="home.jsp">Home</a></li>
-                                        <li class="${pageContext.request.requestURI.endsWith('rooms.jsp') ? 'active' : ''}"><a href="rooms.jsp">Room</a></li>
+                                        <li class="${pageContext.request.requestURI.endsWith('rooms.jsp') ? 'active' : ''}"><a href="searchroom">Room</a></li>
                                         <li><a href="#">More</a>
                                             <ul class="dropdown">
                                                 <li><a href="home.jsp">Home</a></li>

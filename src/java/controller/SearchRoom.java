@@ -11,6 +11,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.sql.Date;
 import java.util.List;
 import validation.Validation;
 
@@ -58,19 +59,21 @@ public class SearchRoom extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String checkin = request.getParameter("checkin");
-        String checkout = request.getParameter("checkout");
+        String checkin_raw = request.getParameter("checkin");
+        String checkout_raw = request.getParameter("checkout");
         String priceTo_raw = request.getParameter("priceto");
         String priceFrom_raw = request.getParameter("pricefrom");
         String numberPeople_raw = request.getParameter("numberpeople");
 
+        Date checkin = Validation.parseStringToSqlDate(checkin_raw ,"yyyy-MM-dd");
+        Date checkout = Validation.parseStringToSqlDate(checkout_raw , "yyyy-MM-dd");
         double priceTo = Validation.parseStringToDouble(priceTo_raw);
         double priceFrom = Validation.parseStringToDouble(priceFrom_raw);
         
-        int numberPeople = validation.Validation.parseStringToInt(numberPeople_raw);
+        int numberPeople = Validation.parseStringToInt(numberPeople_raw);
         
-        request.setAttribute("listRoom", new dao.RoomDAO().getListRoom());
-        
+        request.setAttribute("listRoom", new dao.RoomDAO().getListRoom(checkin, checkout, priceFrom, priceTo, numberPeople, -1));
+        request.setAttribute("listRoomType", new dao.RoomTypeDAO().getListRoomType());
         request.getRequestDispatcher("rooms.jsp").forward(request, response);
     }
 
