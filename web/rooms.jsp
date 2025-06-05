@@ -93,9 +93,9 @@
                                             <div class="col-3 col-lg-3">
                                                 <label style="font-weight: 600;">Giá mỗi đêm:</label>
                                                 <div class="d-flex align-items-center gap-2">
-                                                    <input type="number" name="priceto" step="100" placeholder="$ To" class="form-control" style="max-width: 150px;">
+                                                    <input type="number" name="pricefrom" step="100" placeholder="$From" class="form-control" style="max-width: 150px;">
                                                     <span>&nbsp;&mdash;&nbsp;</span>
-                                                    <input type="number" name="pricefrom" step="100" placeholder="$ From" class="form-control" style="max-width: 150px;">
+                                                    <input type="number" name="priceto" step="100" placeholder="$To" class="form-control" style="max-width: 150px;">
                                                 </div>
                                             </div>
                                         </div>
@@ -106,6 +106,18 @@
                                                 <input type="number" name="numberpeople"   placeholder="Nhập số thành viên" class="form-control" />
 
                                             </div>
+                                            <div class="col-4 col-lg-4">
+                                                <label style="font-weight: 600; font-size: initial; margin-top: 20px">Loại phòng:</label>
+                                                <select name="roomType" class="basic-select">
+                                                    <option value="first">text1</option>
+                                                    <option value="second">text2</option>
+                                                    <option value="third">text3</option>
+                                                </select>
+                                                 
+
+                                            </div>
+
+
 
                                             <div class="col-2 col-lg-2 d-flex align-items-end">
                                                 <input type="submit" value="Tìm kiếm" class="btn btn-primary w-100" />
@@ -282,10 +294,10 @@
                             <div id="description" ></div>
                             <div id="bedType" style="margin-top: 10px"></div>
 
-<!--                            <div style="display: flex; align-items: center; flex-wrap: wrap; margin-top: 10px">
-                                <p class="benefit" style="margin: 0; font-weight: 600;">Other: </p>
-                                <p id="other" style="margin: 0;">&nbsp;Breakfast, Gym, Pool, Laundry service...</p>
-                            </div>-->
+                            <!--                            <div style="display: flex; align-items: center; flex-wrap: wrap; margin-top: 10px">
+                                                            <p class="benefit" style="margin: 0; font-weight: 600;">Other: </p>
+                                                            <p id="other" style="margin: 0;">&nbsp;Breakfast, Gym, Pool, Laundry service...</p>
+                                                        </div>-->
 
                             <p id="price" style="margin-top: 10px;"></p>
 
@@ -326,103 +338,103 @@
         <script src="js/plugins/plugins.js"></script>
         <script src="js/active.js"></script>
 
-  
+
         <script>
-            function showRoomDetail(info){
-                let roomID = info.getAttribute("data-roomID");
-                let roomNumber = info.getAttribute("data-roomNumber");
-                let roomPrice = info.getAttribute("data-roomPrice");
-                let bedType = info.getAttribute("data-bedType");
-                let area = info.getAttribute("data-area");
-                let maxGuest = info.getAttribute("data-maxGuest");
-                let description = info.getAttribute("data-description");
-                
-                let imgSrc = info.getAttribute("data-img");
-                let imgSrc1 = info.getAttribute("data-img1");
-                let imgSrc2 = info.getAttribute("data-img2");
-                let imgSrc3 = info.getAttribute("data-img3");
-                
-                
-                document.getElementById("roomNumber").innerHTML = roomNumber;
-                
-                //IMG
-                document.getElementById("imgDetail").src = imgSrc;
-                document.getElementById("imgDetail").style.width = "400px";// Đổi chiều cao thành 200px
+                                function showRoomDetail(info) {
+                                    let roomID = info.getAttribute("data-roomID");
+                                    let roomNumber = info.getAttribute("data-roomNumber");
+                                    let roomPrice = info.getAttribute("data-roomPrice");
+                                    let bedType = info.getAttribute("data-bedType");
+                                    let area = info.getAttribute("data-area");
+                                    let maxGuest = info.getAttribute("data-maxGuest");
+                                    let description = info.getAttribute("data-description");
 
-                document.getElementById("imgDetail1").src = imgSrc1;
-                document.getElementById("imgDetail1").style.width = "130px";
-                document.getElementById("imgDetail1").style.height = "90px";
-                document.getElementById("imgDetail2").src = imgSrc2;
-                document.getElementById("imgDetail2").style.width = "130px";
-                document.getElementById("imgDetail2").style.height = "90px";
-                document.getElementById("imgDetail3").src = imgSrc3;
-                document.getElementById("imgDetail3").style.width = "130px";
-                document.getElementById("imgDetail3").style.height = "90px";
+                                    let imgSrc = info.getAttribute("data-img");
+                                    let imgSrc1 = info.getAttribute("data-img1");
+                                    let imgSrc2 = info.getAttribute("data-img2");
+                                    let imgSrc3 = info.getAttribute("data-img3");
 
-                //Room Info
-                document.getElementById("area").innerHTML = area;
-                document.getElementById("maxGuest").innerHTML = maxGuest;
-                document.getElementById("description").innerHTML = description;
-                document.getElementById("bedType").innerHTML = bedType;
-                document.getElementById("price").innerHTML = roomPrice;
-            }
-            
-            
-            $(document).ready(function () {
-                // Khởi tạo popup cho nút mở login/register
-                $('.login-modal-btn, .register-modal-btn').magnificPopup({
-                    type: 'inline',
-                    midClick: true
-                });
 
-                // Xử lý chuyển đổi giữa login <-> register
-                $(document).on('click', '.switch-modal', function (e) {
-                    e.preventDefault();
-                    const target = $(this).attr('href');
+                                    document.getElementById("roomNumber").innerHTML = roomNumber;
 
-                    // Cập nhật URL hash mà không reload
-                    history.pushState(null, '', target);
+                                    //IMG
+                                    document.getElementById("imgDetail").src = imgSrc;
+                                    document.getElementById("imgDetail").style.width = "400px";// Đổi chiều cao thành 200px
 
-                    // Đóng popup hiện tại rồi mở cái mới ngay lập tức
-                    $.magnificPopup.close();
+                                    document.getElementById("imgDetail1").src = imgSrc1;
+                                    document.getElementById("imgDetail1").style.width = "130px";
+                                    document.getElementById("imgDetail1").style.height = "90px";
+                                    document.getElementById("imgDetail2").src = imgSrc2;
+                                    document.getElementById("imgDetail2").style.width = "130px";
+                                    document.getElementById("imgDetail2").style.height = "90px";
+                                    document.getElementById("imgDetail3").src = imgSrc3;
+                                    document.getElementById("imgDetail3").style.width = "130px";
+                                    document.getElementById("imgDetail3").style.height = "90px";
 
-                    // Mở popup mới ngay lập tức (không delay, không hiệu ứng)
-                    $.magnificPopup.open({
-                        items: {
-                            src: target,
-                            type: 'inline'
-                        },
-                        midClick: true
-                    });
-                });
+                                    //Room Info
+                                    document.getElementById("area").innerHTML = area;
+                                    document.getElementById("maxGuest").innerHTML = maxGuest;
+                                    document.getElementById("description").innerHTML = description;
+                                    document.getElementById("bedType").innerHTML = bedType;
+                                    document.getElementById("price").innerHTML = roomPrice;
+                                }
 
-                // Khi người dùng nhấn nút back (quay lại)
-                window.addEventListener('popstate', function () {
-                    const hash = window.location.hash;
-                    $.magnificPopup.close();
 
-                    if ($(hash).length) {
-                        $.magnificPopup.open({
-                            items: {
-                                src: hash,
-                                type: 'inline'
-                            },
-                            midClick: true
-                        });
-                    }
-                });
+                                $(document).ready(function () {
+                                    // Khởi tạo popup cho nút mở login/register
+                                    $('.login-modal-btn, .register-modal-btn').magnificPopup({
+                                        type: 'inline',
+                                        midClick: true
+                                    });
 
-                // Khi người dùng load trang kèm theo #login-modal hoặc #register-modal
-                const initialHash = window.location.hash;
-                if ($(initialHash).length) {
-                    $.magnificPopup.open({
-                        items: {
-                            src: initialHash,
-                            type: 'inline'
-                        },
-                        midClick: true
-                    });
-                }
-            });
+                                    // Xử lý chuyển đổi giữa login <-> register
+                                    $(document).on('click', '.switch-modal', function (e) {
+                                        e.preventDefault();
+                                        const target = $(this).attr('href');
+
+                                        // Cập nhật URL hash mà không reload
+                                        history.pushState(null, '', target);
+
+                                        // Đóng popup hiện tại rồi mở cái mới ngay lập tức
+                                        $.magnificPopup.close();
+
+                                        // Mở popup mới ngay lập tức (không delay, không hiệu ứng)
+                                        $.magnificPopup.open({
+                                            items: {
+                                                src: target,
+                                                type: 'inline'
+                                            },
+                                            midClick: true
+                                        });
+                                    });
+
+                                    // Khi người dùng nhấn nút back (quay lại)
+                                    window.addEventListener('popstate', function () {
+                                        const hash = window.location.hash;
+                                        $.magnificPopup.close();
+
+                                        if ($(hash).length) {
+                                            $.magnificPopup.open({
+                                                items: {
+                                                    src: hash,
+                                                    type: 'inline'
+                                                },
+                                                midClick: true
+                                            });
+                                        }
+                                    });
+
+                                    // Khi người dùng load trang kèm theo #login-modal hoặc #register-modal
+                                    const initialHash = window.location.hash;
+                                    if ($(initialHash).length) {
+                                        $.magnificPopup.open({
+                                            items: {
+                                                src: initialHash,
+                                                type: 'inline'
+                                            },
+                                            midClick: true
+                                        });
+                                    }
+                                });
         </script>
 </html>

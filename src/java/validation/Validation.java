@@ -5,6 +5,9 @@
  */
 package validation;
 
+import java.text.ParseException;
+import java.util.Date;
+import java.text.SimpleDateFormat;
 import java.util.Scanner;
 
 /**
@@ -153,10 +156,8 @@ public class Validation {
             System.err.println("Không thể chuyển thành số nguyên: " + input);
             return -1; // hoặc throw exception tùy bạn muốn xử lý ra sao
         }
-    
-    }
 
-    
+    }
 
     public static double parseStringToDouble(String input) {
         try {
@@ -165,6 +166,21 @@ public class Validation {
         } catch (Exception e) {
             System.err.println("Không thể chuyển thành số thực: " + input);
             return -1.0; // hoặc throw exception tùy theo logic của bạn
+        }
+    }
+
+    public static java.sql.Date parseStringToSqlDate(String date, String regex) {
+        if (date == null || date.trim().isEmpty()) {
+            return null; // hoặc throw exception tùy nhu cầu
+        }
+
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat(regex);
+            java.util.Date utilDate = sdf.parse(date);
+            return new java.sql.Date(utilDate.getTime());
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return null; // hoặc throw
         }
     }
 
