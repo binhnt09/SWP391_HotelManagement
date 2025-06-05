@@ -137,7 +137,7 @@
                                                                 </div>
 
                                                                 <div class="google-login-btn mb-30">
-                                                                    <a href="#!">
+                                                                    <a href="https://accounts.google.com/o/oauth2/auth?scope=email profile openid&redirect_uri=http://localhost:8080/swp391_hotelmanagement/logingoogle&response_type=code&client_id=592439718897-g67kiqun5nq2le235c5m68a7q2fr8v85.apps.googleusercontent.com">
                                                                         <span class="icon">
                                                                             <i class="fa fa-google"></i>
                                                                         </span>
@@ -216,7 +216,7 @@
                                                             </div>
 
                                                             <div class="login-form text-center mb-50">
-                                                                <form action="#!">
+                                                                <form action="home.jsp" id="formRegister">
                                                                     <div class="form-item">
                                                                         <input type="email" placeholder="User Name">
                                                                     </div>
@@ -229,13 +229,9 @@
                                                                     <div class="form-item">
                                                                         <input type="password" placeholder="Email Address">
                                                                     </div>
-                                                                    <div class="human-verification text-left">
-                                                                        <input type="checkbox" id="imnotarobot">
-                                                                        <label for="imnotarobot">I'm not a robot</label>
-                                                                        <span class="verification-image">
-                                                                            <img src="${pageContext.request.contextPath}/img/bg-img/iamnotrobot.png" alt="Image_not_found">
-                                                                        </span>
-                                                                    </div>
+                                                                    <!--recaptcha-->
+                                                                    <div style="margin: 10px;" class="g-recaptcha" data-sitekey="6LcbvVYrAAAAAHNkpvJXFD1U2lNK--fDNfhtM1Q7"></div>
+                                                                    <div id="errorRegister" style="color: white; font-style: italic"></div>
                                                                     <button type="submit" class="login-btn">login now</button>
                                                                 </form>
                                                             </div>
@@ -281,11 +277,28 @@
         <script src="js/plugins/plugins.js"></script>
         <!--Active js--> 
         <script src="js/active.js"></script>
+        <!----login js---->
+        <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+        <script>
+            window.onload = function () {
+                let isValid = false;
+                const form = document.getElementById("formRegister");
+                const error = document.getElementById("errorRegister");
+
+                form.addEventListener("submit", function (event) {
+                    event.preventDefault();
+                    const response = grecaptcha.getResponse();
+
+                    if (response) {
+                        form.submit();
+                    } else {
+                        error.innerHTML = "Please choose captcha!";
+                    }
+                });
+            };
+        </script>
     </body>
 
-    <script>
-
-    </script>
     <script>
         $(document).ready(function () {
             // Khởi tạo popup cho nút mở login/register
