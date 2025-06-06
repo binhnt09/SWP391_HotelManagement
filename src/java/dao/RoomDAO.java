@@ -120,7 +120,7 @@ public class RoomDAO extends DBContext {
     public static void main(String[] args) {
         List<Room> list = new dao.RoomDAO().getListRoom(null, null, -1, -1, -1, 1);
         for (Room room : list) {
-            System.out.println(room.getHotel());
+            System.out.println(room.getRoomTypeID());
         }
     }
 

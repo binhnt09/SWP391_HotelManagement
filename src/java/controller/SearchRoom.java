@@ -61,18 +61,28 @@ public class SearchRoom extends HttpServlet {
             throws ServletException, IOException {
         String checkin_raw = request.getParameter("checkin");
         String checkout_raw = request.getParameter("checkout");
-        String priceTo_raw = request.getParameter("priceto");
         String priceFrom_raw = request.getParameter("pricefrom");
+        String priceTo_raw = request.getParameter("priceto");
         String numberPeople_raw = request.getParameter("numberpeople");
+        String roomType_raw = request.getParameter("roomType");
 
+        request.setAttribute("checkin", checkin_raw);
+        request.setAttribute("checkout" ,checkout_raw);
+        request.setAttribute("from" ,priceFrom_raw);
+        request.setAttribute("to" ,priceTo_raw);
+        request.setAttribute("numberPeople" ,numberPeople_raw);
+        request.setAttribute("type" ,roomType_raw);
+        
         Date checkin = Validation.parseStringToSqlDate(checkin_raw ,"yyyy-MM-dd");
         Date checkout = Validation.parseStringToSqlDate(checkout_raw , "yyyy-MM-dd");
         double priceTo = Validation.parseStringToDouble(priceTo_raw);
         double priceFrom = Validation.parseStringToDouble(priceFrom_raw);
         
         int numberPeople = Validation.parseStringToInt(numberPeople_raw);
+        int roomType = Validation.parseStringToInt(roomType_raw);
         
-        request.setAttribute("listRoom", new dao.RoomDAO().getListRoom(checkin, checkout, priceFrom, priceTo, numberPeople, -1));
+        request.setAttribute("listRoom", new dao.RoomDAO().getListRoom(checkin, checkout, priceFrom, priceTo, numberPeople, roomType));
+        
         request.setAttribute("listRoomType", new dao.RoomTypeDAO().getListRoomType());
         request.getRequestDispatcher("rooms.jsp").forward(request, response);
     }
