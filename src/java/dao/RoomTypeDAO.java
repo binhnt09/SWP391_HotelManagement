@@ -19,10 +19,15 @@ import java.util.List;
 public class RoomTypeDAO extends DBContext {
 
     public RoomType getRoomTypeById(int id) {
-        String sql = "select * from roomtype where RoomTypeID = ?";
+        String sql = "select * from roomtype";
+        if(id != -1){
+            sql += "   where RoomTypeID = ?";
+        }
         try {
             PreparedStatement pre = connection.prepareStatement(sql);
-            pre.setInt(1, id);
+            if(id != -1){
+                pre.setInt(1, id);
+            }
             ResultSet rs = pre.executeQuery();
             if (rs.next()) {
                 return new RoomType(rs.getInt("RoomTypeID"),

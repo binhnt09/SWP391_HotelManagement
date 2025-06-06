@@ -83,72 +83,73 @@
                                         <div class="row">
                                             <div class="col-4 col-lg-4">
                                                 <label style="font-weight: 600;">Nhập check-in:</label>
-                                                <input type="date" name="checkin"  placeholder="Chọn ngày đến" class="form-control time-input" />
+                                                <input type="date" value="${checkin}" name="checkin"  placeholder="Chọn ngày đến" class="form-control time-input" />
 
-                                            </div>
-                                            <div class="col-4 col-lg-4">
-                                                <label style="font-weight: 600;">Nhập check-out:</label>
-                                                <input type="date" name="checkout" placeholder="Chọn ngày đi" class="form-control time-input" />
-                                            </div>
-                                            <div class="col-3 col-lg-3">
-                                                <label style="font-weight: 600;">Giá mỗi đêm:</label>
-                                                <div class="d-flex align-items-center gap-2">
-                                                    <input type="number" name="pricefrom" step="100" placeholder="$From" class="form-control" style="max-width: 150px;">
-                                                    <span>&nbsp;&mdash;&nbsp;</span>
-                                                    <input type="number" name="priceto" step="100" placeholder="$To" class="form-control" style="max-width: 150px;">
-                                                </div>
-                                            </div>
                                         </div>
-                                        <div class="row">
-
-                                            <div class="col-4 col-lg-4">
-                                                <label style="font-weight: 600; font-size: initial; margin-top: 20px">Số lượng thành viên:</label>
-                                                <input type="number" name="numberpeople"   placeholder="Nhập số thành viên" class="form-control" />
-
-                                            </div>
-                                            <div class="col-4 col-lg-4">
-                                                <label style="font-weight: 600; font-size: initial; margin-top: 20px">Loại phòng:</label>
-                                                <select name="roomType" class="basic-select">
-                                                    <option value="first">text1</option>
-                                                    <option value="second">text2</option>
-                                                    <option value="third">text3</option>
-                                                </select>
-                                                 
-
-                                            </div>
-
-
-
-                                            <div class="col-2 col-lg-2 d-flex align-items-end">
-                                                <input type="submit" value="Tìm kiếm" class="btn btn-primary w-100" />
+                                        <div class="col-4 col-lg-4">
+                                            <label style="font-weight: 600;">Nhập check-out:</label>
+                                            <input type="date" value="${checkout}" name="checkout"  placeholder="Chọn ngày đến" class="form-control time-input"  />
+                                        </div>
+                                        <div class="col-3 col-lg-3">
+                                            <label style="font-weight: 600;">Giá mỗi đêm:</label>
+                                            <div class="d-flex align-items-center gap-2">
+                                                <input type="number" name="pricefrom" value="${from}" step="100" placeholder="$From" class="form-control" style="max-width: 150px;">
+                                                <span>&nbsp;&mdash;&nbsp;</span>
+                                                <input type="number" name="priceto" value="${to}" step="100" placeholder="$To" class="form-control" style="max-width: 150px;">
                                             </div>
                                         </div>
                                     </div>
+                                    <div class="row">
 
-                                </form>
-                            </div>
+                                        <div class="col-4 col-lg-4">
+                                            <label style="font-weight: 600; font-size: initial; margin-top: 20px">Số lượng thành viên:</label>
+                                            <input type="number" name="numberpeople" value="${numberPeople}"  placeholder="Nhập số thành viên" class="form-control" />
+
+                                        </div>
+                                        <div class="col-4 col-lg-4">
+                                            <label style="font-weight: 600; font-size: initial; margin-top: 20px">Loại phòng:</label>
+                                            <select name="roomType" class="form-select"   >
+                                                <option value="-1" >Select room type </option>
+                                                <c:forEach items="${listRoomType}" var="tmp">
+                                                    <option value="${tmp.roomTypeID}" <c:if test="${tmp.roomTypeID == type}">selected</c:if>>${tmp.typeName}</option>
+                                                </c:forEach>
+                                            </select>
+
+
+                                        </div>
+
+
+
+                                        <div class="col-2 col-lg-2 d-flex align-items-end">
+                                            <input type="submit" value="Tìm kiếm" class="btn btn-primary w-100" />
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </form>
                         </div>
                     </div>
                 </div>
             </div>
-            <!-- ##### Book Now Area End ##### -->
+        </div>
+        <!-- ##### Book Now Area End ##### -->
 
-            <!-- ##### Rooms Area Start ##### -->
-            <section class="rooms-area section-padding-0-100">
-                <div class="container">
-                    <div class="row justify-content-center">
-                        <div class="col-12 col-lg-6">
-                            <div class="section-heading text-center">
-                                <div class="line-"></div>
-                                <h2>Choose a room</h2>
-                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec malesuada lorem maximus mauris sceleri sque, at rutrum nulla dictum. Ut ac ligula sapien.</p>
-                            </div>
+        <!-- ##### Rooms Area Start ##### -->
+        <section class="rooms-area section-padding-0-100">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-12 col-lg-6">
+                        <div class="section-heading text-center">
+                            <div class="line-"></div>
+                            <h2>Choose a room</h2>
+                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec malesuada lorem maximus mauris sceleri sque, at rutrum nulla dictum. Ut ac ligula sapien.</p>
                         </div>
                     </div>
+                </div>
 
-                    <div class="row">
+                <div class="row">
 
-                        <!-- Single Rooms Area -->
+                    <!-- Single Rooms Area -->
                     <c:forEach items="${listRoom}" var="i">
                         <%
                             entity.Room room = (entity.Room) pageContext.getAttribute("i"); 
@@ -172,6 +173,7 @@
                                    data-roomID ="${i.getRoomID()}"
                                    data-roomNumber ="${i.getRoomNumber()}"
                                    data-roomPrice ="${i.price}"
+                                   data-type ="${i.getRoomTypeID().getTypeName()}"
                                    data-bedType ="${i.getRoomDetail().getBedType()}"
                                    data-area ="${i.getRoomDetail().getArea()}"
                                    data-maxGuest ="${i.getRoomDetail().getMaxGuest()}"
@@ -192,7 +194,7 @@
                                 <!-- Rooms Text -->
                                 <div class="rooms-text">
                                     <div class="line"></div>
-                                    <h4>Deluxe Room</h4>
+                                    <h4>${i.getRoomTypeID().getTypeName()}</h4>
                                     <p>${i.getRoomDetail().getDescription()}.</p>
                                 </div>
                                 <!-- Book Room -->
@@ -336,7 +338,7 @@
         <script src="js/bootstrap/popper.min.js"></script>
         <script src="js/bootstrap/bootstrap.min.js"></script>
         <script src="js/plugins/plugins.js"></script>
-        <script src="js/active.js"></script>
+        <!--<script src="js/active.js"></script>-->
 
 
         <script>
@@ -348,6 +350,7 @@
                                     let area = info.getAttribute("data-area");
                                     let maxGuest = info.getAttribute("data-maxGuest");
                                     let description = info.getAttribute("data-description");
+                                    let type = info.getAttribute("data-type");
 
                                     let imgSrc = info.getAttribute("data-img");
                                     let imgSrc1 = info.getAttribute("data-img1");
@@ -355,7 +358,7 @@
                                     let imgSrc3 = info.getAttribute("data-img3");
 
 
-                                    document.getElementById("roomNumber").innerHTML = roomNumber;
+                                    document.getElementById("roomNumber").innerHTML = roomNumber + "-" + type;
 
                                     //IMG
                                     document.getElementById("imgDetail").src = imgSrc;
