@@ -28,7 +28,7 @@ public class DBContext {
         try {
             String user = "sa";
             String pass = "123";
-            String url = "jdbc:sqlserver://localhost:1433;databaseName=HotelManager";
+            String url = "jdbc:sqlserver://localhost:1433;databaseName=HotelManagerV2";
 //            String url = "jdbc:sqlserver://localhost:1433;databaseName=HotelManagement;encryept=true;trustServerCertificate=true;";
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
             connection = DriverManager.getConnection(url, user, pass);
