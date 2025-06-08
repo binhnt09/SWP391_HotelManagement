@@ -17,6 +17,9 @@
         <!--The above 4 meta tags *must* come first in the head; any other head content must come *after* these tags--> 
 
         <!--remove cache-->
+        <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate">
+        <meta http-equiv="Pragma" content="no-cache">
+        <meta http-equiv="Expires" content="0">
 
 
 
@@ -68,11 +71,11 @@
                                 <!-- Nav Start -->
                                 <div class="classynav">
                                     <ul>
-                                        <li class="${pageContext.request.requestURI.endsWith('home.jsp') ? 'active' : ''}"><a href="home.jsp">Home</a></li>
+                                        <li class="${pageContext.request.requestURI.endsWith('home.jsp') ? 'active' : ''}"><a href="loadtohome">Home</a></li>
                                         <li class="${pageContext.request.requestURI.endsWith('rooms.jsp') ? 'active' : ''}"><a href="searchroom">Room</a></li>
                                         <li><a href="#">More</a>
                                             <ul class="dropdown">
-                                                <li><a href="home.jsp">Home</a></li>
+                                                <li><a href="loadtohome">Home</a></li>
                                                 <li><a href="about-us.jsp">About Us</a></li>
                                                 <li><a href="services.jsp">Services</a></li>
                                                 <li><a href="searchroom">Rooms</a></li>
@@ -106,7 +109,7 @@
                                     <div class="menu-btn">
                                         <div class="user-search-btn-group ul-li clearfix">
                                             <ul>
-                                                <c:if test="${sessionScope.acc == null}">
+                                                <c:if test="${sessionScope.auth == null}">
                                                     <li>
                                                         <a href="#login-modal" class="switch-modal">
                                                             <i class="fa fa-lock"> Login |</i>
@@ -125,7 +128,7 @@
                                                                     <div class="register-login-link mb-80">
                                                                         <ul>
                                                                             <li class="active"><a href="#login-modal">Login</a></li>
-                                                                            <li><a href="#register-modal" class="switch-modal">Register</a></li>
+                                                                            <li><a href="#verifyEmail-modal" class="switch-modal">Register</a></li>
                                                                         </ul>
                                                                     </div>
                                                                     <div class="copyright-text">
@@ -136,10 +139,9 @@
 
                                                                 <!-- rightside-content - start -->
                                                                 <div class="rightside-content text-center">
-
                                                                     <div class="mb-30">
                                                                         <h2 class="form-title title-large white-color">Account <strong>Login</strong></h2>
-                                                                        <span class="form-subtitle white-color">Login to our website, or <a href="#register-modal" class="switch-modal"><strong>REGISTER</strong></a></span>
+                                                                        <span class="form-subtitle white-color">Login to our website, or <a href="#verifyEmail-modal" class="switch-modal"><strong>REGISTER</strong></a></span>
                                                                     </div>
 
                                                                     <div class="google-login-btn mb-30">
@@ -152,7 +154,7 @@
                                                                     </div>
 
                                                                     <div class="or-text mb-30">
-                                                                        <a href="#register-modal" class="switch-modal">
+                                                                        <a href="#verifyEmail-modal" class="switch-modal">
                                                                             <span>or sign in</span>
                                                                         </a>
                                                                     </div>
@@ -161,46 +163,72 @@
                                                                         <form action="loginaccount" method="post">
                                                                             <input type="hidden" name="action" value="login"/>
                                                                             <div class="form-item">
-                                                                                <input type="email" name="user" placeholder="example@gmail.com">
+                                                                                <input type="email" name="email" value="${param.email}" placeholder="example@gmail.com">
                                                                             </div>
+                                                                            <c:if test="${not empty param.loginError}">
+                                                                                <script>
+                                                                                    window.addEventListener('DOMContentLoaded', () => {
+                                                                                        document.querySelector("a[href='#login-modal']").click();
+                                                                                    });
+                                                                                </script>
+                                                                                <div style="color: red; text-align: center; margin-bottom: 10px;">
+                                                                                    <c:choose>
+                                                                                        <c:when test="${param.loginError == 'EmailNotExist'}">Email not registered account</c:when>
+                                                                                    </c:choose>
+                                                                                </div>
+                                                                            </c:if>
                                                                             <div class="form-item">
                                                                                 <input type="password" name="pass" placeholder="Password">
                                                                             </div>
-                                                                            <div class="row mb-4">
+                                                                            <c:if test="${not empty param.loginError}">
+                                                                                <script>
+                                                                                    window.addEventListener('DOMContentLoaded', () => {
+                                                                                        document.querySelector("a[href='#login-modal']").click();
+                                                                                    });
+                                                                                </script>
+                                                                                <div style="color: red; text-align: center; margin-bottom: 10px;">
+                                                                                    <c:choose>
+                                                                                        <c:when test="${param.loginError == 'WrongPassword'}">Wrong password</c:when>
+                                                                                    </c:choose>
+                                                                                </div>
+                                                                            </c:if>
+                                                                            <div class="row mb-2">
                                                                                 <div class="col-md-6 d-flex justify-content-center">
                                                                                     <!-- Checkbox -->
                                                                                     <div class="form-check mb-3 mb-md-0">
-                                                                                        <input class="form-check-input" type="checkbox" name="remember" value="" id="loginCheck" style="cursor: pointer" checked />
-                                                                                        <label class="form-check-label" for="loginCheck" style="cursor: pointer"> Remember me </label>
+                                                                                        <input class="form-check-input" type="checkbox" name="remember" value="on" id="loginCheck"
+                                                                                               style="cursor: pointer"
+                                                                                               <c:if test="${param.remember == 'on'}">checked</c:if> />
+                                                                                               <label class="form-check-label" for="loginCheck" style="cursor: pointer"> Remember me </label>
+                                                                                        </div>
                                                                                     </div>
                                                                                 </div>
-                                                                            </div>
-                                                                            <button type="submit" class="login-btn">login now</button>
-                                                                        </form>
-                                                                    </div>
-                                                                    <div class="mt-3">
-                                                                        <a href="#change-password-modal" class="switch-modal white-color" style="font-size: 14px;">Change your password? | </a>
-                                                                        <a href="#forgot-password-modal" class="switch-modal white-color" style="font-size: 14px;">Forgot your password?</a>
-                                                                    </div>
+                                                                                <button type="submit" class="login-btn">login now</button>
+                                                                            </form>
+                                                                        </div>
+                                                                        <div class="mt-3">
+                                                                            <a href="#change-password-modal" class="switch-modal white-color" style="font-size: 14px;">Change your password? | </a>
+                                                                            <a href="#forgot-password-modal" class="switch-modal white-color" style="font-size: 14px;">Forgot your password?</a>
+                                                                        </div>
 
-                                                                    <div class="bottom-text white-color">
-                                                                        <p class="m-0">
+                                                                        <div class="bottom-text white-color">
+                                                                            <p class="m-0">
 
-                                                                        </p>
-                                                                        <p class="m-0"></p>
+                                                                            </p>
+                                                                            <p class="m-0"></p>
+                                                                        </div>
+
                                                                     </div>
+                                                                    <!-- rightside-content - end -->
 
+                                                                    <a class="popup-modal-dismiss" href="#">
+                                                                        <i class="fa fa-times"><button title="Close (Esc)" type="button" class="mfp-close"></button></i>
+                                                                    </a>
                                                                 </div>
-                                                                <!-- rightside-content - end -->
-
-                                                                <a class="popup-modal-dismiss" href="#">
-                                                                    <i class="fa fa-times"><button title="Close (Esc)" type="button" class="mfp-close"></button></i>
-                                                                </a>
                                                             </div>
-                                                        </div>
-                                                    </li>
+                                                        </li>
                                                 </c:if>
-                                                <c:if test="${sessionScope.acc != null}">
+                                                <c:if test="${sessionScope.auth != null}">
                                                     <li class="menu-btn">
                                                         <form action="logingoogle" method="" style="display:inline;">
                                                             <button type="submit" name="logout" value="true" class="btn btn-link nav-link">
@@ -210,11 +238,169 @@
                                                     </li>
                                                 </c:if>
 
-                                                <!--                                                <li>
-                                                                                                    <a href="#register-modal" class="switch-modal">
-                                                                                                        <i class="fa fa-lock"> Login |</i>
-                                                                                                        <i class="fa fa-user"> Register</i>
-                                                                                                    </a>-->
+                                                <!---- verify Email ---->
+                                                <div id="verifyEmail-modal" class="reglog-modal-wrapper mfp-hide clearfix" style="background-image: url('${pageContext.request.contextPath}/img/bg-img/bg-3.jpg');">
+                                                    <div class="overlay-black clearfix">
+                                                        <!-- leftside-content - start -->
+                                                        <div class="leftside-content">
+                                                            <div class="site-logo-wrapper mb-80">
+                                                                <a href="#!" class="logo">
+                                                                    <img src="${pageContext.request.contextPath}/img/core-img/logo.png" alt="logo_not_found">
+                                                                </a>
+                                                            </div>
+                                                            <div class="register-login-link mb-80">
+                                                                <ul>
+                                                                    <li><a href="#login-modal" class="switch-modal">Login</a></li>
+                                                                    <li class="active"><a href="#verifyEmail-modal">Register</a></li>
+                                                                </ul>
+                                                            </div>
+                                                            <div class="copyright-text">
+                                                                <p class="m-0 yellow-color">©2025 <a href="#!">Palatin.com</a> all right reserved, made with <i class="fa fa-heart"></i> by Themes Studio </p>
+                                                            </div>
+                                                        </div>
+                                                        <!-- leftside-content - end -->
+
+                                                        <!-- rightside-content - start -->
+                                                        <div class="rightside-content text-center">
+
+                                                            <div class="mb-30">
+                                                                <h2 class="form-title title-large white-color">Account <strong>Register</strong></h2>
+                                                                <span class="form-subtitle white-color">Have an account? <a href="#login-modal" class="switch-modal"><strong>LOGIN NOW</strong></a></span>
+                                                            </div>
+
+                                                            <div class="login-form text-center mb-50">
+                                                                <form action="loginaccount" method="post">
+                                                                    <input type="hidden" name="action" value="verifyEmail"/>
+                                                                    <div class="form-item">
+                                                                        <input type="email" name="emailvrf" value="" placeholder="Email address">
+                                                                    </div>
+
+                                                                    <!--recaptcha-->
+                                                                    <div style="margin: 10px;" class="g-recaptcha" data-sitekey="6LcbvVYrAAAAAHNkpvJXFD1U2lNK--fDNfhtM1Q7"></div>
+                                                                    <div id="errorRegister" style="color: white; font-style: italic"></div>
+                                                                    <button type="submit" class="login-btn">Register</button>
+                                                                </form>
+                                                            </div>
+                                                            <div class="bottom-text white-color">
+                                                                <a href="#login-modal" class="switch-modal white-color">← Back to Login</a>
+                                                            </div>
+                                                        </div>
+                                                        <!-- rightside-content - end -->
+                                                        <a class="popup-modal-dismiss" href="#">
+                                                            <i class="fa fa-times"><button title="Close (Esc)" type="button" class="mfp-close"></button></i>
+                                                        </a>
+                                                    </div>
+
+                                                    <!--chuyển hướng đến verification code sau khi submit-->
+                                                    <c:if test="${not empty openModal}">
+                                                        <script>
+                                                            document.addEventListener("DOMContentLoaded", function () {
+                                                                setTimeout(function () {
+                                                                    $.magnificPopup.open({
+                                                                        items: {
+                                                                            src: '${openModal}'
+                                                                        },
+                                                                        type: 'inline'
+                                                                    });
+                                                                }, 10);
+                                                            });
+                                                        </script>
+                                                    </c:if>
+                                                </div>
+
+                                                <!---- Verification code ---->
+                                                <div id="enterVerifyCode-modal" class="reglog-modal-wrapper mfp-hide clearfix" style="background-image: url('${pageContext.request.contextPath}/img/bg-img/bg-3.jpg');">
+                                                    <div class="overlay-black clearfix">
+                                                        <!-- leftside-content - start -->
+                                                        <div class="leftside-content">
+                                                            <div class="site-logo-wrapper mb-80">
+                                                                <a href="#!" class="logo">
+                                                                    <img src="${pageContext.request.contextPath}/img/core-img/logo.png" alt="logo_not_found">
+                                                                </a>
+                                                            </div>
+                                                            <div class="register-login-link mb-80">
+                                                                <ul>
+                                                                    <li><a href="#login-modal" class="switch-modal">Login</a></li>
+                                                                    <li class="active"><a href="#enterVerifyCode-modal">Register</a></li>
+                                                                </ul>
+                                                            </div>
+                                                            <div class="copyright-text">
+                                                                <p class="m-0 yellow-color">©2025 <a href="#!">Palatin.com</a> all right reserved, made with <i class="fa fa-heart"></i> by Themes Studio </p>
+                                                            </div>
+                                                        </div>
+                                                        <!-- leftside-content - end -->
+
+                                                        <!-- rightside-content - start -->
+                                                        <div class="rightside-content text-center">
+
+                                                            <div class="mb-30">
+                                                                <h2 class="form-title title-large white-color">Verification code <strong>Register</strong></h2>
+                                                                <span class="form-subtitle white-color">Have an account? <a href="#login-modal" class="switch-modal"><strong>LOGIN NOW</strong></a></span>
+                                                            </div>
+
+                                                            <div class="login-form text-center mb-50">
+                                                                <p style="color: #ff0; font-weight: bold;" id="countdown-text">Mã sẽ hết hạn sau <span id="countdown">${sessionScope.expiredAt}</span> giây</p>
+                                                                <form id="resendForm" action="loginaccount" method="post" style="display: none">
+                                                                    <input type="hidden" name="action" value="resendCode"/>
+                                                                    <button type="submit" id="resendButton" class="login-btn" style="background: none; border: none; color: yellow; cursor: pointer; padding: 0;">
+                                                                        Gửi lại mã?
+                                                                    </button>
+                                                                </form>
+                                                                <p style="color: #fff; font-style: italic; margin-bottom: 15px;">
+                                                                    Mã xác minh đã được gửi tới địa chỉ email: <strong>${sessionScope.email_to_verify}</strong>
+                                                                </p>
+                                                                <form action="loginaccount" method="post">
+                                                                    <input type="hidden" name="action" value="verifyCode"/>
+                                                                    <div class="form-item">
+                                                                        <input type="text" name="codevrf" value="" placeholder="Enter verification code">
+                                                                    </div>
+
+                                                                    <!--recaptcha-->
+                                                                    <div style="margin: 10px;" class="g-recaptcha" data-sitekey="6LcbvVYrAAAAAHNkpvJXFD1U2lNK--fDNfhtM1Q7"></div>
+                                                                    <div id="errorRegister" style="color: white; font-style: italic"></div>
+                                                                    <button type="submit" class="login-btn">Register</button>
+                                                                </form>
+                                                            </div>
+                                                            <div class="bottom-text white-color">
+                                                                <a href="#verifyEmail-modal" class="switch-modal white-color">← Back to previous step</a>
+                                                            </div>
+                                                        </div>
+                                                        <!-- rightside-content - end -->
+                                                        <a class="popup-modal-dismiss" href="#">
+                                                            <i class="fa fa-times"><button title="Close (Esc)" type="button" class="mfp-close"></button></i>
+                                                        </a>
+                                                    </div>
+                                                    <!--time đếm ngược-->
+                                                    <c:if test="${not empty sessionScope.expiredAt}">
+                                                        <script>
+                                                            const expiredTime = new Date("${sessionScope.expiredAt}").getTime();
+                                                            const now = new Date().getTime();
+                                                            let timeLeft = Math.floor((expiredTime - now) / 1000);
+
+                                                            var countdown = document.getElementById("countdown");
+                                                            var countdownText = document.getElementById("countdown-text");
+                                                            var resendForm = document.getElementById("resendForm");
+
+                                                            if (timeLeft > 0) {
+                                                                var timer = setInterval(function () {
+                                                                    timeLeft--;
+                                                                    countdown.innerText = timeLeft;
+
+                                                                    if (timeLeft <= 0) {
+                                                                        clearInterval(timer);
+                                                                        resendForm.style.display = "block";
+                                                                        countdownText.innerHTML = "<span style='color: red;'>Mã đã hết hạn.</span>";
+                                                                    }
+                                                                }, 1000);
+                                                            } else {
+                                                                resendForm.style.display = "block";
+                                                                countdownText.innerHTML = "<span style='color: red;'>Mã đã hết hạn.</span>";
+                                                            }
+                                                        </script>
+                                                    </c:if>
+                                                </div>
+
+                                                <!---- register ---->
                                                 <div id="register-modal" class="reglog-modal-wrapper register-modal mfp-hide clearfix" style="background-image: url('${pageContext.request.contextPath}/img/bg-img/bg-3.jpg');">
                                                     <div class="overlay-black clearfix">
 
@@ -295,7 +481,7 @@
                                                             <div class="register-login-link mb-80">
                                                                 <ul>
                                                                     <li><a href="#login-modal" class="switch-modal">Login</a></li>
-                                                                    <li><a href="#register-modal" class="switch-modal">Register</a></li>
+                                                                    <li><a href="#verifyEmail-modal" class="switch-modal">Register</a></li>
                                                                 </ul>
                                                             </div>
                                                             <div class="copyright-text">
@@ -340,7 +526,7 @@
                                                             <div class="register-login-link mb-80">
                                                                 <ul>
                                                                     <li><a href="#login-modal" class="switch-modal">Login</a></li>
-                                                                    <li><a href="#register-modal" class="switch-modal">Register</a></li>
+                                                                    <li><a href="#verifyEmail-modal" class="switch-modal">Register</a></li>
                                                                 </ul>
                                                             </div>
                                                             <div class="copyright-text">
@@ -408,6 +594,8 @@
         <!----login js---->
         <script src="https://www.google.com/recaptcha/api.js" async defer></script>
         <script>
+        </script>
+        <script>
             window.onload = function () {
                 let isValid = false;
                 const form = document.getElementById("formRegister");
@@ -425,7 +613,37 @@
                 });
             };
         </script>
+
+        <!--ko đóng popup--> 
+        <!--        <script>
+                    document.addEventListener("DOMContentLoaded", function () {
+                        const hash = window.location.hash;
+                        if (hash === "#login-modal") {
+                            document.querySelector("a[href='#login-modal']").click();
+                        }
+                    });
+                </script>-->
+
+        <%--<c:if test="${not empty openModal}">--%>
+        <!--            <script>
+                        window.addEventListener('DOMContentLoaded', (event) => {
+                            if ($"{openModal}" === "login") {
+                                // Tự động mở popup login bằng trigger
+                                document.querySelector("a[href='#login-modal']").click();
+                            }
+                        });
+                    </script>-->
+        <%--</c:if>--%>
+
         <!--remove cache-->
+        <script>
+            window.addEventListener("pageshow", function (event) {
+                if (event.persisted || (window.performance && window.performance.navigation.type == 2)) {
+                    // Force reload if the page is loaded from cache
+                    window.location.reload();
+                }
+            });
+        </script>
 
 
     </body>
