@@ -3,6 +3,7 @@
     Created on : May 25, 2025, 12:16:13 PM
     Author     : ASUS
 --%>
+<%@ page import="java.util.*, java.text.SimpleDateFormat" %>
 <%@ page import="java.util.List" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
@@ -81,14 +82,35 @@
 
                                     <div class="booking-frame">
                                         <div class="row">
-                                            <div class="col-4 col-lg-4">
-                                                <label style="font-weight: 600;">Nhập check-in:</label>
-                                                <input type="date" value="${checkin}" name="checkin"  placeholder="Chọn ngày đến" class="form-control time-input" />
+                                        <%
+                                            String checkin = request.getParameter("checkin");
+                                            if (checkin == null || checkin.trim().isEmpty()) {
+                                                Calendar calendar = Calendar.getInstance();
+                                                calendar.add(Calendar.DAY_OF_YEAR, 1); // ngày mai
+                                                Date tomorrow = calendar.getTime();
+                                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                                                checkin = sdf.format(tomorrow);
+                                            }
+                                            String checkout = request.getParameter("checkout");
+                                            if (checkout == null || checkout.trim().isEmpty()) {
+                                                Calendar calendar = Calendar.getInstance();
+                                                calendar.add(Calendar.DAY_OF_YEAR, 2); // ngày kia
+                                                Date afterTomorrow = calendar.getTime();
+                                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                                                checkout = sdf.format(afterTomorrow);
+                                            }
+                                            request.setAttribute("checkin", checkin);
+                                            request.setAttribute("checkout", checkout);
+                                        %>
+
+                                        <div class="col-4 col-lg-4">
+                                            <label style="font-weight: 600;">Nhập check-in:</label>
+                                            <input type="date" value="${checkin}" name="checkin" required=""  placeholder="Chọn ngày đến" class="form-control time-input" />
 
                                         </div>
                                         <div class="col-4 col-lg-4">
                                             <label style="font-weight: 600;">Nhập check-out:</label>
-                                            <input type="date" value="${checkout}" name="checkout"  placeholder="Chọn ngày đến" class="form-control time-input"  />
+                                            <input type="date" value="${checkout}" name="checkout" required=""  placeholder="Chọn ngày đến" class="form-control time-input"  />
                                         </div>
                                         <div class="col-3 col-lg-3">
                                             <label style="font-weight: 600;">Giá mỗi đêm:</label>
@@ -198,7 +220,7 @@
                                     <p>${i.getRoomDetail().getDescription()}.</p>
                                 </div>
                                 <!-- Book Room -->
-                                <a href="#" class="book-room-btn btn palatin-btn">Book Room</a>
+                                <a href="bookingroom?roomID=${i.getRoomID()}&checkin=${checkin}&checkout=${checkout}" class="book-room-btn btn palatin-btn">Book Room</a>
                             </div>
                         </div>
                     </c:forEach>

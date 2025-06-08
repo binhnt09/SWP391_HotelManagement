@@ -63,18 +63,18 @@ public class RoomDAO extends DBContext {
         try {
             PreparedStatement stm = connection.prepareStatement(sql);
             int count = 1;
- 
+
             if (roomTypeID != -1) {
                 stm.setInt(count++, roomTypeID);
             }
             if (from != -1.0 || to != -1.0) {
                 if (from != -1 && to != -1) {
-                    stm.setDouble(count++, from );
+                    stm.setDouble(count++, from);
                     stm.setDouble(count++, to);
                 } else if (from == -1.0) {
                     stm.setDouble(count++, to);
                 } else if (to == -1) {
-                    stm.setDouble(count++, from );
+                    stm.setDouble(count++, from);
                 }
             }
             if (numberPeople != -1) {
@@ -117,11 +117,39 @@ public class RoomDAO extends DBContext {
         return list;
     }
 
-    public static void main(String[] args) {
-        List<Room> list = new dao.RoomDAO().getListRoom(null, null, -1, -1, -1, 1);
-        for (Room room : list) {
-            System.out.println(room.getRoomTypeID());
+    public Room getRoomByRoomID(int id) {
+        String sql = "select * from Room where RoomID =?";
+        try {
+            PreparedStatement pre = connection.prepareStatement(sql);
+            pre.setInt(1, id);
+            ResultSet rs = pre.executeQuery();
+            if (rs.next()) {
+                Hotel hotel = new dao.HotelDAO().getHotelByID(rs.getInt("HotelID"));
+                RoomDetail roomDetail = new dao.RoomDetailDAO().getRoomDetailByID(rs.getInt("RoomDetailID"));
+                RoomType roomType = new dao.RoomTypeDAO().getRoomTypeById(rs.getInt("roomtypeid"));
+                return new Room(rs.getInt("roomID"),
+                        rs.getString("roomNumber"),
+                        roomDetail, roomType,
+                        rs.getString("status"),
+                        rs.getDouble("price"), hotel,
+                        rs.getDate("CreatedAt"),
+                        rs.getDate("UpdatedAt"),
+                        rs.getDate("DeletedAt"),
+                        rs.getInt("DeletedBy"),
+                        rs.getBoolean("IsDeleted"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
+        return null;
+    }
+
+    public static void main(String[] args) {
+//        List<Room> list = new dao.RoomDAO().getListRoom(null, null, -1, -1, -1, 1);
+//        for (Room room : list) {
+//            System.out.println(room.getRoomTypeID());
+//        }
+System.out.println(new dao.RoomDAO().getRoomByRoomID(5).getPrice());
     }
 
 }
