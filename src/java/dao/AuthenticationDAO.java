@@ -114,6 +114,74 @@ public class AuthenticationDAO extends DBContext {
         return null;
     }
 
+    public boolean isValidLogin(String email, String pass) {
+        Authentication auth = login(email);
+        if (auth == null) {
+            return false;
+        }
+        return BCrypt.checkpw(pass, auth.getPassword());
+    }
+
+    public boolean existEmail(String email) {
+        String sql = "SELECT * FROM [User] WHERE Email = ?";
+        try (PreparedStatement st = connection.prepareStatement(sql)) {
+            st.setString(1, email);
+            ResultSet rs = st.executeQuery();
+
+            return rs.next();
+        } catch (SQLException e) {
+            Logger.getLogger(AuthenticationDAO.class.getName()).log(Level.SEVERE, null, e);
+        }
+        return false;
+    }
+
+    public void insertVerification(String email, String code) {
+        String sql = "INSERT INTO EmailVerification(Email, Code, ExpiredAt) VALUES (?, ?, DATEADD(MINUTE, 1, GETDATE()))";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, email);
+            ps.setString(2, code);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            Logger.getLogger(AuthenticationDAO.class.getName()).log(Level.SEVERE, null, e);
+        }
+    }
+
+    public boolean verifyCode(String email, String code) {
+        String sql = "SELECT VerificationID FROM EmailVerification WHERE Email = ? AND Code = ? AND IsUsed = 0 AND ExpiredAt > GETDATE()";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, email);
+            ps.setString(2, code);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                markUsed(rs.getInt("VerificationID"));
+                return true;
+            }
+        } catch (SQLException e) {
+            Logger.getLogger(AuthenticationDAO.class.getName()).log(Level.SEVERE, null, e);
+        }
+        return false;
+    }
+
+    public void invalidateOldCodes(String email) {
+        String sql = "UPDATE EmailVerification SET IsUsed = 1 WHERE Email = ? AND IsUsed = 0";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, email);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            Logger.getLogger(AuthenticationDAO.class.getName()).log(Level.SEVERE, null, e);
+        }
+    }
+
+    public void markUsed(int id) {
+        String sql = "UPDATE EmailVerification SET IsUsed = 1 WHERE VerificationID = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            Logger.getLogger(AuthenticationDAO.class.getName()).log(Level.SEVERE, null, e);
+        }
+    }
+
     public static void main(String[] args) {
 //        String rawPassword = "123456";
 //        String hashed = BCrypt.hashpw(rawPassword, BCrypt.gensalt(12));
@@ -121,12 +189,6 @@ public class AuthenticationDAO extends DBContext {
         AuthenticationDAO dao = new AuthenticationDAO();
 //        dao.hashAllPlaintextPasswords();
 
-//        Authentication acc = dao.Login("tranthib@example.com", "123456");
-//        if (acc != null) {
-//            System.out.println("Đăng nhập thành công. UserID: " + acc.getUserID());
-//        } else {
-//            System.out.println("Sai email hoặc mật khẩu!");
-//        }
         String email = "admin@gmail.com";
         String rawPassword = "123456";
 
