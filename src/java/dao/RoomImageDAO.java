@@ -27,9 +27,10 @@ public class RoomImageDAO extends DBContext {
             ResultSet rs = stm.executeQuery();
             while(rs.next()){
                 RoomDetail detail = new dao.RoomDetailDAO().getRoomDetailByID(id);
-                list.add(new RoomImage(rs.getInt("ImageID"),detail , rs.getString("imageURL"), rs.getString("Caption"),rs.getDate("CreatedAt"),
-                        rs.getDate("UpdatedAt"),
-                        rs.getDate("DeletedAt"),
+                list.add(new RoomImage(rs.getInt("ImageID"),detail , rs.getString("imageURL"), rs.getString("Caption"),
+                        rs.getTimestamp("CreatedAt"),
+                        rs.getTimestamp("UpdatedAt"),
+                        rs.getTimestamp("DeletedAt"),
                         rs.getInt("DeletedBy"),  
                         rs.getBoolean("IsDeleted")));
             }

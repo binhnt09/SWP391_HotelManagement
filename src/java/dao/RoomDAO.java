@@ -104,10 +104,10 @@ public class RoomDAO extends DBContext {
                         roomDetail, roomType,
                         rs.getString("status"),
                         rs.getDouble("price"), hotel,
-                        rs.getDate("CreatedAt"),
-                        rs.getDate("UpdatedAt"),
-                        rs.getDate("DeletedAt"),
-                        rs.getInt("DeletedBy"),
+                        rs.getTimestamp("CreatedAt"),
+                        rs.getTimestamp("UpdatedAt"),
+                        rs.getTimestamp("DeletedAt"),
+                        rs.getInt("DeletedBy"),  
                         rs.getBoolean("IsDeleted")));
             }
         } catch (SQLException e) {
@@ -132,10 +132,10 @@ public class RoomDAO extends DBContext {
                         roomDetail, roomType,
                         rs.getString("status"),
                         rs.getDouble("price"), hotel,
-                        rs.getDate("CreatedAt"),
-                        rs.getDate("UpdatedAt"),
-                        rs.getDate("DeletedAt"),
-                        rs.getInt("DeletedBy"),
+                        rs.getTimestamp("CreatedAt"),
+                        rs.getTimestamp("UpdatedAt"),
+                        rs.getTimestamp("DeletedAt"),
+                        rs.getInt("DeletedBy"),  
                         rs.getBoolean("IsDeleted"));
             }
         } catch (SQLException e) {
@@ -159,10 +159,10 @@ public class RoomDAO extends DBContext {
                         roomDetail, roomType,
                         rs.getString("status"),
                         rs.getDouble("price"), hotel,
-                        rs.getDate("CreatedAt"),
-                        rs.getDate("UpdatedAt"),
-                        rs.getDate("DeletedAt"),
-                        rs.getInt("DeletedBy"),
+                        rs.getTimestamp("CreatedAt"),
+                        rs.getTimestamp("UpdatedAt"),
+                        rs.getTimestamp("DeletedAt"),
+                        rs.getInt("DeletedBy"),  
                         rs.getBoolean("IsDeleted")));
             }
         } catch (SQLException e) {
