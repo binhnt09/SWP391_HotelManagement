@@ -4,6 +4,7 @@
  */
 package controller;
 
+import dao.AuthenticationDAO;
 import entity.GoogleAccount;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -13,6 +14,8 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -32,14 +35,13 @@ public class LoginGoogleServlet extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
         response.setContentType("text/html;charset=UTF-8");
 //        remove cache
         response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
         response.setHeader("Pragma", "no-cache");
         response.setDateHeader("Expires", 0);
 
-        // LOGOUT xử lý đầu tiên
+        // LOGOUT 
         String logoutParam = request.getParameter("logout");
         if (logoutParam != null && logoutParam.equals("true")) {
             HttpSession session = request.getSession(false);
@@ -59,17 +61,31 @@ public class LoginGoogleServlet extends HttpServlet {
             return;
         }
 
-        GoogleLogin gg = new GoogleLogin();
-        String accessToken = gg.getToken(code);
-        GoogleAccount acc = gg.getUserInfo(accessToken);
+        try {
+            GoogleLogin gg = new GoogleLogin();
+            String accessToken = gg.getToken(code);
+            GoogleAccount acc = gg.getUserInfo(accessToken);
 
-        if (acc != null) {
+            if (acc == null) {
+                response.sendRedirect("home.jsp");
+                return;
+            }
+
+            String firstName = acc.getGiven_name();
+            String lastName = acc.getFamily_name();
+            String email = acc.getEmail();
+
+            AuthenticationDAO dao = new AuthenticationDAO();
+            if (!dao.existEmail(email)) {
+                int UserId = dao.createUser(email, firstName, lastName);
+                dao.createGoogleAuth(UserId);
+            }
+
             HttpSession session = request.getSession();
-            session.setAttribute("acc", acc);
+            session.setAttribute("auth", acc);
             response.sendRedirect("loadtohome");
-//        request.getRequestDispatcher("home.jsp").forward(request, response);
-        } else {
-            response.sendRedirect("loginerror.jsp");
+        } catch (Exception ex) {
+            Logger.getLogger(LoginGoogleServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

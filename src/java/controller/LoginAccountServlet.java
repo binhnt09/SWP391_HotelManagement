@@ -19,6 +19,8 @@ import jakarta.servlet.http.HttpSession;
 import java.net.URLEncoder;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -89,6 +91,8 @@ public class LoginAccountServlet extends HttpServlet {
             resendVerifyCode(request, response);
         } else if ("verifyCode".equals(action)) {
             verifyCode(request, response);
+        } else if ("register".equals(action)) {
+            completeRegister(request, response);
         }
     }
 
@@ -130,6 +134,17 @@ public class LoginAccountServlet extends HttpServlet {
         String emailvrf = request.getParameter("emailvrf");
         request.getSession().setAttribute("email_to_verify", emailvrf);
 
+        AuthenticationDAO dao = new AuthenticationDAO();
+        try {
+            if (dao.existEmail(emailvrf)) {
+                request.setAttribute("error", "Email này đã được sử dụng.");
+                request.setAttribute("openModal", "#verifyEmail-modal");
+                request.getRequestDispatcher("home.jsp").forward(request, response);
+                return;
+            }
+        } catch (Exception e) {
+            throw new ServletException("Lỗi kiểm tra email", e);
+        }
         // Nếu đã có expiredAt trong session và vẫn còn hiệu lực thì ko gửi lại mã
         Timestamp expiredAt = (Timestamp) request.getSession().getAttribute("expiredAt");
         if (expiredAt == null || expiredAt.before(new Timestamp(System.currentTimeMillis()))) {
@@ -143,7 +158,6 @@ public class LoginAccountServlet extends HttpServlet {
         }
 
         // Lưu email để dùng trong bước xác minh
-        // Mở lại modal xác minh
         request.setAttribute("openModal", "#enterVerifyCode-modal");
 //        request.setAttribute("openModalRegister", "#register-modal");
         request.getRequestDispatcher("home.jsp").forward(request, response);
@@ -205,6 +219,13 @@ public class LoginAccountServlet extends HttpServlet {
 
         try {
             AuthenticationDAO dao = new AuthenticationDAO();
+            if (dao.existEmail(emailvf)) {
+                request.setAttribute("error", "Email này đã được sử dụng.");
+                request.setAttribute("openModal", "#verifyEmail-modal");
+                request.getRequestDispatcher("home.jsp").forward(request, response);
+                return;
+            }
+
             boolean validCode = dao.verifyCode(emailvf, codeVf);
 
             if (validCode) {
@@ -225,13 +246,34 @@ public class LoginAccountServlet extends HttpServlet {
         String firstName = request.getParameter("firstName");
         String lastName = request.getParameter("lastName");
         String pass = request.getParameter("pass");
-        String repass = request.getParameter("repass");
 
         if (emailvf == null) {
             request.setAttribute("error", "Không tìm thấy email cần xác minh.");
             request.setAttribute("openModal", "#verifyEmail-modal");
             request.getRequestDispatcher("home.jsp").forward(request, response);
             return;
+        }
+
+        try {
+            AuthenticationDAO dao = new AuthenticationDAO();
+            if (dao.existEmail(emailvf)) {
+                request.setAttribute("error", "Email này đã được sử dụng.");
+                request.setAttribute("openModalRegister", "#register-modal");
+                request.getRequestDispatcher("home.jsp").forward(request, response);
+                return;
+            }
+
+            int userID = dao.createUser(emailvf, firstName, lastName);
+            dao.createAuth(userID, pass);
+
+            request.getSession().removeAttribute("email_to_verify");
+            request.getSession().removeAttribute("expiredAt");
+
+            request.setAttribute("success", "Đăng ký thành công! Mời bạn đăng nhập.");
+            request.setAttribute("openModalLogin", "#login-modal");
+            request.getRequestDispatcher("home.jsp").forward(request, response);
+        } catch (Exception ex) {
+            Logger.getLogger(LoginAccountServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
 
     }
