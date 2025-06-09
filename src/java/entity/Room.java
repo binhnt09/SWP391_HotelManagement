@@ -4,7 +4,7 @@
  */
 package entity;
 
-import java.sql.Date;
+import java.sql.Timestamp;
 
 /**
  *
@@ -20,16 +20,16 @@ public class Room {
     
     private Hotel hotel;
     
-    private Date createdAt;
-    private Date updatedAt;
-    private Date deletedAt;
+    private Timestamp createdAt;
+    private Timestamp updatedAt;
+    private Timestamp deletedAt;
     private int deletedBy;
     private boolean isDeleted;
 
     public Room() {
     }
 
-    public Room(int roomID, String roomNumber, RoomDetail roomDetail, String status, double price, Hotel hotel, Date createdAt, Date updatedAt, Date deletedAt, int deletedBy, boolean isDeleted) {
+    public Room(int roomID, String roomNumber, RoomDetail roomDetail, String status, double price, Hotel hotel, Timestamp createdAt, Timestamp updatedAt, Timestamp deletedAt, int deletedBy, boolean isDeleted) {
         this.roomID = roomID;
         this.roomNumber = roomNumber;
         this.roomDetail = roomDetail;
@@ -43,7 +43,7 @@ public class Room {
         this.isDeleted = isDeleted;
     }
 
-    public Room(int roomID, String roomNumber, RoomDetail roomDetail, RoomType roomTypeID, String status, double price, Hotel hotel, Date createdAt, Date updatedAt, Date deletedAt, int deletedBy, boolean isDeleted) {
+    public Room(int roomID, String roomNumber, RoomDetail roomDetail, RoomType roomTypeID, String status, double price, Hotel hotel, Timestamp createdAt, Timestamp updatedAt, Timestamp deletedAt, int deletedBy, boolean isDeleted) {
         this.roomID = roomID;
         this.roomNumber = roomNumber;
         this.roomDetail = roomDetail;
@@ -114,27 +114,27 @@ public class Room {
         this.hotel = hotel;
     }
 
-    public Date getCreatedAt() {
+    public Timestamp getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(Date createdAt) {
+    public void setCreatedAt(Timestamp createdAt) {
         this.createdAt = createdAt;
     }
 
-    public Date getUpdatedAt() {
+    public Timestamp getUpdatedAt() {
         return updatedAt;
     }
 
-    public void setUpdatedAt(Date updatedAt) {
+    public void setUpdatedAt(Timestamp updatedAt) {
         this.updatedAt = updatedAt;
     }
 
-    public Date getDeletedAt() {
+    public Timestamp getDeletedAt() {
         return deletedAt;
     }
 
-    public void setDeletedAt(Date deletedAt) {
+    public void setDeletedAt(Timestamp deletedAt) {
         this.deletedAt = deletedAt;
     }
 

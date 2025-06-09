@@ -34,9 +34,9 @@ public class RoomTypeDAO extends DBContext {
                         rs.getString("TypeName"),
                         rs.getString("description"),
                         rs.getString("imageurl"),
-                        rs.getDate("CreatedAt"),
-                        rs.getDate("UpdatedAt"),
-                        rs.getDate("DeletedAt"),
+                        rs.getTimestamp("CreatedAt"),
+                        rs.getTimestamp("UpdatedAt"),
+                        rs.getTimestamp("DeletedAt"),
                         rs.getInt("DeletedBy"),
                         rs.getBoolean("IsDeleted"));
             }
@@ -57,9 +57,9 @@ public class RoomTypeDAO extends DBContext {
                         rs.getString("TypeName"),
                         rs.getString("description"),
                         rs.getString("imageurl"),
-                        rs.getDate("CreatedAt"),
-                        rs.getDate("UpdatedAt"),
-                        rs.getDate("DeletedAt"),
+                        rs.getTimestamp("CreatedAt"),
+                        rs.getTimestamp("UpdatedAt"),
+                        rs.getTimestamp("DeletedAt"),
                         rs.getInt("DeletedBy"),
                         rs.getBoolean("IsDeleted")));
             }

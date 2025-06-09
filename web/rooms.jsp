@@ -183,12 +183,7 @@
                         %>
                         <div class="col-12 col-md-6 col-lg-4">
                             <div class="single-rooms-area wow fadeInUp" data-wow-delay="100ms">
-                                <!-- Thumbnail -->
-                                <!--                                <a href="#" data-bs-toggle="modal" data-bs-target="#roomDetailModal">
-                                                                    <div class="bg-thumbnail bg-img" >
-                                                                        <img src="images/ten_anh.jpg" alt="Mô tả hình ảnh" width="200" height="150">
-                                                                    </div></a>-->
-
+                               
                                 <a href="#" onclick="showRoomDetail(this)" 
                                    data-bs-toggle="modal"
                                    data-bs-target="#roomDetailModal"

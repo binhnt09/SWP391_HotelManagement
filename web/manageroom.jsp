@@ -147,9 +147,9 @@
                                                                         <td>${i.roomDetail.maxGuest} </td>
                                     -->                                                 
                                     <td>
-                                        <a href="#editroomtype"  class="edit" >Edit</a>
-                                        <a href="#" class="delete" data-toggle="modal">Delete</a>
-
+                                        <a href="#editroomtype"  style="color: blue;" title="Edit Room"><i class="fa-solid fa-pen-to-square"></i></a>
+                                        <a href="#" class="delete" style="color: red;margin-left: 5px" title="Delete Room" data-toggle="modal"><i class="fa-solid fa-delete-left"></i></a>
+                                        
                                     </td>
                                 </tr>
 
