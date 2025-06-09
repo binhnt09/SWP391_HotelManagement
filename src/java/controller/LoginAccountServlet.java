@@ -93,6 +93,8 @@ public class LoginAccountServlet extends HttpServlet {
             verifyCode(request, response);
         } else if ("register".equals(action)) {
             completeRegister(request, response);
+        } else if("verifyEmailForgotPassword".equals(action)){
+            verifyEmailForgotPassword(request, response);
         }
     }
 
@@ -128,6 +130,36 @@ public class LoginAccountServlet extends HttpServlet {
             }
             response.sendRedirect("loadtohome");
         }
+    }
+    
+    public void verifyEmailForgotPassword(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String emailfg = request.getParameter("emailfg");
+        request.getSession().setAttribute("emailforgot", emailfg);
+        try {
+            AuthenticationDAO dao = new AuthenticationDAO();
+            if (!dao.existEmail(emailfg)) {
+                request.setAttribute("error", "Email này chưa được đăng ký.");
+                request.setAttribute("openModal", "#forgot-password-modal");
+                request.getRequestDispatcher("home.jsp").forward(request, response);
+                return;
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(LoginAccountServlet.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        Timestamp expiredAt = (Timestamp) request.getSession().getAttribute("expiredAt");
+        if (expiredAt == null || expiredAt.before(new Timestamp(System.currentTimeMillis()))) {
+            // Chỉ gửi mã nếu chưa có hoặc đã hết hạn
+            generateAndSendVerificationCode(emailfg);
+            // Đặt lại thời gian hết hạn mới
+            Timestamp newExpired = Timestamp.valueOf(LocalDateTime.now().plusSeconds(20));
+            request.getSession().setAttribute("expiredAt", newExpired);
+        } else {
+            System.out.println("Mã vẫn còn hiệu lực, không gửi lại.");
+        }
+
+        request.setAttribute("openModal", "#enterVerifyCode-modal");
+        request.getRequestDispatcher("home.jsp").forward(request, response);
     }
 
     public void verifyEmail(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -240,7 +272,7 @@ public class LoginAccountServlet extends HttpServlet {
             throw new ServletException("Lỗi xử lý xác minh mã", e);
         }
     }
-
+    
     public void completeRegister(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String emailvf = (String) request.getSession().getAttribute("email_to_verify");
         String firstName = request.getParameter("firstName");

@@ -180,6 +180,22 @@ public class AuthenticationDAO extends DBContext {
         return false;
     }
 
+    public boolean verifyCodeForgotPass(String email, String code) {
+        String sql = "SELECT VerificationID FROM EmailVerification WHERE Email = ? AND Code = ? AND IsUsed = 1 AND ExpiredAt > GETDATE()";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, email);
+            ps.setString(2, code);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                markUsed(rs.getInt("VerificationID"));
+                return true;
+            }
+        } catch (SQLException e) {
+            Logger.getLogger(AuthenticationDAO.class.getName()).log(Level.SEVERE, null, e);
+        }
+        return false;
+    }
+
     public void invalidateOldCodes(String email) {
         String sql = "UPDATE EmailVerification SET IsUsed = 1 WHERE Email = ? AND IsUsed = 0";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
