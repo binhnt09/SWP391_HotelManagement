@@ -32,6 +32,10 @@
         <!--Core Stylesheet--> 
         <link rel="stylesheet" href="style.css">
 
+        <!--<script src="https://www.google.com/recaptcha/api.js" async defer></script>-->
+        <script src="https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit" async defer></script>
+
+
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/style.css">
     </head>
 
@@ -115,9 +119,10 @@
                                                             <i class="fa fa-lock"> Login |</i>
                                                             <i class="fa fa-user"> Register</i>
                                                         </a>
+
+                                                        <!--Login-->
                                                         <div id="login-modal" class="reglog-modal-wrapper mfp-hide clearfix" style="background-image: url('${pageContext.request.contextPath}/img/bg-img/bg-3.jpg');">
                                                             <div class="overlay-black clearfix">
-
                                                                 <!-- leftside-content - start -->
                                                                 <div class="leftside-content">
                                                                     <div class="site-logo-wrapper mb-80">
@@ -225,8 +230,14 @@
                                                                         <i class="fa fa-times"><button title="Close (Esc)" type="button" class="mfp-close"></button></i>
                                                                     </a>
                                                                 </div>
-                                                            </div>
-                                                        </li>
+                                                            <c:if test="${not empty success}">
+                                                                <div class="alert alert-danger" style="margin-bottom: 0px">
+                                                                    <i class="fa fa-exclamation-triangle" style="margin-right: 8px;"></i>
+                                                                    ${success}
+                                                                </div>
+                                                            </c:if>
+                                                        </div>
+                                                    </li>
                                                 </c:if>
                                                 <c:if test="${sessionScope.auth != null}">
                                                     <li class="menu-btn">
@@ -262,22 +273,27 @@
 
                                                         <!-- rightside-content - start -->
                                                         <div class="rightside-content text-center">
-
                                                             <div class="mb-30">
                                                                 <h2 class="form-title title-large white-color">Account <strong>Register</strong></h2>
                                                                 <span class="form-subtitle white-color">Have an account? <a href="#login-modal" class="switch-modal"><strong>LOGIN NOW</strong></a></span>
                                                             </div>
 
+                                                            <c:if test="${not empty error}">
+                                                                <div class="alert alert-danger" style="margin-bottom: 10px">
+                                                                    <i class="fa fa-exclamation-triangle" style="margin-right: 8px;"></i>
+                                                                    ${error}
+                                                                </div>
+                                                            </c:if>
                                                             <div class="login-form text-center mb-50">
-                                                                <form action="loginaccount" method="post">
+                                                                <form id="formVerifyEmail" action="loginaccount" method="post">
                                                                     <input type="hidden" name="action" value="verifyEmail"/>
                                                                     <div class="form-item">
                                                                         <input type="email" name="emailvrf" value="" placeholder="Email address">
                                                                     </div>
 
                                                                     <!--recaptcha-->
-                                                                    <div style="margin: 10px;" class="g-recaptcha" data-sitekey="6LcbvVYrAAAAAHNkpvJXFD1U2lNK--fDNfhtM1Q7"></div>
-                                                                    <div id="errorRegister" style="color: white; font-style: italic"></div>
+                                                                    <div style="margin: 10px;" id="verifyEmail-captcha"></div>
+                                                                    <div id="errorVerifyEmail" style="color: white; font-style: italic"></div>
                                                                     <button type="submit" class="login-btn">Register</button>
                                                                 </form>
                                                             </div>
@@ -338,7 +354,7 @@
                                                             </div>
 
                                                             <div class="login-form text-center mb-50">
-                                                                <p style="color: #ff0; font-weight: bold;" id="countdown-text">Mã sẽ hết hạn sau <span id="countdown">${sessionScope.expiredAt}</span> giây</p>
+                                                                <p style="color: #ff0; font-weight: bold; margin: 0" id="countdown-text">Mã sẽ hết hạn sau <span id="countdown">${sessionScope.expiredAt}</span> giây</p>
                                                                 <form id="resendForm" action="loginaccount" method="post" style="display: none">
                                                                     <input type="hidden" name="action" value="resendCode"/>
                                                                     <button type="submit" id="resendButton" class="login-btn" style="background: none; border: none; color: yellow; cursor: pointer; padding: 0;">
@@ -355,8 +371,6 @@
                                                                     </div>
 
                                                                     <!--recaptcha-->
-                                                                    <div style="margin: 10px;" class="g-recaptcha" data-sitekey="6LcbvVYrAAAAAHNkpvJXFD1U2lNK--fDNfhtM1Q7"></div>
-                                                                    <div id="errorRegister" style="color: white; font-style: italic"></div>
                                                                     <button type="submit" class="login-btn">Register</button>
                                                                 </form>
                                                             </div>
@@ -454,39 +468,50 @@
                                                             </div>
 
                                                             <div class="login-form text-center mb-50">
-                                                                <form action="loginaccount" id="formRegister">
+                                                                <form id="formRegister" action="loginaccount" method="post">
                                                                     <input type="hidden" name="action" value="register"/>
                                                                     <div class="form-item">
-                                                                        <input type="text" placeholder="First Name" name="firstName" required autofocus pattern ="">
-                                                                        <input type="text" placeholder="Last Name" name="lastName" required autofocus pattern ="">
+                                                                        <input type="text" placeholder="First Name" name="firstName" required autofocus 
+                                                                               pattern = "[A-Za-zÀ-ỹ\s]{2,30}" title="Tên chỉ được chứa chữ cái, không bao gồm số hoặc ký tự đặc biệt.">
+                                                                        <input type="text" placeholder="Last Name" name="lastName" required autofocus 
+                                                                               pattern = "[A-Za-zÀ-ỹ\s]{2,30}" title="Tên chỉ được chứa chữ cái, không bao gồm số hoặc ký tự đặc biệt.">
                                                                     </div>
                                                                     <div class="form-item">
-                                                                        <input type="password" placeholder="Password" name="pass" required pattern ="" title="">
+                                                                        <input type="password" placeholder="Password" name="pass" required 
+                                                                               pattern ="(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}" 
+                                                                               title="Mật khẩu phải có ít nhất 6 ký tự, bao gồm chữ hoa, chữ thường, số và ký tự đặc biệt.">
                                                                     </div>
                                                                     <div class="form-item">
-                                                                        <input type="password" placeholder="Repeat Password" name="repass" required pattern ="">
+                                                                        <input type="password" placeholder="Repeat Password" name="repass" required>
+                                                                        <small id="repass-error" style="color: red; display: none;">Mật khẩu nhập lại không khớp.</small>
                                                                     </div>
                                                                     <!--recaptcha-->
-                                                                    <div style="margin: 10px;" class="g-recaptcha" data-sitekey="6LcbvVYrAAAAAHNkpvJXFD1U2lNK--fDNfhtM1Q7"></div>
+                                                                    <div style="margin: 10px;" id="register-captcha"></div>
                                                                     <div id="errorRegister" style="color: white; font-style: italic"></div>
                                                                     <button type="submit" class="login-btn">Register</button>
                                                                 </form>
                                                             </div>
-
-                                                            <div class="bottom-text white-color">
-                                                                <p class="m-0">
-
-                                                                </p>
-                                                                <p class="m-0"></p>
-                                                            </div>
-
                                                         </div>
                                                         <!-- rightside-content - end -->
-
                                                         <a class="popup-modal-dismiss" href="#">
                                                             <i class="fa fa-times"><button title="Close (Esc)" type="button" class="mfp-close"></button></i>
                                                         </a>
                                                     </div>
+                                                    <!--chuyển hướng đến Login sau khi submit-->
+                                                    <c:if test="${not empty openModalLogin}">
+                                                        <script>
+                                                            document.addEventListener("DOMContentLoaded", function () {
+                                                                setTimeout(function () {
+                                                                    $.magnificPopup.open({
+                                                                        items: {
+                                                                            src: '${openModalLogin}'
+                                                                        },
+                                                                        type: 'inline'
+                                                                    });
+                                                                }, 100);
+                                                            });
+                                                        </script>
+                                                    </c:if>
                                                 </div>
 
                                                 <!-- Forgot Password Modal -->
@@ -613,61 +638,95 @@
         <!--Active js--> 
         <script src="js/active.js"></script>
         <!----login js---->
-        <script src="https://www.google.com/recaptcha/api.js" async defer></script>
-        <script>
-        </script>
-        <script>
-            window.onload = function () {
-                let isValid = false;
-                const form = document.getElementById("formRegister");
-                const error = document.getElementById("errorRegister");
+    </body>
 
-                form.addEventListener("submit", function (event) {
-                    event.preventDefault();
-                    const response = grecaptcha.getResponse();
+    <script>
+    </script>
+    <script>
+        let captchaWidgets = {};
 
-                    if (response) {
-                        form.submit();
+        function onloadCallback() {
+            captchaWidgets["formRegister"] = grecaptcha.render("register-captcha", {
+                sitekey: "6LfzjVorAAAAAAJT5bnnmi2MrHjf7KjKK2sAwlxF"
+            });
+
+            captchaWidgets["formVerifyEmail"] = grecaptcha.render("verifyEmail-captcha", {
+                sitekey: "6LfzjVorAAAAAAJT5bnnmi2MrHjf7KjKK2sAwlxF"
+            });
+        }
+
+        window.onload = function () {
+            setupFormValidation("formRegister", "errorRegister", "repass-error", true);
+            setupFormValidation("formVerifyEmail", "errorVerifyEmail", null, false);
+        };
+
+        function setupFormValidation(formId, captchaErrorId, repassErrorId, hasRepass) {
+            const form = document.getElementById(formId);
+            const errorCaptcha = document.getElementById(captchaErrorId);
+            const errorRepass = repassErrorId ? document.getElementById(repassErrorId) : null;
+
+            form.addEventListener("submit", function (e) {
+                let hasError = false;
+
+                // Re-password check
+                if (hasRepass) {
+                    const pass = form.querySelector('input[name="pass"]').value;
+                    const repass = form.querySelector('input[name="repass"]').value;
+                    if (pass !== repass) {
+                        errorRepass.style.display = "block";
+                        hasError = true;
                     } else {
-                        error.innerHTML = "Please choose captcha!";
+                        errorRepass.style.display = "none";
+                    }
+                }
+
+                // Captcha check
+                const captchaResponse = grecaptcha.getResponse(captchaWidgets[formId]);
+                if (!captchaResponse) {
+                    errorCaptcha.innerText = "Bạn cần xác minh captcha.";
+                    hasError = true;
+                } else {
+                    errorCaptcha.innerText = "";
+                }
+
+                if (hasError) {
+                    e.preventDefault();
+                }
+            });
+        }
+    </script>
+
+
+    <!--ko đóng popup--> 
+    <!--        <script>
+                document.addEventListener("DOMContentLoaded", function () {
+                    const hash = window.location.hash;
+                    if (hash === "#login-modal") {
+                        document.querySelector("a[href='#login-modal']").click();
                     }
                 });
-            };
-        </script>
+            </script>-->
 
-        <!--ko đóng popup--> 
-        <!--        <script>
-                    document.addEventListener("DOMContentLoaded", function () {
-                        const hash = window.location.hash;
-                        if (hash === "#login-modal") {
+    <%--<c:if test="${not empty openModal}">--%>
+    <!--            <script>
+                    window.addEventListener('DOMContentLoaded', (event) => {
+                        if ($"{openModal}" === "login") {
+                            // Tự động mở popup login bằng trigger
                             document.querySelector("a[href='#login-modal']").click();
                         }
                     });
                 </script>-->
+    <%--</c:if>--%>
 
-        <%--<c:if test="${not empty openModal}">--%>
-        <!--            <script>
-                        window.addEventListener('DOMContentLoaded', (event) => {
-                            if ($"{openModal}" === "login") {
-                                // Tự động mở popup login bằng trigger
-                                document.querySelector("a[href='#login-modal']").click();
-                            }
-                        });
-                    </script>-->
-        <%--</c:if>--%>
-
-        <!--remove cache-->
-        <script>
-            window.addEventListener("pageshow", function (event) {
-                if (event.persisted || (window.performance && window.performance.navigation.type == 2)) {
-                    // Force reload if the page is loaded from cache
-                    window.location.reload();
-                }
-            });
-        </script>
-
-
-    </body>
+    <!--remove cache-->
+    <script>
+        window.addEventListener("pageshow", function (event) {
+            if (event.persisted || (window.performance && window.performance.navigation.type == 2)) {
+                // Force reload if the page is loaded from cache
+                window.location.reload();
+            }
+        });
+    </script>
 
     <script>
         $(document).ready(function () {
@@ -677,7 +736,7 @@
                 midClick: true
             });
 
-            // Xử lý chuyển đổi giữa login <-> register
+            // Xử lý chuyển đổi giữa login và register
             $(document).on('click', '.switch-modal', function (e) {
                 e.preventDefault();
                 const target = $(this).attr('href');
@@ -688,7 +747,7 @@
                 // Đóng popup hiện tại rồi mở cái mới ngay lập tức
                 $.magnificPopup.close();
 
-                // Mở popup mới ngay lập tức (không delay, không hiệu ứng)
+                // Mở popup mới ngay lập tức 
                 $.magnificPopup.open({
                     items: {
                         src: target,

@@ -6,6 +6,7 @@ package dao;
 
 import dal.DBContext;
 import entity.Authentication;
+import java.sql.Statement;
 import java.sql.Timestamp;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -200,8 +201,8 @@ public class AuthenticationDAO extends DBContext {
     }
 
     public int createUser(String email, String firstName, String lastName) throws Exception {
-        String sql = "INSERT INTO [User](FirstName, LastName, Email, UserRoleID, IsVerifiedEmail) VALUES (?, ?, ?, 2, 1)";
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+        String sql = "INSERT INTO [User](FirstName, LastName, Email, UserRoleID, IsVerifiedEmail) VALUES (?, ?, ?, 1, 1)";
+        try (PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, firstName);
             ps.setString(2, lastName);
             ps.setString(3, email);
@@ -211,6 +212,15 @@ public class AuthenticationDAO extends DBContext {
                 return rs.getInt(1);
             }
             throw new Exception("Không lấy được UserID");
+        }
+    }
+
+    public void createGoogleAuth(int userId) throws Exception {
+        String sql = "INSERT INTO Authentication(UserID, Password, AuthType, UserKey) VALUES (?, NULL, 'google', ?)";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, userId);
+            ps.setString(2, UUID.randomUUID().toString()); // tạo userKey
+            ps.executeUpdate();
         }
     }
 
@@ -225,6 +235,8 @@ public class AuthenticationDAO extends DBContext {
             ps.setString(2, hashedPassword);
             ps.setString(3, UUID.randomUUID().toString()); // tạo userKey
             ps.executeUpdate();
+        } catch (SQLException ex) {
+            Logger.getLogger(AuthenticationDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
