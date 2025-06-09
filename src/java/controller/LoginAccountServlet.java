@@ -87,6 +87,8 @@ public class LoginAccountServlet extends HttpServlet {
             verifyEmail(request, response);
         } else if ("resendCode".equals(action)) {
             resendVerifyCode(request, response);
+        } else if ("verifyCode".equals(action)) {
+            verifyCode(request, response);
         }
     }
 
@@ -126,6 +128,7 @@ public class LoginAccountServlet extends HttpServlet {
 
     public void verifyEmail(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String emailvrf = request.getParameter("emailvrf");
+        request.getSession().setAttribute("email_to_verify", emailvrf);
 
         // Nếu đã có expiredAt trong session và vẫn còn hiệu lực thì ko gửi lại mã
         Timestamp expiredAt = (Timestamp) request.getSession().getAttribute("expiredAt");
@@ -140,10 +143,9 @@ public class LoginAccountServlet extends HttpServlet {
         }
 
         // Lưu email để dùng trong bước xác minh
-        request.getSession().setAttribute("email_to_verify", emailvrf);
-
         // Mở lại modal xác minh
         request.setAttribute("openModal", "#enterVerifyCode-modal");
+//        request.setAttribute("openModalRegister", "#register-modal");
         request.getRequestDispatcher("home.jsp").forward(request, response);
     }
 
@@ -161,22 +163,23 @@ public class LoginAccountServlet extends HttpServlet {
             System.out.println("Mã đã được gửi trước đó, chưa hết hạn.");
         } else {
 //            request.getSession().removeAttribute("expiredAt");
-        generateAndSendVerificationCode(emailrs);
+            generateAndSendVerificationCode(emailrs);
 
-        Timestamp newExpired = Timestamp.valueOf(LocalDateTime.now().plusSeconds(20));
-        request.getSession().setAttribute("expiredAt", newExpired);
+            Timestamp newExpired = Timestamp.valueOf(LocalDateTime.now().plusSeconds(20));
+            request.getSession().setAttribute("expiredAt", newExpired);
         }
 
         request.setAttribute("success", "Mã mới đã được gửi đến email của bạn.");
         request.setAttribute("openModal", "#enterVerifyCode-modal");
+//        request.setAttribute("openModalRegister", "#register-modal");
         request.getRequestDispatcher("home.jsp").forward(request, response);
-
     }
 
     private String generateAndSendVerificationCode(String emailvrf) throws ServletException {
         String code = String.valueOf((int) (Math.random() * 900000 + 100000));
         try {
             AuthenticationDAO dao = new AuthenticationDAO();
+//            Timestamp expiredAt = Timestamp.valueOf(LocalDateTime.now().plusSeconds(20));
             dao.invalidateOldCodes(emailvrf); // Hủy mã cũ chưa dùng
             dao.insertVerification(emailvrf, code); // Ghi mã mới
 
@@ -187,6 +190,50 @@ public class LoginAccountServlet extends HttpServlet {
         } catch (Exception e) {
             throw new ServletException("Lỗi gửi mã xác minh", e);
         }
+    }
+
+    public void verifyCode(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String emailvf = (String) request.getSession().getAttribute("email_to_verify");
+        String codeVf = request.getParameter("codevrf");
+
+        if (emailvf == null) {
+            request.setAttribute("error", "Không tìm thấy email cần xác minh.");
+            request.setAttribute("openModal", "#verifyEmail-modal");
+            request.getRequestDispatcher("home.jsp").forward(request, response);
+            return;
+        }
+
+        try {
+            AuthenticationDAO dao = new AuthenticationDAO();
+            boolean validCode = dao.verifyCode(emailvf, codeVf);
+
+            if (validCode) {
+                request.setAttribute("openModalRegister", "#register-modal");
+            } else {
+                request.setAttribute("error", "Mã xác minh không hợp lệ hoặc đã hết hạn.");
+                request.setAttribute("openModal", "#enterVerifyCode-modal");
+            }
+
+            request.getRequestDispatcher("home.jsp").forward(request, response);
+        } catch (Exception e) {
+            throw new ServletException("Lỗi xử lý xác minh mã", e);
+        }
+    }
+
+    public void completeRegister(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String emailvf = (String) request.getSession().getAttribute("email_to_verify");
+        String firstName = request.getParameter("firstName");
+        String lastName = request.getParameter("lastName");
+        String pass = request.getParameter("pass");
+        String repass = request.getParameter("repass");
+
+        if (emailvf == null) {
+            request.setAttribute("error", "Không tìm thấy email cần xác minh.");
+            request.setAttribute("openModal", "#verifyEmail-modal");
+            request.getRequestDispatcher("home.jsp").forward(request, response);
+            return;
+        }
+
     }
 
     /**

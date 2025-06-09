@@ -332,7 +332,6 @@
 
                                                         <!-- rightside-content - start -->
                                                         <div class="rightside-content text-center">
-
                                                             <div class="mb-30">
                                                                 <h2 class="form-title title-large white-color">Verification code <strong>Register</strong></h2>
                                                                 <span class="form-subtitle white-color">Have an account? <a href="#login-modal" class="switch-modal"><strong>LOGIN NOW</strong></a></span>
@@ -398,12 +397,35 @@
                                                             }
                                                         </script>
                                                     </c:if>
+
+                                                    <!--chuyển hướng đến Register sau khi submit-->
+                                                    <c:if test="${not empty openModalRegister}">
+                                                        <script>
+                                                            document.addEventListener("DOMContentLoaded", function () {
+                                                                setTimeout(function () {
+                                                                    $.magnificPopup.open({
+                                                                        items: {
+                                                                            src: '${openModalRegister}'
+                                                                        },
+                                                                        type: 'inline'
+                                                                    });
+                                                                }, 100);
+                                                            });
+                                                        </script>
+                                                    </c:if>
+
+                                                    <!--báo lỗi-->
+                                                    <c:if test="${not empty error}">
+                                                        <div class="alert alert-danger" style="margin-bottom: 0px">
+                                                            <i class="fa fa-exclamation-triangle" style="margin-right: 8px;"></i>
+                                                            ${error}
+                                                        </div>
+                                                    </c:if>
                                                 </div>
 
                                                 <!---- register ---->
                                                 <div id="register-modal" class="reglog-modal-wrapper register-modal mfp-hide clearfix" style="background-image: url('${pageContext.request.contextPath}/img/bg-img/bg-3.jpg');">
                                                     <div class="overlay-black clearfix">
-
                                                         <!-- leftside-content - start -->
                                                         <div class="leftside-content">
                                                             <div class="site-logo-wrapper mb-80">
@@ -432,18 +454,17 @@
                                                             </div>
 
                                                             <div class="login-form text-center mb-50">
-                                                                <form action="home.jsp" id="formRegister">
+                                                                <form action="loginaccount" id="formRegister">
+                                                                    <input type="hidden" name="action" value="register"/>
                                                                     <div class="form-item">
-                                                                        <input type="email" placeholder="User Name" required autofocus pattern ="">
+                                                                        <input type="text" placeholder="First Name" name="firstName" required autofocus pattern ="">
+                                                                        <input type="text" placeholder="Last Name" name="lastName" required autofocus pattern ="">
                                                                     </div>
                                                                     <div class="form-item">
-                                                                        <input type="password" placeholder="Password" required pattern ="" title="">
+                                                                        <input type="password" placeholder="Password" name="pass" required pattern ="" title="">
                                                                     </div>
                                                                     <div class="form-item">
-                                                                        <input type="email" placeholder="Repeat Password" required pattern ="">
-                                                                    </div>
-                                                                    <div class="form-item">
-                                                                        <input type="password" placeholder="Email Address">
+                                                                        <input type="password" placeholder="Repeat Password" name="repass" required pattern ="">
                                                                     </div>
                                                                     <!--recaptcha-->
                                                                     <div style="margin: 10px;" class="g-recaptcha" data-sitekey="6LcbvVYrAAAAAHNkpvJXFD1U2lNK--fDNfhtM1Q7"></div>

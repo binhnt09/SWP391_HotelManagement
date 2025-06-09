@@ -6,9 +6,11 @@ package dao;
 
 import dal.DBContext;
 import entity.Authentication;
+import java.sql.Timestamp;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.mindrot.jbcrypt.BCrypt;
@@ -136,7 +138,7 @@ public class AuthenticationDAO extends DBContext {
     }
 
     public void insertVerification(String email, String code) {
-        String sql = "INSERT INTO EmailVerification(Email, Code, ExpiredAt) VALUES (?, ?, DATEADD(MINUTE, 1, GETDATE()))";
+        String sql = "INSERT INTO EmailVerification(Email, Code, ExpiredAt) VALUES (?, ?, DATEADD(SECOND, 20, GETDATE()))";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, email);
             ps.setString(2, code);
@@ -146,15 +148,30 @@ public class AuthenticationDAO extends DBContext {
         }
     }
 
+//    public void insertVerification1(String email, String code, Timestamp expiredAt) throws Exception {
+//        String sql = "INSERT INTO EmailVerification (Email, Code, ExpiredAt) VALUES (?, ?, ?)";
+//        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+//            ps.setString(1, email);
+//            ps.setString(2, code);
+//            ps.setTimestamp(3, expiredAt);
+//            ps.executeUpdate();
+//        }
+//    }
     public boolean verifyCode(String email, String code) {
         String sql = "SELECT VerificationID FROM EmailVerification WHERE Email = ? AND Code = ? AND IsUsed = 0 AND ExpiredAt > GETDATE()";
+//        String sql = "SELECT VerificationID, ExpiredAt FROM EmailVerification WHERE Email =  ? AND  Code =  ? AND  IsUsed = 0";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, email);
             ps.setString(2, code);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
+//                Timestamp expiredAt = rs.getTimestamp("ExpiredAt");
+//                Timestamp now = new Timestamp(System.currentTimeMillis());
+
+//                if (expiredAt.after(now)) {
                 markUsed(rs.getInt("VerificationID"));
                 return true;
+//                }
             }
         } catch (SQLException e) {
             Logger.getLogger(AuthenticationDAO.class.getName()).log(Level.SEVERE, null, e);
@@ -179,6 +196,35 @@ public class AuthenticationDAO extends DBContext {
             ps.executeUpdate();
         } catch (SQLException e) {
             Logger.getLogger(AuthenticationDAO.class.getName()).log(Level.SEVERE, null, e);
+        }
+    }
+
+    public int createUser(String email, String firstName, String lastName) throws Exception {
+        String sql = "INSERT INTO [User](FirstName, LastName, Email, UserRoleID, IsVerifiedEmail) VALUES (?, ?, ?, 2, 1)";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, firstName);
+            ps.setString(2, lastName);
+            ps.setString(3, email);
+            ps.executeUpdate();
+            ResultSet rs = ps.getGeneratedKeys();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+            throw new Exception("Không lấy được UserID");
+        }
+    }
+
+    public void createAuth(int userId, String password) throws Exception {
+        String sql = "INSERT INTO Authentication(UserID, Password, AuthType, UserKey) VALUES (?, ?, 'local', ?)";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+
+            // Mã hóa mật khẩu bằng BCrypt
+            String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
+
+            ps.setInt(1, userId);
+            ps.setString(2, hashedPassword);
+            ps.setString(3, UUID.randomUUID().toString()); // tạo userKey
+            ps.executeUpdate();
         }
     }
 
