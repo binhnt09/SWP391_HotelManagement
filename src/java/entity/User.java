@@ -4,6 +4,8 @@
  */
 package entity;
 
+import java.sql.Timestamp;
+
 /**
  *
  * @author viet7
@@ -17,28 +19,14 @@ public class User {
     private String phone;
     private String address;
     private int userRuleId;
-    private String createdAt;
-    private String updatedAt;
-    private String deletedAt;
+
+    private Timestamp createdAt;
+    private Timestamp updatedAt;
+    private Timestamp deletedAt;
     private Integer deletedBy;
     private boolean isDeleted;
 
     public User() {
-    }
-
-    public User(int userId, String firstName, String lastName, String email, String phone, String address, int userRuleId, String createdAt, String updatedAt, String deletedAt, Integer deletedBy, boolean isDeleted) {
-        this.userId = userId;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.email = email;
-        this.phone = phone;
-        this.address = address;
-        this.userRuleId = userRuleId;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
-        this.deletedAt = deletedAt;
-        this.deletedBy = deletedBy;
-        this.isDeleted = isDeleted;
     }
 
     public int getUserId() {
@@ -97,27 +85,25 @@ public class User {
         this.userRuleId = userRuleId;
     }
 
-    public String getCreatedAt() {
+    public Timestamp getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(String createdAt) {
+    public void setCreatedAt(Timestamp createdAt) {
         this.createdAt = createdAt;
     }
 
-    public String getUpdatedAt() {
+    public Timestamp getUpdatedAt() {
         return updatedAt;
     }
 
-    public void setUpdatedAt(String updatedAt) {
+    public void setUpdatedAt(Timestamp updatedAt) {
         this.updatedAt = updatedAt;
     }
 
-    public String getDeletedAt() {
-        return deletedAt;
-    }
+   
 
-    public void setDeletedAt(String deletedAt) {
+    public void setDeletedAt(Timestamp deletedAt) {
         this.deletedAt = deletedAt;
     }
 
@@ -141,6 +127,5 @@ public class User {
     public String toString() {
         return "User{" + "userId=" + userId + ", firstName=" + firstName + ", lastName=" + lastName + ", email=" + email + ", phone=" + phone + ", address=" + address + ", userRuleId=" + userRuleId + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + ", deletedAt=" + deletedAt + ", deletedBy=" + deletedBy + ", isDeleted=" + isDeleted + '}';
     }
-    
-    
+
 }

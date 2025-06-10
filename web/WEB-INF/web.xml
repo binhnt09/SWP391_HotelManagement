@@ -4,8 +4,64 @@
         <servlet-name>SearchRoom</servlet-name>
         <servlet-class>controller.SearchRoom</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>CustomerListServlet</servlet-name>
+        <servlet-class>controller.CustomerListServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>StaffListSevelet</servlet-name>
+        <servlet-class>controller.StaffListSevelet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>CustomerDeleteServlet</servlet-name>
+        <servlet-class>controller.CustomerDeleteServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>StaffDeleteServlet</servlet-name>
+        <servlet-class>controller.StaffDeleteServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>RoomListServlet</servlet-name>
+        <servlet-class>controller.RoomListServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>RoomDeleteServlet</servlet-name>
+        <servlet-class>controller.RoomDeleteServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ReportServlet</servlet-name>
+        <servlet-class>controller.ReportServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>SearchRoom</servlet-name>
         <url-pattern>/searchroom</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>CustomerListServlet</servlet-name>
+        <url-pattern>/customerList</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>StaffListSevelet</servlet-name>
+        <url-pattern>/staffList</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>CustomerDeleteServlet</servlet-name>
+        <url-pattern>/customerDelete</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>StaffDeleteServlet</servlet-name>
+        <url-pattern>/staffDelete</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>RoomListServlet</servlet-name>
+        <url-pattern>/roomList</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>RoomDeleteServlet</servlet-name>
+        <url-pattern>/roomDelete</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ReportServlet</servlet-name>
+        <url-pattern>/report</url-pattern>
     </servlet-mapping>
 </web-app>
