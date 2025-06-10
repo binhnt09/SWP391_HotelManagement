@@ -742,7 +742,6 @@
                                                 <!-- Change Password Modal -->
                                                 <div id="changePassword-modal" class="reglog-modal-wrapper mfp-hide clearfix" style="background-image: url('${pageContext.request.contextPath}/img/bg-img/bg-3.jpg');">
                                                     <div class="overlay-black clearfix">
-
                                                         <div class="leftside-content">
                                                             <div class="site-logo-wrapper mb-80">
                                                                 <a href="#!" class="logo">
@@ -774,9 +773,9 @@
                                                                             <input type="email" value="${sessionScope.auth.email}" readonly>
                                                                         </div>
                                                                     </c:if>
-                                                                    <c:if test="${sessionScope.auth1.authType eq 'local'}">
+                                                                    <c:if test="${not empty sessionScope.auth1.email}">
                                                                         <div class="form-item">
-                                                                            <input type="email" value="${sessionScope.auth1.userID.email}" readonly>
+                                                                            <input type="email" value="${sessionScope.auth1.email}" readonly>
                                                                         </div>
                                                                         <div class="form-item">
                                                                             <input type="password" name="currentPassword" placeholder="Current Password" required>
