@@ -139,7 +139,7 @@ public class AuthenticationDAO extends DBContext {
     }
 
     public void insertVerification(String email, String code) {
-        String sql = "INSERT INTO EmailVerification(Email, Code, ExpiredAt) VALUES (?, ?, DATEADD(SECOND, 20, GETDATE()))";
+        String sql = "INSERT INTO EmailVerification(Email, Code, ExpiredAt) VALUES (?, ?, DATEADD(SECOND, 60, GETDATE()))";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, email);
             ps.setString(2, code);
@@ -180,11 +180,12 @@ public class AuthenticationDAO extends DBContext {
         return false;
     }
 
-    public boolean verifyCodeForgotPass(String email, String code) {
-        String sql = "SELECT VerificationID FROM EmailVerification WHERE Email = ? AND Code = ? AND IsUsed = 1 AND ExpiredAt > GETDATE()";
+    public boolean verifyCodeForgotPass(String email, String code, String purpose) {
+        String sql = "SELECT VerificationID FROM EmailVerification WHERE Email = ? AND Code = ? AND Purpose = ? AND IsUsed = 0 AND ExpiredAt > GETDATE()";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, email);
             ps.setString(2, code);
+            ps.setString(3, purpose);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 markUsed(rs.getInt("VerificationID"));
@@ -194,6 +195,67 @@ public class AuthenticationDAO extends DBContext {
             Logger.getLogger(AuthenticationDAO.class.getName()).log(Level.SEVERE, null, e);
         }
         return false;
+    }
+
+    public void resetPasswordByEmail(String email, String newPassword) {
+        String sql = "UPDATE Authentication SET Password = ? WHERE UserID = (SELECT UserID FROM [User] WHERE Email = ?)";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            String hashedPassword = BCrypt.hashpw(newPassword, BCrypt.gensalt());
+
+            ps.setString(1, hashedPassword);
+            ps.setString(2, email);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            Logger.getLogger(AuthenticationDAO.class.getName()).log(Level.SEVERE, null, e);
+        }
+    }
+
+    public boolean changePassword(int userId, String oldPassword, String newPassword) {
+        String currentHashedPassword = null;
+        String getHashSql = "SELECT Password FROM Authentication WHERE UserID = ?";
+
+        try (PreparedStatement ps = connection.prepareStatement(getHashSql)) {
+            ps.setInt(1, userId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                currentHashedPassword = rs.getString("Password");
+            } else {
+                return false;
+            }
+        } catch (SQLException e) {
+            Logger.getLogger(AuthenticationDAO.class.getName()).log(Level.SEVERE, null, e);
+            return false;
+        }
+
+        // So sánh mật khẩu cũ
+        if (!BCrypt.checkpw(oldPassword, currentHashedPassword)) {
+            return false;
+        }
+
+        // Cập nhật mật khẩu mới
+        String updateSql = "UPDATE Authentication SET Password = ?, UpdatedAt = GETDATE() WHERE UserID = ?";
+        try (PreparedStatement ps = connection.prepareStatement(updateSql)) {
+            String hashedPassword = BCrypt.hashpw(newPassword, BCrypt.gensalt());
+            ps.setString(1, hashedPassword);
+            ps.setInt(2, userId);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            Logger.getLogger(AuthenticationDAO.class.getName()).log(Level.SEVERE, null, e);
+            return false;
+        }
+    }
+
+    public boolean setPasswordForGoogleUser(int userId, String newPassword) {
+        String sql = "UPDATE Authentication SET Password = ?, UpdatedAt = GETDATE() WHERE UserID = ? AND AuthType = 'google'";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            String hashed = BCrypt.hashpw(newPassword, BCrypt.gensalt());
+            ps.setString(1, hashed);
+            ps.setInt(2, userId);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            Logger.getLogger(AuthenticationDAO.class.getName()).log(Level.SEVERE, null, e);
+            return false;
+        }
     }
 
     public void invalidateOldCodes(String email) {
@@ -254,6 +316,20 @@ public class AuthenticationDAO extends DBContext {
         } catch (SQLException ex) {
             Logger.getLogger(AuthenticationDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+    public int getUserIdByEmail(String email) {
+        String sql = "SELECT UserID FROM [User] WHERE Email = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, email);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("UserID");
+            }
+        } catch (SQLException e) {
+            Logger.getLogger(AuthenticationDAO.class.getName()).log(Level.SEVERE, null, e);
+        }
+        return -1; // Không tìm thấy
     }
 
     public static void main(String[] args) {
