@@ -14,6 +14,7 @@ public class Authentication {
 
     private int authenticationID;
     private int userID;
+    private String email;
     private String userKey;
     private String password;
     private String authType;
@@ -39,6 +40,20 @@ public class Authentication {
         this.isDeleted = isDeleted;
     }
 
+    public Authentication(int authenticationID, int userID, String email, String userKey, String password, String authType, Timestamp createdAt, Timestamp updatedAt, Timestamp deletedAt, Integer deletedBy, boolean isDeleted) {
+        this.authenticationID = authenticationID;
+        this.userID = userID;
+        this.email = email;
+        this.userKey = userKey;
+        this.password = password;
+        this.authType = authType;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.deletedAt = deletedAt;
+        this.deletedBy = deletedBy;
+        this.isDeleted = isDeleted;
+    }
+    
     public int getAuthenticationID() {
         return authenticationID;
     }
@@ -53,6 +68,14 @@ public class Authentication {
 
     public void setUserID(int userID) {
         this.userID = userID;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getUserKey() {
@@ -121,7 +144,7 @@ public class Authentication {
 
     @Override
     public String toString() {
-        return "Authentication{" + "authenticationID=" + authenticationID + ", userID=" + userID + ", userKey=" + userKey + ", password=" + password + ", authType=" + authType + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + ", deletedAt=" + deletedAt + ", deletedBy=" + deletedBy + ", isDeleted=" + isDeleted + '}';
+        return "Authentication{" + "authenticationID=" + authenticationID + ", userID=" + userID + ", email=" + email + ", userKey=" + userKey + ", password=" + password + ", authType=" + authType + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + ", deletedAt=" + deletedAt + ", deletedBy=" + deletedBy + ", isDeleted=" + isDeleted + '}';
     }
 
 }

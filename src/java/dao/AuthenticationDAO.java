@@ -91,10 +91,10 @@ public class AuthenticationDAO extends DBContext {
 //        return null;
 //    }
     public Authentication login(String email) {
-        String sql = "SELECT a.AuthenticationID, a.UserID, a.Password "
+        String sql = "SELECT a.AuthenticationID, a.UserID, u.Email, a.Password, a.AuthType  "
                 + "FROM Authentication a "
                 + "JOIN [User] u ON a.UserID = u.UserID "
-                + "WHERE u.Email = ? AND a.IsDeleted = 0 AND u.IsDeleted = 0";
+                + "WHERE u.Email = ? AND a.AuthType = 'local' AND a.IsDeleted = 0 AND u.IsDeleted = 0";
 
         try (PreparedStatement stm = connection.prepareStatement(sql)) {
             stm.setString(1, email);
@@ -104,6 +104,7 @@ public class AuthenticationDAO extends DBContext {
                 return new Authentication(
                         rs.getInt("AuthenticationID"),
                         rs.getInt("UserID"),
+                        rs.getString("Email"),
                         null, // UserKey không cần dùng ở đây
                         rs.getString("Password"),
                         null, // AuthType
