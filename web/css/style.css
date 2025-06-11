@@ -1458,10 +1458,10 @@ button {
     float: right;
     height: 600px;
     padding: 50px 30px;
-    background: -webkit-gradient(linear, left top, right bottom, from(#ff3e00), to(#ffbe30));
-    background: -webkit-linear-gradient(top left, #ff3e00, #ffbe30);
-    background: -o-linear-gradient(top left, #ff3e00, #ffbe30);
-    background: linear-gradient(to bottom right, #ff3e00, #ffbe30);
+    background: -webkit-gradient(linear, left top, right bottom, from(#00A0E9), to(#E0F7FA));
+    background: -webkit-linear-gradient(top left, #00A0E9, #E0F7FA);
+    background: -o-linear-gradient(top left, #00A0E9, #E0F7FA);
+    background: linear-gradient(to bottom right, #00A0E9, #E0F7FA);
 }
 .reglog-modal-wrapper .rightside-content .fb-login-btn {
     overflow: hidden;

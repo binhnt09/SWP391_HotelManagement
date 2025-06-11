@@ -2,12 +2,11 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
+
 package controller;
 
 import constant.MailUtil;
 import dao.AuthenticationDAO;
-import entity.Authentication;
-import entity.GoogleAccount;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -15,7 +14,6 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.logging.Level;
@@ -25,39 +23,36 @@ import java.util.logging.Logger;
  *
  * @author ASUS
  */
-@WebServlet(name = "changePasswordServlet", urlPatterns = {"/changeassword"})
-public class changePasswordServlet extends HttpServlet {
-
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
+@WebServlet(name="ForgotPasswordServlet", urlPatterns={"/forgotpassword"})
+public class ForgotPasswordServlet extends HttpServlet {
+   
+    /** 
+     * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
      * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet changePasswordServlet</title>");
+            out.println("<title>Servlet ForgotPasswordServlet</title>");  
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet changePasswordServlet at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet ForgotPasswordServlet at " + request.getContextPath () + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
-    }
+    } 
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
+    /** 
      * Handles the HTTP <code>GET</code> method.
-     *
      * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
@@ -65,13 +60,12 @@ public class changePasswordServlet extends HttpServlet {
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    throws ServletException, IOException {
         processRequest(request, response);
-    }
+    } 
 
-    /**
+    /** 
      * Handles the HTTP <code>POST</code> method.
-     *
      * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
@@ -79,78 +73,21 @@ public class changePasswordServlet extends HttpServlet {
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    throws ServletException, IOException {
         String action = request.getParameter("action");
-
-        if ("changePassword".equals(action)) {
-            changePassword(request, response);
+        
+        if("verifyEmailForgotPassword".equals(action)){
+            verifyEmailForgotPassword(request, response);
+        } else if("verifyCodeForgot".equals(action)){
+            verifyCodeForgot(request, response);
+        } else if("resendCodeFogot".equals(action)){
+            resendVerifyCodeForgot(request, response);
+        } else if("completeForgotPassword".equals(action)){
+            completeForgotPassword(request, response);
         }
     }
 
-    public void changePassword(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        HttpSession session = request.getSession(false);
-        Authentication authLocal = null;
-        GoogleAccount authGoogle = null;
-
-        int userId = -1;
-        String authType = null;
-
-        // Ưu tiên tài khoản local
-        if (session.getAttribute("auth1") != null) {
-            authLocal = (Authentication) session.getAttribute("auth1");
-            userId = authLocal.getUserID();
-            authType = authLocal.getAuthType();
-        } else if (session.getAttribute("auth") != null) {
-            authGoogle = (GoogleAccount) session.getAttribute("auth");
-            authType = "google";
-
-            // Lấy userId từ DB theo email Google
-            AuthenticationDAO dao = new AuthenticationDAO();
-            userId = dao.getUserIdByEmail(authGoogle.getEmail());
-        }
-
-        // Nếu không tìm thấy user hợp lệ
-        if (userId == -1) {
-            response.sendRedirect("loadtohome");
-            return;
-        }
-
-        // Lấy mật khẩu từ form
-        String oldPassword = request.getParameter("currentPassword");
-        String newPassword = request.getParameter("pass");
-        String confirmPassword = request.getParameter("repass");
-
-        if (newPassword == null || confirmPassword == null || !newPassword.equals(confirmPassword)) {
-            request.setAttribute("error", "Mật khẩu mới không khớp.");
-            request.setAttribute("openModal", "#changePassword-modal");
-            request.getRequestDispatcher("home.jsp").forward(request, response);
-            return;
-        }
-
-        AuthenticationDAO dao = new AuthenticationDAO();
-        boolean success = false;
-
-        if ("local".equals(authType)) {
-            success = dao.changePassword(userId, oldPassword, newPassword);
-            if (success) {
-                request.setAttribute("success", "Đổi mật khẩu thành công!");
-            } else {
-                request.setAttribute("error", "Mật khẩu hiện tại không đúng.");
-            }
-        } else if ("google".equals(authType)) {
-            success = dao.setPasswordForGoogleUser(userId, newPassword);
-            if (success) {
-                request.setAttribute("success", "Đặt mật khẩu mới thành công. Lần sau bạn có thể đăng nhập bằng email & mật khẩu.");
-            } else {
-                request.setAttribute("error", "Không thể cập nhật mật khẩu.");
-            }
-        }
-
-        request.setAttribute("openModal", "#changePassword-modal");
-        request.getRequestDispatcher("home.jsp").forward(request, response);
-    }
-
-    public void completeChangePassword(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public void completeForgotPassword(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String emailfg = (String) request.getSession().getAttribute("emailforgot");
         String pass = request.getParameter("pass");
 
@@ -181,17 +118,28 @@ public class changePasswordServlet extends HttpServlet {
             Logger.getLogger(LoginAccountServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-
-    public void verifyEmailChangePassword(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    
+    public void verifyEmailForgotPassword(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String emailfg = request.getParameter("emailfg");
         request.getSession().setAttribute("emailforgot", emailfg);
-
+        try {
+            AuthenticationDAO dao = new AuthenticationDAO();
+            if (!dao.existEmail(emailfg)) {
+                request.setAttribute("error", "Email này chưa được đăng ký.");
+                request.setAttribute("openModal", "#forgot-password-modal");
+                request.getRequestDispatcher("home.jsp").forward(request, response);
+                return;
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(LoginAccountServlet.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
         Timestamp expiredAt = (Timestamp) request.getSession().getAttribute("expiredAt");
         if (expiredAt == null || expiredAt.before(new Timestamp(System.currentTimeMillis()))) {
             // Chỉ gửi mã nếu chưa có hoặc đã hết hạn
             generateAndSendVerificationCode(emailfg);
             // Đặt lại thời gian hết hạn mới
-            Timestamp newExpired = Timestamp.valueOf(LocalDateTime.now().plusSeconds(20));
+            Timestamp newExpired = Timestamp.valueOf(LocalDateTime.now().plusSeconds(60));
             request.getSession().setAttribute("expiredAt", newExpired);
         } else {
             System.out.println("Mã vẫn còn hiệu lực, không gửi lại.");
@@ -200,8 +148,8 @@ public class changePasswordServlet extends HttpServlet {
         request.setAttribute("openModal", "#enterVerifyCodeForgot-modal");
         request.getRequestDispatcher("home.jsp").forward(request, response);
     }
-
-    public void verifyCodeChange(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    
+    public void verifyCodeForgot(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String emailfg = (String) request.getSession().getAttribute("emailforgot");
         String codefg = request.getParameter("codefg");
 
@@ -235,8 +183,8 @@ public class changePasswordServlet extends HttpServlet {
             throw new ServletException("Lỗi xử lý xác minh mã", e);
         }
     }
-
-    public void resendVerifyCodeChange(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    
+    public void resendVerifyCodeForgot(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String emailrs = (String) request.getSession().getAttribute("emailforgot");
         if (emailrs == null) {
             request.setAttribute("error", "Không tìm thấy email cần xác minh.");
@@ -252,7 +200,7 @@ public class changePasswordServlet extends HttpServlet {
 //            request.getSession().removeAttribute("expiredAt");
             generateAndSendVerificationCode(emailrs);
 
-            Timestamp newExpired = Timestamp.valueOf(LocalDateTime.now().plusSeconds(20));
+            Timestamp newExpired = Timestamp.valueOf(LocalDateTime.now().plusSeconds(60));
             request.getSession().setAttribute("expiredAt", newExpired);
         }
 
@@ -261,11 +209,12 @@ public class changePasswordServlet extends HttpServlet {
 //        request.setAttribute("openModalRegister", "#register-modal");
         request.getRequestDispatcher("home.jsp").forward(request, response);
     }
-
+    
     private String generateAndSendVerificationCode(String emailvrf) throws ServletException {
         String code = String.valueOf((int) (Math.random() * 900000 + 100000));
         try {
             AuthenticationDAO dao = new AuthenticationDAO();
+//            Timestamp expiredAt = Timestamp.valueOf(LocalDateTime.now().plusSeconds(20));
             dao.invalidateOldCodes(emailvrf); // Hủy mã cũ chưa dùng
             dao.insertVerification(emailvrf, code); // Ghi mã mới
 
@@ -277,10 +226,8 @@ public class changePasswordServlet extends HttpServlet {
             throw new ServletException("Lỗi gửi mã xác minh", e);
         }
     }
-
-    /**
+    /** 
      * Returns a short description of the servlet.
-     *
      * @return a String containing servlet description
      */
     @Override
