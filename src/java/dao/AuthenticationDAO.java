@@ -54,42 +54,6 @@ public class AuthenticationDAO extends DBContext {
         }
     }
 
-//    public Authentication Login(String email, String pass) {
-//        String sql = "select * from Authentication a\n"
-//                + "	JOIN [User] u ON a.UserID = u.UserID\n"
-//                + "	WHERE u.Email = ? "
-//                + "	AND a.IsDeleted = 0 AND u.IsDeleted = 0";
-//        try {
-//            PreparedStatement stm = connection.prepareStatement(sql);
-//            stm.setString(1, email);
-//
-//            ResultSet rs = stm.executeQuery();
-//            if (rs.next()) {
-//                String hashedPassword = rs.getString("Password");
-//                if (PasswordUtil.checkPassword(pass, hashedPassword)) {
-//                    return new Authentication(
-//                            rs.getInt("AuthenticationID"),
-//                            rs.getInt("UserID"),
-//                            rs.getString("UserKey"),
-//                            hashedPassword,
-//                            rs.getString("AuthType"),
-//                            rs.getTimestamp("CreatedAt"),
-//                            rs.getTimestamp("UpdatedAt"),
-//                            rs.getTimestamp("DeletedAt"),
-//                            rs.getInt("DeletedBy"),
-//                            rs.getBoolean("IsDeleted")
-//                    );
-//                }
-//                System.out.println("Raw: " + pass);
-//                System.out.println("From DB: " + hashedPassword);
-//                System.out.println("Match? " + BCrypt.checkpw(pass, hashedPassword));
-//            }
-//        } catch (SQLException e) {
-//            Logger.getLogger(AuthenticationDAO.class.getName()).log(Level.SEVERE, null, e);
-//        }
-//
-//        return null;
-//    }
     public Authentication login(String email) {
         String sql = "SELECT a.AuthenticationID, a.UserID, u.Email, a.Password, a.AuthType  "
                 + "FROM Authentication a "

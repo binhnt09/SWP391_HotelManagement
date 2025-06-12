@@ -93,7 +93,7 @@ public class LoginAccountServlet extends HttpServlet {
             verifyCode(request, response);
         } else if ("register".equals(action)) {
             completeRegister(request, response);
-        } 
+        }
     }
 
     public void login(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -120,6 +120,7 @@ public class LoginAccountServlet extends HttpServlet {
                 Cookie ck = new Cookie("email", email);
                 ck.setMaxAge(60 * 60 * 24 * 7); // 7 ngày
 //                session.setMaxInactiveInterval(100);
+                session.setAttribute("emailLogin", email);
                 response.addCookie(ck);
             } else {
                 Cookie ck = new Cookie("email", "");
@@ -129,7 +130,7 @@ public class LoginAccountServlet extends HttpServlet {
             response.sendRedirect("loadtohome");
         }
     }
-    
+
     public void verifyEmail(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String emailvrf = request.getParameter("emailvrf");
         request.getSession().setAttribute("email_to_verify", emailvrf);
@@ -240,7 +241,7 @@ public class LoginAccountServlet extends HttpServlet {
             throw new ServletException("Lỗi xử lý xác minh mã", e);
         }
     }
-    
+
     public void completeRegister(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String emailvf = (String) request.getSession().getAttribute("email_to_verify");
         String firstName = request.getParameter("firstName");

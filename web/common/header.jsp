@@ -173,7 +173,7 @@
                                                                         <form action="loginaccount" method="post">
                                                                             <input type="hidden" name="action" value="login"/>
                                                                             <div class="form-item">
-                                                                                <input type="email" name="email" value="${param.email}" placeholder="example@gmail.com">
+                                                                                <input type="email" name="email" value="${emailLogin}" placeholder="example@gmail.com">
                                                                             </div>
                                                                             <c:if test="${not empty param.loginError}">
                                                                                 <script>
@@ -190,7 +190,7 @@
                                                                             <div class="form-item password-toggle">
                                                                                 <input type="password" name="pass" placeholder="Password" id="passLogin" class="password-check">
                                                                                 <i class="material-icons toggle-icon toggle-password" toggle="#passLogin">remove_red_eye</i>
-                                                                                <small class="error-message" style="color: red"></small>
+                                                                                <small class="error-message" style="color: yellow"></small>
                                                                             </div>
                                                                             <c:if test="${not empty param.loginError}">
                                                                                 <script>
@@ -247,7 +247,7 @@
                                                                 <div class="font-weight-bold text-dark">🥉 Bronze Priority</div>
                                                                 <div class="text-muted small">0 Điểm</div>
                                                             </div>
-                                                            <a class="dropdown-item" href="account" style="color: black"><i class="fa fa-user mr-2 text-primary"></i> Tài khoản của tôi</a>
+                                                            <a class="dropdown-item" href="profile.jsp" style="color: black"><i class="fa fa-user mr-2 text-primary"></i> Tài khoản của tôi</a>
                                                             <a class="dropdown-item" href="updateprofile" style="color: black"><i class="fa fa-user mr-2 text-primary"></i> Cập nhật hồ sơ</a>
                                                             <a class="dropdown-item" href="payment.jsp" style="color: black"><i class="fa fa-credit-card mr-2 text-primary"></i> Payment</a>
                                                             <!--<a href="#verifyEmailChange-modal" class="dropdown-item switch-modal" style="font-size: 14px; color: black">Change your password </a>-->
