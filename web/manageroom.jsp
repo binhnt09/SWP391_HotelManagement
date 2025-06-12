@@ -28,6 +28,7 @@
                 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
                 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>-->
 
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -147,9 +148,21 @@
                                                                         <td>${i.roomDetail.maxGuest} </td>
                                     -->                                                 
                                     <td>
-                                        <a href="#editroomtype"  style="color: blue;" title="Edit Room"><i class="fa-solid fa-pen-to-square"></i></a>
+                                        <a href="#editroomtype"
+                                           data-bs-toggle="modal"
+                                           data-roomID="${i.roomID}"
+                                           data-roomDetail="${i.roomDetail.roomDetailID}"
+                                           data-name="${i.roomNumber}"
+                                           data-status="${i.status}"
+                                           data-roomType="${i.roomTypeID.roomTypeID}"
+                                           data-bedType="${i.roomDetail.bedType}"
+                                           data-description="${i.roomDetail.description}"
+                                           data-pricePerNight="${i.price}"
+                                           data-capacity="${i.roomDetail.maxGuest}"
+                                           data-area="${i.roomDetail.area}"
+                                           style="color: blue;" title="Edit Room"><i class="fa-solid fa-pen-to-square"></i></a>
                                         <a href="#" class="delete" style="color: red;margin-left: 5px" title="Delete Room" data-toggle="modal"><i class="fa-solid fa-delete-left"></i></a>
-                                        
+
                                     </td>
                                 </tr>
 
@@ -158,28 +171,85 @@
                         </tbody>
                     </table>
                 </form>
-
-                <!--                <div class="clearfix">
-                                    <div class="hint-text">Showing <b>${currentpage}</b> out of <b>${endP}</b> entries</div>
-                                    <ul class="pagination">
-                                        <li class="page-item ${currentpage == 1 ? 'disabled' : ''}">
-                                            <a href="roomtypecontrol?page=${currentpage == 1 ? 1 : currentpage-1}" class="page-link">Previous</a>
-                                        </li>
-                <c:forEach begin="1" end="${endP}" var="i">
-                    <li class="page-item ${i == currentpage ? 'active':''}">
-                        <a href="roomtypecontrol?page=${i}" class="page-link">${i}</a>
-                    </li>
-                </c:forEach>
-                <li class="page-item ${currentpage == endP ? 'disabled' : ''}">
-                    <a href="roomtypecontrol?page=${currentpage == endP ? endP : currentpage+1}" class="page-link">Next</a>
-                </li>
-            </ul>
-        </div>-->
             </div>
             <div>
                 <a href="#"><button type="button" class="btn btn-primary" style="margin: 20px 40px; padding: 10px">Back to home</button></a>
             </div>
         </div>
+
+        <script>
+            $(document).on('click', '[data-bs-toggle="modal"]', function () {
+                console.log($(this).data());
+
+                $('#edit-roomID').val($(this).data('roomid'));
+                $('#edit-roomDetail').val($(this).data('roomdetail'));
+                $('#edit-roomNumber').val($(this).data('name'));
+                $('#edit-status').val($(this).data('status'));
+                $('#edit-roomType').val($(this).data('roomtype'));
+                $('#edit-bedType').val($(this).data('bedtype'));
+                $('#edit-description').val($(this).data('description'));
+                $('#edit-price').val($(this).data('pricepernight'));
+                $('#edit-maxGuest').val($(this).data('capacity'));
+                $('#edit-area').val($(this).data('area'));
+            });
+        </script>
+
+
+        <div class="modal fade" id="editroomtype" tabindex="-1">
+            <div class="modal-dialog">
+                <form id="editRoomForm" action="roomcrud">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Edit Room</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <input type="hidden" name="action" value="edit">
+                            <input type="hidden" id="edit-roomID" name="roomID">
+                            <input type="hidden" id="edit-roomDetail" name="roomDetail">
+                            <div class="mb-3">
+                                <label>Room Number</label>
+                                <input type="text" id="edit-roomNumber" name="roomNumber" class="form-control">
+                            </div>
+                            <div class="mb-3">
+                                <label>Room Type</label>
+                                <input type="text" id="edit-roomType" name="roomTypeID" class="form-control">
+                            </div>
+                            <div class="mb-3">
+                                <label>Bed Type</label>
+                                <input type="text" id="edit-bedType" name="bedType" class="form-control">
+                            </div>
+                            <div class="mb-3">
+                                <label>Status</label>
+                                <input type="text" id="edit-status" name="status" class="form-control">
+                            </div>
+                            <div class="mb-3">
+                                <label>Description</label>
+                                <textarea id="edit-description" name="description" class="form-control"></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label>Price</label>
+                                <input type="number" id="edit-price" name="price" class="form-control">
+                            </div>
+                            <div class="mb-3">
+                                <label>Number Guest</label>
+                                <input type="number" id="edit-maxGuest" name="maxGuest" class="form-control">
+                            </div>
+                            <div class="mb-3">
+                                <label>Area</label>
+                                <input type="number" step="any" id="edit-area" name="area" class="form-control">
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-primary">Update Room</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+
         <script>
             // Select all functionality
             document.querySelector('thead input[type="checkbox"]').addEventListener('change', function () {

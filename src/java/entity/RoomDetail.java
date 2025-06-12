@@ -26,6 +26,17 @@ public class RoomDetail {
     public RoomDetail() {
     }
 
+    public RoomDetail(int roomDetailID, String bedType, double area, int maxGuest, String description) {
+        this.roomDetailID = roomDetailID;
+        this.bedType = bedType;
+        this.area = area;
+        this.maxGuest = maxGuest;
+        this.description = description;
+    }
+
+    
+
+    
     public RoomDetail(int roomDetailID, String bedType, double area, int maxGuest, String description, Timestamp createdAt, Timestamp updatedAt, Timestamp deletedAt, int deletedBy, boolean isDeleted) {
         this.roomDetailID = roomDetailID;
         this.bedType = bedType;
