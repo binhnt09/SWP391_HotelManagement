@@ -35,6 +35,7 @@
         <script src="https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit" async defer></script>
 
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/style.css">
 
         <!-- Bootstrap JS (include jQuery + Popper nếu dùng Bootstrap 4) -->
@@ -116,7 +117,7 @@
                                     <div class="menu-btn">
                                         <div class="user-search-btn-group ul-li clearfix">
                                             <ul>
-                                                <c:if test="${sessionScope.auth == null && sessionScope.auth1 == null}">
+                                                <c:if test="${sessionScope.authGoogle == null && sessionScope.authLocal == null}">
                                                     <li>
                                                         <a href="#login-modal" class="switch-modal">
                                                             <i class="fa fa-lock"> Login |</i>
@@ -155,7 +156,8 @@
                                                                     <div class="google-login-btn mb-30">
                                                                         <a href="https://accounts.google.com/o/oauth2/auth?scope=email profile openid&redirect_uri=http://localhost:8080/swp391_hotelmanagement/logingoogle&response_type=code&client_id=592439718897-nneimctagpcoattdv2r16b8ukod4u0cc.apps.googleusercontent.com&prompt=select_account%20consent">
                                                                             <span class="icon">
-                                                                                <i class="fa fa-google"></i>
+                                                                                <img src="${pageContext.request.contextPath}/img/logo.svg.webp" alt="Google logo" width="20">
+                                                                                <!--<i class="fab fa-google"></i>-->
                                                                             </span>
                                                                             login with Google
                                                                         </a>
@@ -186,12 +188,9 @@
                                                                                 </div>
                                                                             </c:if>
                                                                             <div class="form-item password-toggle">
-                                                                                <!--<div class="">-->
-                                                                                    <input type="password" name="pass" placeholder="Password" id="passLogin"
-                                                                                           class="password-check">
-                                                                                    <i class="material-icons toggle-icon toggle-password" toggle="#passLogin">remove_red_eye</i>
-                                                                                    <small class="error-message" style="color: red"></small>
-                                                                                <!--</div>-->
+                                                                                <input type="password" name="pass" placeholder="Password" id="passLogin" class="password-check">
+                                                                                <i class="material-icons toggle-icon toggle-password" toggle="#passLogin">remove_red_eye</i>
+                                                                                <small class="error-message" style="color: red"></small>
                                                                             </div>
                                                                             <c:if test="${not empty param.loginError}">
                                                                                 <script>
@@ -212,7 +211,7 @@
                                                                                         <input class="form-check-input" type="checkbox" name="remember" value="on" id="loginCheck"
                                                                                                style="cursor: pointer"
                                                                                                <c:if test="${param.remember == 'on'}">checked</c:if> />
-                                                                                               <label class="form-check-label" for="loginCheck" style="cursor: pointer"> Remember me </label>
+                                                                                               <label class="form-check-label" for="loginCheck" style="cursor: pointer; color: white"> Remember me </label>
                                                                                         </div>
                                                                                     </div>
                                                                                 </div>
@@ -237,27 +236,35 @@
                                                         </div>
                                                     </li>
                                                 </c:if>
-                                                <c:if test="${sessionScope.auth != null || sessionScope.auth1 != null}">
-                                                    <li class="nav-item dropdown menu-btn">
-                                                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+                                                <c:if test="${sessionScope.authGoogle != null || sessionScope.authLocal != null}">
+                                                    <li class="nav-item dropdown menu-btn user-info">
+                                                        <a class="nav-link" href="#" id="userDropdown" role="button"
                                                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                             <i class="fa fa-user"></i>
                                                         </a>
-                                                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
-                                                            <a class="dropdown-item" href="account" style="color: black">Tài khoản của tôi</a>
-                                                            <a class="dropdown-item" href="updateprofile" style="color: black">Cập nhật hồ sơ</a>
+                                                        <div class="dropdown-menu dropdown-menu-right shadow border-0" aria-labelledby="userDropdown" style="min-width: 250px;">
+                                                            <div class="px-3 py-2 border-bottom">
+                                                                <div class="font-weight-bold text-dark">🥉 Bronze Priority</div>
+                                                                <div class="text-muted small">0 Điểm</div>
+                                                            </div>
+                                                            <a class="dropdown-item" href="account" style="color: black"><i class="fa fa-user mr-2 text-primary"></i> Tài khoản của tôi</a>
+                                                            <a class="dropdown-item" href="updateprofile" style="color: black"><i class="fa fa-user mr-2 text-primary"></i> Cập nhật hồ sơ</a>
+                                                            <a class="dropdown-item" href="payment.jsp" style="color: black"><i class="fa fa-credit-card mr-2 text-primary"></i> Payment</a>
                                                             <!--<a href="#verifyEmailChange-modal" class="dropdown-item switch-modal" style="font-size: 14px; color: black">Change your password </a>-->
-                                                            <a href="#changePassword-modal" class="dropdown-item switch-modal" style="font-size: 14px; color: black">Change your password </a>
+                                                            <c:if test="${not empty sessionScope.authLocal}">
+                                                                <a href="#changePassword-modal" class="dropdown-item switch-modal" style="font-size: 14px; color: black">
+                                                                    <i class="fa fa-lock mr-2 text-primary"></i> Change your password 
+                                                                </a>
+                                                            </c:if>
                                                             <div class="dropdown-divider"></div>
                                                             <form action="logingoogle" method="post" style="display:inline;">
                                                                 <button type="submit" name="logout" value="true" class="dropdown-item">
-                                                                    Đăng xuất
+                                                                    <i class="fa fa-sign-out-alt mr-2"></i> Đăng xuất
                                                                 </button>
                                                             </form>
                                                         </div>
                                                     </li>
                                                 </c:if>
-
 
                                                 <!---- verify Email ---->
                                                 <div id="verifyEmail-modal" class="reglog-modal-wrapper mfp-hide clearfix" style="background-image: url('${pageContext.request.contextPath}/img/bg-img/bg-3.jpg');">
@@ -299,8 +306,6 @@
                                                                     <input type="hidden" name="action" value="verifyEmail"/>
                                                                     <div class="form-item">
                                                                         <input type="email" name="emailvrf" value="" placeholder="Email address">
-                                                                        <!--                                                                        pattern="^[a-zA-Z0-9._%+-]+@(gmail\.com|fpt\.edu\.vn)$"
-                                                                                                                                                title="Email phải kết thúc bằng @gmail.com hoặc @fpt.edu.vn"-->
                                                                     </div>
 
                                                                     <!--recaptcha-->
@@ -467,13 +472,17 @@
                                                                         <input type="text" placeholder="Last Name" name="lastName" required autofocus 
                                                                                pattern = "[A-Za-zÀ-ỹ\s]{2,30}" title="Tên chỉ được chứa chữ cái, không bao gồm số hoặc ký tự đặc biệt.">
                                                                     </div>
-                                                                    <div class="form-item">
-                                                                        <input type="password" placeholder="Password" name="pass" required 
+                                                                    <div class="form-item password-toggle">
+                                                                        <!--<input type="password" name="pass" placeholder="Password" id="passRegister" class="password-check">-->
+                                                                        <!--<small class="error-message" style="color: red"></small>-->
+                                                                        <input type="password" placeholder="Password" name="pass" id="passRegister" required 
                                                                                pattern ="(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}" 
                                                                                title="Mật khẩu phải có ít nhất 6 ký tự, bao gồm chữ hoa, chữ thường, số và ký tự đặc biệt.">
+                                                                        <i class="material-icons toggle-icon toggle-password" toggle="#passRegister">remove_red_eye</i>
                                                                     </div>
-                                                                    <div class="form-item">
-                                                                        <input type="password" placeholder="Repeat Password" name="repass" required>
+                                                                    <div class="form-item password-toggle">
+                                                                        <input type="password" placeholder="Repeat Password" id="repassRegister" name="repass" required>
+                                                                        <i class="material-icons toggle-icon toggle-password" toggle="#repassRegister">remove_red_eye</i>
                                                                         <small id="repass-error" style="color: red; display: none;">Mật khẩu nhập lại không khớp.</small>
                                                                     </div>
                                                                     <!--recaptcha-->
@@ -614,13 +623,15 @@
                                                                     <div class="form-item">
                                                                         <input type="email" value="${sessionScope.emailforgot}" readonly>
                                                                     </div>
-                                                                    <div class="form-item">
-                                                                        <input type="password" placeholder="Password" name="pass" required 
+                                                                    <div class="form-item password-toggle">
+                                                                        <input type="password" placeholder="Password" name="pass" id="passForgot" required 
                                                                                pattern ="(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}" 
                                                                                title="Mật khẩu phải có ít nhất 6 ký tự, bao gồm chữ hoa, chữ thường, số và ký tự đặc biệt.">
+                                                                        <i class="material-icons toggle-icon toggle-password" toggle="#passForgot">remove_red_eye</i>
                                                                     </div>
-                                                                    <div class="form-item">
-                                                                        <input type="password" placeholder="Repeat Password" name="repass" required>
+                                                                    <div class="form-item password-toggle">
+                                                                        <input type="password" placeholder="Repeat Password" name="repass" id="repassForgot" required>
+                                                                        <i class="material-icons toggle-icon toggle-password" toggle="#repassForgot">remove_red_eye</i>
                                                                         <small id="repassfg-error" style="color: red; display: none;">Mật khẩu nhập lại không khớp.</small>
                                                                     </div>
                                                                     <button type="submit" class="login-btn">Reset password</button>
@@ -684,7 +695,7 @@
                                                                 </form>
                                                             </div>
                                                             <div class="bottom-text white-color">
-                                                                <a href="#login-modal" class="switch-modal black-color">← Back to Login</a>
+                                                                <a href="#login-modal" class="switch-modal white-color">← Back to Login</a>
                                                             </div>
                                                         </div>
                                                         <a class="popup-modal-dismiss" href="#">
@@ -728,26 +739,25 @@
                                                             <div class="login-form text-center mb-50">
                                                                 <form id="formChange-password" action="changeassword" method="post">
                                                                     <input type="hidden" name="action" value="changePassword"/>
-                                                                    <c:if test="${not empty sessionScope.auth}">
-                                                                        <div class="form-item">
-                                                                            <input type="email" value="${sessionScope.auth.email}" readonly>
-                                                                        </div>
-                                                                    </c:if>
-                                                                    <c:if test="${not empty sessionScope.auth1.email}">
-                                                                        <div class="form-item">
-                                                                            <input type="email" value="${sessionScope.auth1.email}" readonly>
-                                                                        </div>
-                                                                        <div class="form-item">
-                                                                            <input type="password" name="currentPassword" placeholder="Current Password" required>
-                                                                        </div>
-                                                                    </c:if>
                                                                     <div class="form-item">
-                                                                        <input type="password" placeholder="New Password" name="pass" required 
+                                                                        <input type="email" value="${sessionScope.authLocal.email}" readonly>
+                                                                    </div>
+                                                                    <div class="form-item password-toggle">
+                                                                        <input type="password" name="currentPassword" placeholder="Current Password" id="passCurrent" required 
                                                                                pattern ="(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}" 
                                                                                title="Mật khẩu phải có ít nhất 6 ký tự, bao gồm chữ hoa, chữ thường, số và ký tự đặc biệt.">
+                                                                        <i class="material-icons toggle-icon toggle-password" toggle="#passCurrent">remove_red_eye</i>
                                                                     </div>
-                                                                    <div class="form-item">
-                                                                        <input type="password" placeholder="Confirm New Password" name="repass" required>
+                                                                    <div class="form-item password-toggle">
+                                                                        <input type="password" placeholder="New Password" name="pass" id="newpassChange" required 
+                                                                               pattern ="(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}" 
+                                                                               title="Mật khẩu phải có ít nhất 6 ký tự, bao gồm chữ hoa, chữ thường, số và ký tự đặc biệt.">
+                                                                        <i class="material-icons toggle-icon toggle-password" toggle="#newpassChange">remove_red_eye</i>
+                                                                        <small id="newpass-error" style="color: yellow; margin-bottom: 5px; display: none"></small>
+                                                                    </div>
+                                                                    <div class="form-item password-toggle">
+                                                                        <input type="password" placeholder="Confirm New Password" name="repass" id="repassChange" required>
+                                                                        <i class="material-icons toggle-icon toggle-password" toggle="#repassChange">remove_red_eye</i>
                                                                         <small id="repassch-error" style="color: red; display: none;">Mật khẩu nhập lại không khớp.</small>
                                                                     </div>
                                                                     <button type="submit" class="login-btn">Update Password</button>
@@ -755,7 +765,7 @@
                                                             </div>
 
                                                             <div class="bottom-text white-color">
-                                                                <a href="#login-modal" class="switch-modal black-color">← Cancel</a>
+                                                                <a href="#login-modal" class="switch-modal white-color">← Cancel</a>
                                                             </div>
                                                         </div>
 
@@ -842,6 +852,17 @@
 
         .toggle-icon:hover {
             color: #333;
+        }
+
+        /*icon-logout*/
+        .user-info {
+            border: 2px dashed white;
+            border-radius: 10px;
+        }
+
+        .user-info a:hover{
+            border-radius: 10px;
+            background-color: black;
         }
     </style>
 </html>

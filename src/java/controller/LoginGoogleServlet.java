@@ -82,7 +82,7 @@ public class LoginGoogleServlet extends HttpServlet {
             }
 
             HttpSession session = request.getSession();
-            session.setAttribute("auth", acc);
+            session.setAttribute("authGoogle", acc);
             response.sendRedirect("loadtohome");
         } catch (Exception ex) {
             Logger.getLogger(LoginGoogleServlet.class.getName()).log(Level.SEVERE, null, ex);
