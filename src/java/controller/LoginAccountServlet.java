@@ -114,7 +114,7 @@ public class LoginAccountServlet extends HttpServlet {
         } else {
             HttpSession session = request.getSession();
             Authentication auth = dao.login(email);
-            session.setAttribute("auth1", auth);
+            session.setAttribute("authLocal", auth);
 
             if ("on".equals(remember)) {
                 Cookie ck = new Cookie("email", email);

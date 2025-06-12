@@ -55,7 +55,7 @@ function setupFormValidation(formId, captchaErrorId, repassErrorId, hasRepass) {
 
 //popup login register
 $(document).ready(function () {
-    // Khởi tạo popup cho nút mở login/register
+// Khởi tạo popup cho nút mở login/register
     $('.login-modal-btn, .register-modal-btn').magnificPopup({
         type: 'inline',
         midClick: true
@@ -103,7 +103,6 @@ $(document).ready(function () {
         });
     }
 });
-
 //hiện ẩn password
 document.querySelectorAll('.toggle-password').forEach(function (eyeIcon) {
     eyeIcon.addEventListener('click', function () {
@@ -113,15 +112,12 @@ document.querySelectorAll('.toggle-password').forEach(function (eyeIcon) {
         this.textContent = type === 'password' ? 'remove_red_eye' : 'visibility_off';
     });
 });
-
 //        Ajax hiện lỗi password
 $(document).ready(function () {
     const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{6,}$/;
-
     function validatePasswordInput(input) {
         const val = input.val();
         const errorMsg = input.siblings(".error-message");
-
         if (val.length === 0) {
             input.removeClass("valid invalid");
             errorMsg.fadeOut(150);
@@ -134,8 +130,45 @@ $(document).ready(function () {
         }
     }
 
-    // Apply cho mọi ô có class password-check
+// Apply cho mọi ô có class password-check
     $(".password-check").on("input", function () {
         validatePasswordInput($(this));
     });
 });
+
+
+$(document).ready(function () {
+    let isNewPassValid = true;
+    const newpassError = $("#newpass-error");
+    // Kiểm tra new password khác current password
+    function validateChangePassword() {
+        const currentPass = $("#passCurrent").val();
+        const newpass = $("#newpassChange").val();
+
+        if (!newpass) {
+            $("#newpassChange").removeClass("valid invalid");
+            newpassError.fadeOut(150);
+            return;
+        }
+        if (newpass === currentPass && newpass.length > 0) {
+            $("#newpassChange").removeClass("valid").addClass("invalid");
+            newpassError.html("⚠️ Mật khẩu mới không được trùng với mật khẩu hiện tại.").fadeIn(150);
+            isNewPassValid = false;
+        } else {
+            $("#newpassChange").removeClass("invalid").addClass("valid");
+            newpassError.fadeOut(150);
+            isNewPassValid = true;
+        }
+    }
+    $("#newpassChange, #passCurrent").on("input", function () {
+        validateChangePassword();
+    });
+
+    $("#formChange-password").on("submit", function (e) {
+        validateChangePassword(); // đảm bảo kiểm tra lại trước khi submit
+        if (!isNewPassValid) {
+            e.preventDefault(); // chặn submit
+        }
+    });
+});
+

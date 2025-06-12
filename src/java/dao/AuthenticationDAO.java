@@ -246,18 +246,19 @@ public class AuthenticationDAO extends DBContext {
         }
     }
 
-    public boolean setPasswordForGoogleUser(int userId, String newPassword) {
-        String sql = "UPDATE Authentication SET Password = ?, UpdatedAt = GETDATE() WHERE UserID = ? AND AuthType = 'google'";
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            String hashed = BCrypt.hashpw(newPassword, BCrypt.gensalt());
-            ps.setString(1, hashed);
-            ps.setInt(2, userId);
-            return ps.executeUpdate() > 0;
-        } catch (SQLException e) {
-            Logger.getLogger(AuthenticationDAO.class.getName()).log(Level.SEVERE, null, e);
-            return false;
-        }
-    }
+//    change google account password
+//    public boolean setPasswordForGoogleUser(int userId, String newPassword) {
+//        String sql = "UPDATE Authentication SET Password = ?, UpdatedAt = GETDATE() WHERE UserID = ? AND AuthType = 'google'";
+//        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+//            String hashed = BCrypt.hashpw(newPassword, BCrypt.gensalt());
+//            ps.setString(1, hashed);
+//            ps.setInt(2, userId);
+//            return ps.executeUpdate() > 0;
+//        } catch (SQLException e) {
+//            Logger.getLogger(AuthenticationDAO.class.getName()).log(Level.SEVERE, null, e);
+//            return false;
+//        }
+//    }
 
     public void invalidateOldCodes(String email) {
         String sql = "UPDATE EmailVerification SET IsUsed = 1 WHERE Email = ? AND IsUsed = 0";

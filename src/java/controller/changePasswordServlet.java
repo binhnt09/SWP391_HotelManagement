@@ -88,26 +88,11 @@ public class changePasswordServlet extends HttpServlet {
     }
 
     public void changePassword(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        HttpSession session = request.getSession(false);
-        Authentication authLocal = null;
-        GoogleAccount authGoogle = null;
+        Authentication authLocal = (Authentication) request.getSession().getAttribute("authLocal");
 
         int userId = -1;
-        String authType = null;
 
-        // Ưu tiên tài khoản local
-        if (session.getAttribute("auth1") != null) {
-            authLocal = (Authentication) session.getAttribute("auth1");
-            userId = authLocal.getUserID();
-            authType = authLocal.getAuthType();
-        } else if (session.getAttribute("auth") != null) {
-            authGoogle = (GoogleAccount) session.getAttribute("auth");
-            authType = "google";
-
-            // Lấy userId từ DB theo email Google
-            AuthenticationDAO dao = new AuthenticationDAO();
-            userId = dao.getUserIdByEmail(authGoogle.getEmail());
-        }
+        userId = authLocal.getUserID();
 
         // Nếu không tìm thấy user hợp lệ
         if (userId == -1) {
@@ -118,38 +103,73 @@ public class changePasswordServlet extends HttpServlet {
         // Lấy mật khẩu từ form
         String oldPassword = request.getParameter("currentPassword");
         String newPassword = request.getParameter("pass");
-        String confirmPassword = request.getParameter("repass");
-
-        if (newPassword == null || confirmPassword == null || !newPassword.equals(confirmPassword)) {
-            request.setAttribute("error", "Mật khẩu mới không khớp.");
-            request.setAttribute("openModal", "#changePassword-modal");
-            request.getRequestDispatcher("home.jsp").forward(request, response);
-            return;
-        }
 
         AuthenticationDAO dao = new AuthenticationDAO();
-        boolean success = false;
-
-        if ("local".equals(authType)) {
-            success = dao.changePassword(userId, oldPassword, newPassword);
-            if (success) {
-                request.setAttribute("success", "Đổi mật khẩu thành công!");
-            } else {
-                request.setAttribute("error", "Mật khẩu hiện tại không đúng.");
-            }
-        } else if ("google".equals(authType)) {
-            success = dao.setPasswordForGoogleUser(userId, newPassword);
-            if (success) {
-                request.setAttribute("success", "Đặt mật khẩu mới thành công. Lần sau bạn có thể đăng nhập bằng email & mật khẩu.");
-            } else {
-                request.setAttribute("error", "Không thể cập nhật mật khẩu.");
-            }
+        boolean success = success = dao.changePassword(userId, oldPassword, newPassword);
+        
+        if (success) {
+            request.setAttribute("success", "Đổi mật khẩu thành công!");
+        } else {
+            request.setAttribute("error", "Mật khẩu hiện tại không đúng.");
         }
-
         request.setAttribute("openModal", "#changePassword-modal");
         request.getRequestDispatcher("home.jsp").forward(request, response);
     }
 
+//    public void changePassword(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+//        HttpSession session = request.getSession(false);
+//        Authentication authLocal = null;
+//        GoogleAccount authGoogle = null;
+//
+//        int userId = -1;
+//        String authType = null;
+//
+//        // Ưu tiên tài khoản local
+//        if (session.getAttribute("authLocal") != null) {
+//            authLocal = (Authentication) session.getAttribute("authLocal");
+//            userId = authLocal.getUserID();
+//            authType = authLocal.getAuthType();
+//        } else if (session.getAttribute("authGoogle") != null) {
+//            authGoogle = (GoogleAccount) session.getAttribute("authGoogle");
+//            authType = "google";
+//
+//            // Lấy userId từ DB theo email Google
+//            AuthenticationDAO dao = new AuthenticationDAO();
+//            userId = dao.getUserIdByEmail(authGoogle.getEmail());
+//        }
+//
+//        // Nếu không tìm thấy user hợp lệ
+//        if (userId == -1) {
+//            response.sendRedirect("loadtohome");
+//            return;
+//        }
+//
+//        // Lấy mật khẩu từ form
+//        String oldPassword = request.getParameter("currentPassword");
+//        String newPassword = request.getParameter("pass");
+//
+//        AuthenticationDAO dao = new AuthenticationDAO();
+//        boolean success = false;
+//
+//        if ("local".equals(authType)) {
+//            success = dao.changePassword(userId, oldPassword, newPassword);
+//            if (success) {
+//                request.setAttribute("success", "Đổi mật khẩu thành công!");
+//            } else {
+//                request.setAttribute("error", "Mật khẩu hiện tại không đúng.");
+//            }
+//        } else if ("google".equals(authType)) {
+//            success = dao.setPasswordForGoogleUser(userId, newPassword);
+//            if (success) {
+//                request.setAttribute("success", "Đặt mật khẩu mới thành công. Lần sau bạn có thể đăng nhập bằng email & mật khẩu.");
+//            } else {
+//                request.setAttribute("error", "Không thể cập nhật mật khẩu.");
+//            }
+//        }
+//
+//        request.setAttribute("openModal", "#changePassword-modal");
+//        request.getRequestDispatcher("home.jsp").forward(request, response);
+//    }
     public void completeChangePassword(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String emailfg = (String) request.getSession().getAttribute("emailforgot");
         String pass = request.getParameter("pass");
