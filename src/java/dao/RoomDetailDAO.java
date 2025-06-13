@@ -74,7 +74,7 @@ public class RoomDetailDAO extends DBContext {
         }
         return null;
     }
-
+    
     public static void main(String[] args) {
         List<RoomDetail> t = new dao.RoomDetailDAO().getListRoomDetail();
         System.out.println("Số phần tử trong list: " + t.size());
