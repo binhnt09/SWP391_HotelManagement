@@ -81,7 +81,8 @@ public class SearchRoom extends HttpServlet {
         int numberPeople = Validation.parseStringToInt(numberPeople_raw);
         int roomType = Validation.parseStringToInt(roomType_raw);
         
-        request.setAttribute("listRoom", new dao.RoomDAO().getListRoom(checkin, checkout, priceFrom, priceTo, numberPeople, roomType));
+        List<Room> listRoom = new dao.RoomDAO().getListRoom(checkin, checkout, priceFrom, priceTo, numberPeople, roomType, "", "Available", "", false, 4, 6, false);
+        request.setAttribute("listRoom", listRoom);
         request.setAttribute("listRoomType", new dao.RoomTypeDAO().getListRoomType());
         request.getRequestDispatcher("rooms.jsp").forward(request, response);
     }

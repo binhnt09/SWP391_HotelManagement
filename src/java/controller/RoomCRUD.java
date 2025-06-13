@@ -14,6 +14,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.List;
 import validation.Validation;
 
 /**
@@ -70,6 +71,9 @@ public class RoomCRUD extends HttpServlet {
                 case "delete":
                     deleteRoom(request, response);
                     break;
+                case "deleteMultiple":
+                    deleteMultipleRoom(request, response);
+                    break;
                 default:
                     response.sendError(HttpServletResponse.SC_NOT_FOUND);
             }
@@ -124,8 +128,9 @@ public class RoomCRUD extends HttpServlet {
                 roomT,
                 status, Validation.parseStringToDouble(priceRawRaw));
         boolean checkUpdate = new dao.RoomDAO().updateRoom(room);
-        request.setAttribute("listRoom", new dao.RoomDAO().getAllRoom());
-        request.setAttribute("numberRoom", new dao.RoomDAO().getAllRoom().size());
+        List<Room> listRoom = new dao.RoomDAO().getListRoom(null, null, 0, 100000, 0, -1, "", "all", "", false, 4, 6, false);
+        request.setAttribute("listRoom", listRoom);
+        request.setAttribute("numberRoom", listRoom.size());
         //CẦN SỬA KHI KHÔNG UPDATE ĐƯỢC
         if (checkUpdate) {
             request.getRequestDispatcher("manageroom.jsp").forward(request, response);
@@ -143,8 +148,9 @@ public class RoomCRUD extends HttpServlet {
             throws ServletException, IOException {
         String roomId = request.getParameter("roomId");
         if (new dao.RoomDAO().updateDeleteRoom(Validation.parseStringToInt(roomId), 1, true)) {
-            request.setAttribute("listRoom", new dao.RoomDAO().getAllRoom());
-            request.setAttribute("numberRoom", new dao.RoomDAO().getAllRoom().size());
+            List<Room> listRoom = new dao.RoomDAO().getListRoom(null, null, 0, 100000, 0, -1, "", "all", "", false, 4, 6, false);
+            request.setAttribute("listRoom", listRoom);
+            request.setAttribute("numberRoom", listRoom.size());
             request.getRequestDispatcher("manageroom.jsp").forward(request, response);
         } else {
             request.getRequestDispatcher("manageroom.jsp").forward(request, response);
@@ -155,6 +161,29 @@ public class RoomCRUD extends HttpServlet {
     private void addRoom(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         // Xử lý thêm mới phòng
+    }
+
+    private void deleteMultipleRoom(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String[] roomIdsRaw = request.getParameterValues("roomIds");
+        int number = roomIdsRaw.length;
+        String errorRoom = "";
+        if (roomIdsRaw == null || roomIdsRaw.length == 0) {
+            request.setAttribute("deleteError", "No rooms selected for deletion.");
+        } else {
+            for (int i = 0; i < number; i++) {
+                int roomId = Validation.parseStringToInt(roomIdsRaw[i]);
+                boolean check = new dao.RoomDAO().updateDeleteRoom(roomId, 1, true);
+                if (!check) {
+                    Room room = new dao.RoomDAO().getRoomByRoomID(roomId);
+                    errorRoom += room.getRoomNumber();
+                }
+            }
+        }
+        request.setAttribute("deleteError", "Can't delete room: " + errorRoom);
+        List<Room> listRoom = new dao.RoomDAO().getListRoom(null, null, 0, 100000, 0, -1, "", "all", "", false, 4, 6, false);
+        request.setAttribute("listRoom", listRoom);
+        request.setAttribute("numberRoom", listRoom.size());
+        request.getRequestDispatcher("manageroom.jsp").forward(request, response);
     }
 
 }

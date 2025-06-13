@@ -151,130 +151,6 @@ public class RoomDAO extends DBContext {
         return list;
     }
 
-    public List<Room> getListRoom(Date checkin, Date checkout,
-            double from, double to,
-            int numberPeople, int roomTypeID,
-            String searchText, String status,
-            String sortBy, boolean isAsc,
-            int pageIndex, int pageSize) {
-        List<Room> list = new ArrayList<>();
-        StringBuilder sql = new StringBuilder();
-        sql.append("SELECT r.RoomID, r.RoomNumber, r.RoomDetailID, r.RoomTypeID, r.Status, r.Price, ")
-                .append("r.HotelID, r.CreatedAt, r.UpdatedAt, r.DeletedAt, r.DeletedBy, r.IsDeleted ")
-                .append("FROM Room r ")
-                .append("INNER JOIN RoomType rt ON rt.RoomTypeID = r.RoomTypeID ")
-                .append("INNER JOIN RoomDetail rd ON rd.RoomDetailID = r.RoomDetailID ")
-                .append("WHERE r.IsDeleted = 0 ");
-
-        List<Object> params = new ArrayList<>();
-
-        if (roomTypeID != -1) {
-            sql.append("AND r.RoomTypeID = ? ");
-            params.add(roomTypeID);
-        }
-        if (from != -1.0 || to != -1.0) {
-            if (from != -1 && to != -1) {
-                sql.append("AND r.Price BETWEEN ? AND ? ");
-                params.add(from);
-                params.add(to);
-            } else if (from == -1.0) {
-                sql.append("AND r.Price <= ? ");
-                params.add(to);
-            } else if (to == -1) {
-                sql.append("AND r.Price >= ? ");
-                params.add(from);
-            }
-        }
-        if (numberPeople != -1) {
-            sql.append("AND rd.MaxGuest >= ? ");
-            params.add(numberPeople);
-        }
-        if (searchText != null && !searchText.trim().isEmpty()) {
-            sql.append("AND (r.RoomNumber LIKE ? OR rd.BedType LIKE ? OR rd.Description LIKE ?) ");
-            String like = "%" + searchText + "%";
-            params.add(like);
-            params.add(like);
-            params.add(like);
-        }
-        if (status != null && !status.equalsIgnoreCase("all")) {
-            sql.append("AND r.Status = ? ");
-            params.add(status);
-        }
-        if (checkin != null || checkout != null) {
-            sql.append("AND r.RoomID NOT IN ( ")
-                    .append("SELECT bd.RoomID FROM BookingDetail bd ")
-                    .append("INNER JOIN Booking b ON b.BookingID = bd.BookingID ")
-                    .append("WHERE 1=1 ");
-            if (checkin != null && checkout != null) {
-                sql.append("AND (? < b.CheckOutDate AND ? > b.CheckInDate) ");
-                params.add(checkin);
-                params.add(checkout);
-            } else if (checkin == null) {
-                sql.append("AND ? > b.CheckInDate ");
-                params.add(checkout);
-            } else if (checkout == null) {
-                sql.append("AND ? < b.CheckOutDate ");
-                params.add(checkin);
-            }
-            sql.append(") ");
-        }
-
-        // Validate and append ORDER BY
-        Set<String> validSortColumns = Set.of("Price", "Area", "RoomNumber");
-        if (sortBy != null && validSortColumns.contains(sortBy)) {
-            sql.append("ORDER BY ").append(sortBy).append(isAsc ? " ASC " : " DESC ");
-        } else {
-            sql.append("ORDER BY r.RoomID ASC "); // default
-        }
-
-        // Pagination
-        sql.append("OFFSET ? ROWS FETCH NEXT ? ROWS ONLY ");
-        params.add((pageIndex - 1) * pageSize); // offset
-        params.add(pageSize); // limit
-
-        try (PreparedStatement stm = connection.prepareStatement(sql.toString())) {
-            for (int i = 0; i < params.size(); i++) {
-                Object param = params.get(i);
-                if (param instanceof Integer) {
-                    stm.setInt(i + 1, (Integer) param);
-                } else if (param instanceof Double) {
-                    stm.setDouble(i + 1, (Double) param);
-                } else if (param instanceof String) {
-                    stm.setString(i + 1, (String) param);
-                } else if (param instanceof Date) {
-                    stm.setDate(i + 1, (Date) param);
-                }
-            }
-
-            ResultSet rs = stm.executeQuery();
-            while (rs.next()) {
-                Hotel hotel = new HotelDAO().getHotelByID(rs.getInt("HotelID"));
-                RoomDetail roomDetail = new RoomDetailDAO().getRoomDetailByID(rs.getInt("RoomDetailID"));
-                RoomType roomType = new RoomTypeDAO().getRoomTypeById(rs.getInt("RoomTypeID"));
-
-                list.add(new Room(
-                        rs.getInt("RoomID"),
-                        rs.getString("RoomNumber"),
-                        roomDetail,
-                        roomType,
-                        rs.getString("Status"),
-                        rs.getDouble("Price"),
-                        hotel,
-                        rs.getTimestamp("CreatedAt"),
-                        rs.getTimestamp("UpdatedAt"),
-                        rs.getTimestamp("DeletedAt"),
-                        rs.getInt("DeletedBy"),
-                        rs.getBoolean("IsDeleted")
-                ));
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return list;
-    }
-
     public Room getRoomByRoomID(int id) {
         String sql = "select * from Room where RoomID =?";
         try {
@@ -415,6 +291,73 @@ public class RoomDAO extends DBContext {
         } catch (SQLException e) {
             System.out.println(e);
         }
+        return false;
+    }
+
+    public boolean insertRoom(Room room) {
+        String insertRoomDetailSQL = "INSERT INTO RoomDetail (BedType, Area, MaxGuest, Description, CreatedAt) "
+                + "VALUES (?, ?, ?, ?, GETDATE())";
+
+        String insertRoomSQL = "INSERT INTO Room (RoomNumber, RoomDetailID, RoomTypeID, Status, Price, HotelID, CreatedAt) "
+                + "VALUES (?, ?, ?, ?, ?, ?, GETDATE())";
+
+        try {
+            connection.setAutoCommit(false); // Bắt đầu transaction
+
+            // 1. Insert RoomDetail
+            int roomDetailID;
+            try (PreparedStatement ps1 = connection.prepareStatement(insertRoomDetailSQL)) {
+                ps1.setString(1, room.getRoomDetail().getBedType());
+                ps1.setDouble(2, room.getRoomDetail().getArea());
+                ps1.setInt(3, room.getRoomDetail().getMaxGuest());
+                ps1.setString(4, room.getRoomDetail().getDescription());
+
+                int affectedRows = ps1.executeUpdate();
+                if (affectedRows == 0) {
+                    connection.rollback();
+                    return false;
+                }
+
+                try (ResultSet generatedKeys = ps1.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        roomDetailID = generatedKeys.getInt(1);
+                    } else {
+                        connection.rollback();
+                        return false;
+                    }
+                }
+            }
+
+            // 2. Insert Room
+            try (PreparedStatement ps2 = connection.prepareStatement(insertRoomSQL)) {
+                ps2.setString(1, room.getRoomNumber());
+                ps2.setInt(2, roomDetailID);
+                ps2.setInt(3, room.getRoomTypeID().getRoomTypeID());
+                ps2.setString(4, room.getStatus());
+                ps2.setDouble(5, room.getPrice());
+                ps2.setInt(6, room.getHotel().getHotelID());
+
+                ps2.executeUpdate();
+            }
+
+            connection.commit();
+            return true;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            try {
+                connection.rollback();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+        } finally {
+            try {
+                connection.setAutoCommit(true);
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+        }
+
         return false;
     }
 
