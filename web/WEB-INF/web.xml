@@ -4,8 +4,16 @@
         <servlet-name>SearchRoom</servlet-name>
         <servlet-class>controller.SearchRoom</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>LoadServlet</servlet-name>
+        <servlet-class>controller.LoadServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>SearchRoom</servlet-name>
         <url-pattern>/searchroom</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>LoadServlet</servlet-name>
+        <url-pattern>/load</url-pattern>
     </servlet-mapping>
 </web-app>
