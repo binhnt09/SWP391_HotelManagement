@@ -161,7 +161,7 @@
                                            data-capacity="${i.roomDetail.maxGuest}"
                                            data-area="${i.roomDetail.area}"
                                            style="color: blue;" title="Edit Room"><i class="fa-solid fa-pen-to-square"></i></a>
-                                        <a href="#" class="delete" style="color: red;margin-left: 5px" title="Delete Room" data-toggle="modal"><i class="fa-solid fa-delete-left"></i></a>
+                                           <a href="#" onclick="doDelete(${i.roomID},${i.roomNumber})" class="delete" style="color: red;margin-left: 5px" title="Delete Room" data-toggle="modal"><i class="fa-solid fa-delete-left"></i></a>
 
                                     </td>
                                 </tr>
@@ -251,6 +251,11 @@
 
 
         <script>
+            function doDelete(id , name) {
+                if (confirm("Are you sure to delete roomName :" + name)) {
+                    window.location = "deleteroomtype?action=delete&roomId=" + id;//deletelesson là tên của link servlet để nó nhận doGet
+                }
+            }
             // Select all functionality
             document.querySelector('thead input[type="checkbox"]').addEventListener('change', function () {
                 const checkboxes = document.querySelectorAll('tbody input[type="checkbox"]');

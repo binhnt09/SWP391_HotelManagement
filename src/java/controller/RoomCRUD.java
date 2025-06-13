@@ -141,7 +141,15 @@ public class RoomCRUD extends HttpServlet {
 
     private void deleteRoom(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        // Xử lý xóa phòng theo ID
+        String roomId = request.getParameter("roomId");
+        if (new dao.RoomDAO().updateDeleteRoom(Validation.parseStringToInt(roomId), 1, true)) {
+            request.setAttribute("listRoom", new dao.RoomDAO().getAllRoom());
+            request.setAttribute("numberRoom", new dao.RoomDAO().getAllRoom().size());
+            request.getRequestDispatcher("manageroom.jsp").forward(request, response);
+        } else {
+            request.getRequestDispatcher("manageroom.jsp").forward(request, response);
+        }
+
     }
 
     private void addRoom(HttpServletRequest request, HttpServletResponse response)

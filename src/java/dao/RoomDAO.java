@@ -25,14 +25,28 @@ import java.util.logging.Logger;
  */
 public class RoomDAO extends DBContext {
 
-    public List<Room> getListRoom(Date checkin, Date checkout, double from, double to, int numberPeople, int roomTypeID) {
+    public List<Room> getListRoom(Date checkin, Date checkout,
+            double from, double to,
+            int numberPeople, int roomTypeId,
+            String keyword, String status,
+            String sortBy, boolean isAsc,
+            int pageIndex, int pageSize,
+            boolean isDeleted
+    ) {
         List<Room> list = new ArrayList();
         String sql = "select r.RoomID , r.RoomNumber , r.RoomDetailID, r.RoomTypeID , r.Status , r.Price, r.HotelID , r.CreatedAt , r.UpdatedAt,r.DeletedAt , r.DeletedBy,r.IsDeleted\n"
                 + "from Room r\n"
                 + "inner join roomtype rt on rt.RoomTypeID = r.RoomTypeID\n"
                 + "inner join RoomDetail rd on rd.RoomDetailID = r.RoomDetailID\n"
-                + "where r.Status = 'available'\n";
-        if (roomTypeID != -1) {
+                + "where r.IsDeleted = ? \n";
+        if (status != null && !status.equalsIgnoreCase("all")) {
+            sql += "AND r.Status = ? ";
+        }
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            sql += "AND ( r.RoomID LIKE ? or r.RoomNumber LIKE ? OR rd.BedType LIKE ? OR rd.Description LIKE ?) ";
+        }
+
+        if (roomTypeId != -1) {
             sql += " and rt.RoomTypeID = ? ";
         }
         if (from != -1.0 || to != -1.0) {
@@ -47,6 +61,7 @@ public class RoomDAO extends DBContext {
         if (numberPeople != -1) {
             sql += " and rd.MaxGuest >= ?";
         }
+
         if (checkin != null || checkout != null) {
             sql += "	and r.RoomID not in(\n"
                     + "		select bd.RoomID from BookingDetail bd\n"
@@ -59,14 +74,29 @@ public class RoomDAO extends DBContext {
             } else if (checkout == null) {
                 sql += " and ? < b.CheckOutDate ";
             }
-            sql += ")";
+            sql += " )";
         }
+//        if (sortBy != null && !sortBy.trim().isEmpty()) {
+//            sql += "ORDER BY " + sortBy + (isAsc ? " ASC " : " DESC ");
+//        }
+
+//        sql += "OFFSET ? ROWS FETCH NEXT ? ROWS ONLY ";
         try {
             PreparedStatement stm = connection.prepareStatement(sql);
             int count = 1;
-
-            if (roomTypeID != -1) {
-                stm.setInt(count++, roomTypeID);
+            stm.setBoolean(count++, isDeleted);
+            if (status != null && !status.equalsIgnoreCase("all")) {
+                stm.setString(count++, status);
+            }
+            if (keyword != null && !keyword.trim().isEmpty()) {
+                String kw = "%" + keyword + "%";
+                stm.setString(count++, kw);
+                stm.setString(count++, kw);
+                stm.setString(count++, kw);
+                stm.setString(count++, kw);
+            }
+            if (roomTypeId != -1) {
+                stm.setInt(count++, roomTypeId);
             }
             if (from != -1.0 || to != -1.0) {
                 if (from != -1 && to != -1) {
@@ -94,11 +124,14 @@ public class RoomDAO extends DBContext {
                     stm.setDate(count++, checkin);
                 }
             }
+
+//            stm.setInt(count++, (pageIndex - 1) * pageSize);
+//            stm.setInt(count++, pageSize);
             ResultSet rs = stm.executeQuery();
             while (rs.next()) {
                 Hotel hotel = new dao.HotelDAO().getHotelByID(rs.getInt("HotelID"));
                 RoomDetail roomDetail = new dao.RoomDetailDAO().getRoomDetailByID(rs.getInt("RoomDetailID"));
-                RoomType roomType = new dao.RoomTypeDAO().getRoomTypeById(roomTypeID);
+                RoomType roomType = new dao.RoomTypeDAO().getRoomTypeById(roomTypeId);
 
                 list.add(new Room(rs.getInt("roomID"),
                         rs.getString("roomNumber"),
@@ -117,130 +150,130 @@ public class RoomDAO extends DBContext {
 
         return list;
     }
+
     public List<Room> getListRoom(Date checkin, Date checkout,
-                              double from, double to,
-                              int numberPeople, int roomTypeID,
-                              String searchText, String status,
-                              String sortBy, boolean isAsc,
-                              int pageIndex, int pageSize) {
-    List<Room> list = new ArrayList<>();
-    StringBuilder sql = new StringBuilder();
-    sql.append("SELECT r.RoomID, r.RoomNumber, r.RoomDetailID, r.RoomTypeID, r.Status, r.Price, ")
-       .append("r.HotelID, r.CreatedAt, r.UpdatedAt, r.DeletedAt, r.DeletedBy, r.IsDeleted ")
-       .append("FROM Room r ")
-       .append("INNER JOIN RoomType rt ON rt.RoomTypeID = r.RoomTypeID ")
-       .append("INNER JOIN RoomDetail rd ON rd.RoomDetailID = r.RoomDetailID ")
-       .append("WHERE r.IsDeleted = 0 ");
+            double from, double to,
+            int numberPeople, int roomTypeID,
+            String searchText, String status,
+            String sortBy, boolean isAsc,
+            int pageIndex, int pageSize) {
+        List<Room> list = new ArrayList<>();
+        StringBuilder sql = new StringBuilder();
+        sql.append("SELECT r.RoomID, r.RoomNumber, r.RoomDetailID, r.RoomTypeID, r.Status, r.Price, ")
+                .append("r.HotelID, r.CreatedAt, r.UpdatedAt, r.DeletedAt, r.DeletedBy, r.IsDeleted ")
+                .append("FROM Room r ")
+                .append("INNER JOIN RoomType rt ON rt.RoomTypeID = r.RoomTypeID ")
+                .append("INNER JOIN RoomDetail rd ON rd.RoomDetailID = r.RoomDetailID ")
+                .append("WHERE r.IsDeleted = 0 ");
 
-    List<Object> params = new ArrayList<>();
-    
-    if (roomTypeID != -1) {
-        sql.append("AND r.RoomTypeID = ? ");
-        params.add(roomTypeID);
-    }
-    if (from != -1.0 || to != -1.0) {
-        if (from != -1 && to != -1) {
-            sql.append("AND r.Price BETWEEN ? AND ? ");
-            params.add(from);
-            params.add(to);
-        } else if (from == -1.0) {
-            sql.append("AND r.Price <= ? ");
-            params.add(to);
-        } else if (to == -1) {
-            sql.append("AND r.Price >= ? ");
-            params.add(from);
+        List<Object> params = new ArrayList<>();
+
+        if (roomTypeID != -1) {
+            sql.append("AND r.RoomTypeID = ? ");
+            params.add(roomTypeID);
         }
-    }
-    if (numberPeople != -1) {
-        sql.append("AND rd.MaxGuest >= ? ");
-        params.add(numberPeople);
-    }
-    if (searchText != null && !searchText.trim().isEmpty()) {
-        sql.append("AND (r.RoomNumber LIKE ? OR rd.BedType LIKE ? OR rd.Description LIKE ?) ");
-        String like = "%" + searchText + "%";
-        params.add(like);
-        params.add(like);
-        params.add(like);
-    }
-    if (status != null && !status.equalsIgnoreCase("all")) {
-        sql.append("AND r.Status = ? ");
-        params.add(status);
-    }
-    if (checkin != null || checkout != null) {
-        sql.append("AND r.RoomID NOT IN ( ")
-           .append("SELECT bd.RoomID FROM BookingDetail bd ")
-           .append("INNER JOIN Booking b ON b.BookingID = bd.BookingID ")
-           .append("WHERE 1=1 ");
-        if (checkin != null && checkout != null) {
-            sql.append("AND (? < b.CheckOutDate AND ? > b.CheckInDate) ");
-            params.add(checkin);
-            params.add(checkout);
-        } else if (checkin == null) {
-            sql.append("AND ? > b.CheckInDate ");
-            params.add(checkout);
-        } else if (checkout == null) {
-            sql.append("AND ? < b.CheckOutDate ");
-            params.add(checkin);
-        }
-        sql.append(") ");
-    }
-
-    // Validate and append ORDER BY
-    Set<String> validSortColumns = Set.of("Price", "Area", "RoomNumber");
-    if (sortBy != null && validSortColumns.contains(sortBy)) {
-        sql.append("ORDER BY ").append(sortBy).append(isAsc ? " ASC " : " DESC ");
-    } else {
-        sql.append("ORDER BY r.RoomID ASC "); // default
-    }
-
-    // Pagination
-    sql.append("OFFSET ? ROWS FETCH NEXT ? ROWS ONLY ");
-    params.add((pageIndex - 1) * pageSize); // offset
-    params.add(pageSize); // limit
-
-    try (PreparedStatement stm = connection.prepareStatement(sql.toString())) {
-        for (int i = 0; i < params.size(); i++) {
-            Object param = params.get(i);
-            if (param instanceof Integer) {
-                stm.setInt(i + 1, (Integer) param);
-            } else if (param instanceof Double) {
-                stm.setDouble(i + 1, (Double) param);
-            } else if (param instanceof String) {
-                stm.setString(i + 1, (String) param);
-            } else if (param instanceof Date) {
-                stm.setDate(i + 1, (Date) param);
+        if (from != -1.0 || to != -1.0) {
+            if (from != -1 && to != -1) {
+                sql.append("AND r.Price BETWEEN ? AND ? ");
+                params.add(from);
+                params.add(to);
+            } else if (from == -1.0) {
+                sql.append("AND r.Price <= ? ");
+                params.add(to);
+            } else if (to == -1) {
+                sql.append("AND r.Price >= ? ");
+                params.add(from);
             }
         }
-
-        ResultSet rs = stm.executeQuery();
-        while (rs.next()) {
-            Hotel hotel = new HotelDAO().getHotelByID(rs.getInt("HotelID"));
-            RoomDetail roomDetail = new RoomDetailDAO().getRoomDetailByID(rs.getInt("RoomDetailID"));
-            RoomType roomType = new RoomTypeDAO().getRoomTypeById(rs.getInt("RoomTypeID"));
-
-            list.add(new Room(
-                    rs.getInt("RoomID"),
-                    rs.getString("RoomNumber"),
-                    roomDetail,
-                    roomType,
-                    rs.getString("Status"),
-                    rs.getDouble("Price"),
-                    hotel,
-                    rs.getTimestamp("CreatedAt"),
-                    rs.getTimestamp("UpdatedAt"),
-                    rs.getTimestamp("DeletedAt"),
-                    rs.getInt("DeletedBy"),
-                    rs.getBoolean("IsDeleted")
-            ));
+        if (numberPeople != -1) {
+            sql.append("AND rd.MaxGuest >= ? ");
+            params.add(numberPeople);
+        }
+        if (searchText != null && !searchText.trim().isEmpty()) {
+            sql.append("AND (r.RoomNumber LIKE ? OR rd.BedType LIKE ? OR rd.Description LIKE ?) ");
+            String like = "%" + searchText + "%";
+            params.add(like);
+            params.add(like);
+            params.add(like);
+        }
+        if (status != null && !status.equalsIgnoreCase("all")) {
+            sql.append("AND r.Status = ? ");
+            params.add(status);
+        }
+        if (checkin != null || checkout != null) {
+            sql.append("AND r.RoomID NOT IN ( ")
+                    .append("SELECT bd.RoomID FROM BookingDetail bd ")
+                    .append("INNER JOIN Booking b ON b.BookingID = bd.BookingID ")
+                    .append("WHERE 1=1 ");
+            if (checkin != null && checkout != null) {
+                sql.append("AND (? < b.CheckOutDate AND ? > b.CheckInDate) ");
+                params.add(checkin);
+                params.add(checkout);
+            } else if (checkin == null) {
+                sql.append("AND ? > b.CheckInDate ");
+                params.add(checkout);
+            } else if (checkout == null) {
+                sql.append("AND ? < b.CheckOutDate ");
+                params.add(checkin);
+            }
+            sql.append(") ");
         }
 
-    } catch (SQLException e) {
-        e.printStackTrace();
+        // Validate and append ORDER BY
+        Set<String> validSortColumns = Set.of("Price", "Area", "RoomNumber");
+        if (sortBy != null && validSortColumns.contains(sortBy)) {
+            sql.append("ORDER BY ").append(sortBy).append(isAsc ? " ASC " : " DESC ");
+        } else {
+            sql.append("ORDER BY r.RoomID ASC "); // default
+        }
+
+        // Pagination
+        sql.append("OFFSET ? ROWS FETCH NEXT ? ROWS ONLY ");
+        params.add((pageIndex - 1) * pageSize); // offset
+        params.add(pageSize); // limit
+
+        try (PreparedStatement stm = connection.prepareStatement(sql.toString())) {
+            for (int i = 0; i < params.size(); i++) {
+                Object param = params.get(i);
+                if (param instanceof Integer) {
+                    stm.setInt(i + 1, (Integer) param);
+                } else if (param instanceof Double) {
+                    stm.setDouble(i + 1, (Double) param);
+                } else if (param instanceof String) {
+                    stm.setString(i + 1, (String) param);
+                } else if (param instanceof Date) {
+                    stm.setDate(i + 1, (Date) param);
+                }
+            }
+
+            ResultSet rs = stm.executeQuery();
+            while (rs.next()) {
+                Hotel hotel = new HotelDAO().getHotelByID(rs.getInt("HotelID"));
+                RoomDetail roomDetail = new RoomDetailDAO().getRoomDetailByID(rs.getInt("RoomDetailID"));
+                RoomType roomType = new RoomTypeDAO().getRoomTypeById(rs.getInt("RoomTypeID"));
+
+                list.add(new Room(
+                        rs.getInt("RoomID"),
+                        rs.getString("RoomNumber"),
+                        roomDetail,
+                        roomType,
+                        rs.getString("Status"),
+                        rs.getDouble("Price"),
+                        hotel,
+                        rs.getTimestamp("CreatedAt"),
+                        rs.getTimestamp("UpdatedAt"),
+                        rs.getTimestamp("DeletedAt"),
+                        rs.getInt("DeletedBy"),
+                        rs.getBoolean("IsDeleted")
+                ));
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return list;
     }
-
-    return list;
-}
-
 
     public Room getRoomByRoomID(int id) {
         String sql = "select * from Room where RoomID =?";
@@ -367,19 +400,40 @@ public class RoomDAO extends DBContext {
         return false;
     }
 
-    public static void main(String[] args) {
-//        List<Room> list = new dao.RoomDAO().getListRoom(null, null, -1, -1, -1, 1);
-//        for (Room room : list) {
-//            System.out.println(room.getRoomTypeID());
-//        }
-        System.out.println(new dao.RoomDAO().getRoomByRoomID(5).getPrice());
-        Room room = new Room(1, "hieu", new RoomDetail(1, "hieu", 123, 12, "Anh hhieu dep trai"), new dao.RoomTypeDAO().getRoomTypeById(1), "Available", 200);
-        boolean a = new dao.RoomDAO().updateRoom(room);
-        if(a){
-            System.out.println("asfljahsfg");
-        }else{
-            System.out.println("kajgb");
+    public boolean updateDeleteRoom(int roomid, int deleteBy, boolean isDeleted) {
+        String sql = "UPDATE Room\n"
+                + "SET IsDeleted = ?,\n"
+                + "    DeletedAt = GETDATE(),\n"
+                + "    DeletedBy = ?\n"
+                + "WHERE RoomID = ?";
+        try {
+            PreparedStatement pre = connection.prepareStatement(sql);
+            pre.setBoolean(1, isDeleted);
+            pre.setInt(2, deleteBy);
+            pre.setInt(3, roomid);
+            return pre.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println(e);
         }
+        return false;
+    }
+
+    public static void main(String[] args) {
+        List<Room> list = new dao.RoomDAO().getListRoom(null, null, 0, 4400, 1, -1, "", "Available", "r.RoomID", true, 0, 10, false);
+        for (Room room : list) {
+            System.out.println(room.getRoomTypeID());
+        }
+//        System.out.println(new dao.RoomDAO().getRoomByRoomID(5).getPrice());
+//        Room room = new Room(1, "hieu", new RoomDetail(1, "hieu", 123, 12, "Anh hhieu dep trai"), new dao.RoomTypeDAO().getRoomTypeById(1), "Available", 200);
+//        boolean a = new dao.RoomDAO().updateRoom(room);
+//        if (a) {
+//            System.out.println("asfljahsfg");
+//        } else {
+//            System.out.println("kajgb");
+//        }
+//        if (new dao.RoomDAO().updateDeleteRoom(1, 1, true)) {
+//            System.out.println("afjkbnsg ");
+//        }
     }
 
 }
