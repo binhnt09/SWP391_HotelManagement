@@ -7,7 +7,6 @@ package controller;
 import constant.MailUtil;
 import dao.AuthenticationDAO;
 import entity.Authentication;
-import entity.GoogleAccount;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -15,7 +14,6 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.logging.Level;
@@ -84,9 +82,40 @@ public class changePasswordServlet extends HttpServlet {
 
         if ("changePassword".equals(action)) {
             changePassword(request, response);
+        } else if("changePasswordInProfile".equals(action)){
+            changePasswordInProfile(request, response);
         }
     }
 
+    public void changePasswordInProfile(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        Authentication authLocal = (Authentication) request.getSession().getAttribute("authLocal");
+
+        int userId = -1;
+
+        userId = authLocal.getUserID();
+
+        // Nếu không tìm thấy user hợp lệ
+        if (userId == -1) {
+            response.sendRedirect("loadtohome");
+            return;
+        }
+
+        // Lấy mật khẩu từ form
+        String oldPassword = request.getParameter("currentPassword");
+        String newPassword = request.getParameter("pass");
+
+        AuthenticationDAO dao = new AuthenticationDAO();
+        boolean success = success = dao.changePassword(userId, oldPassword, newPassword);
+        
+        if (success) {
+            request.setAttribute("success", "Đổi mật khẩu thành công!");
+        } else {
+            request.setAttribute("error", "Mật khẩu hiện tại không đúng.");
+        }
+        request.setAttribute("openTab", "#password-security");
+        request.getRequestDispatcher("profile.jsp").forward(request, response);
+    }
+    
     public void changePassword(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Authentication authLocal = (Authentication) request.getSession().getAttribute("authLocal");
 
@@ -170,133 +199,6 @@ public class changePasswordServlet extends HttpServlet {
 //        request.setAttribute("openModal", "#changePassword-modal");
 //        request.getRequestDispatcher("home.jsp").forward(request, response);
 //    }
-    public void completeChangePassword(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String emailfg = (String) request.getSession().getAttribute("emailforgot");
-        String pass = request.getParameter("pass");
-
-        if (emailfg == null) {
-            request.setAttribute("error", "Không tìm thấy email cần xác minh.");
-            request.setAttribute("openModal", "#forgot-password-modal");
-            request.getRequestDispatcher("home.jsp").forward(request, response);
-            return;
-        }
-
-        try {
-            AuthenticationDAO dao = new AuthenticationDAO();
-            if (!dao.existEmail(emailfg)) {
-                request.setAttribute("error", "Email này chưa được đăng ký.");
-                request.setAttribute("openModal", "#completeForgotPassword-modal");
-                request.getRequestDispatcher("home.jsp").forward(request, response);
-                return;
-            }
-
-            dao.resetPasswordByEmail(emailfg, pass);
-            request.getSession().removeAttribute("expiredAt");
-            request.getSession().removeAttribute("emailforgot");
-
-            request.setAttribute("success", "Reset password thành công! Mời bạn đăng nhập.");
-            request.setAttribute("openModal", "#login-modal");
-            request.getRequestDispatcher("home.jsp").forward(request, response);
-        } catch (Exception ex) {
-            Logger.getLogger(LoginAccountServlet.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
-    public void verifyEmailChangePassword(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String emailfg = request.getParameter("emailfg");
-        request.getSession().setAttribute("emailforgot", emailfg);
-
-        Timestamp expiredAt = (Timestamp) request.getSession().getAttribute("expiredAt");
-        if (expiredAt == null || expiredAt.before(new Timestamp(System.currentTimeMillis()))) {
-            // Chỉ gửi mã nếu chưa có hoặc đã hết hạn
-            generateAndSendVerificationCode(emailfg);
-            // Đặt lại thời gian hết hạn mới
-            Timestamp newExpired = Timestamp.valueOf(LocalDateTime.now().plusSeconds(20));
-            request.getSession().setAttribute("expiredAt", newExpired);
-        } else {
-            System.out.println("Mã vẫn còn hiệu lực, không gửi lại.");
-        }
-
-        request.setAttribute("openModal", "#enterVerifyCodeForgot-modal");
-        request.getRequestDispatcher("home.jsp").forward(request, response);
-    }
-
-    public void verifyCodeChange(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String emailfg = (String) request.getSession().getAttribute("emailforgot");
-        String codefg = request.getParameter("codefg");
-
-        if (emailfg == null) {
-            request.setAttribute("error", "Không tìm thấy email cần xác minh.");
-            request.setAttribute("openModal", "#forgot-password-modal");
-            request.getRequestDispatcher("home.jsp").forward(request, response);
-            return;
-        }
-
-        try {
-            AuthenticationDAO dao = new AuthenticationDAO();
-            if (!dao.existEmail(emailfg)) {
-                request.setAttribute("error", "Email này chưa được đăng ký.");
-                request.setAttribute("openModal", "#forgot-password-modal");
-                request.getRequestDispatcher("home.jsp").forward(request, response);
-                return;
-            }
-
-            boolean validCode = dao.verifyCode(emailfg, codefg);
-
-            if (validCode) {
-                request.setAttribute("openModal", "#completeForgotPassword-modal");
-            } else {
-                request.setAttribute("error", "Mã xác minh không hợp lệ hoặc đã hết hạn.");
-                request.setAttribute("openModal", "#enterVerifyCodeForgot-modal");
-            }
-
-            request.getRequestDispatcher("home.jsp").forward(request, response);
-        } catch (Exception e) {
-            throw new ServletException("Lỗi xử lý xác minh mã", e);
-        }
-    }
-
-    public void resendVerifyCodeChange(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String emailrs = (String) request.getSession().getAttribute("emailforgot");
-        if (emailrs == null) {
-            request.setAttribute("error", "Không tìm thấy email cần xác minh.");
-            request.setAttribute("openModal", "#forgot-password-modal");
-            request.getRequestDispatcher("home.jsp").forward(request, response);
-            return;
-        }
-
-        Timestamp expiredAt = (Timestamp) request.getSession().getAttribute("expiredAt");
-        if (expiredAt != null && expiredAt.after(new Timestamp(System.currentTimeMillis()))) {
-            System.out.println("Mã đã được gửi trước đó, chưa hết hạn.");
-        } else {
-//            request.getSession().removeAttribute("expiredAt");
-            generateAndSendVerificationCode(emailrs);
-
-            Timestamp newExpired = Timestamp.valueOf(LocalDateTime.now().plusSeconds(20));
-            request.getSession().setAttribute("expiredAt", newExpired);
-        }
-
-        request.setAttribute("success", "Mã mới đã được gửi đến email của bạn.");
-        request.setAttribute("openModal", "#enterVerifyCodeForgot-modal");
-//        request.setAttribute("openModalRegister", "#register-modal");
-        request.getRequestDispatcher("home.jsp").forward(request, response);
-    }
-
-    private String generateAndSendVerificationCode(String emailvrf) throws ServletException {
-        String code = String.valueOf((int) (Math.random() * 900000 + 100000));
-        try {
-            AuthenticationDAO dao = new AuthenticationDAO();
-            dao.invalidateOldCodes(emailvrf); // Hủy mã cũ chưa dùng
-            dao.insertVerification(emailvrf, code); // Ghi mã mới
-
-            // Gửi email thật
-            MailUtil.send(emailvrf, code);
-            System.out.println("Gửi mã đến email: " + emailvrf + ", mã: " + code);
-            return code;
-        } catch (Exception e) {
-            throw new ServletException("Lỗi gửi mã xác minh", e);
-        }
-    }
 
     /**
      * Returns a short description of the servlet.

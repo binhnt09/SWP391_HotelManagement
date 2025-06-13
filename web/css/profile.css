@@ -347,6 +347,33 @@ body {
     color: #bbb;
 }
 
+.password-toggle {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.password-toggle input {
+    padding-right: 40px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.toggle-icon {
+    position: absolute;
+    right: 15px;
+    top: 7px;
+    cursor: pointer;
+    user-select: none;
+    color: #888;
+    transition: color 0.2s ease;
+}
+
+.toggle-icon:hover {
+    color: #333;
+}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
     .sidebar-card {

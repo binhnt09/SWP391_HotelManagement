@@ -141,7 +141,7 @@
                                                                         </ul>
                                                                     </div>
                                                                     <div class="copyright-text">
-                                                                        <p class="m-0 yellow-color" >©2025 <a href="#!" class="yellow-color">Palatin.com</a> all right reserved, made with <i class="fa fa-heart"></i> by Themes Studio </p>
+                                                                        <p class="m-0 yellow-color" >©2025 <a href="#!" class="yellow-color">Palatin.com</a> all right reserved </p>
                                                                     </div>
                                                                 </div>
                                                                 <!-- leftside-content - end -->
@@ -173,7 +173,7 @@
                                                                         <form action="loginaccount" method="post">
                                                                             <input type="hidden" name="action" value="login"/>
                                                                             <div class="form-item">
-                                                                                <input type="email" name="email" value="${emailLogin}" placeholder="example@gmail.com">
+                                                                                <input type="email" name="email" value="${param.email}" placeholder="example@gmail.com">
                                                                             </div>
                                                                             <c:if test="${not empty param.loginError}">
                                                                                 <script>
@@ -283,7 +283,7 @@
                                                                 </ul>
                                                             </div>
                                                             <div class="copyright-text">
-                                                                <p class="m-0 yellow-color">©2025 <a href="#!">Palatin.com</a> all right reserved, made with <i class="fa fa-heart"></i> by Themes Studio </p>
+                                                                <p class="m-0 yellow-color">©2025 <a href="#!">Palatin.com</a> all right reserved </p>
                                                             </div>
                                                         </div>
                                                         <!-- leftside-content - end -->
@@ -358,7 +358,7 @@
                                                                 </ul>
                                                             </div>
                                                             <div class="copyright-text">
-                                                                <p class="m-0 yellow-color">©2025 <a href="#!">Palatin.com</a> all right reserved, made with <i class="fa fa-heart"></i> by Themes Studio </p>
+                                                                <p class="m-0 yellow-color">©2025 <a href="#!">Palatin.com</a> all right reserved </p>
                                                             </div>
                                                         </div>
                                                         <!-- leftside-content - end -->
@@ -450,7 +450,7 @@
                                                                 </ul>
                                                             </div>
                                                             <div class="copyright-text">
-                                                                <p class="m-0 yellow-color">©2025 <a href="#!">Palatin.com</a> all right reserved, made with <i class="fa fa-heart"></i> by Themes Studio </p>
+                                                                <p class="m-0 yellow-color">©2025 <a href="#!">Palatin.com</a> all right reserved </p>
                                                             </div>
                                                         </div>
                                                         <!-- leftside-content - end -->
@@ -516,7 +516,7 @@
                                                                 </ul>
                                                             </div>
                                                             <div class="copyright-text">
-                                                                <p class="m-0 yellow-color">©2025 <a href="#!">Palatin.com</a> all right reserved, made with <i class="fa fa-heart"></i> by Themes Studio </p>
+                                                                <p class="m-0 yellow-color">©2025 <a href="#!">Palatin.com</a> all right reserved </p>
                                                             </div>
                                                         </div>
                                                         <!-- leftside-content - end -->
@@ -582,10 +582,10 @@
                                                         </script>
                                                     </c:if>
                                                     <!--báo lỗi-->
-                                                    <c:if test="${not empty error}">
+                                                    <c:if test="${not empty errorfg}">
                                                         <div class="alert alert-danger" style="margin-bottom: 0px">
                                                             <i class="fa fa-exclamation-triangle" style="margin-right: 8px;"></i>
-                                                            ${error}
+                                                            ${errorfg}
                                                         </div>
                                                     </c:if>
                                                 </div>
@@ -674,10 +674,10 @@
                                                                 <span class="form-subtitle white-color">Enter your email to reset password</span>
                                                             </div>
 
-                                                            <c:if test="${not empty error}">
+                                                            <c:if test="${not empty errorfg}">
                                                                 <div class="alert alert-danger" style="margin-bottom: 10px">
                                                                     <i class="fa fa-exclamation-triangle" style="margin-right: 8px;"></i>
-                                                                    ${error}
+                                                                    ${errorfg}
                                                                 </div>
                                                             </c:if>
                                                             <div class="login-form text-center mb-50">
@@ -685,8 +685,6 @@
                                                                     <input type="hidden" name="action" value="verifyEmailForgotPassword"/>
                                                                     <div class="form-item">
                                                                         <input type="email" name="emailfg" placeholder="Your registered email" required>
-                                                                        <!--                                                                        pattern="^[a-zA-Z0-9._%+-]+@(gmail\.com|fpt\.edu\.vn)$"
-                                                                                                                                                title="Email phải kết thúc bằng @gmail.com hoặc @fpt.edu.vn"-->
                                                                     </div>
                                                                     <!--recaptcha-->
                                                                     <div style="margin: 10px;" id="forgot-captcha"></div>
@@ -740,7 +738,7 @@
                                                                 <form id="formChange-password" action="changeassword" method="post">
                                                                     <input type="hidden" name="action" value="changePassword"/>
                                                                     <div class="form-item">
-                                                                        <input type="email" value="${sessionScope.authLocal.email}" readonly>
+                                                                        <input type="email" value="${sessionScope.authLocal.user.email}" readonly>
                                                                     </div>
                                                                     <div class="form-item password-toggle">
                                                                         <input type="password" name="currentPassword" placeholder="Current Password" id="passCurrent" required 
@@ -758,7 +756,7 @@
                                                                     <div class="form-item password-toggle">
                                                                         <input type="password" placeholder="Confirm New Password" name="repass" id="repassChange" required>
                                                                         <i class="material-icons toggle-icon toggle-password" toggle="#repassChange">remove_red_eye</i>
-                                                                        <small id="repassch-error" style="color: red; display: none;">Mật khẩu nhập lại không khớp.</small>
+                                                                        <small id="repassch-error" style="color: orangered; display: none;">Mật khẩu nhập lại không khớp.</small>
                                                                     </div>
                                                                     <button type="submit" class="login-btn">Update Password</button>
                                                                 </form>

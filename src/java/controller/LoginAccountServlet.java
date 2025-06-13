@@ -101,15 +101,12 @@ public class LoginAccountServlet extends HttpServlet {
         String pass = request.getParameter("pass");
         String remember = request.getParameter("remember");
 
-//        String loginErr = null;
         AuthenticationDAO dao = new AuthenticationDAO();
         boolean isValid = dao.isValidLogin(email, pass);
 
         if (!dao.existEmail(email)) {
-//            loginErr = "Email not registered account";
             response.sendRedirect("home.jsp?loginError=EmailNotExist&email=" + URLEncoder.encode(email, "UTF-8"));
         } else if (!isValid) {
-//            loginErr = "Wrong email or password";
             response.sendRedirect("home.jsp?loginError=WrongPassword&email=" + URLEncoder.encode(email, "UTF-8"));
         } else {
             HttpSession session = request.getSession();
@@ -118,7 +115,7 @@ public class LoginAccountServlet extends HttpServlet {
 
             if ("on".equals(remember)) {
                 Cookie ck = new Cookie("email", email);
-                ck.setMaxAge(60 * 60 * 24 * 7); // 7 ngày
+                ck.setMaxAge(60 * 60 * 24 * 7);
 //                session.setMaxInactiveInterval(100);
                 session.setAttribute("emailLogin", email);
                 response.addCookie(ck);
@@ -158,9 +155,7 @@ public class LoginAccountServlet extends HttpServlet {
             System.out.println("Mã vẫn còn hiệu lực, không gửi lại.");
         }
 
-        // Lưu email để dùng trong bước xác minh
         request.setAttribute("openModal", "#enterVerifyCode-modal");
-//        request.setAttribute("openModalRegister", "#register-modal");
         request.getRequestDispatcher("home.jsp").forward(request, response);
     }
 
@@ -177,7 +172,6 @@ public class LoginAccountServlet extends HttpServlet {
         if (expiredAt != null && expiredAt.after(new Timestamp(System.currentTimeMillis()))) {
             System.out.println("Mã đã được gửi trước đó, chưa hết hạn.");
         } else {
-//            request.getSession().removeAttribute("expiredAt");
             generateAndSendVerificationCode(emailrs);
 
             Timestamp newExpired = Timestamp.valueOf(LocalDateTime.now().plusSeconds(60));
@@ -186,7 +180,6 @@ public class LoginAccountServlet extends HttpServlet {
 
         request.setAttribute("success", "Mã mới đã được gửi đến email của bạn.");
         request.setAttribute("openModal", "#enterVerifyCode-modal");
-//        request.setAttribute("openModalRegister", "#register-modal");
         request.getRequestDispatcher("home.jsp").forward(request, response);
     }
 
@@ -194,13 +187,10 @@ public class LoginAccountServlet extends HttpServlet {
         String code = String.valueOf((int) (Math.random() * 900000 + 100000));
         try {
             AuthenticationDAO dao = new AuthenticationDAO();
-//            Timestamp expiredAt = Timestamp.valueOf(LocalDateTime.now().plusSeconds(20));
             dao.invalidateOldCodes(emailvrf); // Hủy mã cũ chưa dùng
             dao.insertVerification(emailvrf, code); // Ghi mã mới
 
-            // Gửi email thật
             MailUtil.send(emailvrf, code);
-            System.out.println("Gửi mã đến email: " + emailvrf + ", mã: " + code);
             return code;
         } catch (Exception e) {
             throw new ServletException("Lỗi gửi mã xác minh", e);
