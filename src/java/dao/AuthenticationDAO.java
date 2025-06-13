@@ -6,8 +6,8 @@ package dao;
 
 import dal.DBContext;
 import entity.Authentication;
+import entity.User;
 import java.sql.Statement;
-import java.sql.Timestamp;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -55,25 +55,47 @@ public class AuthenticationDAO extends DBContext {
     }
 
     public Authentication login(String email) {
-        String sql = "SELECT a.AuthenticationID, a.UserID, u.Email, a.Password, a.AuthType  "
-                + "FROM Authentication a "
-                + "JOIN [User] u ON a.UserID = u.UserID "
-                + "WHERE u.Email = ? AND a.AuthType = 'local' AND a.IsDeleted = 0 AND u.IsDeleted = 0";
+        String sql = "SELECT a.AuthenticationID, a.UserKey, a.Password, a.AuthType, a.CreatedAt, a.UpdatedAt, a.DeletedAt, a.DeletedBy, a.IsDeleted,  "
+                + " u.UserID, u.FirstName, u.LastName, u.Email, u.Phone, u.Address, u.CreatedAt, u.UpdatedAt, u.DeletedAt, u.DeletedBy, u.IsDeleted, u.IsVerifiedEmail, u.UserRoleID "
+                + " FROM Authentication a "
+                + " JOIN [User] u ON a.UserID = u.UserID"
+                + " WHERE u.Email = ? AND a.AuthType = 'local' AND a.IsDeleted = 0 AND u.IsDeleted = 0";
 
         try (PreparedStatement stm = connection.prepareStatement(sql)) {
             stm.setString(1, email);
             ResultSet rs = stm.executeQuery();
 
             if (rs.next()) {
-                return new Authentication(
-                        rs.getInt("AuthenticationID"),
+                User user = new User(
                         rs.getInt("UserID"),
+                        rs.getString("FirstName"),
+                        rs.getString("LastName"),
                         rs.getString("Email"),
-                        null, // UserKey không cần dùng ở đây
-                        rs.getString("Password"),
-                        null, // AuthType
-                        null, null, null, null, false // Bỏ các trường không cần
+                        rs.getString("Phone"),
+                        rs.getString("Address"),
+                        rs.getTimestamp("CreatedAt"),
+                        rs.getTimestamp("UpdatedAt"),
+                        rs.getTimestamp("DeletedAt"),
+                        (Integer) rs.getObject("DeletedBy"),
+                        rs.getBoolean("IsDeleted"),
+                        rs.getBoolean("IsVerifiedEmail"),
+                        rs.getInt("UserRoleID")
                 );
+
+                Authentication auth = new Authentication(
+                        rs.getInt("AuthenticationID"),
+                        null,
+                        rs.getString("Password"),
+                        null,
+                        rs.getTimestamp("CreatedAt"),
+                        rs.getTimestamp("UpdatedAt"),
+                        rs.getTimestamp("DeletedAt"),
+                        (Integer) rs.getObject("DeletedBy"),
+                        rs.getBoolean("IsDeleted"),
+                        user
+                );
+
+                return auth;
             }
 
         } catch (SQLException e) {
@@ -114,30 +136,15 @@ public class AuthenticationDAO extends DBContext {
         }
     }
 
-//    public void insertVerification1(String email, String code, Timestamp expiredAt) throws Exception {
-//        String sql = "INSERT INTO EmailVerification (Email, Code, ExpiredAt) VALUES (?, ?, ?)";
-//        try (PreparedStatement ps = connection.prepareStatement(sql)) {
-//            ps.setString(1, email);
-//            ps.setString(2, code);
-//            ps.setTimestamp(3, expiredAt);
-//            ps.executeUpdate();
-//        }
-//    }
     public boolean verifyCode(String email, String code) {
         String sql = "SELECT VerificationID FROM EmailVerification WHERE Email = ? AND Code = ? AND IsUsed = 0 AND ExpiredAt > GETDATE()";
-//        String sql = "SELECT VerificationID, ExpiredAt FROM EmailVerification WHERE Email =  ? AND  Code =  ? AND  IsUsed = 0";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, email);
             ps.setString(2, code);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-//                Timestamp expiredAt = rs.getTimestamp("ExpiredAt");
-//                Timestamp now = new Timestamp(System.currentTimeMillis());
-
-//                if (expiredAt.after(now)) {
                 markUsed(rs.getInt("VerificationID"));
                 return true;
-//                }
             }
         } catch (SQLException e) {
             Logger.getLogger(AuthenticationDAO.class.getName()).log(Level.SEVERE, null, e);
@@ -223,7 +230,6 @@ public class AuthenticationDAO extends DBContext {
 //            return false;
 //        }
 //    }
-
     public void invalidateOldCodes(String email) {
         String sql = "UPDATE EmailVerification SET IsUsed = 1 WHERE Email = ? AND IsUsed = 0";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
@@ -295,15 +301,11 @@ public class AuthenticationDAO extends DBContext {
         } catch (SQLException e) {
             Logger.getLogger(AuthenticationDAO.class.getName()).log(Level.SEVERE, null, e);
         }
-        return -1; // Không tìm thấy
+        return -1;
     }
 
     public static void main(String[] args) {
-//        String rawPassword = "123456";
-//        String hashed = BCrypt.hashpw(rawPassword, BCrypt.gensalt(12));
-//        System.out.println("Mã hóa: " + hashed);
         AuthenticationDAO dao = new AuthenticationDAO();
-//        dao.hashAllPlaintextPasswords();
 
         String email = "admin@gmail.com";
         String rawPassword = "123456";

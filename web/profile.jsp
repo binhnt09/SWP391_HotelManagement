@@ -5,6 +5,7 @@
 --%>
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html lang="en">
@@ -17,17 +18,10 @@
 
         <link rel="stylesheet" href="css/profile.css">
 
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
         <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-        <script src="https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit" async defer></script>
-
-        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/style.css">
-
-        <!-- Bootstrap JS (include jQuery + Popper nếu dùng Bootstrap 4) -->
-        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
     </head>
 
     <body>
@@ -50,8 +44,9 @@
                             <span class="me-3">Khuyến mãi</span>
                             <span class="me-3">Hỗ trợ</span>
                             <div class="user-avatar dropdown">
-                                <a class="nav-link" href="#" id="userDropdown" role="button"
+                                <a class="nav-link" style="color: white" href="#" id="userDropdown" role="button"
                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    ${fn:substring(sessionScope.authLocal.user.email, 0, 1)}
                                     <!--<i class="fa fa-user"></i>-->
                                 </a>
                                 <div class="dropdown-menu dropdown-menu-right shadow border-0" aria-labelledby="userDropdown" style="min-width: 250px; margin-top: 18px">
@@ -69,12 +64,6 @@
                                         <i class="fa fa-credit-card mr-2 text-primary"></i> Payment
                                     </a>
 
-                                    <c:if test="${not empty sessionScope.authLocal}">
-                                        <a href="#changePassword-modal" class="dropdown-item switch-modal">
-                                            <i class="fa fa-lock mr-2 text-primary"></i> Change your password
-                                        </a>
-                                    </c:if>
-
                                     <div class="dropdown-divider"></div>
 
                                     <form action="logingoogle" method="post" style="margin: 0;">
@@ -90,7 +79,6 @@
                 </div>
             </div>
         </header>
-                            <jsp:include page="common/changePassword.jsp"></jsp:include>
 
         <div class="container-fluid mt-4">
             <div class="row">
@@ -98,8 +86,13 @@
                 <div class="col-lg-3 col-md-4 mb-4">
                     <div class="card sidebar-card">
                         <div class="profile-section">
-                            <div class="profile-avatar">N</div>
-                            <h6 class="mb-2">ntb</h6>
+                            <c:if test="${sessionScope.authGoogle != null}">
+                                <div class="profile-avatar">${fn:substring(sessionScope.authGoogle.email, 0, 1)}</div>
+                            </c:if>
+                            <c:if test="${sessionScope.authLocal != null}">
+                                <div class="profile-avatar">${fn:substring(sessionScope.authLocal.user.email, 0, 1)}</div>
+                                <h6 class="mb-2">${sessionScope.authLocal.user.lastName}</h6>
+                            </c:if>
                             <div class="profile-status">Bạn là thành viên Bronze Priority</div>
                         </div>
                         <div class="list-group list-group-flush sidebar-menu">
@@ -140,13 +133,15 @@
                             <h2 class="mb-3">Cài đặt</h2>
                             <ul class="nav nav-tabs" id="accountTabs" role="tablist">
                                 <li class="nav-item" role="presentation">
-                                    <button class="nav-link active" id="account-info-tab" data-bs-toggle="tab"
+                                    <button class="nav-link ${empty openTab || openTab == '#account-info' ? 'active' : ''}"
+                                            id="account-info-tab" data-bs-toggle="tab"
                                             data-bs-target="#account-info" type="button" role="tab">
                                         Thông tin tài khoản
                                     </button>
                                 </li>
                                 <li class="nav-item" role="presentation">
-                                    <button class="nav-link" id="password-security-tab" data-bs-toggle="tab"
+                                    <button class="nav-link ${openTab == '#password-security' ? 'active' : ''}" 
+                                            id="password-security-tab" data-bs-toggle="tab"
                                             data-bs-target="#password-security" type="button" role="tab">
                                         Mật khẩu & Bảo mật
                                     </button>
@@ -156,17 +151,20 @@
 
                         <div class="tab-content p-4" id="accountTabsContent">
                             <!-- Account Info Tab -->
-                            <div class="tab-pane fade show active" id="account-info" role="tabpanel">
+                            <div class="tab-pane fade ${empty openTab || openTab == '#account-info' ? 'show active' : ''}" id="account-info" role="tabpanel">
                                 <form id="account-form">
                                     <!-- Personal Data Section -->
                                     <div class="mb-5">
                                         <h5 class="mb-3">Dữ liệu cá nhân</h5>
 
                                         <div class="row mb-3">
-                                            <div class="col-12">
-                                                <label for="fullName" class="form-label">Tên đầy đủ</label>
-                                                <input type="text" class="form-control" id="fullName" value="ntb" required>
-                                                <div class="form-text">Tên trong hộ sơ được rút ngắn từ họ tên của bạn.</div>
+                                            <div class="col-6">
+                                                <label for="firstName" class="form-label">First Name</label>
+                                                <input type="text" class="form-control" id="firstName" value="${sessionScope.authLocal.user.firstName}" required>
+                                            </div>
+                                            <div class="col-6">
+                                                <label for="lastName" class="form-label">Last Name</label>
+                                                <input type="text" class="form-control" id="fullName" value="${sessionScope.authLocal.user.lastName}" required>
                                             </div>
                                         </div>
 
@@ -219,7 +217,7 @@
                                                         <span>${sessionScope.authGoogle.email}</span>
                                                     </c:if>
                                                     <c:if test="${sessionScope.authLocal != null}">
-                                                        <span>${sessionScope.authLocal.email}</span>
+                                                        <span>${sessionScope.authLocal.user.email}</span>
                                                     </c:if>
                                                     <span class="verified-badge">Đã kích hoạt</span>
                                                 </div>
@@ -264,39 +262,72 @@
                             </div>
 
                             <!-- Password & Security Tab -->
-                            <div class="tab-pane fade" id="password-security" role="tabpanel">
-                                <form class="password-form">
-                                    <div class="mb-4">
-                                        <h5 class="mb-3">Đổi mật khẩu</h5>
+                            <div class="tab-pane fade ${openTab == '#password-security' ? 'show active' : ''}" id="password-security" role="tabpanel">
+                                <c:if test="${not empty sessionScope.authLocal}">
+                                    <form id="formChange-password-profile" action="changeassword" method="post" class="password-form">
+                                        <input type="hidden" name="action" value="changePasswordInProfile"/>
+                                        <div class="mb-4">
+                                            <h5 class="mb-3">Đổi mật khẩu</h5>
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <label for="passCurrent" class="form-label">Mật khẩu hiện tại</label>
+                                                    <div class="mb-3 password-toggle">
+                                                        <input type="password" class="form-control" name="currentPassword" value="${param.currentPassword}" placeholder="Current Password" id="passCurrent" required 
+                                                               pattern ="(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}" 
+                                                               title="Mật khẩu phải có ít nhất 6 ký tự, bao gồm chữ hoa, chữ thường, số và ký tự đặc biệt.">
+                                                        <i class="material-icons toggle-icon toggle-password" toggle="#passCurrent">remove_red_eye</i>
+                                                    </div>
 
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                                <div class="mb-3">
-                                                    <label for="currentPassword" class="form-label">Mật khẩu hiện tại</label>
-                                                    <input type="password" class="form-control" id="currentPassword" required>
-                                                </div>
+                                                    <label for="newpassChange" class="form-label">Mật khẩu mới</label>
+                                                    <div class="mb-3 password-toggle">
+                                                        <input type="password" class="form-control" placeholder="New Password" name="pass" value="${param.pass}" id="newpassChange" required 
+                                                               pattern ="(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}" 
+                                                               title="Mật khẩu phải có ít nhất 6 ký tự, bao gồm chữ hoa, chữ thường, số và ký tự đặc biệt.">
+                                                        <i class="material-icons toggle-icon toggle-password" toggle="#newpassChange">remove_red_eye</i>
+                                                        <small id="newpass-error" style="color: red; margin-top: 10px; display: none"></small>
+                                                    </div>
 
-                                                <div class="mb-3">
-                                                    <label for="newPassword" class="form-label">Mật khẩu mới</label>
-                                                    <input type="password" class="form-control" id="newPassword" required>
-                                                </div>
-
-                                                <div class="mb-3">
-                                                    <label for="confirmPassword" class="form-label">Xác nhận mật khẩu mới</label>
-                                                    <input type="password" class="form-control" id="confirmPassword" required>
+                                                    <label for="repassChange" class="form-label">Xác nhận mật khẩu mới</label>
+                                                    <div class="mb-3 password-toggle">
+                                                        <input type="password" class="form-control" placeholder="Confirm New Password" name="repass" value="${param.repass}" id="repassChange" required>
+                                                        <i class="material-icons toggle-icon toggle-password" toggle="#repassChange">remove_red_eye</i>
+                                                        <small id="repassch-error-profile" style="color: red; display: none;">Mật khẩu nhập lại không khớp.</small>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
 
-                                    <button type="submit" class="btn btn-primary">Cập nhật mật khẩu</button>
-                                </form>
+                                        <button type="submit" class="btn btn-primary">Cập nhật mật khẩu</button>
+                                    </form>
+                                </c:if>
+
+                                <c:if test="${not empty success}">
+                                    <div class="alert alert-success d-flex align-items-center" style="margin-bottom: 0px">
+                                        <i class="fa fa-check" aria-hidden="true" style="margin-right: 8px;"></i>
+                                        ${success}
+                                    </div>
+                                </c:if>
+                                <c:if test="${not empty error}">
+                                    <div class="alert alert-danger" style="margin-bottom: 10px">
+                                        <i class="fa fa-exclamation-triangle" style="margin-right: 8px;"></i>
+                                        ${error}
+                                    </div>
+                                </c:if>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+        <c:if test="${not empty openTab}">
+            <script>
+                document.addEventListener("DOMContentLoaded", function () {
+                    const el = document.querySelector(`button[data-bs-target='${openTab}']`);
+                    if (el)
+                        new bootstrap.Tab(el).show();
+                });
+            </script>
+        </c:if>
 
         <!-- Footer -->
         <footer class="palatin-footer">
@@ -353,18 +384,7 @@
                 </div>
             </div>
         </footer>
-<script src="js/jquery/jquery-2.2.4.min.js"></script>
-        <!--Popper js--> 
-        <script src="js/bootstrap/popper.min.js"></script>
-        <!--Bootstrap js--> 
-        <script src="js/bootstrap/bootstrap.min.js"></script>
-        <!--All Plugins js--> 
-        <script src="js/plugins/plugins.js"></script>
-        <!--Active js--> 
-        <script src="js/active.js"></script>
-        <!----login js---->
-        <script src="js/authentication.js"></script>
-            
+
         <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
         <!-- jQuery (vì Bootstrap 4 phụ thuộc) -->
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -376,5 +396,6 @@
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
         <script src="js/profile.js"></script>
+        <script src="js/authentication.js"></script>
     </body>
 </html>

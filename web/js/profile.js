@@ -11,7 +11,10 @@ function getDaysInMonth(month, year) {
     switch (month) {
         case 2:
             return isLeapYear(year) ? 29 : 28;
-        case 4: case 6: case 9: case 11:
+        case 4:
+        case 6:
+        case 9:
+        case 11:
             return 30;
         default:
             return 31;
@@ -77,3 +80,32 @@ function initializeDateDropdowns() {
 }
 
 document.addEventListener('DOMContentLoaded', initializeDateDropdowns);
+
+
+document.addEventListener("DOMContentLoaded", function () {
+    var form = document.getElementById("formChange-password-profile");
+
+    console.log("form =", form);
+
+    if (form) {
+        var newPass = document.getElementById("newpassChange");
+
+        var rePass = document.getElementById("repassChange");
+
+        var errorMsg = document.getElementById("repassch-error-profile");
+
+        console.log("newPass =", newPass);
+        console.log("rePass =", rePass);
+        console.log("errorMsg =", errorMsg);
+
+        form.addEventListener("submit", function (e) {
+            if (newPass.value.trim() !== rePass.value.trim()) {
+                e.preventDefault();
+                errorMsg.style.display = "block";
+                errorMsg.textContent = "Mật khẩu nhập lại không khớp.";
+            } else {
+                errorMsg.style.display = "none";
+            }
+        });
+    }
+});

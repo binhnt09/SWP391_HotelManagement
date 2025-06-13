@@ -92,7 +92,7 @@ public class ForgotPasswordServlet extends HttpServlet {
         String pass = request.getParameter("pass");
 
         if (emailfg == null) {
-            request.setAttribute("error", "Không tìm thấy email cần xác minh.");
+            request.setAttribute("errorfg", "Không tìm thấy email cần xác minh.");
             request.setAttribute("openModal", "#forgot-password-modal");
             request.getRequestDispatcher("home.jsp").forward(request, response);
             return;
@@ -101,7 +101,7 @@ public class ForgotPasswordServlet extends HttpServlet {
         try {
             AuthenticationDAO dao = new AuthenticationDAO();
             if (!dao.existEmail(emailfg)) {
-                request.setAttribute("error", "Email này chưa được đăng ký.");
+                request.setAttribute("errorfg", "Email này chưa được đăng ký.");
                 request.setAttribute("openModal", "#completeForgotPassword-modal");
                 request.getRequestDispatcher("home.jsp").forward(request, response);
                 return;
@@ -125,7 +125,7 @@ public class ForgotPasswordServlet extends HttpServlet {
         try {
             AuthenticationDAO dao = new AuthenticationDAO();
             if (!dao.existEmail(emailfg)) {
-                request.setAttribute("error", "Email này chưa được đăng ký.");
+                request.setAttribute("errorfg", "Email này chưa được đăng ký.");
                 request.setAttribute("openModal", "#forgot-password-modal");
                 request.getRequestDispatcher("home.jsp").forward(request, response);
                 return;
@@ -154,7 +154,7 @@ public class ForgotPasswordServlet extends HttpServlet {
         String codefg = request.getParameter("codefg");
 
         if (emailfg == null) {
-            request.setAttribute("error", "Không tìm thấy email cần xác minh.");
+            request.setAttribute("errorfg", "Không tìm thấy email cần xác minh.");
             request.setAttribute("openModal", "#forgot-password-modal");
             request.getRequestDispatcher("home.jsp").forward(request, response);
             return;
@@ -163,7 +163,7 @@ public class ForgotPasswordServlet extends HttpServlet {
         try {
             AuthenticationDAO dao = new AuthenticationDAO();
             if (!dao.existEmail(emailfg)) {
-                request.setAttribute("error", "Email này chưa được đăng ký.");
+                request.setAttribute("errorfg", "Email này chưa được đăng ký.");
                 request.setAttribute("openModal", "#forgot-password-modal");
                 request.getRequestDispatcher("home.jsp").forward(request, response);
                 return;
@@ -174,7 +174,7 @@ public class ForgotPasswordServlet extends HttpServlet {
             if (validCode) {
                 request.setAttribute("openModal", "#completeForgotPassword-modal");
             } else {
-                request.setAttribute("error", "Mã xác minh không hợp lệ hoặc đã hết hạn.");
+                request.setAttribute("errorfg", "Mã xác minh không hợp lệ hoặc đã hết hạn.");
                 request.setAttribute("openModal", "#enterVerifyCodeForgot-modal");
             }
 
@@ -187,7 +187,7 @@ public class ForgotPasswordServlet extends HttpServlet {
     public void resendVerifyCodeForgot(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String emailrs = (String) request.getSession().getAttribute("emailforgot");
         if (emailrs == null) {
-            request.setAttribute("error", "Không tìm thấy email cần xác minh.");
+            request.setAttribute("errorfg", "Không tìm thấy email cần xác minh.");
             request.setAttribute("openModal", "#forgot-password-modal");
             request.getRequestDispatcher("home.jsp").forward(request, response);
             return;

@@ -24,7 +24,7 @@ public class User {
     private Integer deletedBy;
     private boolean isDeleted;
     private boolean isVerifiedEmail;
-    private int userRoleID; // foreign key to UserRole
+    private int userRoleID;
 
     public User() {
     }
