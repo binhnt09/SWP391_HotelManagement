@@ -12,24 +12,24 @@ public class GoogleAccount {
     private String id;
     private String email;
     private String name;
-    private String first_name;
-    private String given_name;
-    private String family_name;
+    private String firstName;
+    private String givenName;
+    private String familyName;
     private String picture;
-    private boolean verified_email;
+    private boolean verifiedEmail;
 
     public GoogleAccount() {
     }
 
-    public GoogleAccount(String id, String email, String name, String first_name, String given_name, String family_name, String picture, boolean verified_email) {
+    public GoogleAccount(String id, String email, String name, String firstName, String givenName, String familyName, String picture, boolean verifiedEmail) {
         this.id = id;
         this.email = email;
         this.name = name;
-        this.first_name = first_name;
-        this.given_name = given_name;
-        this.family_name = family_name;
+        this.firstName = firstName;
+        this.givenName = givenName;
+        this.familyName = familyName;
         this.picture = picture;
-        this.verified_email = verified_email;
+        this.verifiedEmail = verifiedEmail;
     }
 
     public String getId() {
@@ -56,28 +56,28 @@ public class GoogleAccount {
         this.name = name;
     }
 
-    public String getFirst_name() {
-        return first_name;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void setFirst_name(String first_name) {
-        this.first_name = first_name;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
     }
 
-    public String getGiven_name() {
-        return given_name;
+    public String getGivenName() {
+        return givenName;
     }
 
-    public void setGiven_name(String given_name) {
-        this.given_name = given_name;
+    public void setGivenName(String givenName) {
+        this.givenName = givenName;
     }
 
-    public String getFamily_name() {
-        return family_name;
+    public String getFamilyName() {
+        return familyName;
     }
 
-    public void setFamily_name(String family_name) {
-        this.family_name = family_name;
+    public void setFamilyName(String familyName) {
+        this.familyName = familyName;
     }
 
     public String getPicture() {
@@ -88,17 +88,17 @@ public class GoogleAccount {
         this.picture = picture;
     }
 
-    public boolean isVerified_email() {
-        return verified_email;
+    public boolean isVerifiedEmail() {
+        return verifiedEmail;
     }
 
-    public void setVerified_email(boolean verified_email) {
-        this.verified_email = verified_email;
+    public void setVerifiedEmail(boolean verifiedEmail) {
+        this.verifiedEmail = verifiedEmail;
     }
 
     @Override
     public String toString() {
-        return "GoogleAccount{" + "id=" + id + ", email=" + email + ", name=" + name + ", first_name=" + first_name + ", given_name=" + given_name + ", family_name=" + family_name + ", picture=" + picture + ", verified_email=" + verified_email + '}';
+        return "GoogleAccount{" + "id=" + id + ", email=" + email + ", name=" + name + ", firstName=" + firstName + ", givenName=" + givenName + ", familyName=" + familyName + ", picture=" + picture + ", verifiedEmail=" + verifiedEmail + '}';
     }
 
 }

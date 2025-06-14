@@ -117,7 +117,7 @@
                                     <div class="menu-btn">
                                         <div class="user-search-btn-group ul-li clearfix">
                                             <ul>
-                                                <c:if test="${sessionScope.authGoogle == null && sessionScope.authLocal == null}">
+                                                <c:if test="${sessionScope.authLocal == null}">
                                                     <li>
                                                         <a href="#login-modal" class="switch-modal">
                                                             <i class="fa fa-lock"> Login |</i>
@@ -236,7 +236,7 @@
                                                         </div>
                                                     </li>
                                                 </c:if>
-                                                <c:if test="${sessionScope.authGoogle != null || sessionScope.authLocal != null}">
+                                                <c:if test="${sessionScope.authLocal != null}">
                                                     <li class="nav-item dropdown menu-btn user-info">
                                                         <a class="nav-link" href="#" id="userDropdown" role="button"
                                                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -483,7 +483,7 @@
                                                                     <div class="form-item password-toggle">
                                                                         <input type="password" placeholder="Repeat Password" id="repassRegister" name="repass" required>
                                                                         <i class="material-icons toggle-icon toggle-password" toggle="#repassRegister">remove_red_eye</i>
-                                                                        <small id="repass-error" style="color: red; display: none;">Mật khẩu nhập lại không khớp.</small>
+                                                                        <small id="repass-error" style="color: yellow; display: none;">⚠ Mật khẩu nhập lại không khớp.</small>
                                                                     </div>
                                                                     <!--recaptcha-->
                                                                     <div style="margin: 10px;" id="register-captcha"></div>
@@ -537,7 +537,7 @@
                                                                     </button>
                                                                 </form>
                                                                 <p style="color: #fff; font-style: italic; margin-bottom: 15px;">
-                                                                    Mã xác minh đã được gửi tới địa chỉ email: <strong>${sessionScope.emailforgot}</strong>
+                                                                    Mã xác minh đã được gửi tới địa chỉ email: <strong>${sessionScope.emailForgot}</strong>
                                                                 </p>
                                                                 <form action="forgotpassword" method="post">
                                                                     <input type="hidden" name="action" value="verifyCodeForgot"/>
@@ -621,7 +621,7 @@
                                                                 <form id="formCompleteForgotPassword" action="forgotpassword" method="post">
                                                                     <input type="hidden" name="action" value="completeForgotPassword"/>
                                                                     <div class="form-item">
-                                                                        <input type="email" value="${sessionScope.emailforgot}" readonly>
+                                                                        <input type="email" value="${sessionScope.emailForgot}" readonly>
                                                                     </div>
                                                                     <div class="form-item password-toggle">
                                                                         <input type="password" placeholder="Password" name="pass" id="passForgot" required 

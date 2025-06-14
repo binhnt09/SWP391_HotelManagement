@@ -5,9 +5,10 @@
 package controller;
 
 import dao.AuthenticationDAO;
+import entity.Authentication;
 import entity.GoogleAccount;
+import entity.User;
 import java.io.IOException;
-import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -57,36 +58,47 @@ public class LoginGoogleServlet extends HttpServlet {
         String error = request.getParameter("error");
 
         if (error != null) {
-            response.sendRedirect("loadtohome");
+            forwardToHomeView(response);
             return;
         }
 
         try {
-            GoogleLogin gg = new GoogleLogin();
-            String accessToken = gg.getToken(code);
-            GoogleAccount acc = gg.getUserInfo(accessToken);
+            String accessToken = GoogleLogin.getToken(code);
+            GoogleAccount acc = GoogleLogin.getUserInfo(accessToken);
 
             if (acc == null) {
-                response.sendRedirect("home.jsp");
+                forwardToHomeView(response);
                 return;
             }
 
-            String firstName = acc.getGiven_name();
-            String lastName = acc.getFamily_name();
+            String firstName = acc.getGivenName();
+            String lastName = acc.getFamilyName();
             String email = acc.getEmail();
 
+            int userId;
             AuthenticationDAO dao = new AuthenticationDAO();
             if (!dao.existEmail(email)) {
-                int UserId = dao.createUser(email, firstName, lastName);
-                dao.createGoogleAuth(UserId);
+                userId = dao.createUser(email, firstName, lastName);
+                dao.createGoogleAuth(userId);
+            } else {
+                userId = dao.getUserIdByEmail(email);
             }
 
+            User user = dao.findUserById(userId);
+            Authentication auth = new Authentication(user);
+            auth.setAuthType("google");
+
             HttpSession session = request.getSession();
-            session.setAttribute("authGoogle", acc);
-            response.sendRedirect("loadtohome");
+            session.setAttribute("authLocal", auth);
+            forwardToHomeView(response);
         } catch (Exception ex) {
             Logger.getLogger(LoginGoogleServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+    private void forwardToHomeView(HttpServletResponse response)
+            throws ServletException, IOException {
+        response.sendRedirect("loadtohome");
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

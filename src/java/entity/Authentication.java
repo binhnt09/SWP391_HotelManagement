@@ -39,6 +39,10 @@ public class Authentication {
         this.user = user;
     }
 
+    public Authentication(User user) {
+        this.user = user;
+    }
+
     public int getAuthenticationID() {
         return authenticationID;
     }
@@ -123,5 +127,5 @@ public class Authentication {
     public String toString() {
         return "Authentication{" + "authenticationID=" + authenticationID + ", userKey=" + userKey + ", password=" + password + ", authType=" + authType + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + ", deletedAt=" + deletedAt + ", deletedBy=" + deletedBy + ", isDeleted=" + isDeleted + ", user=" + user + '}';
     }
-    
+
 }

@@ -86,10 +86,7 @@
                 <div class="col-lg-3 col-md-4 mb-4">
                     <div class="card sidebar-card">
                         <div class="profile-section">
-                            <c:if test="${sessionScope.authGoogle != null}">
-                                <div class="profile-avatar">${fn:substring(sessionScope.authGoogle.email, 0, 1)}</div>
-                                <h6 class="mb-2">${sessionScope.authGoogle.family_name}</h6>
-                            </c:if>
+                            
                             <c:if test="${sessionScope.authLocal != null}">
                                 <div class="profile-avatar">${fn:substring(sessionScope.authLocal.user.email, 0, 1)}</div>
                                 <h6 class="mb-2">${sessionScope.authLocal.user.lastName}</h6>
@@ -162,18 +159,14 @@
                                         <div class="row mb-3">
                                             <div class="col-6">
                                                 <label for="" class="form-label">Họ</label>
-                                                <c:if test="${sessionScope.authGoogle != null}">
-                                                    <input type="text" name="firstName" class="form-control" value="${sessionScope.authGoogle.given_name}" required>
-                                                </c:if>
+                                                
                                                 <c:if test="${sessionScope.authLocal != null}">
                                                     <input type="text" name="firstName" class="form-control" value="${sessionScope.authLocal.user.firstName}" required>
                                                 </c:if>
                                             </div>
                                             <div class="col-6">
                                                 <label for="" class="form-label">Tên</label>
-                                                <c:if test="${sessionScope.authGoogle != null}">
-                                                    <input type="text" name="firstName" class="form-control" value="${sessionScope.authGoogle.family_name}" required>
-                                                </c:if>
+                                                
                                                 <c:if test="${sessionScope.authLocal != null}">
                                                     <input type="text" name="lastName" class="form-control" value="${sessionScope.authLocal.user.lastName}" required>
                                                 </c:if>
@@ -183,28 +176,28 @@
                                         <div class="row mb-3">
                                             <div class="col-md-4">
                                                 <label for="gender" class="form-label">Giới tính</label>
-                                                <select value="${sex}" name="sex" class="form-select" id="gender">
+                                                <select value="${gender}" name="gender" class="form-select" id="gender">
                                                     <option value="">Chọn giới tính</option>
-                                                    <option value="male" ${sex=='male'?'selected':''}>Nam</option>
-                                                    <option value="female" ${sex=='female'?'selected':''}>Nữ</option>
-                                                    <option value="other" ${sex=='other'?'selected':''}>Khác</option>
+                                                    <option value="male" ${gender=='male'?'selected':''}>Nam</option>
+                                                    <option value="female" ${gender=='female'?'selected':''}>Nữ</option>
+                                                    <option value="other" ${gender=='other'?'selected':''}>Khác</option>
                                                 </select>
                                             </div>
                                             <div class="col-md-3">
                                                 <label for="birthDay" class="form-label">Ngày sinh</label>
-                                                <select class="form-select" id="birthDay">
+                                                <select name="birthDay" class="form-select" id="birthDay">
                                                     <option value="">Ngày</option>
                                                 </select>
                                             </div>
                                             <div class="col-md-3">
                                                 <label for="birthMonth" class="form-label">Tháng</label>
-                                                <select class="form-select" id="birthMonth">
+                                                <select name="birthMonth" class="form-select" id="birthMonth">
                                                     <option value="">Tháng</option>
                                                 </select>
                                             </div>
                                             <div class="col-md-2">
                                                 <label for="birthYear" class="form-label">Năm</label>
-                                                <select class="form-select" id="birthYear">
+                                                <select name="birthYear" class="form-select" id="birthYear">
                                                     <option value="">Năm</option>
                                                 </select>
                                             </div>
@@ -213,7 +206,7 @@
                                         <div class="row mb-3">
                                             <div class="col-md-6">
                                                 <label for="city" class="form-label">Thành phố cư trú</label>
-                                                <input type="text" class="form-control" id="city" placeholder="Thành phố cư trú">
+                                                <input type="text" name="city" value="${param.city}" class="form-control" id="city" placeholder="Thành phố cư trú">
                                             </div>
                                         </div>
                                     </div>
@@ -224,9 +217,7 @@
                                         <div id="email-list" class="mb-3">
                                             <div class="contact-item">
                                                 <div>
-                                                    <c:if test="${sessionScope.authGoogle != null}">
-                                                        <span>${sessionScope.authGoogle.email}</span>
-                                                    </c:if>
+                                                    
                                                     <c:if test="${sessionScope.authLocal != null}">
                                                         <span>${sessionScope.authLocal.user.email}</span>
                                                     </c:if>
@@ -245,14 +236,14 @@
                                         <div id="phone-list" class="mb-3">
                                             <!-- Phone numbers will be added here -->
                                         </div>
-                                        <input style="" type="text" class="form-control" id="phone">
+                                        <input type="text" name="phone" value="${param.phone}" class="form-control" id="phone">
                                         <button type="button" class="btn add-btn" id="add-phone-btn">
                                             <i class="fas fa-plus me-2"></i> Thêm số di động
                                         </button>
                                     </div>
 
                                     <!-- Linked Accounts Section -->
-                                    <c:if test="${sessionScope.authGoogle != null}">
+                                    <c:if test="${sessionScope.authLocal.authType eq 'google'}">
                                         <div class="mb-4">
                                             <h5 class="mb-2">Tài khoản đã Liên kết</h5>
                                             <p class="text-muted mb-3">Liên kết tài khoản mạng xã hội của bạn để đăng nhập Palatin dễ dàng</p>
