@@ -74,6 +74,9 @@ public class RoomCRUD extends HttpServlet {
                 case "deleteMultiple":
                     deleteMultipleRoom(request, response);
                     break;
+                case "filterRoom":
+                    filter(request, response);
+                    break;
                 default:
                     response.sendError(HttpServletResponse.SC_NOT_FOUND);
             }
@@ -131,6 +134,7 @@ public class RoomCRUD extends HttpServlet {
         List<Room> listRoom = new dao.RoomDAO().getListRoom(null, null, 0, 100000, 0, -1, "", "all", "", false, 4, 6, false);
         request.setAttribute("listRoom", listRoom);
         request.setAttribute("numberRoom", listRoom.size());
+        request.setAttribute("listRoomType", new dao.RoomTypeDAO().getListRoomType());
         //CẦN SỬA KHI KHÔNG UPDATE ĐƯỢC
         if (checkUpdate) {
             request.getRequestDispatcher("manageroom.jsp").forward(request, response);
@@ -151,6 +155,7 @@ public class RoomCRUD extends HttpServlet {
             List<Room> listRoom = new dao.RoomDAO().getListRoom(null, null, 0, 100000, 0, -1, "", "all", "", false, 4, 6, false);
             request.setAttribute("listRoom", listRoom);
             request.setAttribute("numberRoom", listRoom.size());
+            request.setAttribute("listRoomType", new dao.RoomTypeDAO().getListRoomType());
             request.getRequestDispatcher("manageroom.jsp").forward(request, response);
         } else {
             request.getRequestDispatcher("manageroom.jsp").forward(request, response);
@@ -183,6 +188,31 @@ public class RoomCRUD extends HttpServlet {
         List<Room> listRoom = new dao.RoomDAO().getListRoom(null, null, 0, 100000, 0, -1, "", "all", "", false, 4, 6, false);
         request.setAttribute("listRoom", listRoom);
         request.setAttribute("numberRoom", listRoom.size());
+        request.setAttribute("listRoomType", new dao.RoomTypeDAO().getListRoomType());
+        request.getRequestDispatcher("manageroom.jsp").forward(request, response);
+    }
+
+    private void filter(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String keyWorld = request.getParameter("keyWorld");
+        String roomType = request.getParameter("roomType");
+        String sortBy = request.getParameter("sortBy");
+        String sort = request.getParameter("sort");
+        boolean check = sort.equalsIgnoreCase("asc");
+        String viewDeleted = request.getParameter("presentDeleted");
+        Boolean isDeleted = true;
+        if ("1".equalsIgnoreCase(viewDeleted)) {
+            isDeleted = null;
+        } else {
+            isDeleted = false;
+        }
+        
+        List<Room> listRoom = new dao.RoomDAO().getListRoom(null, null,
+                0, 100000, 0, Validation.parseStringToInt(roomType),
+                keyWorld, "all", sortBy, check,
+                4, 6, isDeleted);
+        request.setAttribute("listRoom", listRoom);
+        request.setAttribute("numberRoom", listRoom.size());
+        request.setAttribute("listRoomType", new dao.RoomTypeDAO().getListRoomType());
         request.getRequestDispatcher("manageroom.jsp").forward(request, response);
     }
 
