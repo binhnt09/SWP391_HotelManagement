@@ -41,7 +41,7 @@
     <body>
         <div class="container">
             <div class="table-wrapper">
-                <form action="roomcrud" method="post" id="deleteSelect">
+                <form action="roomcrud" method="get" id="deleteSelect">
 
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <div>
@@ -52,12 +52,37 @@
                                 <i class="fas fa-trash me-1"></i>DELETE
                             </button>
                         </div>
+                        <div>
+                            <input type="hidden" name="action" value="filterRoom">
+                            <input type="text" id="searchInput" name="keyWorld" placeholder="Search Room" oninput="searchRoom()">
+                            <select name="sortBy">
+                                <option value="RoomID">RoomID</option>
+                                <option value="RoomNumber">Name</option>
+                                <option value="Price">Price</option>
+                            </select>
+                            <select name="roomType">
+                                <option value="all">All</option>
+                                <c:forEach items="${listRoomType}" var="i">
+                                    <option value="${i.roomTypeID}">${i.typeName}</option>
+                                </c:forEach>
+                            </select>
+
+                            <select name="sort">
+                                <option value="asc">Tăng dần giá</option>
+                                <option value="desc">Giảm dần giá</option>
+                            </select>
+                            <label for="viewDeleted">View deleted?</label>
+                            <input type="radio" id="viewDeleted" name="presentDeleted" value="1">
+                            <input type="submit" value="Submit">
+                        </div>
                         <div class="text-muted">
                             <small>Tổng cộng: ${numberRoom} phòng</small>
                         </div>
+
                     </div>
 
             </div>
+
             <table class="table table-striped table-hover">
                 <thead class="table-dark">
                     <tr>
@@ -274,7 +299,7 @@
                 console.log(queryString);
             }
         }
-        window.location = "roomcrud?action=deleteMultiple&"+queryString;
+        window.location = "roomcrud?action=deleteMultiple&" + queryString;
     }
 
     // Select all functionality

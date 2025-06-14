@@ -31,14 +31,17 @@ public class RoomDAO extends DBContext {
             String keyword, String status,
             String sortBy, boolean isAsc,
             int pageIndex, int pageSize,
-            boolean isDeleted
+            Boolean isDeleted
     ) {
         List<Room> list = new ArrayList();
         String sql = "select r.RoomID , r.RoomNumber , r.RoomDetailID, r.RoomTypeID , r.Status , r.Price, r.HotelID , r.CreatedAt , r.UpdatedAt,r.DeletedAt , r.DeletedBy,r.IsDeleted\n"
                 + "from Room r\n"
                 + "inner join roomtype rt on rt.RoomTypeID = r.RoomTypeID\n"
                 + "inner join RoomDetail rd on rd.RoomDetailID = r.RoomDetailID\n"
-                + "where r.IsDeleted = ? \n";
+                + "where 1=1 \n";
+        if(isDeleted != null){
+            sql+= " and r.IsDeleted = ? ";
+        }
         if (status != null && !status.equalsIgnoreCase("all")) {
             sql += "AND r.Status = ? ";
         }
@@ -59,7 +62,7 @@ public class RoomDAO extends DBContext {
             }
         }
         if (numberPeople != -1) {
-            sql += " and rd.MaxGuest >= ?";
+            sql += " and rd.MaxGuest >= ? ";
         }
 
         if (checkin != null || checkout != null) {
@@ -76,15 +79,18 @@ public class RoomDAO extends DBContext {
             }
             sql += " )";
         }
-//        if (sortBy != null && !sortBy.trim().isEmpty()) {
-//            sql += "ORDER BY " + sortBy + (isAsc ? " ASC " : " DESC ");
-//        }
+        if (sortBy != null && !sortBy.trim().isEmpty()) {
+            sql += "ORDER BY r." + sortBy + (isAsc ? " ASC " : " DESC ");
+        }
 
+        System.out.println("Final SQL: " + sql);
 //        sql += "OFFSET ? ROWS FETCH NEXT ? ROWS ONLY ";
         try {
             PreparedStatement stm = connection.prepareStatement(sql);
             int count = 1;
-            stm.setBoolean(count++, isDeleted);
+            if(isDeleted != null){
+                stm.setBoolean(count++, isDeleted);
+            }
             if (status != null && !status.equalsIgnoreCase("all")) {
                 stm.setString(count++, status);
             }
@@ -362,8 +368,12 @@ public class RoomDAO extends DBContext {
     }
 
     public static void main(String[] args) {
-        List<Room> list = new dao.RoomDAO().getListRoom(null, null, 0, 4400, 1, -1, "", "Available", "r.RoomID", true, 0, 10, false);
-        for (Room room : list) {
+        List<Room> listRoom = new dao.RoomDAO().getListRoom(null, null, 
+                0, 100000, 
+                0, -1, 
+                "studio", "all", "price", 
+                true, 4, 6, null);
+        for (Room room : listRoom) {
             System.out.println(room.getRoomTypeID());
         }
 //        System.out.println(new dao.RoomDAO().getRoomByRoomID(5).getPrice());
