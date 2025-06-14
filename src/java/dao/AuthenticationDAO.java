@@ -56,7 +56,7 @@ public class AuthenticationDAO extends DBContext {
 
     public Authentication login(String email) {
         String sql = "SELECT a.AuthenticationID, a.UserKey, a.Password, a.AuthType, a.CreatedAt, a.UpdatedAt, a.DeletedAt, a.DeletedBy, a.IsDeleted,  "
-                + " u.UserID, u.FirstName, u.LastName, u.Email, u.Phone, u.Address, u.CreatedAt, u.UpdatedAt, u.DeletedAt, u.DeletedBy, u.IsDeleted, u.IsVerifiedEmail, u.UserRoleID "
+                + " u.UserID, u.FirstName, u.LastName, u.Email, u.Phone, u.Sex, u.Address, u.CreatedAt, u.UpdatedAt, u.DeletedAt, u.DeletedBy, u.IsDeleted, u.IsVerifiedEmail, u.UserRoleID "
                 + " FROM Authentication a "
                 + " JOIN [User] u ON a.UserID = u.UserID"
                 + " WHERE u.Email = ? AND a.AuthType = 'local' AND a.IsDeleted = 0 AND u.IsDeleted = 0";
@@ -72,6 +72,8 @@ public class AuthenticationDAO extends DBContext {
                         rs.getString("LastName"),
                         rs.getString("Email"),
                         rs.getString("Phone"),
+                        rs.getString("Sex"),
+                        rs.getTimestamp("BirthDay"),
                         rs.getString("Address"),
                         rs.getTimestamp("CreatedAt"),
                         rs.getTimestamp("UpdatedAt"),
@@ -312,7 +314,7 @@ public class AuthenticationDAO extends DBContext {
 
         Authentication auth = dao.login(email);
         if (auth != null && BCrypt.checkpw(rawPassword, auth.getPassword())) {
-            System.out.println("✅ Đăng nhập thành công! " + auth.getUserID());
+            System.out.println("✅ Đăng nhập thành công! " + auth.getUser().getUserID());
         } else {
             System.out.println("❌ Sai email hoặc mật khẩu!");
         }

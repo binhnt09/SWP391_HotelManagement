@@ -4,7 +4,6 @@
  */
 package controller;
 
-import constant.MailUtil;
 import dao.AuthenticationDAO;
 import entity.Authentication;
 import java.io.IOException;
@@ -14,10 +13,6 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -92,7 +87,7 @@ public class changePasswordServlet extends HttpServlet {
 
         int userId = -1;
 
-        userId = authLocal.getUserID();
+        userId = authLocal.getUser().getUserID();
 
         // Nếu không tìm thấy user hợp lệ
         if (userId == -1) {
@@ -121,7 +116,7 @@ public class changePasswordServlet extends HttpServlet {
 
         int userId = -1;
 
-        userId = authLocal.getUserID();
+        userId = authLocal.getUser().getUserID();
 
         // Nếu không tìm thấy user hợp lệ
         if (userId == -1) {
