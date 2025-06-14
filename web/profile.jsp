@@ -88,6 +88,7 @@
                         <div class="profile-section">
                             <c:if test="${sessionScope.authGoogle != null}">
                                 <div class="profile-avatar">${fn:substring(sessionScope.authGoogle.email, 0, 1)}</div>
+                                <h6 class="mb-2">${sessionScope.authGoogle.family_name}</h6>
                             </c:if>
                             <c:if test="${sessionScope.authLocal != null}">
                                 <div class="profile-avatar">${fn:substring(sessionScope.authLocal.user.email, 0, 1)}</div>
@@ -152,30 +153,41 @@
                         <div class="tab-content p-4" id="accountTabsContent">
                             <!-- Account Info Tab -->
                             <div class="tab-pane fade ${empty openTab || openTab == '#account-info' ? 'show active' : ''}" id="account-info" role="tabpanel">
-                                <form id="account-form">
+                                <form action="updateprofile" method="post" id="account-form">
+                                    <input type="hidden" name="action" value="updateProfile"/>
                                     <!-- Personal Data Section -->
                                     <div class="mb-5">
                                         <h5 class="mb-3">Dữ liệu cá nhân</h5>
 
                                         <div class="row mb-3">
                                             <div class="col-6">
-                                                <label for="firstName" class="form-label">First Name</label>
-                                                <input type="text" class="form-control" id="firstName" value="${sessionScope.authLocal.user.firstName}" required>
+                                                <label for="" class="form-label">Họ</label>
+                                                <c:if test="${sessionScope.authGoogle != null}">
+                                                    <input type="text" name="firstName" class="form-control" value="${sessionScope.authGoogle.given_name}" required>
+                                                </c:if>
+                                                <c:if test="${sessionScope.authLocal != null}">
+                                                    <input type="text" name="firstName" class="form-control" value="${sessionScope.authLocal.user.firstName}" required>
+                                                </c:if>
                                             </div>
                                             <div class="col-6">
-                                                <label for="lastName" class="form-label">Last Name</label>
-                                                <input type="text" class="form-control" id="fullName" value="${sessionScope.authLocal.user.lastName}" required>
+                                                <label for="" class="form-label">Tên</label>
+                                                <c:if test="${sessionScope.authGoogle != null}">
+                                                    <input type="text" name="firstName" class="form-control" value="${sessionScope.authGoogle.family_name}" required>
+                                                </c:if>
+                                                <c:if test="${sessionScope.authLocal != null}">
+                                                    <input type="text" name="lastName" class="form-control" value="${sessionScope.authLocal.user.lastName}" required>
+                                                </c:if>
                                             </div>
                                         </div>
 
                                         <div class="row mb-3">
                                             <div class="col-md-4">
                                                 <label for="gender" class="form-label">Giới tính</label>
-                                                <select class="form-select" id="gender">
+                                                <select value="${sex}" name="sex" class="form-select" id="gender">
                                                     <option value="">Chọn giới tính</option>
-                                                    <option value="male">Nam</option>
-                                                    <option value="female">Nữ</option>
-                                                    <option value="other">Khác</option>
+                                                    <option value="male" ${sex=='male'?'selected':''}>Nam</option>
+                                                    <option value="female" ${sex=='female'?'selected':''}>Nữ</option>
+                                                    <option value="other" ${sex=='other'?'selected':''}>Khác</option>
                                                 </select>
                                             </div>
                                             <div class="col-md-3">
@@ -201,8 +213,7 @@
                                         <div class="row mb-3">
                                             <div class="col-md-6">
                                                 <label for="city" class="form-label">Thành phố cư trú</label>
-                                                <input type="text" class="form-control" id="city"
-                                                       placeholder="Thành phố cư trú">
+                                                <input type="text" class="form-control" id="city" placeholder="Thành phố cư trú">
                                             </div>
                                         </div>
                                     </div>

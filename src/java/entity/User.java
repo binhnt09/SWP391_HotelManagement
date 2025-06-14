@@ -17,6 +17,8 @@ public class User {
     private String lastName;
     private String email;
     private String phone;
+    private String sex;
+    private Timestamp birthDay;
     private String address;
     private Timestamp createdAt;
     private Timestamp updatedAt;
@@ -29,12 +31,14 @@ public class User {
     public User() {
     }
 
-    public User(int userID, String firstName, String lastName, String email, String phone, String address, Timestamp createdAt, Timestamp updatedAt, Timestamp deletedAt, Integer deletedBy, boolean isDeleted, boolean isVerifiedEmail, int userRoleID) {
+    public User(int userID, String firstName, String lastName, String email, String phone, String sex, Timestamp birthDay, String address, Timestamp createdAt, Timestamp updatedAt, Timestamp deletedAt, Integer deletedBy, boolean isDeleted, boolean isVerifiedEmail, int userRoleID) {
         this.userID = userID;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.phone = phone;
+        this.sex = sex;
+        this.birthDay = birthDay;
         this.address = address;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
@@ -83,6 +87,22 @@ public class User {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public String getSex() {
+        return sex;
+    }
+
+    public void setSex(String sex) {
+        this.sex = sex;
+    }
+
+    public Timestamp getBirthDay() {
+        return birthDay;
+    }
+
+    public void setBirthDay(Timestamp birthDay) {
+        this.birthDay = birthDay;
     }
 
     public String getAddress() {
@@ -151,7 +171,7 @@ public class User {
 
     @Override
     public String toString() {
-        return "User{" + "userID=" + userID + ", firstName=" + firstName + ", lastName=" + lastName + ", email=" + email + ", phone=" + phone + ", address=" + address + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + ", deletedAt=" + deletedAt + ", deletedBy=" + deletedBy + ", isDeleted=" + isDeleted + ", isVerifiedEmail=" + isVerifiedEmail + ", userRoleID=" + userRoleID + '}';
+        return "User{" + "userID=" + userID + ", firstName=" + firstName + ", lastName=" + lastName + ", email=" + email + ", phone=" + phone + ", sex=" + sex + ", birthDay=" + birthDay + ", address=" + address + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + ", deletedAt=" + deletedAt + ", deletedBy=" + deletedBy + ", isDeleted=" + isDeleted + ", isVerifiedEmail=" + isVerifiedEmail + ", userRoleID=" + userRoleID + '}';
     }
 
 }
