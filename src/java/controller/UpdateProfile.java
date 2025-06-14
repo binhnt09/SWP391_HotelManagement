@@ -4,16 +4,22 @@
  */
 package controller;
 
+import dao.AuthenticationDAO;
 import entity.Authentication;
+import entity.GoogleAccount;
 import entity.User;
 import java.io.IOException;
-import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import validation.Validation;
 
 /**
  *
@@ -22,45 +28,10 @@ import jakarta.servlet.http.HttpSession;
 @WebServlet(name = "UpdateProfile", urlPatterns = {"/updateprofile"})
 public class UpdateProfile extends HttpServlet {
 
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet UpdateProfile</title>");
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet UpdateProfile at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
-        }
-    }
-
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        response.getWriter().println("Hello from doGet.");
     }
 
     /**
@@ -74,37 +45,87 @@ public class UpdateProfile extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        String action = request.getParameter("action");
+
+        if ("updateProfile".equals(action)) {
+            updateProfile(request, response);
+        }
     }
 
-    public void resendVerifyCode(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        HttpSession session = request.getSession();
-        Authentication auth = (Authentication) session.getAttribute("authLocal");
-
-        User user = null;
+    public void updateProfile(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        Authentication auth = getCurrentAuth(request);
         if (auth == null) {
-            auth = (Authentication) session.getAttribute("authGoogle");
+            response.sendRedirect("home.jsp");
 
-            if (auth == null) {
-                response.sendRedirect("home.jsp");
-                return;
-            }
+            return;
         }
 
-        user = auth.getUser();
-        String firstName = request.getParameter("firstName").trim();
-        String lastName = request.getParameter("lastName").trim();
-        String phone = request.getParameter("phone").trim();
+        User user = auth.getUser();
+        String firstName = Validation.trimSafe(request.getParameter("firstName"));
+        String lastName = Validation.trimSafe(request.getParameter("lastName"));
+        String gender = Validation.trimSafe(request.getParameter("gender"));
+        String phone = Validation.trimSafe(request.getParameter("phone"));
+        String city = Validation.trimSafe(request.getParameter("city"));
+        String birthDay = Validation.trimSafe(request.getParameter("birthDay"));
+        String birthMonth = Validation.trimSafe(request.getParameter("birthMonth"));
+        String birthYear = Validation.trimSafe(request.getParameter("birthYear"));
+
+        AuthenticationDAO dao = new AuthenticationDAO();
+        int day = 0;
+        int month = 0;
+        int year = 0;
+        try {
+            if (!birthDay.isEmpty() && !birthMonth.isEmpty() && !birthYear.isEmpty()) {
+                day = Integer.parseInt(birthDay);
+                month = Integer.parseInt(birthMonth);
+                year = Integer.parseInt(birthYear);
+                LocalDate birth = LocalDate.of(year, month, day);
+
+                Timestamp timestamp = Timestamp.valueOf(birth.atStartOfDay());
+                user.setBirthDay(timestamp);
+            }
+        } catch (NumberFormatException e) {
+            Logger.getLogger(UpdateProfile.class.getName()).log(Level.SEVERE, null, e);
+            return;
+        }
+
+        user.setFirstName(firstName);
+        user.setLastName(lastName);
+        user.setPhone(phone);
+        user.setSex(gender);
+        user.setAddress(city);
+
+        boolean isUpdateUser = dao.updateUser(user);
+
+        if (isUpdateUser) {
+            auth.setUser(user);
+            HttpSession session = request.getSession();
+            if (session.getAttribute("authLocal") == null) {
+                session.setAttribute("authGoogle", auth);
+            } else {
+                session.setAttribute("authLocal", auth);
+            }
+            response.sendRedirect("profile.jsp");
+        } else {
+            request.setAttribute("errorUpProfile", "Cập nhật thất bại!");
+            request.getRequestDispatcher("profile.jsp").forward(request, response);
+        }
     }
 
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
+    private Authentication getCurrentAuth(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        if (session == null) {
+            return null;
+        }
+
+        Authentication auth = (Authentication) session.getAttribute("authLocal");
+
+        if (auth == null) {
+            GoogleAccount google = (GoogleAccount) session.getAttribute("authGoogle");
+            if (google == null) return null;
+        }
+
+        return auth;
+    }
 
 }

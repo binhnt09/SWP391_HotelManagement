@@ -37,7 +37,7 @@ public class AuthenticationDAO extends DBContext {
 
                 // Nếu đã hash rồi thì bỏ qua
                 if (currentPass.startsWith("$2a$") || currentPass.startsWith("$2b$") || currentPass.startsWith("$2y$")) {
-                    System.out.println("❗ ID " + id + " đã hash, bỏ qua.");
+                    Logger.getLogger(AuthenticationDAO.class.getName()).log(Level.INFO, "\u2757 ID {0} \u0111\u00e3 hash, b\u1ecf qua.", id);
                     continue;
                 }
 
@@ -46,7 +46,7 @@ public class AuthenticationDAO extends DBContext {
                 updateStmt.setInt(2, id);
                 updateStmt.executeUpdate();
 
-                System.out.println("✔ Đã hash cho ID: " + id);
+                Logger.getLogger(AuthenticationDAO.class.getName()).log(Level.INFO, "\u2714 \u0110\u00e3 hash cho ID: {0}", id);
             }
 
         } catch (SQLException e) {
@@ -267,6 +267,38 @@ public class AuthenticationDAO extends DBContext {
         }
     }
 
+    public User findUserById(int userId) {
+        User user = null;
+        String sql = "SELECT UserID, FirstName, LastName, Email, Phone, Sex, BirthDay, Address, UserRoleID, CreatedAt, UpdatedAt, DeletedAt, DeletedBy, IsDeleted, IsVerifiedEmail FROM [User] WHERE UserID = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, userId);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                user = new User();
+                user.setUserID(rs.getInt("UserID"));
+                user.setFirstName(rs.getString("FirstName"));
+                user.setLastName(rs.getString("LastName"));
+                user.setEmail(rs.getString("Email"));
+                user.setPhone(rs.getString("Phone"));
+                user.setSex(rs.getString("Sex"));
+                user.setBirthDay(rs.getTimestamp("BirthDay"));
+                user.setAddress(rs.getString("Address"));
+                user.setUserRoleID(rs.getInt("UserRoleID"));
+                user.setCreatedAt(rs.getTimestamp("CreatedAt"));
+                user.setUpdatedAt(rs.getTimestamp("UpdatedAt"));
+                user.setDeletedAt(rs.getTimestamp("DeletedAt"));
+                user.setDeletedBy(rs.getInt("DeletedBy"));
+                user.setIsDeleted(rs.getBoolean("IsDeleted"));
+                user.setIsVerifiedEmail(rs.getBoolean("IsVerifiedEmail"));
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(AuthenticationDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return user;
+    }
+
     public void createGoogleAuth(int userId) throws Exception {
         String sql = "INSERT INTO Authentication(UserID, Password, AuthType, UserKey) VALUES (?, NULL, 'google', ?)";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
@@ -306,17 +338,26 @@ public class AuthenticationDAO extends DBContext {
         return -1;
     }
 
-    public static void main(String[] args) {
-        AuthenticationDAO dao = new AuthenticationDAO();
+    public boolean updateUser(User user) {
+        String sql = "UPDATE [dbo].[User]\n"
+                + "   SET [FirstName] = ?, [LastName] = ?, [Phone] = ?, [Sex] = ?"
+                + "      ,[BirthDay] = ?, [Address] = ?, [UpdatedAt] = GETDATE()"
+                + " WHERE UserID = ?";
+        try (PreparedStatement st = connection.prepareStatement(sql)) {
+            st.setString(1, user.getFirstName());
+            st.setString(2, user.getLastName());
+            st.setString(3, user.getPhone());
+            st.setString(4, user.getSex());
+            st.setTimestamp(5, user.getBirthDay());
+            st.setString(6, user.getAddress());
+            st.setInt(7, user.getUserID());
 
-        String email = "admin@gmail.com";
-        String rawPassword = "123456";
-
-        Authentication auth = dao.login(email);
-        if (auth != null && BCrypt.checkpw(rawPassword, auth.getPassword())) {
-            System.out.println("✅ Đăng nhập thành công! " + auth.getUser().getUserID());
-        } else {
-            System.out.println("❌ Sai email hoặc mật khẩu!");
+            int row = st.executeUpdate();
+            return row > 0;
+        } catch (SQLException ex) {
+            Logger.getLogger(AuthenticationDAO.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
         }
     }
+
 }

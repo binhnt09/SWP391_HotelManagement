@@ -12,6 +12,9 @@ import org.mindrot.jbcrypt.BCrypt;
  */
 public class PasswordUtil {
 
+    private PasswordUtil() {
+    }
+
     public static String hashPassword(String plainPassword) {
         return BCrypt.hashpw(plainPassword, BCrypt.gensalt(12)); // độ mạnh = 12
     }

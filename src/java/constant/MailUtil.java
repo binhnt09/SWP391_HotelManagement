@@ -14,6 +14,9 @@ import java.util.Properties;
  */
 public class MailUtil {
 
+    private MailUtil() {
+    }
+
     public static void send(String toEmail, String code) throws Exception {
         final String fromEmail = "";
         final String password = "";     // App password
@@ -35,7 +38,6 @@ public class MailUtil {
         msg.setRecipient(Message.RecipientType.TO, new InternetAddress(toEmail));
         msg.setSubject(MimeUtility.encodeText("Mã xác minh tài khoản Palatin", "utf-8", "B"));
         msg.setContent("Mã xác minh tài khoản Palatin", "text/html; charset=UTF-8");
-//        String html = "Xin chào,<br><br>Mã xác minh email của bạn là: <b>" + code + "</b><br>Mã có hiệu lực trong 1 phút.<br><br>Trân trọng!";
         String html = String.format("""
             <!DOCTYPE html>
             <html lang="vi">
