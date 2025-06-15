@@ -137,7 +137,7 @@ public class RoomDAO extends DBContext {
             while (rs.next()) {
                 Hotel hotel = new dao.HotelDAO().getHotelByID(rs.getInt("HotelID"));
                 RoomDetail roomDetail = new dao.RoomDetailDAO().getRoomDetailByID(rs.getInt("RoomDetailID"));
-                RoomType roomType = new dao.RoomTypeDAO().getRoomTypeById(roomTypeId);
+                RoomType roomType = new dao.RoomTypeDAO().getRoomTypeById(rs.getInt("roomtypeid"));
 
                 list.add(new Room(rs.getInt("roomID"),
                         rs.getString("roomNumber"),

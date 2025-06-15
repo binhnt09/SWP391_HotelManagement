@@ -210,6 +210,13 @@ public class RoomCRUD extends HttpServlet {
                 0, 100000, 0, Validation.parseStringToInt(roomType),
                 keyWorld, "all", sortBy, check,
                 4, 6, isDeleted);
+        
+        
+        request.setAttribute("keyWorld", keyWorld);
+        request.setAttribute("roomType", roomType);
+        request.setAttribute("sortBy", sortBy);
+        request.setAttribute("sort", sort);
+        request.setAttribute("presentDeleted", viewDeleted);
         request.setAttribute("listRoom", listRoom);
         request.setAttribute("numberRoom", listRoom.size());
         request.setAttribute("listRoomType", new dao.RoomTypeDAO().getListRoomType());
