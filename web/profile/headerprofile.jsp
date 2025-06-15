@@ -65,7 +65,7 @@
                             <a class="dropdown-item" href="${pageContext.request.contextPath}/profile/historypayment.jsp">
                                 <i class="fas fa-list mr-2 text-primary"></i> Danh sách giao dịch
                             </a>
-                            <a class="dropdown-item" href="${pageContext.request.contextPath}/payment.jsp">
+                            <a class="dropdown-item" href="${pageContext.request.contextPath}/payment/payment.jsp">
                                 <i class="fa fa-credit-card mr-2 text-primary"></i> Payment
                             </a>
 
