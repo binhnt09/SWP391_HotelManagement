@@ -4,7 +4,8 @@
  */
 package controller;
 
-import dao.CustomerDAO;
+import dao.StaffDAO;
+import entity.User;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -17,7 +18,7 @@ import java.io.PrintWriter;
  *
  * @author viet7
  */
-public class CustomerDeleteServlet extends HttpServlet {
+public class StaffUpdateServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -36,10 +37,10 @@ public class CustomerDeleteServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet CustomerDeleteServlet</title>");            
+            out.println("<title>Servlet StaffUpdateServlet</title>");            
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet CustomerDeleteServlet at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet StaffUpdateServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -57,12 +58,7 @@ public class CustomerDeleteServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        int id = Integer.parseInt(request.getParameter("id"));
-        int deletedBy = 2;
-        CustomerDAO dao = new CustomerDAO();
-        dao.deleteCustomer(id, deletedBy);
-        request.getSession().setAttribute("successMessage", "Xóa khách hàng thành công!");
-        response.sendRedirect("customerList");
+        processRequest(request, response);
     }
 
     /**
@@ -76,10 +72,55 @@ public class CustomerDeleteServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+                String firstName = request.getParameter("firstName");
+        String lastName = request.getParameter("lastName");
+        String email = request.getParameter("email");
+        String phone = request.getParameter("phone");
+        String address = request.getParameter("address");
+        int roleID = Integer.parseInt(request.getParameter("roleID"));
+        
+
+        StaffDAO dao = new StaffDAO();
+        User staff = new User();
+
+        staff.setFirstName(firstName);
+        staff.setLastName(lastName);
+        staff.setEmail(email);
+        staff.setPhone(phone);
+        staff.setAddress(address);
+        staff.setUserRoleId(roleID);
+
+        boolean success = false;
+        String action = request.getParameter("action");
+
+        try {
+            if ("add".equalsIgnoreCase(action)) {
+                success = dao.insertUser(staff);
+                if (success) {
+                    request.getSession().setAttribute("successMessage", "Thêm khách hàng thành công!");
+                }
+            } else if ("update".equalsIgnoreCase(action)) {
+                int userId = Integer.parseInt(request.getParameter("userId"));
+                staff.setUserId(userId);
+                success = dao.updateUser(staff);
+                if (success) {
+                    request.getSession().setAttribute("successMessage", "Cập nhật khách hàng thành công!");
+                }
+            }
+
+            if (!success) {
+                request.getSession().setAttribute("errorMessage", "Có lỗi xảy ra, vui lòng thử lại.");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            request.getSession().setAttribute("errorMessage", "Xảy ra lỗi trong quá trình xử lý.");
+        }
+
+        // Redirect về lại list
+        response.sendRedirect("staffList");
     }
 
-    /**
+        /**
      * Returns a short description of the servlet.
      *
      * @return a String containing servlet description

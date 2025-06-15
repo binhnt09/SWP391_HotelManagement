@@ -5,7 +5,7 @@
 package dao;
 
 import dal.DBContext;
-import entity.Staff;
+import entity.User;
 import java.util.ArrayList;
 import java.util.List;
 import java.sql.PreparedStatement;
@@ -20,49 +20,50 @@ import java.util.logging.Logger;
  */
 public class StaffDAO extends DBContext {
 
-    public List<Staff> getStaffByRoleWithPaging(String roleName, int offset, int limit) {
-        List<Staff> staffList = new ArrayList<>();
-        String sql = "SELECT u.*, r.RoleName FROM [User] u JOIN UserRole r ON u.UserRoleID = r.UserRoleID WHERE r.RoleName = ? AND u.IsDeleted = 0 ORDER BY u.CreatedAt DESC OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+    public List<User> getStaffByRoleWithPaging(int roleID, int offset, int limit) {
+        List<User> staffList = new ArrayList<>();
+        String sql = "SELECT * FROM [User] "
+                + "WHERE UserRoleID = ? AND IsDeleted = 0 "
+                + "ORDER BY CreatedAt DESC "
+                + "OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
 
-            stmt.setString(1, roleName);
+            stmt.setInt(1, roleID);
             stmt.setInt(2, offset);
             stmt.setInt(3, limit);
 
             ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {
-                staffList.add(extractStaff(rs));
+                User staff = new User();
+                staff.setUserId(rs.getInt("UserID"));
+                staff.setFirstName(rs.getString("FirstName"));
+                staff.setLastName(rs.getString("LastName"));
+                staff.setEmail(rs.getString("Email"));
+                staff.setPhone(rs.getString("Phone"));
+                staff.setAddress(rs.getString("Address"));
+                staff.setUserRoleId(roleID);
+                staff.setRoleName(getRoleName(roleID));
+                staff.setCreatedAt(rs.getTimestamp("CreatedAt"));
+                staffList.add(staff);
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            Logger.getLogger(StaffDAO.class.getName()).log(Level.SEVERE, null, e);
         }
 
         return staffList;
     }
 
-    private Staff extractStaff(ResultSet rs) throws SQLException {
-        Staff staff = new Staff();
-        staff.setUserId(rs.getInt("UserID"));
-        staff.setFirstName(rs.getString("FirstName"));
-        staff.setLastName(rs.getString("LastName"));
-        staff.setEmail(rs.getString("Email"));
-        staff.setPhone(rs.getString("Phone"));
-        staff.setAddress(rs.getString("Address"));
-        staff.setCreatedAt(rs.getTimestamp("CreatedAt"));
-        staff.setRoleName(rs.getString("RoleName"));
-        return staff;
-    }
 
-    public int countTotalStaffByRole(String roleName) {
-        String sql = "SELECT COUNT(*) FROM [User] u JOIN UserRole r ON u.UserRoleID = r.UserRoleID"
-                + " WHERE r.RoleName = ? AND u.IsDeleted = 0";
+    public int countTotalStaffByRole(int roleID) {
+        String sql = "SELECT COUNT(*) FROM [User]"
+                + " WHERE UserRoleID = ? AND IsDeleted = 0";
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
 
-            stmt.setString(1, roleName);
+            stmt.setInt(1, roleID);
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
@@ -70,65 +71,68 @@ public class StaffDAO extends DBContext {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            Logger.getLogger(StaffDAO.class.getName()).log(Level.SEVERE, null, e);
         }
 
         return 0;
     }
 
-    public List<Staff> searchStaffByPage(String keyword, String roleName, int offset, int limit) {
-        List<Staff> list = new ArrayList<>();
-        String sql = "SELECT * FROM [User] u JOIN UserRole r ON u.UserRoleID = r.UserRoleID WHERE r.RoleName = ? AND u.IsDeleted = 0 "
-                + "AND (u.FirstName LIKE ? OR u.LastName LIKE ? OR u.Email LIKE ? OR Phone LIKE ?) "
-                + "ORDER BY u.CreatedAt DESC OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+    public List<User> searchStaffByPage(String keyword, int roleID, int offset, int limit) {
+        List<User> list = new ArrayList<>();
+        String sql = "SELECT * FROM [User] WHERE UserRoleID = ? AND IsDeleted = 0 "
+                + "AND (FirstName LIKE ? OR LastName LIKE ? OR Email LIKE ? OR Phone LIKE ? OR Address LIKE ?) "
+                + "ORDER BY CreatedAt DESC OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
 
             String kw = "%" + keyword + "%";
-            stmt.setString(1, roleName);
+            stmt.setInt(1, roleID);
             stmt.setString(2, kw);
             stmt.setString(3, kw);
             stmt.setString(4, kw);
             stmt.setString(5, kw);
-            stmt.setInt(6, offset);
-            stmt.setInt(7, limit);
+            stmt.setString(6, kw);
+            stmt.setInt(7, offset);
+            stmt.setInt(8, limit);
 
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
-                Staff s = new Staff();
+                User s = new User();
                 s.setUserId(rs.getInt("UserID"));
                 s.setFirstName(rs.getString("FirstName"));
                 s.setLastName(rs.getString("LastName"));
                 s.setEmail(rs.getString("Email"));
                 s.setPhone(rs.getString("Phone"));
                 s.setAddress(rs.getString("Address"));
+                s.setUserRoleId(roleID);
+                s.setRoleName(getRoleName(roleID));
                 s.setCreatedAt(rs.getTimestamp("CreatedAt"));
-                s.setRoleName(rs.getString("RoleName"));
                 list.add(s);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.getLogger(StaffDAO.class.getName()).log(Level.SEVERE, null, e);
         }
         return list;
     }
 
-    public int countSearchStaff(String keyword, String roleName) {
-        String sql = "SELECT COUNT(*) FROM [User] u JOIN UserRole r ON u.UserRoleID = r.UserRoleID"
-                + " WHERE r.RoleName = ? AND u.IsDeleted = 0  "
-                + "AND (u.FirstName LIKE ? OR u.LastName LIKE ? OR u.Email LIKE ? OR Phone LIKE ?)";
+    public int countSearchStaff(String keyword, int roleID) {
+        String sql = "SELECT COUNT(*) FROM [User]"
+                + " WHERE UserRoleID = ? AND IsDeleted = 0  "
+                + "AND (FirstName LIKE ? OR LastName LIKE ? OR Email LIKE ? OR Phone LIKE ? OR Address LIKE ?)";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             String kw = "%" + keyword + "%";
-            stmt.setString(1, roleName);
+            stmt.setInt(1, roleID);
             stmt.setString(2, kw);
             stmt.setString(3, kw);
             stmt.setString(4, kw);
             stmt.setString(5, kw);
+            stmt.setString(6, kw);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 return rs.getInt(1);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.getLogger(StaffDAO.class.getName()).log(Level.SEVERE, null, e);
         }
         return 0;
     }
@@ -140,23 +144,70 @@ public class StaffDAO extends DBContext {
             stmt.setInt(2, id);
             stmt.executeUpdate();
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.getLogger(StaffDAO.class.getName()).log(Level.SEVERE, null, e);
         }
     }
 
+    public boolean insertUser(User user) {
+        String sql = "INSERT INTO [User] (FirstName, LastName, Email, Phone, Address, UserRoleID, CreatedAt, UpdatedAt, IsDeleted) VALUES (?, ?, ?, ?, ?, ?, getdate(), getdate(), 0)";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, user.getFirstName());
+            ps.setString(2, user.getLastName());
+            ps.setString(3, user.getEmail());
+            ps.setString(4, user.getPhone());
+            ps.setString(5, user.getAddress());
+            ps.setInt(6, user.getUserRoleId());
+            int rowsAffected = ps.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            Logger.getLogger(StaffDAO.class.getName()).log(Level.SEVERE, null, e);
+        }
+        return false;
+    }
+
+    public boolean updateUser(User user) {
+        String sql = "UPDATE [User] SET FirstName=?, LastName=?, Email=?, Phone=?, Address=?, UpdatedAt= getdate(), UserRoleID=?  WHERE UserID=?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, user.getFirstName());
+            ps.setString(2, user.getLastName());
+            ps.setString(3, user.getEmail());
+            ps.setString(4, user.getPhone());
+            ps.setString(5, user.getAddress());
+            ps.setInt(6, user.getUserRoleId());
+            ps.setInt(7, user.getUserId());
+            int rowsAffected = ps.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            Logger.getLogger(StaffDAO.class.getName()).log(Level.SEVERE, null, e);
+        }
+        return false;
+    }
+    
+    public String getRoleName(int roleId) {
+    switch (roleId) {
+        case 3:
+            return "Receptionist";
+        case 4:
+            return "Cleaner";
+        default:
+            return "Unknown";
+    }
+}
+
+
     public static void main(String[] args) {
         StaffDAO dao = new StaffDAO();
-        List<Staff> staffs = dao.searchStaffByPage("", "Cleaner", 0, 5);
-        System.out.println(dao.countSearchStaff("", "Cleaner"));
+        List<User> staffs = dao.getStaffByRoleWithPaging( 3, 0, 5);
+        System.out.println(dao.countSearchStaff("", 3));
         System.out.println("DANH SÁCH Cleaner:");
-        for (Staff c : staffs) {
+        for (User c : staffs) {
             System.out.println("ID: " + c.getUserId()
                     + ", Tên: " + c.getFirstName() + " " + c.getLastName()
                     + ", Email: " + c.getEmail()
                     + ", SĐT: " + c.getPhone()
                     + ", Địa chỉ: " + c.getAddress()
                     + ", Ngày tạo: " + c.getCreatedAt()
-                    + ", Role: " + c.getRoleName());
+                    + ", Role: " + c.getUserRoleId());
         }
     }
 }

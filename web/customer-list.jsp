@@ -113,13 +113,13 @@
             <!-- End XP Row -->
 
         </div>
-        <div class="xp-breadcrumbbar text-center">
-            <h4 class="page-title">Dashboard</h4>  
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Dashboard</li>
-            </ol>                
-        </div>
+        <!--        <div class="xp-breadcrumbbar text-center">
+                    <h4 class="page-title">Dashboard</h4>  
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Dashboard</li>
+                    </ol>                
+                </div>-->
 
     </div>
     <!------main-content-start----------->
@@ -128,10 +128,24 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="table-wrapper">
-                    <c:if test="${param.success == 'deleted'}">
-                        <div class="alert alert-success" role="alert">
-                            Xóa thành công!
+                    <c:if test="${not empty sessionScope.successMessage}">
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            ${sessionScope.successMessage}
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
                         </div>
+                        <c:remove var="successMessage" scope="session" />
+                    </c:if>
+
+                    <c:if test="${not empty sessionScope.errorMessage}">
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            ${sessionScope.errorMessage}
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <c:remove var="errorMessage" scope="session" />
                     </c:if>
 
                     <div class="table-title">
@@ -190,7 +204,15 @@
                                             <td>${c.address}</td>
                                             <td>${c.createdAt}</td>
                                             <td>
-                                                <a href="customer-edit?id=${c.userId}" class="edit" data-toggle="tooltip" title="Edit">
+                                                <a href="#editEmployeeModal"
+                                                   class="edit"
+                                                   data-toggle="modal"
+                                                   data-id="${c.userId}"
+                                                   data-firstname="${c.firstName}"
+                                                   data-lastname="${c.lastName}"
+                                                   data-email="${c.email}"
+                                                   data-phone="${c.phone}"
+                                                   data-address="${c.address}">
                                                     <i class="material-icons">&#xE254;</i>
                                                 </a>
                                                 <a href="customerDelete?id=${c.userId}" class="delete" data-toggle="tooltip" title="Delete"
@@ -246,39 +268,46 @@
             </div>
 
 
-            <!----add-modal start--------->
+            <!----add-modal start--------->-->
             <div class="modal fade" tabindex="-1" id="addEmployeeModal" role="dialog">
                 <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title">Add Employees</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
+                    <form action="customerUpdate" method="POST">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Add Customer</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="form-group">
+                                    <label>First Name</label>
+                                    <input type="text" class="form-control" name="firstName" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Last Name</label>
+                                    <input type="text" class="form-control" name="lastName" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Email</label>
+                                    <input type="email" class="form-control" name="email" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Address</label>
+                                    <textarea class="form-control" name="address" required></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label>Phone</label>
+                                    <input type="text" class="form-control" name="phone" required>
+                                </div>
+                                <input type="hidden" name="action" value="add">
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                <button type="submit" class="btn btn-success">Add</button>
+                            </div>
                         </div>
-                        <div class="modal-body">
-                            <div class="form-group">
-                                <label>Name</label>
-                                <input type="text" class="form-control" required>
-                            </div>
-                            <div class="form-group">
-                                <label>Email</label>
-                                <input type="emil" class="form-control" required>
-                            </div>
-                            <div class="form-group">
-                                <label>Address</label>
-                                <textarea class="form-control" required></textarea>
-                            </div>
-                            <div class="form-group">
-                                <label>Phone</label>
-                                <input type="text" class="form-control" required>
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                            <button type="button" class="btn btn-success">Add</button>
-                        </div>
-                    </div>
+                    </form>
                 </div>
             </div>
 
@@ -291,36 +320,45 @@
             <!----edit-modal start--------->
             <div class="modal fade" tabindex="-1" id="editEmployeeModal" role="dialog">
                 <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title">Edit Employees</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
+                    <form action="customerUpdate" method="POST">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Edit Customer</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="form-group">
+                                    <label>First Name</label>
+                                    <input type="text" class="form-control" id="editFirstName" name="firstName" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Last Name</label>
+                                    <input type="text" class="form-control" id="editLastName" name="lastName" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Email</label>
+                                    <input type="email" class="form-control" id="editEmail" name="email" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Address</label>
+                                    <textarea class="form-control" id="editAddress" name="address" required></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label>Phone</label>
+                                    <input type="text" class="form-control" id="editPhone" name="phone" required>
+                                </div>
+                                <input type="hidden" id="editUserId" name="userId">
+                                <input type="hidden" name="action" value="update">
+                            </div>
+
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                <button type="submit" class="btn btn-success">Save</button>
+                            </div>
                         </div>
-                        <div class="modal-body">
-                            <div class="form-group">
-                                <label>Name</label>
-                                <input type="text" class="form-control" required>
-                            </div>
-                            <div class="form-group">
-                                <label>Email</label>
-                                <input type="emil" class="form-control" required>
-                            </div>
-                            <div class="form-group">
-                                <label>Address</label>
-                                <textarea class="form-control" required></textarea>
-                            </div>
-                            <div class="form-group">
-                                <label>Phone</label>
-                                <input type="text" class="form-control" required>
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                            <button type="button" class="btn btn-success">Save</button>
-                        </div>
-                    </div>
+                    </form>
                 </div>
             </div>
 
@@ -356,6 +394,29 @@
 
         </div>
     </div>
+
+    <script>
+        $(document).ready(function () {
+            $('.edit').on('click', function () {
+                var id = $(this).data('id');
+                var firstname = $(this).data('firstname');
+                var lastname = $(this).data('lastname');
+                var email = $(this).data('email');
+                var phone = $(this).data('phone');
+                var address = $(this).data('address');
+
+                $('#editUserId').val(id);
+                $('#editFirstName').val(firstname);
+                $('#editLastName').val(lastname);
+                $('#editEmail').val(email);
+                $('#editPhone').val(phone);
+                $('#editAddress').val(address);
+                console.log("id = ", id);
+                console.log("firstname = ", firstname);
+            });
+        });
+    </script>
+
 
     <!------main-content-end----------->
 

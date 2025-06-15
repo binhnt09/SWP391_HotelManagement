@@ -1,7 +1,7 @@
 <%-- 
-    Document   : staff-list
-    Created on : Jun 8, 2025, 10:30:05 AM
-    Author     : viet7
+   Document   : staff-list
+   Created on : Jun 8, 2025, 10:30:05 AM
+   Author     : viet7
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
@@ -131,12 +131,26 @@
             <div class="col-md-12">
                 <div class="table-wrapper">
 
-                    <c:if test="${param.success == 'deleted'}">
-                        <div class="alert alert-success" role="alert">
-                            Xóa thành công!
+                    <c:if test="${not empty sessionScope.successMessage}">
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            ${sessionScope.successMessage}
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
                         </div>
+                        <c:remove var="successMessage" scope="session" />
                     </c:if>
-                    
+
+                    <c:if test="${not empty sessionScope.errorMessage}">
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            ${sessionScope.errorMessage}
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <c:remove var="errorMessage" scope="session" />
+                    </c:if>
+
                     <div class="table-title">
                         <div class="row align-items-center">
                             <div class="col-md-6 d-flex justify-content-start">
@@ -146,12 +160,12 @@
                                 <form method="get" action="staffList" class="form-inline mb-2">
                                     <label>Filter by role: </label>
                                     <select name="role" onchange="this.form.submit()" class="form-control ml-2">
-                                        <option value="Receptionist" ${role == 'Receptionist' ? 'selected' : ''}>Receptionist</option>
-                                        <option value="Cleaner" ${role == 'Cleaner' ? 'selected' : ''}>Cleaner</option>
+                                        <option value="3" ${role == 3 ? 'selected' : ''}>Receptionist</option>
+                                        <option value="4" ${role == 4 ? 'selected' : ''}>Cleaner</option>
                                     </select>
                                     <input type="hidden" name="keyword" value="${keyword}"/>
                                 </form>
-                                <a href="#addStaffModal" class="btn btn-success" data-toggle="modal">
+                                <a href="#addEmployeeModal" class="btn btn-success" data-toggle="modal">
                                     <i class="material-icons">&#xE147;</i>
                                     <span>Add New Staff</span>
                                 </a>
@@ -201,7 +215,15 @@
                                             <td>${s.roleName}</td>
                                             <td>${s.createdAt}</td>
                                             <td>
-                                                <a href="staff-edit?id=${s.userId}" class="edit" data-toggle="tooltip" title="Edit">
+                                                <a href="#editEmployeeModal"
+                                                   class="edit"
+                                                   data-toggle="modal"
+                                                   data-id="${s.userId}"
+                                                   data-firstname="${s.firstName}"
+                                                   data-lastname="${s.lastName}"
+                                                   data-email="${s.email}"
+                                                   data-phone="${s.phone}"
+                                                   data-address="${s.address}">
                                                     <i class="material-icons">&#xE254;</i>
                                                 </a>
                                                 <a href="staffDelete?id=${s.userId}" class="delete" data-toggle="tooltip" title="Delete"
@@ -257,36 +279,51 @@
             <!----add-modal start--------->
             <div class="modal fade" tabindex="-1" id="addEmployeeModal" role="dialog">
                 <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title">Add Employees</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
+                    <form action="staffUpdate" method="POST">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Add Customer</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="form-group">
+                                    <label>First Name</label>
+                                    <input type="text" class="form-control" name="firstName" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Last Name</label>
+                                    <input type="text" class="form-control" name="lastName" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Email</label>
+                                    <input type="email" class="form-control" name="email" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Address</label>
+                                    <textarea class="form-control" name="address" required></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label>Phone</label>
+                                    <input type="text" class="form-control" name="phone" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Position</label>
+                                    <select name="roleID" class="form-control">
+                                        <option value="3" ${role == 3 ? 'selected' : ''}>Receptionist</option>
+                                        <option value="4" ${role == 4 ? 'selected' : ''}>Cleaner</option>
+                                    </select>
+                                </div>
+
+                                <input type="hidden" name="action" value="add">
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                <button type="submit" class="btn btn-success">Add</button>
+                            </div>
                         </div>
-                        <div class="modal-body">
-                            <div class="form-group">
-                                <label>Name</label>
-                                <input type="text" class="form-control" required>
-                            </div>
-                            <div class="form-group">
-                                <label>Email</label>
-                                <input type="emil" class="form-control" required>
-                            </div>
-                            <div class="form-group">
-                                <label>Address</label>
-                                <textarea class="form-control" required></textarea>
-                            </div>
-                            <div class="form-group">
-                                <label>Phone</label>
-                                <input type="text" class="form-control" required>
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                            <button type="button" class="btn btn-success">Add</button>
-                        </div>
-                    </div>
+                    </form>
                 </div>
             </div>
 
@@ -299,36 +336,52 @@
             <!----edit-modal start--------->
             <div class="modal fade" tabindex="-1" id="editEmployeeModal" role="dialog">
                 <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title">Edit Employees</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
+                    <form action="staffUpdate" method="POST">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Edit employee</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="form-group">
+                                    <label>First Name</label>
+                                    <input type="text" class="form-control" id="editFirstName" name="firstName" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Last Name</label>
+                                    <input type="text" class="form-control" id="editLastName" name="lastName" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Email</label>
+                                    <input type="email" class="form-control" id="editEmail" name="email" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Address</label>
+                                    <textarea class="form-control" id="editAddress" name="address" required></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label>Phone</label>
+                                    <input type="text" class="form-control" id="editPhone" name="phone" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Position</label>
+                                    <select name="roleID" class="form-control">
+                                        <option value="3" ${role == 3 ? 'selected' : ''}>Receptionist</option>
+                                        <option value="4" ${role == 4 ? 'selected' : ''}>Cleaner</option>
+                                    </select>
+                                </div>
+                                <input type="hidden" id="editUserId" name="userId">
+                                <input type="hidden" name="action" value="update">
+                            </div>
+
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                <button type="submit" class="btn btn-success">Save</button>
+                            </div>
                         </div>
-                        <div class="modal-body">
-                            <div class="form-group">
-                                <label>Name</label>
-                                <input type="text" class="form-control" required>
-                            </div>
-                            <div class="form-group">
-                                <label>Email</label>
-                                <input type="emil" class="form-control" required>
-                            </div>
-                            <div class="form-group">
-                                <label>Address</label>
-                                <textarea class="form-control" required></textarea>
-                            </div>
-                            <div class="form-group">
-                                <label>Phone</label>
-                                <input type="text" class="form-control" required>
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                            <button type="button" class="btn btn-success">Save</button>
-                        </div>
-                    </div>
+                    </form>
                 </div>
             </div>
 
@@ -361,6 +414,28 @@
 
         </div>
     </div>
+
+    <script>
+        $(document).ready(function () {
+            $('.edit').on('click', function () {
+                var id = $(this).data('id');
+                var firstname = $(this).data('firstname');
+                var lastname = $(this).data('lastname');
+                var email = $(this).data('email');
+                var phone = $(this).data('phone');
+                var address = $(this).data('address');
+
+                $('#editUserId').val(id);
+                $('#editFirstName').val(firstname);
+                $('#editLastName').val(lastname);
+                $('#editEmail').val(email);
+                $('#editPhone').val(phone);
+                $('#editAddress').val(address);
+                console.log("id = ", id);
+                console.log("firstname = ", firstname);
+            });
+        });
+    </script>
 
     <!------main-content-end----------->
 
