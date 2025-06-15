@@ -18,13 +18,15 @@ public class User {
     private String email;
     private String phone;
     private String address;
-    private int userRuleId;
+    private int userRoleId;
 
     private Timestamp createdAt;
     private Timestamp updatedAt;
     private Timestamp deletedAt;
     private Integer deletedBy;
     private boolean isDeleted;
+    
+    private String roleName;
 
     public User() {
     }
@@ -77,12 +79,12 @@ public class User {
         this.address = address;
     }
 
-    public int getUserRuleId() {
-        return userRuleId;
+    public int getUserRoleId() {
+        return userRoleId;
     }
 
-    public void setUserRuleId(int userRuleId) {
-        this.userRuleId = userRuleId;
+    public void setUserRoleId(int userRuleId) {
+        this.userRoleId = userRuleId;
     }
 
     public Timestamp getCreatedAt() {
@@ -100,8 +102,6 @@ public class User {
     public void setUpdatedAt(Timestamp updatedAt) {
         this.updatedAt = updatedAt;
     }
-
-   
 
     public void setDeletedAt(Timestamp deletedAt) {
         this.deletedAt = deletedAt;
@@ -123,9 +123,16 @@ public class User {
         this.isDeleted = isDeleted;
     }
 
+    public String getRoleName() {
+        return roleName;
+    }
+
+    public void setRoleName(String roleName) {
+        this.roleName = roleName;
+    }
     @Override
     public String toString() {
-        return "User{" + "userId=" + userId + ", firstName=" + firstName + ", lastName=" + lastName + ", email=" + email + ", phone=" + phone + ", address=" + address + ", userRuleId=" + userRuleId + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + ", deletedAt=" + deletedAt + ", deletedBy=" + deletedBy + ", isDeleted=" + isDeleted + '}';
+        return "User{" + "userId=" + userId + ", firstName=" + firstName + ", lastName=" + lastName + ", email=" + email + ", phone=" + phone + ", address=" + address + ", userRuleId=" + userRoleId + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + ", deletedAt=" + deletedAt + ", deletedBy=" + deletedBy + ", isDeleted=" + isDeleted + '}';
     }
 
 }

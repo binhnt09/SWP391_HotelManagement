@@ -251,8 +251,12 @@
 
                 <div class="main-content">
                     <div class="row">
-                        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-                        <canvas id="revenueChart"></canvas>
+                        <div class="col-sm-4">
+                            <div class="table-wrapper">
+                                <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+                                <canvas id="revenueChart"></canvas>
+                            </div>
+                        </div>
 
                         <script>
                             fetch('/swp391_hotelmanagement/api/revenue')

@@ -32,6 +32,14 @@
         <servlet-name>ReportServlet</servlet-name>
         <servlet-class>controller.ReportServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>CustomerUpdateServlet</servlet-name>
+        <servlet-class>controller.CustomerUpdateServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>StaffUpdateServlet</servlet-name>
+        <servlet-class>controller.StaffUpdateServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>SearchRoom</servlet-name>
         <url-pattern>/searchroom</url-pattern>
@@ -63,5 +71,13 @@
     <servlet-mapping>
         <servlet-name>ReportServlet</servlet-name>
         <url-pattern>/report</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>CustomerUpdateServlet</servlet-name>
+        <url-pattern>/customerUpdate</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>StaffUpdateServlet</servlet-name>
+        <url-pattern>/staffUpdate</url-pattern>
     </servlet-mapping>
 </web-app>

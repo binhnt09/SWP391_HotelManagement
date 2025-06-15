@@ -5,7 +5,7 @@
 package controller;
 
 import dao.StaffDAO;
-import entity.Staff;
+import entity.User;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -62,10 +62,18 @@ public class StaffListSevelet extends HttpServlet {
         int recordsPerPage = 5;
 
         String keyword = request.getParameter("keyword");
-        String role = request.getParameter("role");
 
-        if (role == null || (!role.equals("Receptionist") && !role.equals("Cleaner"))) {
-            role = "Receptionist";
+        String roleStr = request.getParameter("role");
+        Integer role = null;
+
+        try {
+            role = Integer.parseInt(roleStr);
+        } catch (NumberFormatException e) {
+            role = null;  // Nếu parse lỗi thì coi như null
+        }
+
+        if (role == null || (role != 3 && role != 4)) {
+            role = 3;
         }
 
         if (request.getParameter("page") != null) {
@@ -73,7 +81,7 @@ public class StaffListSevelet extends HttpServlet {
         }
 
         StaffDAO dao = new StaffDAO();
-        List<Staff> staffList;
+        List<User> staffList;
         int totalStaff;
 
         if (keyword != null && !keyword.trim().isEmpty()) {

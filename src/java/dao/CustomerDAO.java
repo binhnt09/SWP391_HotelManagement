@@ -43,7 +43,7 @@ public class CustomerDAO extends DBContext {
                 list.add(c);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            Logger.getLogger(CustomerDAO.class.getName()).log(Level.SEVERE, null, e);
         }
         return list;
     }
@@ -57,7 +57,7 @@ public class CustomerDAO extends DBContext {
                 return rs.getInt(1);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            Logger.getLogger(CustomerDAO.class.getName()).log(Level.SEVERE, null, e);
         }
         return 0;
     }
@@ -91,7 +91,7 @@ public class CustomerDAO extends DBContext {
                 list.add(c);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.getLogger(CustomerDAO.class.getName()).log(Level.SEVERE, null, e);
         }
         return list;
     }
@@ -111,7 +111,7 @@ public class CustomerDAO extends DBContext {
                 return rs.getInt(1);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            Logger.getLogger(CustomerDAO.class.getName()).log(Level.SEVERE, null, e);
         }
         return 0;
     }
@@ -123,8 +123,64 @@ public class CustomerDAO extends DBContext {
             stmt.setInt(2, id);
             stmt.executeUpdate();
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.getLogger(CustomerDAO.class.getName()).log(Level.SEVERE, null, e);
         }
+    }
+
+    public boolean insertCustomer(User user) {
+        String sql = "INSERT INTO [User] (FirstName, LastName, Email, Phone, Address, UserRoleID, CreatedAt, UpdatedAt, IsDeleted) VALUES (?, ?, ?, ?, ?, 5, getdate(), getdate(), 0)";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, user.getFirstName());
+            ps.setString(2, user.getLastName());
+            ps.setString(3, user.getEmail());
+            ps.setString(4, user.getPhone());
+            ps.setString(5, user.getAddress());
+            int rowsAffected = ps.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            Logger.getLogger(CustomerDAO.class.getName()).log(Level.SEVERE, null, e);
+        }
+        return false;
+    }
+
+    public boolean updateUser(User user) {
+        String sql = "UPDATE [User] SET FirstName=?, LastName=?, Email=?, Phone=?, Address=?, UpdatedAt= getdate() WHERE UserID=?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, user.getFirstName());
+            ps.setString(2, user.getLastName());
+            ps.setString(3, user.getEmail());
+            ps.setString(4, user.getPhone());
+            ps.setString(5, user.getAddress());
+            ps.setInt(6, user.getUserId());
+            int rowsAffected = ps.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            Logger.getLogger(CustomerDAO.class.getName()).log(Level.SEVERE, null, e);
+        }
+        return false;
+    }
+
+    public User getUserById(int id) {
+        String sql = "SELECT * FROM [User] WHERE UserID = ? AND IsDeleted = 0";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                User u = new User();
+                u.setUserId(rs.getInt("UserID"));
+                u.setFirstName(rs.getString("FirstName"));
+                u.setLastName(rs.getString("LastName"));
+                u.setEmail(rs.getString("Email"));
+                u.setPhone(rs.getString("Phone"));
+                u.setAddress(rs.getString("Address"));
+                u.setCreatedAt(rs.getTimestamp("CreatedAt"));
+                u.setUpdatedAt(rs.getTimestamp("UpdatedAt"));
+                return u;
+            }
+        } catch (SQLException e) {
+            Logger.getLogger(CustomerDAO.class.getName()).log(Level.SEVERE, null, e);
+        }
+        return null;
     }
 
     public static void main(String[] args) {
@@ -140,5 +196,7 @@ public class CustomerDAO extends DBContext {
                     + ", Địa chỉ: " + c.getAddress()
                     + ", Ngày tạo: " + c.getCreatedAt());
         }
+        System.out.println("get User by id:");
+        System.out.println(dao.getUserById(36).getFirstName());
     }
 }
