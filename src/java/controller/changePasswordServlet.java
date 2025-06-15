@@ -60,7 +60,7 @@ public class changePasswordServlet extends HttpServlet {
 
         int userId = -1;
 
-        userId = authLocal.getUser().getUserID();
+        userId = authLocal.getUser().getUserId();
 
         // Nếu không tìm thấy user hợp lệ
         if (userId == -1) {
@@ -76,12 +76,12 @@ public class changePasswordServlet extends HttpServlet {
         boolean success = dao.changePassword(userId, oldPassword, newPassword);
         
         if (success) {
-            request.setAttribute("success", "Đổi mật khẩu thành công!");
+            request.setAttribute("successChange", "Đổi mật khẩu thành công!");
         } else {
-            request.setAttribute("error", "Mật khẩu hiện tại không đúng.");
+            request.setAttribute("errorChange", "Mật khẩu hiện tại không đúng.");
         }
         request.setAttribute("openTab", "#password-security");
-        request.getRequestDispatcher("profile.jsp").forward(request, response);
+        request.getRequestDispatcher("/profile/profile.jsp").forward(request, response);
     }
     
     public void changePassword(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -89,7 +89,7 @@ public class changePasswordServlet extends HttpServlet {
 
         int userId = -1;
 
-        userId = authLocal.getUser().getUserID();
+        userId = authLocal.getUser().getUserId();
 
         // Nếu không tìm thấy user hợp lệ
         if (userId == -1) {

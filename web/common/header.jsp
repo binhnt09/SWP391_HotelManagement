@@ -247,7 +247,7 @@
                                                                 <div class="font-weight-bold text-dark">🥉 Bronze Priority</div>
                                                                 <div class="text-muted small">0 Điểm</div>
                                                             </div>
-                                                            <a class="dropdown-item" href="profile.jsp" style="color: black"><i class="fa fa-user mr-2 text-primary"></i> Tài khoản của tôi</a>
+                                                            <a class="dropdown-item" href="${pageContext.request.contextPath}/profile/profile.jsp" style="color: black"><i class="fa fa-user mr-2 text-primary"></i> Tài khoản của tôi</a>
                                                             <a class="dropdown-item" href="updateprofile" style="color: black"><i class="fa fa-user mr-2 text-primary"></i> Cập nhật hồ sơ</a>
                                                             <a class="dropdown-item" href="payment.jsp" style="color: black"><i class="fa fa-credit-card mr-2 text-primary"></i> Payment</a>
                                                             <!--<a href="#verifyEmailChange-modal" class="dropdown-item switch-modal" style="font-size: 14px; color: black">Change your password </a>-->
@@ -735,7 +735,7 @@
                                                             </div>
 
                                                             <div class="login-form text-center mb-50">
-                                                                <form id="formChange-password" action="changeassword" method="post">
+                                                                <form id="formChange-password" action="changeassword" method="post" class="formChangePass">
                                                                     <input type="hidden" name="action" value="changePassword"/>
                                                                     <div class="form-item">
                                                                         <input type="email" value="${sessionScope.authLocal.user.email}" readonly>

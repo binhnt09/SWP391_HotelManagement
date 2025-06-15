@@ -105,7 +105,7 @@ public class AuthenticationDAO extends DBContext {
         }
         return null;
     }
-    
+
     public boolean isValidLogin(String email, String pass) {
         Authentication auth = login(email);
         if (auth == null) {
@@ -148,11 +148,18 @@ public class AuthenticationDAO extends DBContext {
         }
         return false;
     }
-    
-    public boolean existPhone(String phone) {
-        String sql = "SELECT phone FROM [User] WHERE phone = ?";
+
+    public boolean existPhone(String phone, int userId) {
+        String sql = "SELECT UserId, phone FROM [User] WHERE phone = ?";
+
+        if (userId > 0) {
+            sql += " AND UserId != ? ";
+        }
         try (PreparedStatement st = connection.prepareStatement(sql)) {
             st.setString(1, phone);
+            if (userId > 0) {
+                st.setInt(2, userId);
+            }
             ResultSet rs = st.executeQuery();
 
             return rs.next();
@@ -311,7 +318,7 @@ public class AuthenticationDAO extends DBContext {
 
             if (rs.next()) {
                 user = new User();
-                user.setUserID(rs.getInt("UserID"));
+                user.setUserId(rs.getInt("UserID"));
                 user.setFirstName(rs.getString("FirstName"));
                 user.setLastName(rs.getString("LastName"));
                 user.setEmail(rs.getString("Email"));
@@ -385,7 +392,7 @@ public class AuthenticationDAO extends DBContext {
             st.setString(4, user.getSex());
             st.setTimestamp(5, user.getBirthDay());
             st.setString(6, user.getAddress());
-            st.setInt(7, user.getUserID());
+            st.setInt(7, user.getUserId());
 
             int row = st.executeUpdate();
             return row > 0;
