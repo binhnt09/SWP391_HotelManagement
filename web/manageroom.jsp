@@ -54,25 +54,31 @@
                         </div>
                         <div>
                             <input type="hidden" name="action" value="filterRoom">
-                            <input type="text" id="searchInput" name="keyWorld" placeholder="Search Room" oninput="searchRoom()">
+                            <input type="text" id="searchInput" name="keyWorld" value="${keyWorld}" placeholder="Search Room" oninput="searchRoom()">
                             <select name="sortBy">
-                                <option value="RoomID">RoomID</option>
-                                <option value="RoomNumber">Name</option>
-                                <option value="Price">Price</option>
+                                <option disabled ${sortBy == null ? "selected" : ""}>Select sort by</option>
+                                <option value="RoomID" ${sortBy.equals("RoomID") ? "selected" : ""}>RoomID</option>
+                                <option value="RoomNumber" ${sortBy.equals("RoomNumber") ? "selected" : ""}>Name</option>
+                                <option value="Price" ${sortBy.equals("Price") ? "selected" : ""}>Price</option>
                             </select>
+
                             <select name="roomType">
-                                <option value="all">All</option>
+                                <option value="all" ${roomType == "all" ? "selected" : ""}>All</option>
                                 <c:forEach items="${listRoomType}" var="i">
-                                    <option value="${i.roomTypeID}">${i.typeName}</option>
+                                    <option value="${i.roomTypeID}"
+                                            ${roomType != null && roomType == String.valueOf(i.roomTypeID) ? "selected" : ""}>
+                                        ${i.typeName}
+                                    </option>
                                 </c:forEach>
                             </select>
 
+
                             <select name="sort">
-                                <option value="asc">Tăng dần giá</option>
-                                <option value="desc">Giảm dần giá</option>
+                                <option value="asc"  ${sort.equals("asc") ? "selected" : ""}>Tăng dần giá</option>
+                                <option value="desc" ${sort.equals("desc") ? "selected" : ""}>Giảm dần giá</option>
                             </select>
                             <label for="viewDeleted">View deleted?</label>
-                            <input type="radio" id="viewDeleted" name="presentDeleted" value="1">
+                            <input type="checkbox" id="viewDeleted" name="presentDeleted" ${presentDeleted.equals("1") ? "checked" : ""} value="1">
                             <input type="submit" value="Submit">
                         </div>
                         <div class="text-muted">
@@ -94,7 +100,7 @@
                         </th>
                         <th>STT</th>
                         <th>Name</th>
-                        <th>Image</th>
+                        <th>RoomType</th>
                         <th>Status</th>
                         <th>Area(m²)</th>
                         <th>Price</th>
@@ -117,11 +123,7 @@
 
                             <td>${index.index+1}</td>
                             <td><strong>${i.roomNumber}</strong></td>
-                            <td>
-                                <div class="bg-primary text-white rounded text-center d-inline-block px-2 py-1">
-                                    <small>IMG</small>
-                                </div>
-                            </td>
+                            <td>${i.roomTypeID.roomTypeID}</td>
                             <td><span class="
                                       <c:choose>
                                           <c:when test="${i.status == 'Available'}">
@@ -244,6 +246,10 @@
                         <input type="text" id="edit-status" name="status" class="form-control">
                     </div>
                     <div class="mb-3">
+                        <label for="photos">Select Img:</label>
+                        <input type="file" name="photos" class="form-control" multiple accept="image/*">
+                    </div>
+                    <div class="mb-3">
                         <label>Description</label>
                         <textarea id="edit-description" name="description" class="form-control"></textarea>
                     </div>
@@ -259,6 +265,8 @@
                         <label>Area</label>
                         <input type="number" step="any" id="edit-area" name="area" class="form-control">
                     </div>
+                    
+
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
