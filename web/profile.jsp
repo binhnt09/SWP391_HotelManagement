@@ -86,7 +86,7 @@
                 <div class="col-lg-3 col-md-4 mb-4">
                     <div class="card sidebar-card">
                         <div class="profile-section">
-                            
+
                             <c:if test="${sessionScope.authLocal != null}">
                                 <div class="profile-avatar">${fn:substring(sessionScope.authLocal.user.email, 0, 1)}</div>
                                 <h6 class="mb-2">${sessionScope.authLocal.user.lastName}</h6>
@@ -154,35 +154,47 @@
                                     <input type="hidden" name="action" value="updateProfile"/>
                                     <!-- Personal Data Section -->
                                     <div class="mb-5">
+                                        <c:if test="${not empty successUpProfile}">
+                                            <div class="alert alert-success d-flex align-items-center" style="margin-bottom: 0px">
+                                                <i class="fa fa-check" aria-hidden="true" style="margin-right: 8px;"></i>
+                                                ${successUpProfile}
+                                            </div><br/>
+                                        </c:if>
+                                        <c:if test="${not empty errorUpProfile}">
+                                            <div class="alert alert-danger" style="margin-bottom: 10px">
+                                                <i class="fa fa-exclamation-triangle" style="margin-right: 8px;"></i>
+                                                ${errorUpProfile}
+                                            </div><br/>
+                                        </c:if>
                                         <h5 class="mb-3">Dữ liệu cá nhân</h5>
 
                                         <div class="row mb-3">
                                             <div class="col-6">
                                                 <label for="" class="form-label">Họ</label>
-                                                
-                                                <c:if test="${sessionScope.authLocal != null}">
-                                                    <input type="text" name="firstName" class="form-control" value="${sessionScope.authLocal.user.firstName}" required>
-                                                </c:if>
+                                                <input type="text" name="firstName" class="form-control" value="${sessionScope.authLocal.user.firstName}" required>
                                             </div>
                                             <div class="col-6">
                                                 <label for="" class="form-label">Tên</label>
-                                                
-                                                <c:if test="${sessionScope.authLocal != null}">
-                                                    <input type="text" name="lastName" class="form-control" value="${sessionScope.authLocal.user.lastName}" required>
-                                                </c:if>
+                                                <input type="text" name="lastName" class="form-control" value="${sessionScope.authLocal.user.lastName}" required>
                                             </div>
                                         </div>
 
                                         <div class="row mb-3">
                                             <div class="col-md-4">
                                                 <label for="gender" class="form-label">Giới tính</label>
-                                                <select value="${gender}" name="gender" class="form-select" id="gender">
+                                                <select name="gender" class="form-select" id="gender">
                                                     <option value="">Chọn giới tính</option>
-                                                    <option value="male" ${gender=='male'?'selected':''}>Nam</option>
-                                                    <option value="female" ${gender=='female'?'selected':''}>Nữ</option>
-                                                    <option value="other" ${gender=='other'?'selected':''}>Khác</option>
+                                                    <option value="male" ${sessionScope.authLocal.user.sex=='male'?'selected':''}>Nam</option>
+                                                    <option value="female" ${sessionScope.authLocal.user.sex=='female'?'selected':''}>Nữ</option>
+                                                    <option value="other" ${sessionScope.authLocal.user.sex=='other'?'selected':''}>Khác</option>
                                                 </select>
                                             </div>
+                                            <script>
+                                                // Lấy giá trị từ phía server
+                                                var birthYear = ${fn:substring(sessionScope.authLocal.user.birthDay, 0, 4)};
+                                                var birthMonth = ${fn:substring(sessionScope.authLocal.user.birthDay, 5, 7)};
+                                                var birthDay = ${fn:substring(sessionScope.authLocal.user.birthDay, 8, 10)};
+                                            </script>
                                             <div class="col-md-3">
                                                 <label for="birthDay" class="form-label">Ngày sinh</label>
                                                 <select name="birthDay" class="form-select" id="birthDay">
@@ -206,7 +218,7 @@
                                         <div class="row mb-3">
                                             <div class="col-md-6">
                                                 <label for="city" class="form-label">Thành phố cư trú</label>
-                                                <input type="text" name="city" value="${param.city}" class="form-control" id="city" placeholder="Thành phố cư trú">
+                                                <input type="text" name="city" value="${sessionScope.authLocal.user.address}" class="form-control" id="city" placeholder="Thành phố cư trú">
                                             </div>
                                         </div>
                                     </div>
@@ -217,10 +229,7 @@
                                         <div id="email-list" class="mb-3">
                                             <div class="contact-item">
                                                 <div>
-                                                    
-                                                    <c:if test="${sessionScope.authLocal != null}">
-                                                        <span>${sessionScope.authLocal.user.email}</span>
-                                                    </c:if>
+                                                    <span>${sessionScope.authLocal.user.email}</span>
                                                     <span class="verified-badge">Đã kích hoạt</span>
                                                 </div>
                                             </div>
@@ -232,14 +241,12 @@
                                         <h5 class="mb-2">
                                             <label for="phone" class="form-label">Phone number</label>
                                         </h5>
-
-                                        <div id="phone-list" class="mb-3">
-                                            <!-- Phone numbers will be added here -->
+                                        <div class="contact-item" style="width: 50%">
+                                            <input type="text" value="${sessionScope.authLocal.user.phone}" name="phone" class="form-control" id="phone" style="width: 80%">
+                                            <c:if test="${not empty sessionScope.authLocal.user.phone}">
+                                                <span class="verified-badge">Đã kích hoạt</span>
+                                            </c:if>
                                         </div>
-                                        <input type="text" name="phone" value="${param.phone}" class="form-control" id="phone">
-                                        <button type="button" class="btn add-btn" id="add-phone-btn">
-                                            <i class="fas fa-plus me-2"></i> Thêm số di động
-                                        </button>
                                     </div>
 
                                     <!-- Linked Accounts Section -->
@@ -265,7 +272,7 @@
 
                             <!-- Password & Security Tab -->
                             <div class="tab-pane fade ${openTab == '#password-security' ? 'show active' : ''}" id="password-security" role="tabpanel">
-                                <c:if test="${not empty sessionScope.authLocal}">
+                                <c:if test="${sessionScope.authLocal.authType eq 'local'}">
                                     <form id="formChange-password-profile" action="changeassword" method="post" class="password-form">
                                         <input type="hidden" name="action" value="changePasswordInProfile"/>
                                         <div class="mb-4">
@@ -303,13 +310,13 @@
                                     </form>
                                 </c:if>
 
-                                <c:if test="${not empty success}">
+                                <c:if test="${not empty successUpProfile}">
                                     <div class="alert alert-success d-flex align-items-center" style="margin-bottom: 0px">
                                         <i class="fa fa-check" aria-hidden="true" style="margin-right: 8px;"></i>
                                         ${success}
                                     </div>
                                 </c:if>
-                                <c:if test="${not empty error}">
+                                <c:if test="${not empty errorUpProfile}">
                                     <div class="alert alert-danger" style="margin-bottom: 10px">
                                         <i class="fa fa-exclamation-triangle" style="margin-right: 8px;"></i>
                                         ${error}

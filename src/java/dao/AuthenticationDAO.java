@@ -56,7 +56,7 @@ public class AuthenticationDAO extends DBContext {
 
     public Authentication login(String email) {
         String sql = "SELECT a.AuthenticationID, a.UserKey, a.Password, a.AuthType, a.CreatedAt, a.UpdatedAt, a.DeletedAt, a.DeletedBy, a.IsDeleted,  "
-                + " u.UserID, u.FirstName, u.LastName, u.Email, u.Phone, u.Sex, u.Address, u.CreatedAt, u.UpdatedAt, u.DeletedAt, u.DeletedBy, u.IsDeleted, u.IsVerifiedEmail, u.UserRoleID "
+                + " u.UserID, u.FirstName, u.LastName, u.Email, u.Phone, u.Sex, u.BirthDay, u.Address, u.CreatedAt, u.UpdatedAt, u.DeletedAt, u.DeletedBy, u.IsDeleted, u.IsVerifiedEmail, u.UserRoleID "
                 + " FROM Authentication a "
                 + " JOIN [User] u ON a.UserID = u.UserID"
                 + " WHERE u.Email = ? AND a.AuthType = 'local' AND a.IsDeleted = 0 AND u.IsDeleted = 0";
@@ -88,7 +88,7 @@ public class AuthenticationDAO extends DBContext {
                         rs.getInt("AuthenticationID"),
                         null,
                         rs.getString("Password"),
-                        null,
+                        rs.getString("AuthType"),
                         rs.getTimestamp("CreatedAt"),
                         rs.getTimestamp("UpdatedAt"),
                         rs.getTimestamp("DeletedAt"),
@@ -105,7 +105,7 @@ public class AuthenticationDAO extends DBContext {
         }
         return null;
     }
-
+    
     public boolean isValidLogin(String email, String pass) {
         Authentication auth = login(email);
         if (auth == null) {
@@ -114,10 +114,45 @@ public class AuthenticationDAO extends DBContext {
         return BCrypt.checkpw(pass, auth.getPassword());
     }
 
+    public Authentication findAuthTypeByEmail(String email) {
+        Authentication auth = null;
+        String sql = "SELECT a.AuthenticationID, a.AuthType, a.IsDeleted,  "
+                + " u.UserID,  u.IsDeleted FROM Authentication a "
+                + " JOIN [User] u ON a.UserID = u.UserID"
+                + " WHERE u.Email = ? AND a.IsDeleted = 0 AND u.IsDeleted = 0";
+        try (PreparedStatement stm = connection.prepareStatement(sql)) {
+            stm.setString(1, email);
+            ResultSet rs = stm.executeQuery();
+
+            if (rs.next()) {
+                auth = new Authentication();
+                auth.setAuthenticationID(rs.getInt("AuthenticationID"));
+                auth.setAuthType(rs.getString("AuthType"));
+            }
+
+        } catch (SQLException e) {
+            Logger.getLogger(AuthenticationDAO.class.getName()).log(Level.SEVERE, null, e);
+        }
+        return auth;
+    }
+
     public boolean existEmail(String email) {
-        String sql = "SELECT * FROM [User] WHERE Email = ?";
+        String sql = "SELECT email FROM [User] WHERE Email = ?";
         try (PreparedStatement st = connection.prepareStatement(sql)) {
             st.setString(1, email);
+            ResultSet rs = st.executeQuery();
+
+            return rs.next();
+        } catch (SQLException e) {
+            Logger.getLogger(AuthenticationDAO.class.getName()).log(Level.SEVERE, null, e);
+        }
+        return false;
+    }
+    
+    public boolean existPhone(String phone) {
+        String sql = "SELECT phone FROM [User] WHERE phone = ?";
+        try (PreparedStatement st = connection.prepareStatement(sql)) {
+            st.setString(1, phone);
             ResultSet rs = st.executeQuery();
 
             return rs.next();

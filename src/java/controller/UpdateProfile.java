@@ -6,7 +6,6 @@ package controller;
 
 import dao.AuthenticationDAO;
 import entity.Authentication;
-import entity.GoogleAccount;
 import entity.User;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
@@ -88,6 +87,11 @@ public class UpdateProfile extends HttpServlet {
             Logger.getLogger(UpdateProfile.class.getName()).log(Level.SEVERE, null, e);
             return;
         }
+        
+        if(dao.existPhone(phone)){
+            request.setAttribute("errorUpProfile", "Số điện thoại này đã tồn tại!");
+            request.getRequestDispatcher("profile.jsp").forward(request, response);
+        }
 
         user.setFirstName(firstName);
         user.setLastName(lastName);
@@ -99,13 +103,12 @@ public class UpdateProfile extends HttpServlet {
 
         if (isUpdateUser) {
             auth.setUser(user);
-            HttpSession session = request.getSession();
-            if (session.getAttribute("authLocal") == null) {
-                session.setAttribute("authGoogle", auth);
-            } else {
-                session.setAttribute("authLocal", auth);
-            }
+
+            request.getSession().setAttribute("authLocal", auth);
+
+            request.getSession().setAttribute("successUpProfile", "Cập nhật thông tin cá nhân thành công!");
             response.sendRedirect("profile.jsp");
+//            request.getRequestDispatcher("profile.jsp").forward(request, response);
         } else {
             request.setAttribute("errorUpProfile", "Cập nhật thất bại!");
             request.getRequestDispatcher("profile.jsp").forward(request, response);
@@ -119,10 +122,8 @@ public class UpdateProfile extends HttpServlet {
         }
 
         Authentication auth = (Authentication) session.getAttribute("authLocal");
-
         if (auth == null) {
-            GoogleAccount google = (GoogleAccount) session.getAttribute("authGoogle");
-            if (google == null) return null;
+            return null;
         }
 
         return auth;
