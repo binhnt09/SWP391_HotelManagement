@@ -55,7 +55,6 @@ public class UpdateProfile extends HttpServlet {
         Authentication auth = getCurrentAuth(request);
         if (auth == null) {
             response.sendRedirect("home.jsp");
-
             return;
         }
 
@@ -87,10 +86,11 @@ public class UpdateProfile extends HttpServlet {
             Logger.getLogger(UpdateProfile.class.getName()).log(Level.SEVERE, null, e);
             return;
         }
-        
-        if(dao.existPhone(phone)){
+
+        if (dao.existPhone(phone, user.getUserId())) {
             request.setAttribute("errorUpProfile", "Số điện thoại này đã tồn tại!");
-            request.getRequestDispatcher("profile.jsp").forward(request, response);
+            request.getRequestDispatcher("/profile/profile.jsp").forward(request, response);
+            return;
         }
 
         user.setFirstName(firstName);
@@ -107,11 +107,10 @@ public class UpdateProfile extends HttpServlet {
             request.getSession().setAttribute("authLocal", auth);
 
             request.getSession().setAttribute("successUpProfile", "Cập nhật thông tin cá nhân thành công!");
-            response.sendRedirect("profile.jsp");
-//            request.getRequestDispatcher("profile.jsp").forward(request, response);
+            response.sendRedirect(request.getContextPath() + "/profile/profile.jsp");
         } else {
             request.setAttribute("errorUpProfile", "Cập nhật thất bại!");
-            request.getRequestDispatcher("profile.jsp").forward(request, response);
+            request.getRequestDispatcher("/profile/profile.jsp").forward(request, response);
         }
     }
 

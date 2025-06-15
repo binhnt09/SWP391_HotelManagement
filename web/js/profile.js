@@ -5,7 +5,6 @@
 
 function populateDays(daySelect, month, year) {
     const prevSelected = daySelect.value;
-
     // Reset
     daySelect.innerHTML = "<option value=''>Ngày</option>";
 
@@ -26,7 +25,7 @@ function populateDays(daySelect, month, year) {
 
 function isLeapYear(year) {
     return (year % 4 === 0 && year % 100 !== 0) ||
-        (year % 400 === 0);
+            (year % 400 === 0);
 }
 
 function getDaysInMonth(month, year) {
@@ -101,14 +100,14 @@ function initializeDateDropdowns() {
     yearSelect.addEventListener("change", () => {
         const year = parseInt(yearSelect.value);
         const month = parseInt(monthSelect.value) ||
-            1;
+                1;
 
         populateDays(daySelect, month, year);
     });
 
     monthSelect.addEventListener("change", () => {
         const year = parseInt(yearSelect.value) ||
-            currentYear;
+                currentYear;
 
         const month = parseInt(monthSelect.value);
         populateDays(daySelect, month, year);
@@ -144,4 +143,72 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
     }
+});
+
+$(document).ready(function () {
+    $('#formChange-password-profile').on("submit", function (e) {
+        var currentPass = $("#passCurrent").val().trim();
+        var newPass = $("#newpassChange").val().trim();
+
+        if (newPass === currentPass) {
+            $("#newpass-error").text("⚡ Mật khẩu mới KHÔNG được trùng với mật khẩu hiện tại").fadeIn(150);
+            e.preventDefault();
+            return false;
+        } else {
+            $("#newpass-error").fadeOut(150);
+        }
+    });
+});
+
+//sau khi co thay doi nut submit moi hien
+document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('profileForm');
+    const submitBtn = document.getElementById('submitProfile');
+    const cancelBtn = document.getElementById('cancelProfile');
+
+    // Lưu các giá trị ban đầu
+    const initialValues = {};
+
+    for (const element of form.elements) {
+        if (element.name) {
+            initialValues[element.name] = element.value.trim();
+        }
+    }
+
+    function isFormModified() {
+        for (const element of form.elements) {
+            if (element.name &&
+                    element.value.trim() !== initialValues[element.name]) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    form.addEventListener('input', () => {
+        if (isFormModified()) {
+            submitBtn.disabled = false;
+            cancelBtn.disabled = false;
+        } else {
+            submitBtn.disabled = true;
+            cancelBtn.disabled = true;
+        }
+    });
+
+    cancelBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+
+        for (const element of form.elements) {
+            if (element.name) {
+                element.value = initialValues[element.name];
+            }
+        }
+
+        document.getElementById("birthYear").value = birthYear;
+        document.getElementById("birthMonth").value = birthMonth;
+        document.getElementById("birthDay").value = birthDay;
+
+        submitBtn.disabled = true;
+        cancelBtn.disabled = true;
+    });
 });

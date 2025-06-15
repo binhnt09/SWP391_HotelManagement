@@ -12,7 +12,7 @@ import java.sql.Timestamp;
  */
 public class User {
 
-    private int userID;
+    private int userId;
     private String firstName;
     private String lastName;
     private String email;
@@ -31,8 +31,8 @@ public class User {
     public User() {
     }
 
-    public User(int userID, String firstName, String lastName, String email, String phone, String sex, Timestamp birthDay, String address, Timestamp createdAt, Timestamp updatedAt, Timestamp deletedAt, Integer deletedBy, boolean isDeleted, boolean isVerifiedEmail, int userRoleID) {
-        this.userID = userID;
+    public User(int userId, String firstName, String lastName, String email, String phone, String sex, Timestamp birthDay, String address, Timestamp createdAt, Timestamp updatedAt, Timestamp deletedAt, Integer deletedBy, boolean isDeleted, boolean isVerifiedEmail, int userRoleID) {
+        this.userId = userId;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
@@ -49,12 +49,12 @@ public class User {
         this.userRoleID = userRoleID;
     }
 
-    public int getUserID() {
-        return userID;
+    public int getUserId() {
+        return userId;
     }
 
-    public void setUserID(int userID) {
-        this.userID = userID;
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
     public String getFirstName() {
@@ -171,7 +171,7 @@ public class User {
 
     @Override
     public String toString() {
-        return "User{" + "userID=" + userID + ", firstName=" + firstName + ", lastName=" + lastName + ", email=" + email + ", phone=" + phone + ", sex=" + sex + ", birthDay=" + birthDay + ", address=" + address + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + ", deletedAt=" + deletedAt + ", deletedBy=" + deletedBy + ", isDeleted=" + isDeleted + ", isVerifiedEmail=" + isVerifiedEmail + ", userRoleID=" + userRoleID + '}';
+        return "User{" + "userID=" + userId + ", firstName=" + firstName + ", lastName=" + lastName + ", email=" + email + ", phone=" + phone + ", sex=" + sex + ", birthDay=" + birthDay + ", address=" + address + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + ", deletedAt=" + deletedAt + ", deletedBy=" + deletedBy + ", isDeleted=" + isDeleted + ", isVerifiedEmail=" + isVerifiedEmail + ", userRoleID=" + userRoleID + '}';
     }
 
 }

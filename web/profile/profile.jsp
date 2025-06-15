@@ -13,10 +13,10 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        <title>Cài đặt tài khoản - The Palatin</title>
-        <link rel="icon" href="img/core-img/favicon.ico">
+        <title>The Palatin - Cài đặt tài khoản</title>
+        <link rel="icon" href="${pageContext.request.contextPath}/img/core-img/favicon.ico">
 
-        <link rel="stylesheet" href="css/profile.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/profile.css">
 
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
@@ -26,112 +26,21 @@
 
     <body>
         <!-- header -->
-        <header class="palatin-header">
-            <div class="container-fluid">
-                <div class="row align-items-center py-2">
-                    <div class="col-md-2">
-                        <a href="loadtohome" class="palatin-logo">Palatin</a>
-                    </div>
-                    <div class="col-md-7">
-                        <nav class="navbar-nav d-flex flex-row">
-                            <a class="nav-link" href="#"></a>
-                            <a class="nav-link" href="#"></a>
-                        </nav>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="d-flex align-items-center justify-content-end">
-                            <span class="me-3"><img src="${pageContext.request.contextPath}/img/vietnam.svg.webp" alt="Google logo" width="20"> VI | VND</span>
-                            <span class="me-3">Khuyến mãi</span>
-                            <span class="me-3">Hỗ trợ</span>
-                            <div class="user-avatar dropdown">
-                                <a class="nav-link" style="color: white" href="#" id="userDropdown" role="button"
-                                   data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    ${fn:substring(sessionScope.authLocal.user.email, 0, 1)}
-                                    <!--<i class="fa fa-user"></i>-->
-                                </a>
-                                <div class="dropdown-menu dropdown-menu-right shadow border-0" aria-labelledby="userDropdown" style="min-width: 250px; margin-top: 18px">
-                                    <div class="px-3 py-2 border-bottom">
-                                        <div class="font-weight-bold text-dark">🥉 Bronze Priority</div>
-                                        <div class="text-muted small">0 Điểm</div>
-                                    </div>
-                                    <a class="dropdown-item" href="profile.jsp">
-                                        <i class="fa fa-user mr-2 text-primary"></i> Tài khoản của tôi
-                                    </a>
-                                    <a class="dropdown-item" href="updateprofile">
-                                        <i class="fa fa-user-edit mr-2 text-primary"></i> Cập nhật hồ sơ
-                                    </a>
-                                    <a class="dropdown-item" href="payment.jsp">
-                                        <i class="fa fa-credit-card mr-2 text-primary"></i> Payment
-                                    </a>
+        <jsp:include page="/profile/headerprofile.jsp"></jsp:include>
 
-                                    <div class="dropdown-divider"></div>
+            <div class="container-fluid mt-4">
+                <div class="row">
+                    <!-- Sidebar -->
+                <jsp:include page="/profile/sidebarprofile.jsp"></jsp:include>
 
-                                    <form action="logingoogle" method="post" style="margin: 0;">
-                                        <button type="submit" name="logout" value="true" class="dropdown-item">
-                                            <i class="fa fa-sign-out-alt mr-2"></i> Đăng xuất
-                                        </button>
-                                    </form>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </header>
-
-        <div class="container-fluid mt-4">
-            <div class="row">
-                <!-- Sidebar -->
-                <div class="col-lg-3 col-md-4 mb-4">
-                    <div class="card sidebar-card">
-                        <div class="profile-section">
-
-                            <c:if test="${sessionScope.authLocal != null}">
-                                <div class="profile-avatar">${fn:substring(sessionScope.authLocal.user.email, 0, 1)}</div>
-                                <h6 class="mb-2">${sessionScope.authLocal.user.lastName}</h6>
-                            </c:if>
-                            <div class="profile-status">Bạn là thành viên Bronze Priority</div>
-                        </div>
-                        <div class="list-group list-group-flush sidebar-menu">
-                            <div class="list-group-item">
-                                <i class="fas fa-bed"></i> Đặt chỗ của tôi
-                            </div>
-                            <div class="list-group-item">
-                                <i class="fas fa-list"></i> Danh sách giao dịch
-                            </div>
-                            <div class="list-group-item">
-                                <i class="fas fa-money-bill-wave"></i> Refunds
-                            </div>
-                            <div class="list-group-item">
-                                <i class="fas fa-users"></i> Thông tin hành khách đã lưu
-                            </div>
-                            <div class="list-group-item">
-                                <i class="fas fa-envelope"></i> Cài đặt thông báo
-                            </div>
-                            <div class="list-group-item active">
-                                <i class="fas fa-cog"></i> Tài khoản
-                            </div>
-                            <!--<i class="fas fa-sign-out-alt"></i> Đăng xuất-->
-                            <form action="logingoogle" method="post" style="display:inline;">
-                                <div class="list-group-item">
-                                    <button type="submit" name="logout" value="true" class="dropdown-item">
-                                        <i class="fa fa-sign-out-alt mr-2"></i> Đăng xuất
-                                    </button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Main Content -->
-                <div class="col-lg-9 col-md-8">
-                    <div class="card main-content-card">
-                        <div class="content-header">
-                            <h2 class="mb-3">Cài đặt</h2>
-                            <ul class="nav nav-tabs" id="accountTabs" role="tablist">
-                                <li class="nav-item" role="presentation">
-                                    <button class="nav-link ${empty openTab || openTab == '#account-info' ? 'active' : ''}"
+                    <!-- Main Content -->
+                    <div class="col-lg-9 col-md-8">
+                        <div class="card main-content-card">
+                            <div class="content-header">
+                                <h2 class="mb-3">Cài đặt</h2>
+                                <ul class="nav nav-tabs" id="accountTabs" role="tablist">
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link ${empty openTab || openTab == '#account-info' ? 'active' : ''}"
                                             id="account-info-tab" data-bs-toggle="tab"
                                             data-bs-target="#account-info" type="button" role="tab">
                                         Thông tin tài khoản
@@ -150,15 +59,16 @@
                         <div class="tab-content p-4" id="accountTabsContent">
                             <!-- Account Info Tab -->
                             <div class="tab-pane fade ${empty openTab || openTab == '#account-info' ? 'show active' : ''}" id="account-info" role="tabpanel">
-                                <form action="updateprofile" method="post" id="account-form">
+                                <form action="${pageContext.request.contextPath}/updateprofile" method="post" id="profileForm">
                                     <input type="hidden" name="action" value="updateProfile"/>
                                     <!-- Personal Data Section -->
                                     <div class="mb-5">
                                         <c:if test="${not empty successUpProfile}">
-                                            <div class="alert alert-success d-flex align-items-center" style="margin-bottom: 0px">
+                                            <div id="notification" class="alert alert-success d-flex align-items-center" style="margin-bottom: 0px">
                                                 <i class="fa fa-check" aria-hidden="true" style="margin-right: 8px;"></i>
                                                 ${successUpProfile}
                                             </div><br/>
+                                            <c:remove var="successUpProfile" scope="session" />
                                         </c:if>
                                         <c:if test="${not empty errorUpProfile}">
                                             <div class="alert alert-danger" style="margin-bottom: 10px">
@@ -266,14 +176,15 @@
                                         </div>
                                     </c:if>
 
-                                    <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+                                    <button type="submit" id="cancelProfile" class="btn btn-secondary" disabled>Để sau</button>
+                                    <button type="submit" id="submitProfile" class="btn btn-primary" disabled>Lưu thay đổi</button>
                                 </form>
                             </div>
 
                             <!-- Password & Security Tab -->
                             <div class="tab-pane fade ${openTab == '#password-security' ? 'show active' : ''}" id="password-security" role="tabpanel">
                                 <c:if test="${sessionScope.authLocal.authType eq 'local'}">
-                                    <form id="formChange-password-profile" action="changeassword" method="post" class="password-form">
+                                    <form id="formChange-password-profile" action="${pageContext.request.contextPath}/changeassword" method="post" class="formChangePass">
                                         <input type="hidden" name="action" value="changePasswordInProfile"/>
                                         <div class="mb-4">
                                             <h5 class="mb-3">Đổi mật khẩu</h5>
@@ -310,16 +221,16 @@
                                     </form>
                                 </c:if>
 
-                                <c:if test="${not empty successUpProfile}">
+                                <c:if test="${not empty successChange}">
                                     <div class="alert alert-success d-flex align-items-center" style="margin-bottom: 0px">
                                         <i class="fa fa-check" aria-hidden="true" style="margin-right: 8px;"></i>
-                                        ${success}
+                                        ${successChange}
                                     </div>
                                 </c:if>
-                                <c:if test="${not empty errorUpProfile}">
+                                <c:if test="${not empty errorChange}">
                                     <div class="alert alert-danger" style="margin-bottom: 10px">
                                         <i class="fa fa-exclamation-triangle" style="margin-right: 8px;"></i>
-                                        ${error}
+                                        ${errorChange}
                                     </div>
                                 </c:if>
                             </div>
@@ -339,72 +250,19 @@
         </c:if>
 
         <!-- Footer -->
-        <footer class="palatin-footer">
-            <div class="container">
-                <div class="row">
-                    <div class="col-md-3 footer-section">
-                        <h6>Về Palatin</h6>
-                        <ul>
-                            <li><a href="#">Cách đặt chỗ</a></li>
-                            <li><a href="#">Liên hệ chúng tôi</a></li>
-                            <li><a href="#">Trợ giúp</a></li>
-                            <li><a href="#">Về chúng tôi</a></li>
-                        </ul>
-                    </div>
+        <jsp:include page="/profile/footerprofile.jsp"></jsp:include>
 
-                    <div class="col-md-3 footer-section">
-                        <h6>Sản phẩm</h6>
-                        <ul>
-                            <li><a href="#">Khách sạn</a></li>
-                        </ul>
-                    </div>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+            <!-- jQuery (vì Bootstrap 4 phụ thuộc) -->
+            <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-                    <div class="col-md-3 footer-section">
-                        <h6>Khác</h6>
-                        <ul>
-                            <li><a href="#">Palatin Blog</a></li>
-                            <li><a href="#">Chính Sách Quyền Riêng</a></li>
-                            <li><a href="#">Điều khoản & Điều kiện</a></li>
-                            <li><a href="#">Đăng ký nội dung của bạn</a></li>
-                        </ul>
-                    </div>
+            <!-- Popper.js -->
+            <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
 
-                    <div class="col-md-3 footer-section">
-                        <h6>Theo dõi chúng tôi</h6>
-                        <div class="social-links mb-3">
-                            <a href="#"><i class="fab fa-facebook"></i></a>
-                            <a href="#"><i class="fab fa-instagram"></i></a>
-                            <a href="#"><i class="fab fa-tiktok"></i></a>
-                            <a href="#"><i class="fab fa-youtube"></i></a>
-                            <a href="#"><i class="fas fa-envelope"></i></a>
-                        </div>
+            <!-- Bootstrap 4 JS -->
+            <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
-                        <h6>Phương thức thanh toán</h6>
-                        <div class="payment-methods">
-                            <div class="payment-logo">Mastercard</div>
-                            <div class="payment-logo">VNpay</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="footer-bottom mt-4">
-                    <p>Công ty TNHH Palatin Việt Nam.</p>
-                    <p>Copyright © 2025 The Palatin. All rights reserved</p>
-                </div>
-            </div>
-        </footer>
-
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-        <!-- jQuery (vì Bootstrap 4 phụ thuộc) -->
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-        <!-- Popper.js -->
-        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
-
-        <!-- Bootstrap 4 JS -->
-        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
-        <script src="js/profile.js"></script>
-        <script src="js/authentication.js"></script>
+            <script src="${pageContext.request.contextPath}/js/profile.js"></script>
+        <script src="${pageContext.request.contextPath}/js/authentication.js"></script>
     </body>
 </html>
