@@ -6,6 +6,7 @@ package controller;
 
 import constant.MailUtil;
 import dao.AuthenticationDAO;
+import entity.Authentication;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -65,12 +66,13 @@ public class ForgotPasswordServlet extends HttpServlet {
 
     private static final String ERROR_1 = "Email này chưa được đăng ký.";
     private static final String ERROR_2 = "Không tìm thấy email cần xác minh.";
-    private static final String MODAL_FOGOT = "#forgot-password-modal";
-    private static final String MODAL_VERIFY = "#enterVerifyCodeForgot-modal";
     private static final String ERRORFG = "errorfg";
     private static final String EMAILFORGOT = "emailForgot";
     private static final String OPENMODAL = "openModal";
     private static final String EXPIREDAT = "expiredAt";
+
+    private static final String MODAL_FOGOT = "#forgot-password-modal";
+    private static final String MODAL_VERIFY = "#enterVerifyCodeForgot-modal";
 
     public void completeForgotPassword(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String emailfg = (String) request.getSession().getAttribute(EMAILFORGOT);
@@ -99,7 +101,7 @@ public class ForgotPasswordServlet extends HttpServlet {
             request.setAttribute("success", "Reset password thành công! Mời bạn đăng nhập.");
             request.setAttribute(OPENMODAL, "#login-modal");
             forwardToHomeView(request, response);
-        } catch (Exception ex) {
+        } catch (ServletException | IOException ex) {
             Logger.getLogger(LoginAccountServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -109,13 +111,21 @@ public class ForgotPasswordServlet extends HttpServlet {
         request.getSession().setAttribute(EMAILFORGOT, emailfg);
         try {
             AuthenticationDAO dao = new AuthenticationDAO();
-            if (!dao.existEmail(emailfg)) {
+            Authentication auth = dao.findAuthTypeByEmail(emailfg);
+            if (!dao.existEmail(emailfg) || auth == null) {
                 request.setAttribute(ERRORFG, ERROR_1);
                 request.setAttribute(OPENMODAL, MODAL_FOGOT);
                 forwardToHomeView(request, response);
                 return;
             }
-        } catch (Exception ex) {
+            
+            if ("google".equals(auth.getAuthType())) {
+                request.setAttribute(ERRORFG, "Tài khoản Google không được sử dụng quên mật khẩu.");
+                request.setAttribute(OPENMODAL, MODAL_FOGOT);
+                forwardToHomeView(request, response);
+                return;
+            }
+        } catch (ServletException | IOException ex) {
             Logger.getLogger(LoginAccountServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
 
@@ -164,7 +174,7 @@ public class ForgotPasswordServlet extends HttpServlet {
             }
 
             forwardToHomeView(request, response);
-        } catch (Exception e) {
+        } catch (ServletException | IOException e) {
             throw new ServletException("Lỗi xử lý xác minh mã", e);
         }
     }

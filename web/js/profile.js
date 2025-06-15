@@ -3,8 +3,30 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/JavaScript.js to edit this template
  */
 
+function populateDays(daySelect, month, year) {
+    const prevSelected = daySelect.value;
+
+    // Reset
+    daySelect.innerHTML = "<option value=''>Ngày</option>";
+
+    const daysInMonth = getDaysInMonth(month, year);
+    for (let i = 1; i <= daysInMonth; i++) {
+        const option = document.createElement("option");
+
+        option.value = i;
+        option.textContent = i;
+
+        daySelect.appendChild(option);
+    }
+
+    if (prevSelected && prevSelected <= daysInMonth) {
+        daySelect.value = prevSelected;
+    }
+}
+
 function isLeapYear(year) {
-    return (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
+    return (year % 4 === 0 && year % 100 !== 0) ||
+        (year % 400 === 0);
 }
 
 function getDaysInMonth(month, year) {
@@ -21,65 +43,79 @@ function getDaysInMonth(month, year) {
     }
 }
 
-function populateDays(daySelect, month, year) {
-    const daysInMonth = getDaysInMonth(month, year);
-    const currentDay = daySelect.value;
-
-    daySelect.innerHTML = '<option value="">Day</option>';
-    for (let i = 1; i <= daysInMonth; i++) {
-        const option = document.createElement('option');
-        option.value = i;
-        option.textContent = i;
-        daySelect.appendChild(option);
-    }
-
-    if (currentDay <= daysInMonth) {
-        daySelect.value = currentDay;
-    }
-}
-
 function initializeDateDropdowns() {
-    const daySelect = document.getElementById('birthDay');
-    const monthSelect = document.getElementById('birthMonth');
-    const yearSelect = document.getElementById('birthYear');
+    const daySelect = document.getElementById("birthDay");
 
-    const months = [
-        'Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6',
-        'Tháng 7', 'Tháng 8', 'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12'
-    ];
-    monthSelect.innerHTML = '<option value="">Month</option>';
-    months.forEach((months, index) => {
-        const option = document.createElement('option');
-        option.value = index + 1;
-        option.textContent = months;
-        monthSelect.appendChild(option);
-    });
+    const monthSelect = document.getElementById("birthMonth");
 
+    const yearSelect = document.getElementById("birthYear");
+
+    yearSelect.innerHTML = "<option value=''>Năm</option>";
     const currentYear = new Date().getFullYear();
-    yearSelect.innerHTML = '<option value="">Year</option>';
-    for (let y = currentYear - 10; y >= currentYear - 100; y--) {
-        const option = document.createElement('option');
+
+    for (let y = currentYear - 100; y <= currentYear; y++) {
+        const option = document.createElement("option");
+
         option.value = y;
         option.textContent = y;
+
         yearSelect.appendChild(option);
     }
 
-    populateDays(daySelect, 1, currentYear);
+    const months = [
+        "Tháng 1", "Tháng 2", "Tháng 3", "Tháng 4",
+        "Tháng 5", "Tháng 6", "Tháng 7", "Tháng 8",
+        "Tháng 9", "Tháng 10", "Tháng 11", "Tháng 12"
+    ];
 
-    monthSelect.addEventListener('change', () => {
-        const month = parseInt(monthSelect.value);
-        const year = parseInt(yearSelect.value) || currentYear;
+    monthSelect.innerHTML = "<option value=''>Tháng</option>";
+
+    months.forEach((item, index) => {
+        const option = document.createElement("option");
+
+        option.value = index + 1;
+        option.textContent = item;
+
+        monthSelect.appendChild(option);
+    });
+
+    // Gán giá trị từ phía server
+    if (birthYear) {
+        yearSelect.value = birthYear;
+    }
+
+    if (birthMonth) {
+        birthMonth = parseInt(birthMonth);
+        monthSelect.value = birthMonth;
+
+        populateDays(daySelect, birthMonth, birthYear);
+    } else {
+        populateDays(daySelect, 1, currentYear);
+    }
+
+    if (birthDay) {
+        daySelect.value = birthDay;
+    }
+
+    // Cập nhật khi thay đổi
+    yearSelect.addEventListener("change", () => {
+        const year = parseInt(yearSelect.value);
+        const month = parseInt(monthSelect.value) ||
+            1;
+
         populateDays(daySelect, month, year);
     });
 
-    yearSelect.addEventListener('change', () => {
-        const month = parseInt(monthSelect.value) || 1;
-        const year = parseInt(yearSelect.value);
+    monthSelect.addEventListener("change", () => {
+        const year = parseInt(yearSelect.value) ||
+            currentYear;
+
+        const month = parseInt(monthSelect.value);
         populateDays(daySelect, month, year);
     });
 }
 
-document.addEventListener('DOMContentLoaded', initializeDateDropdowns);
+document.addEventListener("DOMContentLoaded", initializeDateDropdowns);
 
 
 document.addEventListener("DOMContentLoaded", function () {

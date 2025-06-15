@@ -251,7 +251,7 @@
                                                             <a class="dropdown-item" href="updateprofile" style="color: black"><i class="fa fa-user mr-2 text-primary"></i> Cập nhật hồ sơ</a>
                                                             <a class="dropdown-item" href="payment.jsp" style="color: black"><i class="fa fa-credit-card mr-2 text-primary"></i> Payment</a>
                                                             <!--<a href="#verifyEmailChange-modal" class="dropdown-item switch-modal" style="font-size: 14px; color: black">Change your password </a>-->
-                                                            <c:if test="${not empty sessionScope.authLocal}">
+                                                            <c:if test="${sessionScope.authLocal.authType eq 'local'}">
                                                                 <a href="#changePassword-modal" class="dropdown-item switch-modal" style="font-size: 14px; color: black">
                                                                     <i class="fa fa-lock mr-2 text-primary"></i> Change your password 
                                                                 </a>
@@ -638,7 +638,7 @@
                                                                 </form>
                                                             </div>
                                                             <div class="bottom-text white-color">
-                                                                <a href="#login-modal" class="switch-modal black-color">← Back to Login</a>
+                                                                <a href="#login-modal" class="switch-modal white-color">← Back to Login</a>
                                                             </div>
                                                         </div>
                                                         <a class="popup-modal-dismiss" href="#">

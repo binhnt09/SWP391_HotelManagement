@@ -64,7 +64,7 @@ public class LoginAccountServlet extends HttpServlet {
 
     public void login(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String emailName = "email";
-        String email = request.getParameter(emailName);
+        String email = request.getParameter("email");
         String pass = request.getParameter("pass");
         String remember = request.getParameter("remember");
 
