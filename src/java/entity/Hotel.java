@@ -13,7 +13,10 @@ import java.sql.Date;
 public class Hotel {
 
     private int hotelID;
-    private String name, address, description, facilities;
+    private String name;
+    private String address;
+    private String description;
+    private String facilities;
     private Date createdAt;
     private Date updatedAt;
     private Date deletedAt;
