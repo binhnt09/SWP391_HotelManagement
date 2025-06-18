@@ -326,7 +326,7 @@ public class AuthenticationDAO extends DBContext {
                 user.setSex(rs.getString("Sex"));
                 user.setBirthDay(rs.getTimestamp("BirthDay"));
                 user.setAddress(rs.getString("Address"));
-                user.setUserRoleID(rs.getInt("UserRoleID"));
+                user.setUserRoleId(rs.getInt("UserRoleID"));
                 user.setCreatedAt(rs.getTimestamp("CreatedAt"));
                 user.setUpdatedAt(rs.getTimestamp("UpdatedAt"));
                 user.setDeletedAt(rs.getTimestamp("DeletedAt"));
