@@ -35,9 +35,9 @@ public class RoomDetailDAO extends DBContext {
                         rs.getDouble("Area"),
                         rs.getInt("MaxGuest"),
                         rs.getString("Description"),
-                        rs.getDate("CreatedAt"),
-                        rs.getDate("UpdatedAt"),
-                        rs.getDate("DeletedAt"),
+                        rs.getTimestamp("CreatedAt"),
+                        rs.getTimestamp("UpdatedAt"),
+                        rs.getTimestamp("DeletedAt"),
                         rs.getInt("DeletedBy"),  
                         rs.getBoolean("IsDeleted")
                 ));
@@ -62,16 +62,19 @@ public class RoomDetailDAO extends DBContext {
                         rs.getString("BedType"), 
                         rs.getDouble("Area"), 
                         rs.getInt("MaxGuest"), 
-                        rs.getString("Description"),rs.getDate(6), 
-                        rs.getDate(7), rs.getDate(8), 
-                        rs.getInt(9), rs.getBoolean(10));
+                        rs.getString("Description"),
+                        rs.getTimestamp("CreatedAt"),
+                        rs.getTimestamp("UpdatedAt"),
+                        rs.getTimestamp("DeletedAt"),
+                        rs.getInt("DeletedBy"),  
+                        rs.getBoolean("IsDeleted"));
             }
         } catch (SQLException e) {
 
         }
         return null;
     }
-
+    
     public static void main(String[] args) {
         List<RoomDetail> t = new dao.RoomDetailDAO().getListRoomDetail();
         System.out.println("Số phần tử trong list: " + t.size());
