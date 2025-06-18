@@ -292,7 +292,7 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <c:if test="${not empty sessionScope.acc && sessionScope.acc.role != null && sessionScope.acc.role == 'Admin'}">
+                        <c:if test="${not empty sessionScope.acc && sessionScope.acc != null}">
                             <button type="button" class="btn btn-secondary" onclick="deleteRoom()" data-bs-dismiss="modal">Delete</button>
 
                             <button type="button" onclick="getRoomInfo()" class="btn btn-primary" 

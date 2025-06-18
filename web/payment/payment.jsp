@@ -11,8 +11,8 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>The palatin - Payment</title>
-        <link rel="icon" href="img/core-img/favicon.ico">
-        <link rel="stylesheet" href="css/payment.css">
+        <link rel="icon" href="${pageContext.request.contextPath}/img/core-img/favicon.ico">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/payment.css">
         <!--sbvhfvhf-->
     </head>
     <body>
@@ -183,6 +183,6 @@
             </div>
         </div>
 
-        <script src="js/payment.js"></script>
+        <script src="${pageContext.request.contextPath}/js/payment.js"></script>
     </body>
 </html>
