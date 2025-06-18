@@ -31,10 +31,10 @@ public class HotelDAO extends DBContext {
                         rs.getString("Address"),
                         rs.getString("Description"),
                         rs.getString("Facilities"),
-                        rs.getDate("CreatedAt"),
-                        rs.getDate("UpdatedAt"),
-                        rs.getDate("DeletedAt"),
-                        rs.getInt("DeletedBy"),
+                        rs.getTimestamp("CreatedAt"),
+                        rs.getTimestamp("UpdatedAt"),
+                        rs.getTimestamp("DeletedAt"),
+                        rs.getInt("DeletedBy"),  
                         rs.getBoolean("IsDeleted")
                 );
 

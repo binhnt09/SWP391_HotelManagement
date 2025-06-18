@@ -3,6 +3,7 @@
     Created on : May 25, 2025, 12:16:13 PM
     Author     : ASUS
 --%>
+<%@ page import="java.util.*, java.text.SimpleDateFormat" %>
 <%@ page import="java.util.List" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
@@ -78,65 +79,88 @@
                         <div class="col-12 col-lg-10" >
                             <div class="book-now-form" >
                                 <form action="searchroom">
-
                                     <div class="booking-frame">
                                         <div class="row">
-                                            <div class="col-4 col-lg-4">
-                                                <label style="font-weight: 600;">Nhập check-in:</label>
-                                                <input type="date" name="checkin"  placeholder="Chọn ngày đến" class="form-control time-input" />
+                                        <%
+                                            String checkin = request.getParameter("checkin");
+                                            if (checkin == null || checkin.trim().isEmpty()) {
+                                                Calendar calendar = Calendar.getInstance();
+                                                calendar.add(Calendar.DAY_OF_YEAR, 1); // ngày mai
+                                                Date tomorrow = calendar.getTime();
+                                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                                                checkin = sdf.format(tomorrow);
+                                            }
+                                            String checkout = request.getParameter("checkout");
+                                            if (checkout == null || checkout.trim().isEmpty()) {
+                                                Calendar calendar = Calendar.getInstance();
+                                                calendar.add(Calendar.DAY_OF_YEAR, 2); // ngày kia
+                                                Date afterTomorrow = calendar.getTime();
+                                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                                                checkout = sdf.format(afterTomorrow);
+                                            }
+                                            request.setAttribute("checkin", checkin);
+                                            request.setAttribute("checkout", checkout);
+                                        %>
 
-                                            </div>
-                                            <div class="col-4 col-lg-4">
-                                                <label style="font-weight: 600;">Nhập check-out:</label>
-                                                <input type="date" name="checkout" placeholder="Chọn ngày đi" class="form-control time-input" />
-                                            </div>
-                                            <div class="col-3 col-lg-3">
-                                                <label style="font-weight: 600;">Giá mỗi đêm:</label>
-                                                <div class="d-flex align-items-center gap-2">
-                                                    <input type="number" name="priceto" step="100" placeholder="$ To" class="form-control" style="max-width: 150px;">
-                                                    <span>&nbsp;&mdash;&nbsp;</span>
-                                                    <input type="number" name="pricefrom" step="100" placeholder="$ From" class="form-control" style="max-width: 150px;">
-                                                </div>
-                                            </div>
+                                        <div class="col-4 col-lg-4">
+                                            <label style="font-weight: 600;">Nhập check-in:</label>
+                                            <input type="date" value="${checkin}" name="checkin" required=""  placeholder="Chọn ngày đến" class="form-control time-input" />
+
                                         </div>
-                                        <div class="row">
-
-                                            <div class="col-4 col-lg-4">
-                                                <label style="font-weight: 600; font-size: initial; margin-top: 20px">Số lượng thành viên:</label>
-                                                <input type="number" name="numberpeople"   placeholder="Nhập số thành viên" class="form-control" />
-
-                                            </div>
-
-                                            <div class="col-2 col-lg-2 d-flex align-items-end">
-                                                <input type="submit" value="Tìm kiếm" class="btn btn-primary w-100" />
+                                        <div class="col-4 col-lg-4">
+                                            <label style="font-weight: 600;">Nhập check-out:</label>
+                                            <input type="date" value="${checkout}" name="checkout" required=""  placeholder="Chọn ngày đến" class="form-control time-input"  />
+                                        </div>
+                                        <div class="col-3 col-lg-3">
+                                            <label style="font-weight: 600;">Giá mỗi đêm:</label>
+                                            <div class="d-flex align-items-center gap-2">
+                                                <input type="number" name="pricefrom" value="${from}" step="100" placeholder="$From" class="form-control" style="max-width: 150px;">
+                                                <span>&nbsp;&mdash;&nbsp;</span>
+                                                <input type="number" name="priceto" value="${to}" step="100" placeholder="$To" class="form-control" style="max-width: 150px;">
                                             </div>
                                         </div>
                                     </div>
+                                    <div class="row">
 
-                                </form>
-                            </div>
+                                        <div class="col-4 col-lg-4">
+                                            <label style="font-weight: 600; font-size: initial; margin-top: 20px">Số lượng thành viên:</label>
+                                            <input type="number" name="numberpeople" value="${numberPeople}"  placeholder="Nhập số thành viên" class="form-control" />
+                                        </div>
+                                        <div class="col-4 col-lg-4">
+                                            <label style="font-weight: 600; font-size: initial; margin-top: 20px">Loại phòng:</label>
+                                            <select name="roomType" class="form-select"   >
+                                                <option value="-1" >Select room type </option>
+                                                <c:forEach items="${listRoomType}" var="tmp">
+                                                    <option value="${tmp.roomTypeID}" <c:if test="${tmp.roomTypeID == type}">selected</c:if>>${tmp.typeName}</option>
+                                                </c:forEach>
+                                            </select>
+                                        </div>
+                                        <div class="col-2 col-lg-2 d-flex align-items-end">
+                                            <input type="submit" value="Tìm kiếm" class="btn btn-primary w-100" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>
             </div>
-            <!-- ##### Book Now Area End ##### -->
-
-            <!-- ##### Rooms Area Start ##### -->
-            <section class="rooms-area section-padding-0-100">
-                <div class="container">
-                    <div class="row justify-content-center">
-                        <div class="col-12 col-lg-6">
-                            <div class="section-heading text-center">
-                                <div class="line-"></div>
-                                <h2>Choose a room</h2>
-                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec malesuada lorem maximus mauris sceleri sque, at rutrum nulla dictum. Ut ac ligula sapien.</p>
-                            </div>
+        </div>
+        <!-- ##### Book Now Area End ##### -->
+        <!-- ##### Rooms Area Start ##### -->
+        <section class="rooms-area section-padding-0-100">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-12 col-lg-6">
+                        <div class="section-heading text-center">
+                            <div class="line-"></div>
+                            <h2>Choose a room</h2>
+                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec malesuada lorem maximus mauris sceleri sque, at rutrum nulla dictum. Ut ac ligula sapien.</p>
                         </div>
                     </div>
-
-                    <div class="row">
-
-                        <!-- Single Rooms Area -->
+                </div>
+                <div class="row">
+                    <!-- Single Rooms Area -->
                     <c:forEach items="${listRoom}" var="i">
                         <%
                             entity.Room room = (entity.Room) pageContext.getAttribute("i"); 
@@ -148,18 +172,13 @@
                         %>
                         <div class="col-12 col-md-6 col-lg-4">
                             <div class="single-rooms-area wow fadeInUp" data-wow-delay="100ms">
-                                <!-- Thumbnail -->
-                                <!--                                <a href="#" data-bs-toggle="modal" data-bs-target="#roomDetailModal">
-                                                                    <div class="bg-thumbnail bg-img" >
-                                                                        <img src="images/ten_anh.jpg" alt="Mô tả hình ảnh" width="200" height="150">
-                                                                    </div></a>-->
-
                                 <a href="#" onclick="showRoomDetail(this)" 
                                    data-bs-toggle="modal"
                                    data-bs-target="#roomDetailModal"
                                    data-roomID ="${i.getRoomID()}"
                                    data-roomNumber ="${i.getRoomNumber()}"
                                    data-roomPrice ="${i.price}"
+                                   data-type ="${i.getRoomTypeID().getTypeName()}"
                                    data-bedType ="${i.getRoomDetail().getBedType()}"
                                    data-area ="${i.getRoomDetail().getArea()}"
                                    data-maxGuest ="${i.getRoomDetail().getMaxGuest()}"
@@ -168,29 +187,24 @@
                                    data-img1="${not empty roomImgList and roomImgList.size() > 1 ? roomImgList[1].imageURL : ''}"
                                    data-img2="${not empty roomImgList and roomImgList.size() > 2 ? roomImgList[2].imageURL : ''}"
                                    data-img3="${not empty roomImgList and roomImgList.size() > 3 ? roomImgList[3].imageURL : ''}"
-
                                    >
                                     <div class="bg-thumbnail bg-img">
                                         <img src="${roomImgList[0].imageURL}" alt="Mô tả hình ảnh" width="200" height="150">
                                     </div>
                                 </a>
-
                                 <!-- Price -->
                                 <p class="price-from">From $${i.getPrice()}/night</p>
                                 <!-- Rooms Text -->
                                 <div class="rooms-text">
                                     <div class="line"></div>
-                                    <h4>Deluxe Room</h4>
+                                    <h4>${i.getRoomTypeID().getTypeName()}</h4>
                                     <p>${i.getRoomDetail().getDescription()}.</p>
                                 </div>
                                 <!-- Book Room -->
-                                <a href="#" class="book-room-btn btn palatin-btn">Book Room</a>
+                                <a href="bookingroom?roomID=${i.getRoomID()}&checkin=${checkin}&checkout=${checkout}" class="book-room-btn btn palatin-btn">Book Room</a>
                             </div>
                         </div>
                     </c:forEach>
-
-
-
                 </div>
             </div>
         </section>
@@ -216,7 +230,6 @@
                             <img src="img/bg-img/footer-map.png" alt="">
                         </div>
                     </div>
-
                     <!-- Footer Widget Area -->
                     <div class="col-12 col-md-6 col-lg-3">
                         <div class="footer-widget-area mt-50">
@@ -227,7 +240,6 @@
                             </form>
                         </div>
                     </div>
-
                     <!-- Copywrite Text -->
                     <div class="col-12">
                         <div class="copywrite-text mt-30">
@@ -239,7 +251,6 @@
                 </div>
             </div>
         </footer>
-
 
         <!--CHI TIẾT PHÒNG-->
         <div class="modal fade" id="roomDetailModal" tabindex="-1" aria-labelledby="roomDetailLabel" aria-hidden="true">
@@ -281,12 +292,6 @@
 
                             <div id="description" ></div>
                             <div id="bedType" style="margin-top: 10px"></div>
-
-<!--                            <div style="display: flex; align-items: center; flex-wrap: wrap; margin-top: 10px">
-                                <p class="benefit" style="margin: 0; font-weight: 600;">Other: </p>
-                                <p id="other" style="margin: 0;">&nbsp;Breakfast, Gym, Pool, Laundry service...</p>
-                            </div>-->
-
                             <p id="price" style="margin-top: 10px;"></p>
 
                         </div>
@@ -324,105 +329,106 @@
         <script src="js/bootstrap/popper.min.js"></script>
         <script src="js/bootstrap/bootstrap.min.js"></script>
         <script src="js/plugins/plugins.js"></script>
-        <script src="js/active.js"></script>
+        <!--<script src="js/active.js"></script>-->
 
-  
+
         <script>
-            function showRoomDetail(info){
-                let roomID = info.getAttribute("data-roomID");
-                let roomNumber = info.getAttribute("data-roomNumber");
-                let roomPrice = info.getAttribute("data-roomPrice");
-                let bedType = info.getAttribute("data-bedType");
-                let area = info.getAttribute("data-area");
-                let maxGuest = info.getAttribute("data-maxGuest");
-                let description = info.getAttribute("data-description");
-                
-                let imgSrc = info.getAttribute("data-img");
-                let imgSrc1 = info.getAttribute("data-img1");
-                let imgSrc2 = info.getAttribute("data-img2");
-                let imgSrc3 = info.getAttribute("data-img3");
-                
-                
-                document.getElementById("roomNumber").innerHTML = roomNumber;
-                
-                //IMG
-                document.getElementById("imgDetail").src = imgSrc;
-                document.getElementById("imgDetail").style.width = "400px";// Đổi chiều cao thành 200px
+                                function showRoomDetail(info) {
+                                    let roomID = info.getAttribute("data-roomID");
+                                    let roomNumber = info.getAttribute("data-roomNumber");
+                                    let roomPrice = info.getAttribute("data-roomPrice");
+                                    let bedType = info.getAttribute("data-bedType");
+                                    let area = info.getAttribute("data-area");
+                                    let maxGuest = info.getAttribute("data-maxGuest");
+                                    let description = info.getAttribute("data-description");
+                                    let type = info.getAttribute("data-type");
 
-                document.getElementById("imgDetail1").src = imgSrc1;
-                document.getElementById("imgDetail1").style.width = "130px";
-                document.getElementById("imgDetail1").style.height = "90px";
-                document.getElementById("imgDetail2").src = imgSrc2;
-                document.getElementById("imgDetail2").style.width = "130px";
-                document.getElementById("imgDetail2").style.height = "90px";
-                document.getElementById("imgDetail3").src = imgSrc3;
-                document.getElementById("imgDetail3").style.width = "130px";
-                document.getElementById("imgDetail3").style.height = "90px";
+                                    let imgSrc = info.getAttribute("data-img");
+                                    let imgSrc1 = info.getAttribute("data-img1");
+                                    let imgSrc2 = info.getAttribute("data-img2");
+                                    let imgSrc3 = info.getAttribute("data-img3");
 
-                //Room Info
-                document.getElementById("area").innerHTML = area;
-                document.getElementById("maxGuest").innerHTML = maxGuest;
-                document.getElementById("description").innerHTML = description;
-                document.getElementById("bedType").innerHTML = bedType;
-                document.getElementById("price").innerHTML = roomPrice;
-            }
-            
-            
-            $(document).ready(function () {
-                // Khởi tạo popup cho nút mở login/register
-                $('.login-modal-btn, .register-modal-btn').magnificPopup({
-                    type: 'inline',
-                    midClick: true
-                });
 
-                // Xử lý chuyển đổi giữa login <-> register
-                $(document).on('click', '.switch-modal', function (e) {
-                    e.preventDefault();
-                    const target = $(this).attr('href');
+                                    document.getElementById("roomNumber").innerHTML = roomNumber + "-" + type;
 
-                    // Cập nhật URL hash mà không reload
-                    history.pushState(null, '', target);
+                                    //IMG
+                                    document.getElementById("imgDetail").src = imgSrc;
+                                    document.getElementById("imgDetail").style.width = "400px";// Đổi chiều cao thành 200px
 
-                    // Đóng popup hiện tại rồi mở cái mới ngay lập tức
-                    $.magnificPopup.close();
+                                    document.getElementById("imgDetail1").src = imgSrc1;
+                                    document.getElementById("imgDetail1").style.width = "130px";
+                                    document.getElementById("imgDetail1").style.height = "90px";
+                                    document.getElementById("imgDetail2").src = imgSrc2;
+                                    document.getElementById("imgDetail2").style.width = "130px";
+                                    document.getElementById("imgDetail2").style.height = "90px";
+                                    document.getElementById("imgDetail3").src = imgSrc3;
+                                    document.getElementById("imgDetail3").style.width = "130px";
+                                    document.getElementById("imgDetail3").style.height = "90px";
 
-                    // Mở popup mới ngay lập tức (không delay, không hiệu ứng)
-                    $.magnificPopup.open({
-                        items: {
-                            src: target,
-                            type: 'inline'
-                        },
-                        midClick: true
-                    });
-                });
+                                    //Room Info
+                                    document.getElementById("area").innerHTML = area;
+                                    document.getElementById("maxGuest").innerHTML = maxGuest;
+                                    document.getElementById("description").innerHTML = description;
+                                    document.getElementById("bedType").innerHTML = bedType;
+                                    document.getElementById("price").innerHTML = roomPrice;
+                                }
 
-                // Khi người dùng nhấn nút back (quay lại)
-                window.addEventListener('popstate', function () {
-                    const hash = window.location.hash;
-                    $.magnificPopup.close();
 
-                    if ($(hash).length) {
-                        $.magnificPopup.open({
-                            items: {
-                                src: hash,
-                                type: 'inline'
-                            },
-                            midClick: true
-                        });
-                    }
-                });
+                                $(document).ready(function () {
+                                    // Khởi tạo popup cho nút mở login/register
+                                    $('.login-modal-btn, .register-modal-btn').magnificPopup({
+                                        type: 'inline',
+                                        midClick: true
+                                    });
 
-                // Khi người dùng load trang kèm theo #login-modal hoặc #register-modal
-                const initialHash = window.location.hash;
-                if ($(initialHash).length) {
-                    $.magnificPopup.open({
-                        items: {
-                            src: initialHash,
-                            type: 'inline'
-                        },
-                        midClick: true
-                    });
-                }
-            });
+                                    // Xử lý chuyển đổi giữa login <-> register
+                                    $(document).on('click', '.switch-modal', function (e) {
+                                        e.preventDefault();
+                                        const target = $(this).attr('href');
+
+                                        // Cập nhật URL hash mà không reload
+                                        history.pushState(null, '', target);
+
+                                        // Đóng popup hiện tại rồi mở cái mới ngay lập tức
+                                        $.magnificPopup.close();
+
+                                        // Mở popup mới ngay lập tức (không delay, không hiệu ứng)
+                                        $.magnificPopup.open({
+                                            items: {
+                                                src: target,
+                                                type: 'inline'
+                                            },
+                                            midClick: true
+                                        });
+                                    });
+
+                                    // Khi người dùng nhấn nút back (quay lại)
+                                    window.addEventListener('popstate', function () {
+                                        const hash = window.location.hash;
+                                        $.magnificPopup.close();
+
+                                        if ($(hash).length) {
+                                            $.magnificPopup.open({
+                                                items: {
+                                                    src: hash,
+                                                    type: 'inline'
+                                                },
+                                                midClick: true
+                                            });
+                                        }
+                                    });
+
+                                    // Khi người dùng load trang kèm theo #login-modal hoặc #register-modal
+                                    const initialHash = window.location.hash;
+                                    if ($(initialHash).length) {
+                                        $.magnificPopup.open({
+                                            items: {
+                                                src: initialHash,
+                                                type: 'inline'
+                                            },
+                                            midClick: true
+                                        });
+                                    }
+                                });
         </script>
 </html>
