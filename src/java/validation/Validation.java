@@ -153,10 +153,12 @@ public class Validation {
             System.err.println("Không thể chuyển thành số nguyên: " + input);
             return -1; // hoặc throw exception tùy bạn muốn xử lý ra sao
         }
-    
+
     }
 
-    
+    public static String trimSafe(String str) {
+        return (str == null) ? "" : str.trim();
+    }
 
     public static double parseStringToDouble(String input) {
         try {
