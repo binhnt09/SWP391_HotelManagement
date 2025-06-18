@@ -6,10 +6,7 @@ package entity;
 
 import java.sql.Timestamp;
 
-/**
- *
- * @author viet7
- */
+
 public class User {
 
     private int userId;
@@ -17,9 +14,10 @@ public class User {
     private String lastName;
     private String email;
     private String phone;
+  
+    private String sex;
+    private Timestamp birthDay;
     private String address;
-    private int userRoleId;
-
     private Timestamp createdAt;
     private Timestamp updatedAt;
     private Timestamp deletedAt;
@@ -27,10 +25,30 @@ public class User {
     private boolean isDeleted;
     
     private String roleName;
+    private boolean isVerifiedEmail;
+    private int userRoleId;
 
     public User() {
     }
 
+    public User(int userId, String firstName, String lastName, String email, String phone, String sex, Timestamp birthDay, String address, Timestamp createdAt, Timestamp updatedAt, Timestamp deletedAt, Integer deletedBy, boolean isDeleted, boolean isVerifiedEmail, int userRoleId) {
+        this.userId = userId;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.phone = phone;
+        this.sex = sex;
+        this.birthDay = birthDay;
+        this.address = address;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.deletedAt = deletedAt;
+        this.deletedBy = deletedBy;
+        this.isDeleted = isDeleted;
+        this.isVerifiedEmail = isVerifiedEmail;
+        this.userRoleIduserRoleId = userRoleId;
+    }
+  
     public int getUserId() {
         return userId;
     }
@@ -71,20 +89,36 @@ public class User {
         this.phone = phone;
     }
 
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
     public int getUserRoleId() {
         return userRoleId;
     }
 
     public void setUserRoleId(int userRuleId) {
         this.userRoleId = userRuleId;
+    }
+    public String getSex() {
+        return sex;
+    }
+
+    public void setSex(String sex) {
+        this.sex = sex;
+    }
+
+    public Timestamp getBirthDay() {
+        return birthDay;
+    }
+
+    public void setBirthDay(Timestamp birthDay) {
+        this.birthDay = birthDay;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+
     }
 
     public Timestamp getCreatedAt() {
@@ -101,6 +135,11 @@ public class User {
 
     public void setUpdatedAt(Timestamp updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+
+    public Timestamp getDeletedAt() {
+        return deletedAt;
     }
 
     public void setDeletedAt(Timestamp deletedAt) {
@@ -123,6 +162,7 @@ public class User {
         this.isDeleted = isDeleted;
     }
 
+
     public String getRoleName() {
         return roleName;
     }
@@ -130,9 +170,18 @@ public class User {
     public void setRoleName(String roleName) {
         this.roleName = roleName;
     }
+   
+    public boolean isIsVerifiedEmail() {
+        return isVerifiedEmail;
+    }
+
+    public void setIsVerifiedEmail(boolean isVerifiedEmail) {
+        this.isVerifiedEmail = isVerifiedEmail;
+    }
+
     @Override
     public String toString() {
-        return "User{" + "userId=" + userId + ", firstName=" + firstName + ", lastName=" + lastName + ", email=" + email + ", phone=" + phone + ", address=" + address + ", userRuleId=" + userRoleId + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + ", deletedAt=" + deletedAt + ", deletedBy=" + deletedBy + ", isDeleted=" + isDeleted + '}';
+        return "User{" + "userID=" + userId + ", firstName=" + firstName + ", lastName=" + lastName + ", email=" + email + ", phone=" + phone + ", sex=" + sex + ", birthDay=" + birthDay + ", address=" + address + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + ", deletedAt=" + deletedAt + ", deletedBy=" + deletedBy + ", isDeleted=" + isDeleted + ", isVerifiedEmail=" + isVerifiedEmail + ", userRoleId=" + userRoleId + '}';
     }
 
 }

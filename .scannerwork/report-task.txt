@@ -1,0 +1,6 @@
+projectKey=project_swp391
+serverUrl=http://localhost:9000
+serverVersion=25.6.0.109173
+dashboardUrl=http://localhost:9000/dashboard?id=project_swp391
+ceTaskId=4083853d-7eef-411e-9475-e5055c3f4e04
+ceTaskUrl=http://localhost:9000/api/ce/task?id=4083853d-7eef-411e-9475-e5055c3f4e04
