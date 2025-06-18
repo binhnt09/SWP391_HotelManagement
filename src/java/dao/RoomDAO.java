@@ -294,6 +294,7 @@ public class RoomDAO extends DBContext {
                         rs.getBoolean("IsDeleted"));
             }
         } catch (SQLException e) {
+            e.printStackTrace();
         }
         return null;
     }
@@ -501,6 +502,6 @@ public class RoomDAO extends DBContext {
 //        if (new dao.RoomDAO().updateDeleteRoom(1, 1, true)) {
 //            System.out.println("afjkbnsg ");
 //        }
-    }
 
+    }
 }
