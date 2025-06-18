@@ -4,6 +4,10 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+
+>>>>>>> 205ca8092e074e760bc671bb8476d1de1e6e5cfb
             <file>file:/D:/FU%20Learning/Summer%202025/SWP391/SWP_HotelManagement_V1_1/SWP391_HotelManagement_V1/web/profile/headerprofile.jsp</file>
             <file>file:/D:/FU%20Learning/Summer%202025/SWP391/SWP_HotelManagement_V1_1/SWP391_HotelManagement_V1/src/java/constant/MailUtil.java</file>
             <file>file:/D:/FU%20Learning/Summer%202025/SWP391/SWP_HotelManagement_V1_1/SWP391_HotelManagement_V1/src/java/constant/IConstant.java</file>
@@ -20,6 +24,7 @@
             <file>file:/D:/FU%20Learning/Summer%202025/SWP391/SWP_HotelManagement_V1_1/SWP391_HotelManagement_V1/web/js/authentication.js</file>
             <file>file:/D:/FU%20Learning/Summer%202025/SWP391/SWP_HotelManagement_V1_1/SWP391_HotelManagement_V1/src/java/controller/LoginGoogleServlet.java</file>
             <file>file:/D:/FU%20Learning/Summer%202025/SWP391/SWP_HotelManagement_V1_1/SWP391_HotelManagement_V1/src/java/controller/UpdateProfile.java</file>
+<<<<<<< HEAD
 =======
             <file>file:/D:/kì/ki5/SWP/project/SWP391_HotelManagement/src/java/controller/RoomCRUD.java</file>
             <file>file:/D:/kì/ki5/SWP/project/SWP391_HotelManagement/src/java/dao/RoomImageDAO.java</file>
@@ -27,6 +32,8 @@
             <file>file:/D:/kì/ki5/SWP/project/SWP391_HotelManagement/src/java/dao/RoomDAO.java</file>
             <file>file:/D:/kì/ki5/SWP/project/SWP391_HotelManagement/web/manageroom.jsp</file>
 >>>>>>> hieu
+=======
+>>>>>>> 205ca8092e074e760bc671bb8476d1de1e6e5cfb
         </group>
     </open-files>
 </project-private>
