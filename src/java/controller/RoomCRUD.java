@@ -130,6 +130,7 @@ public class RoomCRUD extends HttpServlet {
                 roomNumber, roomD,
                 roomT,
                 status, Validation.parseStringToDouble(priceRawRaw));
+        
         boolean checkUpdate = new dao.RoomDAO().updateRoom(room);
         List<Room> listRoom = new dao.RoomDAO().getListRoom(null, null, 0, 100000, 0, -1, "", "all", "", false, 4, 6, false);
         request.setAttribute("listRoom", listRoom);
