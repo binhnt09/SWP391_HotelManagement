@@ -159,6 +159,10 @@ public class Validation {
 
     }
 
+    public static String trimSafe(String str) {
+        return (str == null) ? "" : str.trim();
+    }
+
     public static double parseStringToDouble(String input) {
         try {
             double a = Double.parseDouble(input.trim());

@@ -20,8 +20,7 @@ public class HotelDAO extends DBContext {
 
     public Hotel getHotelByID(int hotelID) {
         String sql = "select * from Hotel where HotelID = ?";
-        try {
-            PreparedStatement stm = connection.prepareStatement(sql);
+        try (PreparedStatement stm = connection.prepareStatement(sql)){
             stm.setInt(1, hotelID);
             ResultSet rs = stm.executeQuery();
             if (rs.next()) {
@@ -45,9 +44,5 @@ public class HotelDAO extends DBContext {
         }
 
         return null;
-    }
-
-    public static void main(String[] args) {
-        System.out.println(new dao.HotelDAO().getHotelByID(1));
     }
 }
