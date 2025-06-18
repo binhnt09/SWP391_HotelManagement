@@ -79,7 +79,6 @@
                         <div class="col-12 col-lg-10" >
                             <div class="book-now-form" >
                                 <form action="searchroom">
-
                                     <div class="booking-frame">
                                         <div class="row">
                                         <%
@@ -126,7 +125,6 @@
                                         <div class="col-4 col-lg-4">
                                             <label style="font-weight: 600; font-size: initial; margin-top: 20px">Số lượng thành viên:</label>
                                             <input type="number" name="numberpeople" value="${numberPeople}"  placeholder="Nhập số thành viên" class="form-control" />
-
                                         </div>
                                         <div class="col-4 col-lg-4">
                                             <label style="font-weight: 600; font-size: initial; margin-top: 20px">Loại phòng:</label>
@@ -136,18 +134,12 @@
                                                     <option value="${tmp.roomTypeID}" <c:if test="${tmp.roomTypeID == type}">selected</c:if>>${tmp.typeName}</option>
                                                 </c:forEach>
                                             </select>
-
-
                                         </div>
-
-
-
                                         <div class="col-2 col-lg-2 d-flex align-items-end">
                                             <input type="submit" value="Tìm kiếm" class="btn btn-primary w-100" />
                                         </div>
                                     </div>
                                 </div>
-
                             </form>
                         </div>
                     </div>
@@ -155,7 +147,6 @@
             </div>
         </div>
         <!-- ##### Book Now Area End ##### -->
-
         <!-- ##### Rooms Area Start ##### -->
         <section class="rooms-area section-padding-0-100">
             <div class="container">
@@ -168,9 +159,7 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="row">
-
                     <!-- Single Rooms Area -->
                     <c:forEach items="${listRoom}" var="i">
                         <%
@@ -183,7 +172,6 @@
                         %>
                         <div class="col-12 col-md-6 col-lg-4">
                             <div class="single-rooms-area wow fadeInUp" data-wow-delay="100ms">
-                               
                                 <a href="#" onclick="showRoomDetail(this)" 
                                    data-bs-toggle="modal"
                                    data-bs-target="#roomDetailModal"
@@ -199,13 +187,11 @@
                                    data-img1="${not empty roomImgList and roomImgList.size() > 1 ? roomImgList[1].imageURL : ''}"
                                    data-img2="${not empty roomImgList and roomImgList.size() > 2 ? roomImgList[2].imageURL : ''}"
                                    data-img3="${not empty roomImgList and roomImgList.size() > 3 ? roomImgList[3].imageURL : ''}"
-
                                    >
                                     <div class="bg-thumbnail bg-img">
                                         <img src="${roomImgList[0].imageURL}" alt="Mô tả hình ảnh" width="200" height="150">
                                     </div>
                                 </a>
-
                                 <!-- Price -->
                                 <p class="price-from">From $${i.getPrice()}/night</p>
                                 <!-- Rooms Text -->
@@ -219,9 +205,6 @@
                             </div>
                         </div>
                     </c:forEach>
-
-
-
                 </div>
             </div>
         </section>
@@ -247,7 +230,6 @@
                             <img src="img/bg-img/footer-map.png" alt="">
                         </div>
                     </div>
-
                     <!-- Footer Widget Area -->
                     <div class="col-12 col-md-6 col-lg-3">
                         <div class="footer-widget-area mt-50">
@@ -258,7 +240,6 @@
                             </form>
                         </div>
                     </div>
-
                     <!-- Copywrite Text -->
                     <div class="col-12">
                         <div class="copywrite-text mt-30">
@@ -270,7 +251,6 @@
                 </div>
             </div>
         </footer>
-
 
         <!--CHI TIẾT PHÒNG-->
         <div class="modal fade" id="roomDetailModal" tabindex="-1" aria-labelledby="roomDetailLabel" aria-hidden="true">
@@ -312,12 +292,6 @@
 
                             <div id="description" ></div>
                             <div id="bedType" style="margin-top: 10px"></div>
-
-                            <!--                            <div style="display: flex; align-items: center; flex-wrap: wrap; margin-top: 10px">
-                                                            <p class="benefit" style="margin: 0; font-weight: 600;">Other: </p>
-                                                            <p id="other" style="margin: 0;">&nbsp;Breakfast, Gym, Pool, Laundry service...</p>
-                                                        </div>-->
-
                             <p id="price" style="margin-top: 10px;"></p>
 
                         </div>

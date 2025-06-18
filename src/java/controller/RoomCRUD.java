@@ -141,14 +141,6 @@ public class RoomCRUD extends HttpServlet {
             request.getRequestDispatcher("manageroom.jsp").forward(request, response);
         }
     }
-
-    private void updateRoom(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        // Lấy dữ liệu từ form (roomNumber, price,...)
-        // Gọi DAO update
-        // Redirect hoặc forward lại trang quản lý phòng
-    }
-
     private void deleteRoom(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String roomId = request.getParameter("roomId");
