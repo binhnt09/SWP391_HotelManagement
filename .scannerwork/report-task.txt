@@ -1,6 +1,0 @@
-projectKey=project_swp
-serverUrl=http://localhost:9000
-serverVersion=25.6.0.109173
-dashboardUrl=http://localhost:9000/dashboard?id=project_swp
-ceTaskId=1daa2223-3de1-4314-aa0a-27bc21960c3d
-ceTaskUrl=http://localhost:9000/api/ce/task?id=1daa2223-3de1-4314-aa0a-27bc21960c3d
