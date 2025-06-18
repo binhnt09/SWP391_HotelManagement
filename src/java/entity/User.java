@@ -46,7 +46,7 @@ public class User {
         this.deletedBy = deletedBy;
         this.isDeleted = isDeleted;
         this.isVerifiedEmail = isVerifiedEmail;
-        this.userRoleIduserRoleId = userRoleId;
+        this.userRoleId = userRoleId;
     }
   
     public int getUserId() {
