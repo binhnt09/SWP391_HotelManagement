@@ -4,7 +4,7 @@
  */
 package entity;
 
-import java.sql.Date;
+import java.sql.Timestamp;
 
 /**
  *
@@ -17,16 +17,17 @@ public class Hotel {
     private String address;
     private String description;
     private String facilities;
-    private Date createdAt;
-    private Date updatedAt;
-    private Date deletedAt;
+
+    private Timestamp createdAt;
+    private Timestamp updatedAt;
+    private Timestamp deletedAt;
     private int deletedBy;
     private boolean isDeleted;
 
     public Hotel() {
     }
 
-    public Hotel(int hotelID, String name, String address, String description, String facilities, Date createdAt, Date updatedAt, Date deletedAt, int deletedBy, boolean isDeleted) {
+    public Hotel(int hotelID, String name, String address, String description, String facilities, Timestamp createdAt, Timestamp updatedAt, Timestamp deletedAt, int deletedBy, boolean isDeleted) {
         this.hotelID = hotelID;
         this.name = name;
         this.address = address;
@@ -79,27 +80,27 @@ public class Hotel {
         this.facilities = facilities;
     }
 
-    public Date getCreatedAt() {
+    public Timestamp getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(Date createdAt) {
+    public void setCreatedAt(Timestamp createdAt) {
         this.createdAt = createdAt;
     }
 
-    public Date getUpdatedAt() {
+    public Timestamp getUpdatedAt() {
         return updatedAt;
     }
 
-    public void setUpdatedAt(Date updatedAt) {
+    public void setUpdatedAt(Timestamp updatedAt) {
         this.updatedAt = updatedAt;
     }
 
-    public Date getDeletedAt() {
+    public Timestamp getDeletedAt() {
         return deletedAt;
     }
 
-    public void setDeletedAt(Date deletedAt) {
+    public void setDeletedAt(Timestamp deletedAt) {
         this.deletedAt = deletedAt;
     }
 

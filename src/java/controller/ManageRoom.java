@@ -8,18 +8,18 @@ import entity.Room;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.sql.Date;
 import java.util.List;
-import validation.Validation;
 
 /**
  *
  * @author Admin
  */
-public class SearchRoom extends HttpServlet {
+@WebServlet(name = "ManageRoom", urlPatterns = {"/manageroom"})
+public class ManageRoom extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -38,10 +38,10 @@ public class SearchRoom extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet SearchRoom</title>");
+            out.println("<title>Servlet ManageRoom</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet SearchRoom at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet ManageRoom at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -59,32 +59,12 @@ public class SearchRoom extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String checkin_raw = request.getParameter("checkin");
-        String checkout_raw = request.getParameter("checkout");
-        String priceFrom_raw = request.getParameter("pricefrom");
-        String priceTo_raw = request.getParameter("priceto");
-        String numberPeople_raw = request.getParameter("numberpeople");
-        String roomType_raw = request.getParameter("roomType");
+        List<Room> listRoom = new dao.RoomDAO().getListRoom(null, null, 0, 100000, 0, -1, "", "all", "", false, 4, 6, false);
 
-        request.setAttribute("checkin", checkin_raw);
-        request.setAttribute("checkout" ,checkout_raw);
-        request.setAttribute("from" ,priceFrom_raw);
-        request.setAttribute("to" ,priceTo_raw);
-        request.setAttribute("numberPeople" ,numberPeople_raw);
-        request.setAttribute("type" ,roomType_raw);
-        
-        Date checkin = Validation.parseStringToSqlDate(checkin_raw ,"yyyy-MM-dd");
-        Date checkout = Validation.parseStringToSqlDate(checkout_raw , "yyyy-MM-dd");
-        double priceTo = Validation.parseStringToDouble(priceTo_raw);
-        double priceFrom = Validation.parseStringToDouble(priceFrom_raw);
-        
-        int numberPeople = Validation.parseStringToInt(numberPeople_raw);
-        int roomType = Validation.parseStringToInt(roomType_raw);
-        
-        List<Room> listRoom = new dao.RoomDAO().getListRoom(checkin, checkout, priceFrom, priceTo, numberPeople, roomType, "", "Available", "", false, 4, 6, false);
         request.setAttribute("listRoom", listRoom);
-        request.setAttribute("listRoomType", new dao.RoomTypeDAO().getListRoomType());
-        request.getRequestDispatcher("rooms.jsp").forward(request, response);
+        request.setAttribute("numberRoom", listRoom.size());
+
+        request.getRequestDispatcher("manageroom.jsp").forward(request, response);
     }
 
     /**

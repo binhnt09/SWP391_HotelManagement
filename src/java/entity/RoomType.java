@@ -4,7 +4,8 @@
  */
 package entity;
 
-import java.sql.Date;
+import java.sql.Timestamp;
+import java.sql.Timestamp;
 
 /**
  *
@@ -16,16 +17,16 @@ public class RoomType {
     private String description;
     private String imageUrl;
     
-    private Date createdAt;
-    private Date updatedAt;
-    private Date deletedAt;
+    private Timestamp createdAt;
+    private Timestamp updatedAt;
+    private Timestamp deletedAt;
     private int deletedBy;
     private boolean isDeleted;
 
     public RoomType() {
     }
 
-    public RoomType(int roomTypeID, String typeName, String description, String imageUrl, Date createdAt, Date updatedAt, Date deletedAt, int deletedBy, boolean isDeleted) {
+    public RoomType(int roomTypeID, String typeName, String description, String imageUrl, Timestamp createdAt, Timestamp updatedAt, Timestamp deletedAt, int deletedBy, boolean isDeleted) {
         this.roomTypeID = roomTypeID;
         this.typeName = typeName;
         this.description = description;
@@ -69,27 +70,27 @@ public class RoomType {
         this.imageUrl = imageUrl;
     }
 
-    public Date getCreatedAt() {
+    public Timestamp getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(Date createdAt) {
+    public void setCreatedAt(Timestamp createdAt) {
         this.createdAt = createdAt;
     }
 
-    public Date getUpdatedAt() {
+    public Timestamp getUpdatedAt() {
         return updatedAt;
     }
 
-    public void setUpdatedAt(Date updatedAt) {
+    public void setUpdatedAt(Timestamp updatedAt) {
         this.updatedAt = updatedAt;
     }
 
-    public Date getDeletedAt() {
+    public Timestamp getDeletedAt() {
         return deletedAt;
     }
 
-    public void setDeletedAt(Date deletedAt) {
+    public void setDeletedAt(Timestamp deletedAt) {
         this.deletedAt = deletedAt;
     }
 
