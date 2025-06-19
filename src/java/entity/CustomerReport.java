@@ -5,6 +5,7 @@
 package entity;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 
 /**
  *
@@ -15,8 +16,12 @@ public class CustomerReport {
     private int userId;
     private String firstName;
     private String lastName;
+    private String email;
     private int totalBookings;
     private BigDecimal totalSpent;
+    private Timestamp lastBookingDate;
+    private Timestamp registerDate;
+    private String tier;
 
     public CustomerReport() {
     }
@@ -45,6 +50,14 @@ public class CustomerReport {
         this.lastName = lastName;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     public int getTotalBookings() {
         return totalBookings;
     }
@@ -61,11 +74,45 @@ public class CustomerReport {
         this.totalSpent = totalSpent;
     }
 
+    public Timestamp getLastBookingDate() {
+        return lastBookingDate;
+    }
+
+    public void setLastBookingDate(Timestamp lastBookingDate) {
+        this.lastBookingDate = lastBookingDate;
+    }
+
+    public Timestamp getRegisterDate() {
+        return registerDate;
+    }
+
+    public void setRegisterDate(Timestamp registerDate) {
+        this.registerDate = registerDate;
+    }
+
+    public String getTier() {
+        if (totalSpent == null) {
+            return "Unranked";
+        }
+        if (totalSpent.compareTo(new BigDecimal("50000000")) >= 0) {
+            return "Platinum";
+        }
+        if (totalSpent.compareTo(new BigDecimal("20000000")) >= 0) {
+            return "Gold";
+        }
+        if (totalSpent.compareTo(new BigDecimal("5000000")) >= 0) {
+            return "Silver";
+        }
+        return "Bronze";
+    }   
+
+    public void setTier(String tier) {
+        this.tier = tier;
+    }
+
     @Override
     public String toString() {
-        return "CustomerReport{" + "userId=" + userId + ", firstName=" + firstName + ", lastName=" + lastName + ", totalBookings=" + totalBookings + ", totalSpent=" + totalSpent + '}';
+        return "CustomerReport{" + "userId=" + userId + ", firstName=" + firstName + ", lastName=" + lastName + ", email=" + email + ", totalBookings=" + totalBookings + ", totalSpent=" + totalSpent + ", lastBookingDate=" + lastBookingDate + ", registerDate=" + registerDate + ", tier=" + tier + '}';
     }
-    
-    
-    
+
 }
