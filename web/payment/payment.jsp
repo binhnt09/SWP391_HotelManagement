@@ -22,12 +22,19 @@
                 <div class="bird-icon"></div>
                 <div class="logo">The Palatin</div>
                 <div style="margin-left: auto; font-weight: normal;">
-                    Đừng lo lắng, giá vẫn giữ nguyên. Hoàn tất thanh toán của bạn bằng <span style="color: #FFD700;">00:55:00</span> ⏰
+                    Đừng lo lắng, giá vẫn giữ nguyên. Hoàn tất thanh toán của bạn bằng <span style="color: #FFD700;">00:01:00</span> ⏰
                 </div>
             </div>
 
             <div class="main-content">
                 <div class="payment-section">
+                    <input type="hidden" name="bookingId" value="1" />
+                    <input type="hidden" id="method" name="method" value="vietqr" />
+                    <input type="hidden" id="transactionCode" name="transactionCode" />
+                    <input type="hidden" id="bankCode" name="bankCode" />
+                    <input type="hidden" id="gatewayResponse" name="gatewayResponse" />
+                    <input type="hidden" id="qrRef" name="qrRef" />
+                    
                     <h2 class="section-title">Bạn muốn thanh toán thế nào?</h2>
 
                     <div class="payment-method selected" onclick="selectPayment(this)" data-method="vietqr">
@@ -117,7 +124,8 @@
                     </div>
 
                     <div class="price-summary">
-                        <div class="total-price">1.087.121 VND</div>
+                        <input type="hidden" name="totalbill" value="" />
+                        <div class="total-price">${totalPrice} VND</div>
                     </div>
 
                     <button class="payment-btn" onclick="processPayment()">
@@ -139,24 +147,24 @@
                         <div class="date-info">
                             <div class="date-item">
                                 <div class="date-label">Nhận phòng</div>
-                                <div class="date-value">Th 5, 30 tháng 5<br>2025</div>
+                                <strong>${checkin}</strong>
                                 <div style="font-size: 11px; color: #666;">Từ 14:00</div>
                             </div>
                             <div class="date-item">
                                 <div class="date-label">Trả phòng</div>
-                                <div class="date-value">Th 7, 31 tháng 5<br>2025</div>
+                                <strong>${checkout}</strong>
                                 <div style="font-size: 11px; color: #666;">Trước 12:00</div>
                             </div>
                         </div>
 
                         <div style="text-align: center; margin-bottom: 15px;">
-                            <span style="background: #f0f0f0; padding: 5px 10px; border-radius: 12px; font-size: 12px;">1 đêm</span>
+                            <span style="background: #f0f0f0; padding: 5px 10px; border-radius: 12px; font-size: 12px;">${numberNight} đêm</span>
                         </div>
                     </div>
 
                     <div class="room-info">
-                        <div class="room-title">(1x) Deluxe King Room</div>
-                        <div class="room-details">🏠 2 khách</div>
+                        <div class="room-title">${room.getRoomNumber()}-${room.getRoomTypeID().getTypeName()}</div>
+                        <div class="room-details">🏠 ${room.roomDetail.maxGuest} khách</div>
                         <div class="room-details">🍽️ Gồm bữa sáng</div>
                         <div class="room-details">📶 Without Wifi</div>
                         <div style="color: #d32f2f; font-size: 12px; margin-top: 8px;">Yêu cầu đặc biệt (nếu có)</div>
@@ -164,7 +172,7 @@
 
                     <div class="guest-info">
                         <div style="font-weight: bold; margin-bottom: 10px;">Tên khách</div>
-                        <div style="margin-bottom: 10px;">Tokuda Toku</div>
+                        <div style="margin-bottom: 10px;">${sessionScope.authLocal.user.firstName} ${sessionScope.authLocal.user.lastName}</div>
 
                         <div class="status-badge no-refund">⚠ Không hoàn tiền</div><br>
                         <div class="status-badge no-reschedule">⚠ Không đổi lịch</div>
@@ -172,9 +180,9 @@
 
                     <div style="margin: 20px 0;">
                         <div style="font-weight: bold; margin-bottom: 10px;">Chi tiết người liên lạc</div>
-                        <div style="margin-bottom: 5px;">Tokuda Toku</div>
-                        <div style="font-size: 14px; color: #666;">📞 +6259638459</div>
-                        <div style="font-size: 14px; color: #666;">✉️ tokutokuda123@gmail.com</div>
+                        <div style="margin-bottom: 5px;">${sessionScope.authLocal.user.firstName} ${sessionScope.authLocal.user.lastName}</div>
+                        <div style="font-size: 14px; color: #666;">📞 ${sessionScope.authLocal.user.phone}</div>
+                        <div style="font-size: 14px; color: #666;">✉ ️${sessionScope.authLocal.user.email}</div>
                     </div>
 
                     <div class="contact-note">
