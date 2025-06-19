@@ -86,6 +86,7 @@
                                                 <li><a href="loadtohome">Home</a></li>
                                                 <li><a href="about-us.jsp">About Us</a></li>
                                                 <li class="${pageContext.request.requestURI.endsWith('manageroom.jsp') ? 'active' : ''}"><a href="manageroom">Manage Room</a></li>
+                                                <li class="${pageContext.request.requestURI.endsWith('managerDashboard.jsp') ? 'active' : ''}"><a href="managerDashboard.jsp">Manage</a></li>
                                                 <li><a href="services.jsp">Services</a></li>
                                                 <li><a href="searchroom">Rooms</a></li>
                                                 <li><a href="blog.jsp">News</a></li>
