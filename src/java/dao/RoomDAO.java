@@ -367,15 +367,6 @@ public class RoomDAO extends DBContext {
         return false;
     }
 
-    public static void main(String[] args) {
-        List<Room> listRoom = new dao.RoomDAO().getListRoom(null, null, 
-                0, 100000, 
-                0, -1, 
-                "studio", "all", "price", 
-                true, 4, 6, null);
-        for (Room room : listRoom) {
-            System.out.println(room.getRoomTypeID());
-        }
 //        System.out.println(new dao.RoomDAO().getRoomByRoomID(5).getPrice());
 //        Room room = new Room(1, "hieu", new RoomDetail(1, "hieu", 123, 12, "Anh hhieu dep trai"), new dao.RoomTypeDAO().getRoomTypeById(1), "Available", 200);
 //        boolean a = new dao.RoomDAO().updateRoom(room);
@@ -407,7 +398,7 @@ public class RoomDAO extends DBContext {
                 r.setRoomNumber(rs.getString("RoomNumber"));
                 r.setStatus(rs.getString("Status"));
                 r.setPrice(rs.getDouble("Price"));
-                r.setCreatedAt(rs.getDate("CreatedAt"));
+                r.setCreatedAt(rs.getTimestamp("CreatedAt"));
                 r.setRoomTypeID(new RoomType());
                 r.getRoomTypeID().setTypeName(rs.getString("TypeName"));
                 r.setRoomDetail(new RoomDetail());
@@ -458,7 +449,7 @@ public class RoomDAO extends DBContext {
                 r.setRoomNumber(rs.getString("RoomNumber"));
                 r.setStatus(rs.getString("Status"));
                 r.setPrice(rs.getDouble("Price"));
-                r.setCreatedAt(rs.getDate("CreatedAt"));
+                r.setCreatedAt(rs.getTimestamp("CreatedAt"));
                 r.setRoomTypeID(new RoomType());
                 r.getRoomTypeID().setTypeName(rs.getString("TypeName"));
                 r.setRoomDetail(new RoomDetail());

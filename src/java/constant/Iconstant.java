@@ -8,9 +8,9 @@ package constant;
  *
  * @author HP
  */
-public class IConstant {
+public class Iconstant {
 
-    private IConstant() {
+    private Iconstant() {
     }
     
     public static final String GOOGLE_CLIENT_ID = "";

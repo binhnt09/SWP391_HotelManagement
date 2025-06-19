@@ -18,9 +18,9 @@ public class Hotel {
     private String address;
     private String description;
     private String facilities;
-    private Date createdAt;
-    private Date updatedAt;
-    private Date deletedAt;
+    private Timestamp createdAt;
+    private Timestamp updatedAt;
+    private Timestamp deletedAt;
     private int deletedBy;
     private boolean isDeleted;
 
