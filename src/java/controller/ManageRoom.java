@@ -5,6 +5,7 @@
 package controller;
 
 import entity.Room;
+import entity.RoomType;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -60,8 +61,10 @@ public class ManageRoom extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         List<Room> listRoom = new dao.RoomDAO().getListRoom(null, null, 0, 100000, 0, -1, "", "all", "", false, 4, 6, false);
-
+        List<RoomType> listRoomType = new dao.RoomTypeDAO().getListRoomType();
+                
         request.setAttribute("listRoom", listRoom);
+        request.setAttribute("listRoomType", listRoomType);
         request.setAttribute("numberRoom", listRoom.size());
 
         request.getRequestDispatcher("manageroom.jsp").forward(request, response);
