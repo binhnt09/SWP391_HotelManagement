@@ -39,22 +39,25 @@
 
     </head>
     <body>
-        <div class="container">
-            <div class="table-wrapper">
-                <form action="roomcrud" method="get" id="deleteSelect">
+        <jsp:include page="common/header.jsp"></jsp:include>
+            <div class="container" style="margin-top: 200px">
+                <div class="table-wrapper">
+                    <form action="roomcrud" method="get" id="deleteSelect">
 
-                    <div class="d-flex justify-content-between align-items-center mb-4">
-                        <div>
-                            <button class="btn btn-success me-2" type="button">
-                                <i class="fas fa-plus me-1"></i>Add New Room
-                            </button>
-                            <button type="button" onclick="return confirmDeleteSelected();" class="btn btn-danger">
-                                <i class="fas fa-trash me-1"></i>DELETE
-                            </button>
-                        </div>
-                        <div>
-                            <input type="hidden" name="action" value="filterRoom">
-                            <input type="text" id="searchInput" name="keyWorld" value="${keyWorld}" placeholder="Search Room" oninput="searchRoom()">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <div>
+                                <button class="btn btn-success me-2" type="button">
+                                    <a href="#addroom"
+                                       data-bs-toggle="modal" class="text-white"  title="Add Room"><i class="fas fa-plus me-1"></i>Add New Room</a>
+
+                                </button>
+                                <button type="button" onclick="return confirmDeleteSelected();" class="btn btn-danger">
+                                    <i class="fas fa-trash me-1"></i>DELETE
+                                </button>
+                            </div>
+                            <div>
+                                <input type="hidden" name="action" value="filterRoom">
+                                <input type="text" id="searchInput" name="keyWorld" value="${keyWorld}" placeholder="Search Room" oninput="searchRoom()">
                             <select name="sortBy">
                                 <option disabled ${sortBy == null ? "selected" : ""}>Select sort by</option>
                                 <option value="RoomID" ${sortBy.equals("RoomID") ? "selected" : ""}>RoomID</option>
@@ -166,7 +169,7 @@
                                                                 <td>${i.roomDetail.maxGuest} </td>
                             -->                                                 
                             <td>
-                                <a href="#editroomtype"
+                                <a href="#editroom"
                                    data-bs-toggle="modal"
                                    data-roomID="${i.roomID}"
                                    data-roomDetail="${i.roomDetail.roomDetailID}"
@@ -195,7 +198,7 @@
         </form>
     </div>
     <div>
-        <a href="#"><button type="button" class="btn btn-primary" style="margin: 20px 40px; padding: 10px">Back to home</button></a>
+        <a href="searchroom"><button type="button" class="btn btn-primary" style="margin: 20px 40px; padding: 10px">Back to home</button></a>
     </div>
 </div>
 
@@ -217,9 +220,9 @@
 </script>
 
 
-<div class="modal fade" id="editroomtype" tabindex="-1">
+<div class="modal fade" id="editroom" tabindex="-1">
     <div class="modal-dialog">
-        <form id="editRoomForm" action="roomcrud">
+        <form id="editRoomForm" method="post" action="roomcrud"  enctype="multipart/form-data">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Edit Room</h5>
@@ -265,12 +268,88 @@
                         <label>Area</label>
                         <input type="number" step="any" id="edit-area" name="area" class="form-control">
                     </div>
-                    
+
 
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                     <button type="submit" class="btn btn-primary">Update Room</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<!--Modal add room-->
+<div class="modal fade" id="addroom" tabindex="-1">
+    <div class="modal-dialog">
+        <form id="addRoomForm" method="post" action="roomcrud" enctype="multipart/form-data">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Room</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="action" value="add">
+                    <div class="mb-3">
+                        <label>Room Number</label>
+                        <input type="text" id="edit-roomNumber" name="roomNumber" class="form-control">
+                    </div>
+                    <div class="mb-3">
+                        <label>Room Type</label>
+                        <select name="roomTypeID" class="form-select"   >
+                            <option value="-1" >Select room type </option>
+                            <c:forEach items="${listRoomType}" var="tmp">
+                                <option value="${tmp.roomTypeID}">${tmp.typeName}</option>
+                            </c:forEach>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label>Bed Type</label>
+                        <input type="text" id="edit-bedType" name="bedType" class="form-control">
+                    </div>
+                    <div class="mb-3">
+                        <label>Status</label>
+                        <select name="status" class="form-select"   >
+                            <option value="-1" >Select room status </option>
+                                <option value="Available">Available</option>
+                                <option value="Occupied">Occupied</option>
+                                <option value="Reserved">Reserved</option>
+                                <option value="Cleaning">Cleaning</option>
+                                <option value="Non-available">Non-available</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label>Hotel</label>
+                        <input type="text" id="edit-status" name="hotel" class="form-control">
+                    </div>
+                    <div class="mb-3">
+                        <label for="photos">Select Img:</label>
+                        <input type="file" name="photos" class="form-control" multiple accept="image/*">
+                    </div>
+                    <div class="mb-3">
+                        <label>Description</label>
+                        <textarea id="edit-description" name="description" class="form-control"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label>Price</label>
+                        <input type="number" id="edit-price" name="price" class="form-control">
+                    </div>
+                    <div class="mb-3">
+                        <label>Number Guest</label>
+                        <input type="number" id="edit-maxGuest" name="maxGuest" class="form-control">
+                    </div>
+                    <div class="mb-3">
+                        <label>Area</label>
+                        <input type="number" step="any" id="edit-area" name="area" class="form-control">
+                    </div>
+
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Add Room</button>
                 </div>
             </div>
         </form>

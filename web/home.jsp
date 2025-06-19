@@ -4,8 +4,10 @@
     Author     : ASUS
 --%>
 
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
-<!DOCTYPE html>
+<%@ page import="java.util.*, java.text.SimpleDateFormat" %>
+<%@ page import="java.util.List" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@page contentType="text/html" pageEncoding="UTF-8"%><!DOCTYPE html>
 <html lang="en">
 
     <head>
@@ -39,121 +41,148 @@
 
         <!-- ##### Header Area Start ##### -->
         <jsp:include page="common/header.jsp"></jsp:include>
-        <!-- ##### Header Area End ##### -->
+            <!-- ##### Header Area End ##### -->
 
-        <!-- ##### Hero Area Start ##### -->
-        <section class="hero-area">
-            <div class="hero-slides owl-carousel">
+            <!-- ##### Hero Area Start ##### -->
+            <section class="hero-area">
+                <div class="hero-slides owl-carousel">
 
-                <!-- Single Hero Slide -->
-                <div class="single-hero-slide d-flex align-items-center justify-content-center">
-                    <!-- Slide Img -->
-                    <div class="slide-img bg-img" style="background-image: url(img/bg-img/bg-1.jpg);"></div>
-                    <div class="container">
-                        <div class="row justify-content-center">
-                            <div class="col-12 col-lg-9">
-                                <!-- Slide Content -->
-                                <div class="hero-slides-content" data-animation="fadeInUp" data-delay="100ms">
-                                    <div class="line" data-animation="fadeInUp" data-delay="300ms"></div>
-                                    <h2 data-animation="fadeInUp" data-delay="500ms">The Vacation Heaven</h2>
-                                    <p data-animation="fadeInUp" data-delay="700ms">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec malesuada lorem maximus mauris sceleri sque, at rutrum nulla dictum. Ut ac ligula sapien. Suspendisse cursus faucibus finibus.</p>
-                                    <a href="#" class="btn palatin-btn mt-50" data-animation="fadeInUp" data-delay="900ms">Read More</a>
+                    <!-- Single Hero Slide -->
+                    <div class="single-hero-slide d-flex align-items-center justify-content-center">
+                        <!-- Slide Img -->
+                        <div class="slide-img bg-img" style="background-image: url(img/bg-img/bg-1.jpg);"></div>
+                        <div class="container">
+                            <div class="row justify-content-center">
+                                <div class="col-12 col-lg-9">
+                                    <!-- Slide Content -->
+                                    <div class="hero-slides-content" data-animation="fadeInUp" data-delay="100ms">
+                                        <div class="line" data-animation="fadeInUp" data-delay="300ms"></div>
+                                        <h2 data-animation="fadeInUp" data-delay="500ms">The Vacation Heaven</h2>
+                                        <p data-animation="fadeInUp" data-delay="700ms">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec malesuada lorem maximus mauris sceleri sque, at rutrum nulla dictum. Ut ac ligula sapien. Suspendisse cursus faucibus finibus.</p>
+                                        <a href="#" class="btn palatin-btn mt-50" data-animation="fadeInUp" data-delay="900ms">Read More</a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- Single Hero Slide -->
-                <div class="single-hero-slide d-flex align-items-center justify-content-center">
-                    <!-- Slide Img -->
-                    <div class="slide-img bg-img" style="background-image: url(img/bg-img/bg-2.jpg);"></div>
-                    <div class="container">
-                        <div class="row justify-content-center">
-                            <div class="col-12 col-lg-9">
-                                <!-- Slide Content -->
-                                <div class="hero-slides-content" data-animation="fadeInUp" data-delay="100ms">
-                                    <div class="line" data-animation="fadeInUp" data-delay="300ms"></div>
-                                    <h2 data-animation="fadeInUp" data-delay="500ms">A place to remember</h2>
-                                    <p data-animation="fadeInUp" data-delay="700ms">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec malesuada lorem maximus mauris sceleri sque, at rutrum nulla dictum. Ut ac ligula sapien. Suspendisse cursus faucibus finibus.</p>
-                                    <a href="#" class="btn palatin-btn mt-50" data-animation="fadeInUp" data-delay="900ms">Read More</a>
+                    <!-- Single Hero Slide -->
+                    <div class="single-hero-slide d-flex align-items-center justify-content-center">
+                        <!-- Slide Img -->
+                        <div class="slide-img bg-img" style="background-image: url(img/bg-img/bg-2.jpg);"></div>
+                        <div class="container">
+                            <div class="row justify-content-center">
+                                <div class="col-12 col-lg-9">
+                                    <!-- Slide Content -->
+                                    <div class="hero-slides-content" data-animation="fadeInUp" data-delay="100ms">
+                                        <div class="line" data-animation="fadeInUp" data-delay="300ms"></div>
+                                        <h2 data-animation="fadeInUp" data-delay="500ms">A place to remember</h2>
+                                        <p data-animation="fadeInUp" data-delay="700ms">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec malesuada lorem maximus mauris sceleri sque, at rutrum nulla dictum. Ut ac ligula sapien. Suspendisse cursus faucibus finibus.</p>
+                                        <a href="#" class="btn palatin-btn mt-50" data-animation="fadeInUp" data-delay="900ms">Read More</a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- Single Hero Slide -->
-                <div class="single-hero-slide d-flex align-items-center justify-content-center">
-                    <!-- Slide Img -->
-                    <div class="slide-img bg-img" style="background-image: url(img/bg-img/bg-3.jpg);"></div>
-                    <div class="container">
-                        <div class="row justify-content-center">
-                            <div class="col-12 col-lg-9">
-                                <!-- Slide Content -->
-                                <div class="hero-slides-content" data-animation="fadeInUp" data-delay="100ms">
-                                    <div class="line" data-animation="fadeInUp" data-delay="300ms"></div>
-                                    <h2 data-animation="fadeInUp" data-delay="500ms">Enjoy your life</h2>
-                                    <p data-animation="fadeInUp" data-delay="700ms">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec malesuada lorem maximus mauris sceleri sque, at rutrum nulla dictum. Ut ac ligula sapien. Suspendisse cursus faucibus finibus.</p>
-                                    <a href="#" class="btn palatin-btn mt-50" data-animation="fadeInUp" data-delay="900ms">Read More</a>
+                    <!-- Single Hero Slide -->
+                    <div class="single-hero-slide d-flex align-items-center justify-content-center">
+                        <!-- Slide Img -->
+                        <div class="slide-img bg-img" style="background-image: url(img/bg-img/bg-3.jpg);"></div>
+                        <div class="container">
+                            <div class="row justify-content-center">
+                                <div class="col-12 col-lg-9">
+                                    <!-- Slide Content -->
+                                    <div class="hero-slides-content" data-animation="fadeInUp" data-delay="100ms">
+                                        <div class="line" data-animation="fadeInUp" data-delay="300ms"></div>
+                                        <h2 data-animation="fadeInUp" data-delay="500ms">Enjoy your life</h2>
+                                        <p data-animation="fadeInUp" data-delay="700ms">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec malesuada lorem maximus mauris sceleri sque, at rutrum nulla dictum. Ut ac ligula sapien. Suspendisse cursus faucibus finibus.</p>
+                                        <a href="#" class="btn palatin-btn mt-50" data-animation="fadeInUp" data-delay="900ms">Read More</a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+
                 </div>
+            </section>
+            <!-- ##### Hero Area End ##### -->
 
-            </div>
-        </section>
-        <!-- ##### Hero Area End ##### -->
+            <!-- ##### Book Now Area Start ##### -->
+            <style>
 
-        <!-- ##### Book Now Area Start ##### -->
-        <style>
+                .booking-frame {
+                    background-color: #ffffff;
+                    border-radius: 12px;
+                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+                    padding: 30px;
+                    width: 100%;
+                    max-width: 1000px;
+                }
+            </style>
+            <div class="book-now-area">
+                <div class="container">
+                    <div class="row justify-content-center" >
+                        <div class="col-12 col-lg-10" >
+                            <div class="book-now-form" >
+                                <form action="searchroom">
 
-            .booking-frame {
-                background-color: #ffffff;
-                border-radius: 12px;
-                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-                padding: 30px;
-                width: 100%;
-                max-width: 1000px;
-            }
-        </style>
-        <div class="book-now-area">
-            <div class="container">
-                <div class="row justify-content-center" >
-                    <div class="col-12 col-lg-10" >
-                        <div class="book-now-form" >
-                            <form action="#">
+                                    <div class="booking-frame">
+                                        <div class="row">
+                                        <%
+                                            String checkin = request.getParameter("checkin");
+                                            if (checkin == null || checkin.trim().isEmpty()) {
+                                                Calendar calendar = Calendar.getInstance();
+                                                calendar.add(Calendar.DAY_OF_YEAR, 1); // ngày mai
+                                                Date tomorrow = calendar.getTime();
+                                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                                                checkin = sdf.format(tomorrow);
+                                            }
+                                            String checkout = request.getParameter("checkout");
+                                            if (checkout == null || checkout.trim().isEmpty()) {
+                                                Calendar calendar = Calendar.getInstance();
+                                                calendar.add(Calendar.DAY_OF_YEAR, 2); // ngày kia
+                                                Date afterTomorrow = calendar.getTime();
+                                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                                                checkout = sdf.format(afterTomorrow);
+                                            }
+                                            request.setAttribute("checkin", checkin);
+                                            request.setAttribute("checkout", checkout);
+                                        %>
 
-                                <div class="booking-frame">
-                                    <div class="row">
                                         <div class="col-4 col-lg-4">
                                             <label style="font-weight: 600;">Nhập check-in:</label>
-                                            <input type="text" name="birthday" placeholder="Chọn ngày đến" class="form-control time-input" />
+                                            <input type="date" value="${checkin}" name="checkin" required=""  placeholder="Chọn ngày đến" class="form-control time-input" />
 
                                         </div>
                                         <div class="col-4 col-lg-4">
                                             <label style="font-weight: 600;">Nhập check-out:</label>
-                                            <input type="text" name="birthday" placeholder="Chọn ngày đi" class="form-control time-input" />
-
+                                            <input type="date" value="${checkout}" name="checkout" required=""  placeholder="Chọn ngày đến" class="form-control time-input"  />
                                         </div>
                                         <div class="col-3 col-lg-3">
                                             <label style="font-weight: 600;">Giá mỗi đêm:</label>
                                             <div class="d-flex align-items-center gap-2">
-                                                <input type="number" step="100" placeholder="$ To" class="form-control" style="max-width: 150px;">
+                                                <input type="number" name="pricefrom" value="${from}" step="100" placeholder="$From" class="form-control" style="max-width: 150px;">
                                                 <span>&nbsp;&mdash;&nbsp;</span>
-                                                <input type="number" step="100" placeholder="$ From" class="form-control" style="max-width: 150px;">
+                                                <input type="number" name="priceto" value="${to}" step="100" placeholder="$To" class="form-control" style="max-width: 150px;">
                                             </div>
-
-
-
                                         </div>
+                                    </div>
+                                    <div class="row">
+
                                         <div class="col-4 col-lg-4">
                                             <label style="font-weight: 600; font-size: initial; margin-top: 20px">Số lượng thành viên:</label>
-                                            <input type="number"   placeholder="Nhập số thành viên" class="form-control" />
-
+                                            <input type="number" name="numberpeople" value="${numberPeople}"  placeholder="Nhập số thành viên" class="form-control" />
                                         </div>
-
+                                        <div class="col-4 col-lg-4">
+                                            <label style="font-weight: 600; font-size: initial; margin-top: 20px">Loại phòng:</label>
+                                            <select name="roomType" class="form-select"   >
+                                                <option value="-1" >Select room type </option>
+                                                <c:forEach items="${listRoomType}" var="tmp">
+                                                    <option value="${tmp.roomTypeID}" <c:if test="${tmp.roomTypeID == type}">selected</c:if>>${tmp.typeName}</option>
+                                                </c:forEach>
+                                            </select>
+                                        </div>
                                         <div class="col-2 col-lg-2 d-flex align-items-end">
                                             <input type="submit" value="Tìm kiếm" class="btn btn-primary w-100" />
                                         </div>
@@ -418,12 +447,19 @@
 
         <!-- Script khởi tạo -->
         <script>
-                                        $(function () {
-                                            $('input[name="birthday"]').daterangepicker({
-                                                singleDatePicker: true,
-                                                minYear: 1901,
-                                                maxYear: parseInt(moment().format('YYYY'), 10)
-                                            });
+
+                                        $(document).ready(function () {
+                                            $('.single-rooms-area').hover(
+                                                    function () {
+                                                        $(this).css({
+                                                            'transform': 'scale(1.03)',
+                                                            'transition': 'transform 0.3s ease'
+                                                        });
+                                                    },
+                                                    function () {
+                                                        $(this).css('transform', 'scale(1)');
+                                                    }
+                                            );
                                         });
         </script>
     </body>
