@@ -117,7 +117,7 @@
                             <i class="material-icons">insights</i>Reports
                         </a>
                         <ul class="collapse list-unstyled menu" id="reportMenu">
-                            <li><a href="revenueReport"><i class="material-icons">bar_chart</i>Revenue</a></li>
+                            <li><a href="customerReport"><i class="material-icons">bar_chart</i>Revenue</a></li>
                             <li><a href="bookingReport"><i class="material-icons">pie_chart</i>Booking Rate</a></li>
                         </ul>
                     </li>
