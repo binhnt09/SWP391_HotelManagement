@@ -198,7 +198,9 @@
                                 <small class="text-muted"><i class="fas fa-mobile-alt"></i> Bản chưa bỏ trợ đình!</small>
                             </div>
 
-                            <button class="btn btn-danger btn-lg w-100 fw-bold">Tiếp tục thanh toán</button>
+                            <button class="btn btn-danger btn-lg w-100 fw-bold">
+                                <a href="payment" class="fw-bold white-color">Tiếp tục thanh toán</a>
+                            </button>
 
                             <p class="text-center small text-muted mt-3">
                                 Bằng việc chấp nhận thanh toán, bạn đã đồng ý với 
