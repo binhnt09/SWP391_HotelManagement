@@ -26,6 +26,14 @@ public class RoomDetail {
     public RoomDetail() {
     }
 
+    public RoomDetail(String bedType, double area, int maxGuest, String description) {
+        this.bedType = bedType;
+        this.area = area;
+        this.maxGuest = maxGuest;
+        this.description = description;
+    }
+
+    
     public RoomDetail(int roomDetailID, String bedType, double area, int maxGuest, String description) {
         this.roomDetailID = roomDetailID;
         this.bedType = bedType;
