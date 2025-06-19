@@ -61,7 +61,7 @@
                         <nav class="classy-navbar justify-content-between" id="palatinNav">
 
                             <!-- Nav brand -->
-                            <a href="home.jsp" class="nav-brand"><img src="img/core-img/logo.png" alt=""></a>
+                            <a href="loadtohome" class="nav-brand"><img src="img/core-img/logo.png" alt=""></a>
 
                             <!-- Navbar Toggler -->
                             <div class="classy-navbar-toggler">
@@ -79,19 +79,19 @@
                                 <!-- Nav Start -->
                                 <div class="classynav">
                                     <ul>
-                                        <li class="${pageContext.request.requestURI.endsWith('home.jsp') ? 'active' : ''}"><a href="home.jsp">Home</a></li>
+                                        <li class="${pageContext.request.requestURI.endsWith('home.jsp') ? 'active' : ''}"><a href="loadtohome">Home</a></li>
                                         <li class="${pageContext.request.requestURI.endsWith('rooms.jsp') ? 'active' : ''}"><a href="searchroom">Room</a></li>
-                                        <li class="${pageContext.request.requestURI.endsWith('manageroom.jsp') ? 'active' : ''}"><a href="manageroom">Manage Room</a></li>
                                         <li><a href="#">More</a>
                                             <ul class="dropdown">
                                                 <li><a href="loadtohome">Home</a></li>
                                                 <li><a href="about-us.jsp">About Us</a></li>
+                                                <li class="${pageContext.request.requestURI.endsWith('manageroom.jsp') ? 'active' : ''}"><a href="manageroom">Manage Room</a></li>
                                                 <li><a href="services.jsp">Services</a></li>
                                                 <li><a href="searchroom">Rooms</a></li>
                                                 <li><a href="blog.jsp">News</a></li>
                                                 <li><a href="contact.jsp">Contact</a></li>
                                                 <li><a href="elements.jsp">Elements</a></li>
-                                                <li><a href="${pageContext.request.contextPath}/payment/payment.jsp">Payment</a></li>
+                                                <li><a href="payment">Payment</a></li>
                                             </ul>
                                         </li>
                                         <li class="${pageContext.request.requestURI.endsWith('about-us.jsp') ? 'active' : ''}"><a href="about-us.jsp">About Us</a></li>
@@ -248,9 +248,9 @@
                                                                 <div class="font-weight-bold text-dark">🥉 Bronze Priority</div>
                                                                 <div class="text-muted small">0 Điểm</div>
                                                             </div>
-                                                            <a class="dropdown-item" href="${pageContext.request.contextPath}/profile/profile.jsp" style="color: black"><i class="fa fa-user mr-2 text-primary"></i> Tài khoản của tôi</a>
+                                                            <a class="dropdown-item" href="updateprofile" style="color: black"><i class="fa fa-user mr-2 text-primary"></i> Tài khoản của tôi</a>
                                                             <a class="dropdown-item" href="updateprofile" style="color: black"><i class="fa fa-user mr-2 text-primary"></i> Cập nhật hồ sơ</a>
-                                                            <a class="dropdown-item" href="${pageContext.request.contextPath}/payment/payment.jsp" style="color: black"><i class="fa fa-credit-card mr-2 text-primary"></i> Payment</a>
+                                                            <a class="dropdown-item" href="payment" style="color: black"><i class="fa fa-credit-card mr-2 text-primary"></i> Payment</a>
                                                             <!--<a href="#verifyEmailChange-modal" class="dropdown-item switch-modal" style="font-size: 14px; color: black">Change your password </a>-->
                                                             <c:if test="${sessionScope.authLocal.authType eq 'local'}">
                                                                 <a href="#changePassword-modal" class="dropdown-item switch-modal" style="font-size: 14px; color: black">

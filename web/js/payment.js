@@ -53,7 +53,7 @@ function processPayment() {
 }
 
 // Countdown timer simulation
-let timeLeft = 55 * 60; // 54 minutes 29 seconds
+let timeLeft = 1 * 60; // 54 minutes 29 seconds
 
 function updateTimer() {
     const minutes = Math.floor(timeLeft / 60);
