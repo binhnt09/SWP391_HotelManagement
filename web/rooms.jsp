@@ -160,19 +160,37 @@
                     </div>
                 </div>
                 <div class="row">
-                    <!-- Single Rooms Area -->
+                    <!-- Bộ lọc -->
+                    <div class="filter-bar d-flex justify-content-end align-items-center gap-2 mb-3">
+                        <select id="sortBySelect">
+                            <option disabled selected>Select Sort By</option>
+                            <option value="roomnumber">Name</option>
+                            <option value="price">Price</option>
+                        </select>
+
+                        <select id="sortOrderSelect">
+                            <option value="asc">Ascending</option>
+                            <option value="desc">Descending</option>
+                        </select>
+                    </div>
+                </div>
+
+
+                <div class="row" id="roomListContainer"  style="margin-top: 30px;">
                     <c:forEach items="${listRoom}" var="i">
                         <%
-                            entity.Room room = (entity.Room) pageContext.getAttribute("i"); 
-                            
+                            entity.Room room = (entity.Room) pageContext.getAttribute("i");
                             int roomDetailId = room.getRoomDetail().getRoomDetailID();
                             List<entity.RoomImage> roomImgList = new dao.RoomImageDAO().getListRoomImgByDetailID(roomDetailId);
-                            pageContext.setAttribute("roomImgList",roomImgList);
-                            
+                            pageContext.setAttribute("roomImgList", roomImgList);
                         %>
-                        <div class="col-12 col-md-6 col-lg-4">
-                            <div class="single-rooms-area wow fadeInUp" data-wow-delay="100ms">
-                                <a href="#" onclick="showRoomDetail(this)" 
+                        <div class="col-12 col-md-6 col-lg-4 mb-5 d-flex align-items-stretch room-card"
+                             data-roomid="${i.getRoomID()}"
+                             data-roomnumber="${i.getRoomNumber()}"
+                             data-price="${i.getPrice()}"
+                             data-roomtype="${i.getRoomTypeID().getRoomTypeID()}">
+                            <div class="single-rooms-area card shadow w-100 h-85" style="border: none;">
+                                <a href="#" onclick="showRoomDetail(this)" title="Click để xem chi tiết" 
                                    data-bs-toggle="modal"
                                    data-bs-target="#roomDetailModal"
                                    data-roomID ="${i.getRoomID()}"
@@ -186,28 +204,70 @@
                                    data-img="${not empty roomImgList and roomImgList.size() > 0 ? roomImgList[0].imageURL : ''}"
                                    data-img1="${not empty roomImgList and roomImgList.size() > 1 ? roomImgList[1].imageURL : ''}"
                                    data-img2="${not empty roomImgList and roomImgList.size() > 2 ? roomImgList[2].imageURL : ''}"
-                                   data-img3="${not empty roomImgList and roomImgList.size() > 3 ? roomImgList[3].imageURL : ''}"
-                                   >
-                                    <div class="bg-thumbnail bg-img">
-                                        <img src="${roomImgList[0].imageURL}" alt="Mô tả hình ảnh" width="200" height="150">
-                                    </div>
+                                   data-img3="${not empty roomImgList and roomImgList.size() > 3 ? roomImgList[3].imageURL : ''}">
+                                    <img src="${roomImgList[0].imageURL}" class="card-img-top img-fluid"
+                                         style="height: 200px; object-fit: cover;" alt="Room Image">
                                 </a>
-                                <!-- Price -->
-                                <p class="price-from">From $${i.getPrice()}/night</p>
-                                <!-- Rooms Text -->
-                                <div class="rooms-text">
-                                    <div class="line"></div>
-                                    <h4>${i.getRoomTypeID().getTypeName()}</h4>
-                                    <p>${i.getRoomDetail().getDescription()}.</p>
+                                <div class="card-body d-flex flex-column" style="height: 50px">
+                                    <p class="price-from text-end mb-2" style="font-weight: bold; color: white;">
+                                        From $${i.getPrice()}/night
+                                    </p>
+                                    <h5 class="card-title">${i.getRoomNumber()} - ${i.getRoomTypeID().getTypeName()}</h5>
+                                    <p class="card-text flex-grow-1">${i.getRoomDetail().getDescription()}</p>
+                                    <a href="bookingroom?roomID=${i.getRoomID()}&checkin=${checkin}&checkout=${checkout}" class="btn palatin-btn mt-auto">Book Room</a>
                                 </div>
-                                <!-- Book Room -->
-                                <a href="bookingroom?roomID=${i.getRoomID()}&checkin=${checkin}&checkout=${checkout}" class="book-room-btn btn palatin-btn">Book Room</a>
                             </div>
                         </div>
                     </c:forEach>
                 </div>
+
+
             </div>
         </section>
+        <script>
+            function filterAndSortRooms() {
+                const sortBy = document.getElementById('sortBySelect').value || 'price';
+                const sortOrder = document.getElementById('sortOrderSelect').value;
+
+                const rooms = Array.from(document.querySelectorAll('.room-card'));
+
+                // Bỏ lọc, tất cả hiển thị
+                rooms.forEach(room => {
+                    room.style.display = '';
+                });
+
+                // Sắp xếp lại các phòng đang hiển thị
+                const visibleRooms = rooms.filter(room => room.style.display !== 'none');
+
+                visibleRooms.sort((a, b) => {
+                    let valA = a.dataset[sortBy];
+                    let valB = b.dataset[sortBy];
+
+                    // Nếu là số thì parseFloat
+                    if (sortBy === 'price' || sortBy === 'roomnumber') {
+                        valA = parseFloat(valA);
+                        valB = parseFloat(valB);
+                    }
+
+                    if (valA < valB)
+                        return sortOrder === 'asc' ? -1 : 1;
+                    if (valA > valB)
+                        return sortOrder === 'asc' ? 1 : -1;
+                    return 0;
+                });
+
+                // Gắn lại vào container
+                const container = document.getElementById('roomListContainer');
+                visibleRooms.forEach(room => container.appendChild(room));
+            }
+
+            // Gắn sự kiện (không còn searchInput)
+            document.getElementById('sortBySelect').addEventListener('change', filterAndSortRooms);
+            document.getElementById('sortOrderSelect').addEventListener('change', filterAndSortRooms);
+        </script>
+
+
+
         <!-- ##### Rooms Area End ##### -->
 
         <!-- ##### Footer Area Start ##### -->
@@ -290,9 +350,9 @@
 
                             <h3>Customer Benefits</h3>
 
-                            <div id="description" ></div>
-                            <div id="bedType" style="margin-top: 10px"></div>
-                            <p id="price" style="margin-top: 10px;"></p>
+                            <div class="text-muted  lh-base fw-light" id="description" ></div>
+                            <div class="text-muted  lh-base fw-light" id="price" style="margin-top: 10px;"></div>
+                            <div class="text-muted  lh-base fw-light" id="bedType" style="margin-top: 10px"></div>
 
                         </div>
                     </div>
@@ -333,6 +393,19 @@
 
 
         <script>
+                                $(document).ready(function () {
+                                    $('.single-rooms-area').hover(
+                                            function () {
+                                                $(this).css({
+                                                    'transform': 'scale(1.04)',
+                                                    'transition': 'transform 0.4s ease'
+                                                });
+                                            },
+                                            function () {
+                                                $(this).css('transform', 'scale(1)');
+                                            }
+                                    );
+                                });
                                 function showRoomDetail(info) {
                                     let roomID = info.getAttribute("data-roomID");
                                     let roomNumber = info.getAttribute("data-roomNumber");
@@ -366,69 +439,72 @@
                                     document.getElementById("imgDetail3").style.height = "90px";
 
                                     //Room Info
-                                    document.getElementById("area").innerHTML = area;
-                                    document.getElementById("maxGuest").innerHTML = maxGuest;
-                                    document.getElementById("description").innerHTML = description;
-                                    document.getElementById("bedType").innerHTML = bedType;
-                                    document.getElementById("price").innerHTML = roomPrice;
+                                    document.getElementById("area").innerHTML = area+ "m²";
+                                    document.getElementById("maxGuest").innerHTML = maxGuest+" People";
+                                    document.getElementById("description").innerHTML = "Description: "+description;
+                                    document.getElementById("bedType").innerHTML ="Bed type: "+ bedType;
+                                    document.getElementById("price").innerHTML = "Giá mỗi đêm: $"+roomPrice+"/night";
+                                    
+                                    
+                                    
                                 }
 
 
-                                $(document).ready(function () {
-                                    // Khởi tạo popup cho nút mở login/register
-                                    $('.login-modal-btn, .register-modal-btn').magnificPopup({
-                                        type: 'inline',
-                                        midClick: true
-                                    });
-
-                                    // Xử lý chuyển đổi giữa login <-> register
-                                    $(document).on('click', '.switch-modal', function (e) {
-                                        e.preventDefault();
-                                        const target = $(this).attr('href');
-
-                                        // Cập nhật URL hash mà không reload
-                                        history.pushState(null, '', target);
-
-                                        // Đóng popup hiện tại rồi mở cái mới ngay lập tức
-                                        $.magnificPopup.close();
-
-                                        // Mở popup mới ngay lập tức (không delay, không hiệu ứng)
-                                        $.magnificPopup.open({
-                                            items: {
-                                                src: target,
-                                                type: 'inline'
-                                            },
-                                            midClick: true
-                                        });
-                                    });
-
-                                    // Khi người dùng nhấn nút back (quay lại)
-                                    window.addEventListener('popstate', function () {
-                                        const hash = window.location.hash;
-                                        $.magnificPopup.close();
-
-                                        if ($(hash).length) {
-                                            $.magnificPopup.open({
-                                                items: {
-                                                    src: hash,
-                                                    type: 'inline'
-                                                },
-                                                midClick: true
-                                            });
-                                        }
-                                    });
-
-                                    // Khi người dùng load trang kèm theo #login-modal hoặc #register-modal
-                                    const initialHash = window.location.hash;
-                                    if ($(initialHash).length) {
-                                        $.magnificPopup.open({
-                                            items: {
-                                                src: initialHash,
-                                                type: 'inline'
-                                            },
-                                            midClick: true
-                                        });
-                                    }
-                                });
+//                                $(document).ready(function () {
+//                                    // Khởi tạo popup cho nút mở login/register
+//                                    $('.login-modal-btn, .register-modal-btn').magnificPopup({
+//                                        type: 'inline',
+//                                        midClick: true
+//                                    });
+//
+//                                    // Xử lý chuyển đổi giữa login <-> register
+//                                    $(document).on('click', '.switch-modal', function (e) {
+//                                        e.preventDefault();
+//                                        const target = $(this).attr('href');
+//
+//                                        // Cập nhật URL hash mà không reload
+//                                        history.pushState(null, '', target);
+//
+//                                        // Đóng popup hiện tại rồi mở cái mới ngay lập tức
+//                                        $.magnificPopup.close();
+//
+//                                        // Mở popup mới ngay lập tức (không delay, không hiệu ứng)
+//                                        $.magnificPopup.open({
+//                                            items: {
+//                                                src: target,
+//                                                type: 'inline'
+//                                            },
+//                                            midClick: true
+//                                        });
+//                                    });
+//
+//                                    // Khi người dùng nhấn nút back (quay lại)
+//                                    window.addEventListener('popstate', function () {
+//                                        const hash = window.location.hash;
+//                                        $.magnificPopup.close();
+//
+//                                        if ($(hash).length) {
+//                                            $.magnificPopup.open({
+//                                                items: {
+//                                                    src: hash,
+//                                                    type: 'inline'
+//                                                },
+//                                                midClick: true
+//                                            });
+//                                        }
+//                                    });
+//
+//                                    // Khi người dùng load trang kèm theo #login-modal hoặc #register-modal
+//                                    const initialHash = window.location.hash;
+//                                    if ($(initialHash).length) {
+//                                        $.magnificPopup.open({
+//                                            items: {
+//                                                src: initialHash,
+//                                                type: 'inline'
+//                                            },
+//                                            midClick: true
+//                                        });
+//                                    }
+//                                });
         </script>
 </html>
