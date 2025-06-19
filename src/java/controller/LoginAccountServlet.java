@@ -19,7 +19,6 @@ import jakarta.servlet.http.HttpSession;
 import java.net.URLEncoder;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 

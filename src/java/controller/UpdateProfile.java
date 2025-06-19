@@ -30,7 +30,8 @@ public class UpdateProfile extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        response.getWriter().println("Hello from doGet.");
+        request.getRequestDispatcher("/profile/profile.jsp").forward(request, response);
+//        response.getWriter().println("Hello from doGet.");
     }
 
     /**

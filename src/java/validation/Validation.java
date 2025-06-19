@@ -5,8 +5,8 @@
  */
 package validation;
 
+import java.math.BigDecimal;
 import java.text.ParseException;
-import java.util.Date;
 import java.text.SimpleDateFormat;
 import java.util.Scanner;
 
@@ -185,6 +185,26 @@ public class Validation {
         } catch (ParseException e) {
             e.printStackTrace();
             return null; // hoặc throw
+        }
+    }
+
+    public static BigDecimal validateBigDecimal(String value, BigDecimal min, BigDecimal max) throws IllegalArgumentException {
+        try {
+            BigDecimal input = new BigDecimal(value);
+
+            if (input.compareTo(min) < 0 || input.compareTo(max) > 0) {
+                throw new IllegalArgumentException("Please enter number in range [" + min + ", " + max + "]");
+            }
+
+            // Chỉ chấp nhận .5 hoặc số nguyên
+            BigDecimal multiplied = input.multiply(BigDecimal.valueOf(2));
+            if (multiplied.stripTrailingZeros().scale() > 0) {
+                throw new IllegalArgumentException("Please input .5 or integer number.");
+            }
+
+            return input;
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Invalid number format: " + value);
         }
     }
 
