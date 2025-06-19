@@ -29,6 +29,16 @@ public class Room {
     public Room() {
     }
 
+    public Room(String roomNumber, RoomDetail roomDetail, RoomType roomTypeID, String status, double price, Hotel hotel) {
+        this.roomNumber = roomNumber;
+        this.roomDetail = roomDetail;
+        this.roomTypeID = roomTypeID;
+        this.status = status;
+        this.price = price;
+        this.hotel = hotel;
+    }
+    
+
     public Room(int roomID, String roomNumber, RoomDetail roomDetail, RoomType roomTypeID, String status, double price) {
         this.roomID = roomID;
         this.roomNumber = roomNumber;
