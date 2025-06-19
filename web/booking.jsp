@@ -87,98 +87,98 @@
 
                                     <div class="mb-3">
                                         <label class="form-label fw-semibold">Tên đầy đủ (theo Hộ chiếu/Thẻ căn cước công dân)</label>
-                                        <input type="text" class="form-control" placeholder="Ví dụ: Nguyễn Văn A">
-                                        <div class="form-text">Vui lòng chỉ dùng chữ cái (A-Z), không có chức danh, ký tự đặc biệt và dấu câu.</div>
+                                        <input type="text" class="form-control" value="${sessionScope.authLocal.user.firstName} ${sessionScope.authLocal.user.lastName}" placeholder="Ví dụ: Nguyễn Văn A">
+                                    <div class="form-text">Vui lòng chỉ dùng chữ cái (A-Z), không có chức danh, ký tự đặc biệt và dấu câu.</div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label fw-semibold">E-mail</label>
+                                        <input type="email" name="email" value="${sessionScope.authLocal.user.email}" class="form-control" placeholder="email@example.com">
                                     </div>
-
-                                    <div class="row">
-                                        <div class="col-md-6 mb-3">
-                                            <label class="form-label fw-semibold">E-mail</label>
-                                            <input type="email" name="email" class="form-control" placeholder="email@example.com">
-                                        </div>
-                                        <div class="col-md-6 mb-3">
-                                            <label class="form-label fw-semibold">Số điện thoại</label>
-                                            <div class="input-group">
-                                                <select class="form-select" style="max-width: 80px;">
-                                                    <option>+84</option>
-                                                </select>
-                                                <input type="tel" class="form-control">
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <p class="form-text">Chúng tôi sẽ gửi e-voucher tới email này. +84 123456789 gồm Mã quốc gia (+84) và Số điện thoại (123456789).</p>
-
-                                    <div class="row mt-3">
-                                        <div class="col-6">
-                                            <div class="card border-primary bg-light">
-                                                <div class="card-body text-center p-3">
-                                                    <i class="fas fa-phone me-2"></i>
-                                                    <span class="small">Tôi là khách lưu trú</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-6">
-                                            <div class="card">
-                                                <div class="card-body text-center p-3">
-                                                    <i class="fas fa-users me-2"></i>
-                                                    <span class="small">Tôi đang đặt cho người khác</span>
-                                                </div>
-                                            </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label fw-semibold">Số điện thoại</label>
+                                        <div class="input-group">
+<!--                                            <select class="form-select" style="max-width: 80px;">
+                                                <option>+84</option>
+                                            </select>-->
+                                            <input type="tel" value="${sessionScope.authLocal.user.phone}" class="form-control">
                                         </div>
                                     </div>
                                 </div>
 
-                                <!-- Special Requests -->
-                                <div class="mb-4">
-                                    <h5 class="fw-bold mb-3">Bạn yêu cầu nào không?</h5>
-                                    <p class="text-muted small mb-3">Khi nhận phòng, khách sạn sẽ thông báo liệu yêu cầu này có được đáp ứng hay không.</p>
+                                <p class="form-text">Chúng tôi sẽ gửi e-voucher tới email này. +84 123456789 gồm Mã quốc gia (+84) và Số điện thoại (123456789).</p>
 
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="form-check mb-2">
-                                                <input class="form-check-input" type="checkbox" id="nonsmoking">
-                                                <label class="form-check-label" for="nonsmoking">Phòng không hút thuốc</label>
-                                            </div>
-                                            <div class="form-check mb-2">
-                                                <input class="form-check-input" type="checkbox" id="highfloor">
-                                                <label class="form-check-label" for="highfloor">Tầng lầu</label>
-                                            </div>
-                                            <div class="form-check mb-2">
-                                                <input class="form-check-input" type="checkbox" id="earlycheck">
-                                                <label class="form-check-label" for="earlycheck">Gửi nhận phòng</label>
-                                            </div>
-                                            <div class="form-check mb-2">
-                                                <input class="form-check-input" type="checkbox" id="other">
-                                                <label class="form-check-label" for="other">Khác</label>
+                                <div class="row mt-3">
+                                    <div class="col-6">
+                                        <div class="card border-primary bg-light">
+                                            <div class="card-body text-center p-3">
+                                                <i class="fas fa-phone me-2"></i>
+                                                <span class="small">Tôi là khách lưu trú</span>
                                             </div>
                                         </div>
-                                        <div class="col-md-6">
-                                            <div class="form-check mb-2">
-                                                <input class="form-check-input" type="checkbox" id="connecting">
-                                                <label class="form-check-label" for="connecting">Phòng liền thông</label>
-                                            </div>
-                                            <div class="form-check mb-2">
-                                                <input class="form-check-input" type="checkbox" id="bed">
-                                                <label class="form-check-label" for="bed">Loại giường</label>
-                                            </div>
-                                            <div class="form-check mb-2">
-                                                <input class="form-check-input" type="checkbox" id="latecheck">
-                                                <label class="form-check-label" for="latecheck">Gửi trả phòng</label>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="card">
+                                            <div class="card-body text-center p-3">
+                                                <i class="fas fa-users me-2"></i>
+                                                <span class="small">Tôi đang đặt cho người khác</span>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
+                            </div>
+
+                            <!-- Special Requests -->
+                            <div class="mb-4">
+                                <h5 class="fw-bold mb-3">Bạn yêu cầu nào không?</h5>
+                                <p class="text-muted small mb-3">Khi nhận phòng, khách sạn sẽ thông báo liệu yêu cầu này có được đáp ứng hay không.</p>
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-check mb-2">
+                                            <input class="form-check-input" type="checkbox" id="nonsmoking">
+                                            <label class="form-check-label" for="nonsmoking">Phòng không hút thuốc</label>
+                                        </div>
+                                        <div class="form-check mb-2">
+                                            <input class="form-check-input" type="checkbox" id="highfloor">
+                                            <label class="form-check-label" for="highfloor">Tầng lầu</label>
+                                        </div>
+                                        <div class="form-check mb-2">
+                                            <input class="form-check-input" type="checkbox" id="earlycheck">
+                                            <label class="form-check-label" for="earlycheck">Gửi nhận phòng</label>
+                                        </div>
+                                        <div class="form-check mb-2">
+                                            <input class="form-check-input" type="checkbox" id="other">
+                                            <label class="form-check-label" for="other">Khác</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-check mb-2">
+                                            <input class="form-check-input" type="checkbox" id="connecting">
+                                            <label class="form-check-label" for="connecting">Phòng liền thông</label>
+                                        </div>
+                                        <div class="form-check mb-2">
+                                            <input class="form-check-input" type="checkbox" id="bed">
+                                            <label class="form-check-label" for="bed">Loại giường</label>
+                                        </div>
+                                        <div class="form-check mb-2">
+                                            <input class="form-check-input" type="checkbox" id="latecheck">
+                                            <label class="form-check-label" for="latecheck">Gửi trả phòng</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
 
 
-                                <!-- Price Details -->
-                                <div class="mb-4">
-                                    <h5 class="fw-bold mb-3">Chi tiết giá</h5>
-                                    <div class="card">
-                                        <div class="card-body">
-                                            <div class="d-flex justify-content-between mb-2">
-                                                <span>Giá phòng</span>
-                                                <span>${totalPrice} VND</span>
+                            <!-- Price Details -->
+                            <div class="mb-4">
+                                <h5 class="fw-bold mb-3">Chi tiết giá</h5>
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between mb-2">
+                                            <span>Giá phòng</span>
+                                            <span>${totalPrice} VND</span>
                                         </div>
                                         <div class="text-muted small mb-2">${room.getRoomNumber()}-${room.getRoomTypeID().getTypeName()} (${numberNight} đêm)</div>
                                         <div class="d-flex justify-content-between mb-3">
@@ -330,6 +330,8 @@
         </div>
     </div>
 
+    <script src="js/active.js"></script>
+    <script src="js/bootstrap/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
