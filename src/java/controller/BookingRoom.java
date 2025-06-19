@@ -81,12 +81,12 @@ public class BookingRoom extends HttpServlet {
         Room room = new dao.RoomDAO().getRoomByRoomID(roomID);
         double totalPrice = diffDays * room.getPrice();
 
-        request.setAttribute("room", room);
-        request.setAttribute("checkin", checkin_raw);
-        request.setAttribute("checkout", checkout_raw);
-        request.setAttribute("numberNight", diffDays);
+        request.getSession().setAttribute("room", room);
+        request.getSession().setAttribute("checkin", checkin_raw);
+        request.getSession().setAttribute("checkout", checkout_raw);
+        request.getSession().setAttribute("numberNight", diffDays);
         request.setAttribute("nowTocheckin", nowTocheckinDays);
-        request.setAttribute("totalPrice", totalPrice);
+        request.getSession().setAttribute("totalPrice", totalPrice);
 
         request.getRequestDispatcher("booking.jsp").forward(request, response);
     }

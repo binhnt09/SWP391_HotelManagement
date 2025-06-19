@@ -13,14 +13,15 @@ import java.sql.Timestamp;
 public class Hotel {
 
     private int hotelID;
-
     private String name;
     private String address;
     private String description;
     private String facilities;
+
     private Timestamp createdAt;
     private Timestamp updatedAt;
     private Timestamp deletedAt;
+
     private int deletedBy;
     private boolean isDeleted;
 

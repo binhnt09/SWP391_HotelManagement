@@ -27,6 +27,13 @@ public class RoomImage {
     public RoomImage() {
     }
 
+    public RoomImage(RoomDetail roomDetail, String imageURL, String caption, Timestamp createdAt) {
+        this.roomDetail = roomDetail;
+        this.imageURL = imageURL;
+        this.caption = caption;
+        this.createdAt = createdAt;
+    }
+    
     public RoomImage(int imageID, RoomDetail roomDetail, String imageURL, String caption, Timestamp createdAt, Timestamp updatedAt, Timestamp deletedAt, int deletedBy, boolean isDeleted) {
         this.imageID = imageID;
         this.roomDetail = roomDetail;
