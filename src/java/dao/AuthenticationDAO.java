@@ -295,7 +295,7 @@ public class AuthenticationDAO extends DBContext {
     }
 
     public int createUser(String email, String firstName, String lastName) throws Exception {
-        String sql = "INSERT INTO [User](FirstName, LastName, Email, UserRoleID, IsVerifiedEmail) VALUES (?, ?, ?, 1, 1)";
+        String sql = "INSERT INTO [User](FirstName, LastName, Email, UserRoleID, IsVerifiedEmail) VALUES (?, ?, ?, 5, 1)";
         try (PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, firstName);
             ps.setString(2, lastName);
