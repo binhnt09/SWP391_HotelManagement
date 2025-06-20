@@ -82,7 +82,7 @@ public class Validation {
     }
 
     //hàm nhập số kiểu int
-    public static int getInt(String mess, int min, int max) {
+    public static int getInt1(String mess, int min, int max) {
         while (true) {
             System.out.print(mess);
             try {
@@ -99,6 +99,24 @@ public class Validation {
                 e.printStackTrace();
             }
         }
+    }
+
+    public static int getInt(String input, int min, int max) {
+        if (input == null || input.trim().isEmpty()) {
+            return -1; // hoặc giá trị mặc định
+        }
+        try {
+            Scanner sc = new Scanner(input);
+            if (sc.hasNextLine()) {
+                int value = Integer.parseInt(sc.nextLine().trim());
+                if (value >= min && value <= max) {
+                    return value;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return -1;
     }
 
     public static double getDouble(String mess, double min, double max) {
@@ -185,6 +203,23 @@ public class Validation {
         } catch (ParseException e) {
             e.printStackTrace();
             return null; // hoặc throw
+        }
+    }
+
+    public static java.sql.Timestamp parseStringToSqlTimestamp(String dateStr, String pattern) {
+        if (dateStr == null || dateStr.trim().isEmpty()) {
+            return null; // hoặc throw new IllegalArgumentException("Date string is empty");
+        }
+
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat(pattern);
+            sdf.setLenient(false); // chặn parse kiểu "32/13/2024" thành ngày hợp lệ
+
+            java.util.Date parsedDate = sdf.parse(dateStr);
+            return new java.sql.Timestamp(parsedDate.getTime());
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return null; // hoặc throw new RuntimeException("Sai định dạng ngày giờ");
         }
     }
 
