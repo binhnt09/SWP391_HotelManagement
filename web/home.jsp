@@ -44,68 +44,27 @@
             <!-- ##### Header Area End ##### -->
 
             <!-- ##### Hero Area Start ##### -->
-            <section class="hero-area">
-                <div class="hero-slides owl-carousel">
+            <section >
 
-                    <!-- Single Hero Slide -->
-                    <div class="single-hero-slide d-flex align-items-center justify-content-center">
-                        <!-- Slide Img -->
-                        <div class="slide-img bg-img" style="background-image: url(img/bg-img/bg-1.jpg);"></div>
-                        <div class="container">
-                            <div class="row justify-content-center">
-                                <div class="col-12 col-lg-9">
-                                    <!-- Slide Content -->
-                                    <div class="hero-slides-content" data-animation="fadeInUp" data-delay="100ms">
-                                        <div class="line" data-animation="fadeInUp" data-delay="300ms"></div>
-                                        <h2 data-animation="fadeInUp" data-delay="500ms">The Vacation Heaven</h2>
-                                        <p data-animation="fadeInUp" data-delay="700ms">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec malesuada lorem maximus mauris sceleri sque, at rutrum nulla dictum. Ut ac ligula sapien. Suspendisse cursus faucibus finibus.</p>
-                                        <a href="#" class="btn palatin-btn mt-50" data-animation="fadeInUp" data-delay="900ms">Read More</a>
-                                    </div>
+                <div class="single-hero-slide d-flex align-items-center justify-content-center">
+                    <!-- Slide Img -->
+                    <div class="slide-img bg-img" style="background-image: url(img/bg-img/bg-1.jpg);"></div>
+                    <div class="container">
+                        <div class="row justify-content-center">
+                            <div class="col-12 col-lg-9">
+                                <!-- Slide Content -->
+                                <div class="hero-slides-content"  >
+                                    <div class="line" ></div>
+                                    <h2 data-animation="fadeInUp">The Vacation Heaven</h2>
+                                    <p data-animation="fadeInUp">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec malesuada lorem maximus mauris sceleri sque, at rutrum nulla dictum. Ut ac ligula sapien. Suspendisse cursus faucibus finibus.</p>
+                                    <a href="#" class="btn palatin-btn mt-50" data-animation="fadeInUp" data-delay="900ms">Read More</a>
                                 </div>
                             </div>
                         </div>
                     </div>
-
-                    <!-- Single Hero Slide -->
-                    <div class="single-hero-slide d-flex align-items-center justify-content-center">
-                        <!-- Slide Img -->
-                        <div class="slide-img bg-img" style="background-image: url(img/bg-img/bg-2.jpg);"></div>
-                        <div class="container">
-                            <div class="row justify-content-center">
-                                <div class="col-12 col-lg-9">
-                                    <!-- Slide Content -->
-                                    <div class="hero-slides-content" data-animation="fadeInUp" data-delay="100ms">
-                                        <div class="line" data-animation="fadeInUp" data-delay="300ms"></div>
-                                        <h2 data-animation="fadeInUp" data-delay="500ms">A place to remember</h2>
-                                        <p data-animation="fadeInUp" data-delay="700ms">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec malesuada lorem maximus mauris sceleri sque, at rutrum nulla dictum. Ut ac ligula sapien. Suspendisse cursus faucibus finibus.</p>
-                                        <a href="#" class="btn palatin-btn mt-50" data-animation="fadeInUp" data-delay="900ms">Read More</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Single Hero Slide -->
-                    <div class="single-hero-slide d-flex align-items-center justify-content-center">
-                        <!-- Slide Img -->
-                        <div class="slide-img bg-img" style="background-image: url(img/bg-img/bg-3.jpg);"></div>
-                        <div class="container">
-                            <div class="row justify-content-center">
-                                <div class="col-12 col-lg-9">
-                                    <!-- Slide Content -->
-                                    <div class="hero-slides-content" data-animation="fadeInUp" data-delay="100ms">
-                                        <div class="line" data-animation="fadeInUp" data-delay="300ms"></div>
-                                        <h2 data-animation="fadeInUp" data-delay="500ms">Enjoy your life</h2>
-                                        <p data-animation="fadeInUp" data-delay="700ms">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec malesuada lorem maximus mauris sceleri sque, at rutrum nulla dictum. Ut ac ligula sapien. Suspendisse cursus faucibus finibus.</p>
-                                        <a href="#" class="btn palatin-btn mt-50" data-animation="fadeInUp" data-delay="900ms">Read More</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
                 </div>
             </section>
+
             <!-- ##### Hero Area End ##### -->
 
             <!-- ##### Book Now Area Start ##### -->
@@ -211,10 +170,12 @@
                                 <div class="line-"></div>
                                 <h2>A place to remember</h2>
                             </div>
-                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec malesuada lorem maximus mauris sceleri sque, at rutrum nulla dictum. Ut ac ligula sapien. Suspendisse cursus faucibus finibus. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec malesuada lorem maximus mauris sceleri sque, at rutrum nulla dictum. Ut ac ligula sapien. Suspendisse cursus faucibus finibus.</p>
+                            <p>Kỳ nghỉ hoàn hảo đang chờ đón bạn tại khách sạn của chúng tôi
+                                . Hãy tận hưởng không gian sang trọng, dịch vụ chuyên nghiệp và sự tiện nghi hiện đại
+                                . Dù là chuyến công tác hay kỳ nghỉ dưỡng, chúng tôi cam kết mang đến trải nghiệm đáng nhớ nhất.</p>
                             <div class="about-key-text">
-                                <h6><span class="fa fa-check"></span> Donec malesuada lorem maximus mauris sceleri</h6>
-                                <h6><span class="fa fa-check"></span> Malesuada lorem maximus mauris sceleri</h6>
+                                <h6><span class="fa fa-check"></span> Không gian tiện nghi, hiện đại và ấm cúng</h6>
+                                <h6><span class="fa fa-check"></span> Dịch vụ tận tâm, hỗ trợ 24/7</h6>
                             </div>
                             <a href="#" class="btn palatin-btn mt-50">Read More</a>
                         </div>
@@ -250,7 +211,9 @@
                             <div class="section-heading text-center white">
                                 <div class="line-"></div>
                                 <h2>Infinity Pool</h2>
-                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec malesuada lorem maximus mauris sceleri sque, at rutrum nulla dictum. Ut ac ligula sapien. Suspendisse cursus faucibus finibus. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec malesuada lorem maximus mauris sceleri sque, at rutrum nulla dictum.</p>
+                                <p>Trải nghiệm cảm giác thư giãn tuyệt đối tại hồ bơi vô cực với tầm nhìn toàn cảnh tuyệt đẹp. 
+                                    Không chỉ là nơi để bơi lội, đây còn là không gian lý tưởng để nghỉ ngơi, tận hưởng hoàng hôn và lưu giữ những khoảnh khắc đáng nhớ. 
+                                    Hãy đắm mình trong làn nước mát lạnh và để mọi muộn phiền tan biến.</p>
                             </div>
 
                             <div class="row">
@@ -290,7 +253,7 @@
                         <div class="section-heading text-center">
                             <div class="line-"></div>
                             <h2>Choose a room</h2>
-                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec malesuada lorem maximus mauris sceleri sque, at rutrum nulla dictum. Ut ac ligula sapien.</p>
+                            <p>Hãy lựa chọn phòng nghỉ lý tưởng cho kỳ nghỉ của bạn. Từ không gian sang trọng đến tiện nghi hiện đại, mỗi phòng đều được thiết kế để mang lại sự thoải mái tối đa và trải nghiệm tuyệt vời nhất cho bạn.</p>
                         </div>
                     </div>
                 </div>
@@ -308,10 +271,10 @@
                             <div class="rooms-text">
                                 <div class="line"></div>
                                 <h4>Deluxe Room</h4>
-                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec malesuada lorem maximus mauris sceleri sque.</p>
+                                <p>Phòng đơn hiện đại, tiện nghi phù hợp cho khách đi công tác hoặc du lịch một mình. Bao gồm giường đơn, bàn làm việc và Wi-Fi tốc độ cao.</p>
                             </div>
                             <!-- Book Room -->
-                            <a href="#" class="book-room-btn btn palatin-btn">Book Room</a>
+                            <a href="searchroom" class="book-room-btn btn palatin-btn">Book Room</a>
                         </div>
                     </div>
 
@@ -326,10 +289,10 @@
                             <div class="rooms-text">
                                 <div class="line"></div>
                                 <h4>Double Suite</h4>
-                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec malesuada lorem maximus mauris sceleri sque.</p>
+                                <p>Không gian sang trọng với thiết kế tinh tế, bao gồm giường lớn, minibar, tivi màn hình phẳng và ban công hướng nhìn ra thành phố.</p>
                             </div>
                             <!-- Book Room -->
-                            <a href="#" class="book-room-btn btn palatin-btn">Book Room</a>
+                            <a href="searchroom" class="book-room-btn btn palatin-btn">Book Room</a>
                         </div>
                     </div>
 
@@ -344,10 +307,10 @@
                             <div class="rooms-text">
                                 <div class="line"></div>
                                 <h4>Single Room</h4>
-                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec malesuada lorem maximus mauris sceleri sque.</p>
+                                <p>Phù hợp cho cặp đôi hoặc gia đình nhỏ, phòng suite đôi có không gian rộng rãi, 2 giường, phòng tắm sang trọng và khu vực tiếp khách riêng.</p>
                             </div>
                             <!-- Book Room -->
-                            <a href="#" class="book-room-btn btn palatin-btn">Book Room</a>
+                            <a href="searchroom" class="book-room-btn btn palatin-btn">Book Room</a>
                         </div>
                     </div>
 
@@ -440,10 +403,10 @@
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 
         <!-- Popper + Bootstrap + Plugin + Active -->
-        <script src="js/bootstrap/popper.min.js"></script>
-        <script src="js/bootstrap/bootstrap.min.js"></script>
+        <!--<script src="js/bootstrap/popper.min.js"></script>-->
+        <!--<script src="js/bootstrap/bootstrap.min.js"></script>-->
         <script src="js/plugins/plugins.js"></script>
-        <script src="js/active.js"></script>
+        <!--<script src="js/active.js"></script>-->
 
         <!-- Script khởi tạo -->
         <script>
