@@ -60,7 +60,7 @@
                                 <input type="text" id="searchInput" name="keyWorld" value="${keyWorld}" placeholder="Search Room" oninput="searchRoom()">
                             <select name="sortBy">
                                 <option disabled ${sortBy == null ? "selected" : ""}>Select sort by</option>
-                                <option value="RoomID" ${sortBy.equals("RoomID") ? "selected" : ""}>RoomID</option>
+                                <!--<option value="RoomID" ${sortBy.equals("RoomID") ? "selected" : ""}>RoomID</option>-->
                                 <option value="RoomNumber" ${sortBy.equals("RoomNumber") ? "selected" : ""}>Name</option>
                                 <option value="Price" ${sortBy.equals("Price") ? "selected" : ""}>Price</option>
                             </select>
@@ -125,7 +125,19 @@
                             </td>
 
                             <td>${index.index+1}</td>
-                            <td><strong>${i.roomNumber}</strong></td>
+                            <td>
+                                <strong class=" <c:choose>
+                                          <c:when test="${i.isDeleted}">
+                                              text-primary
+                                          </c:when>
+                                          <c:otherwise>
+                                              text-dark
+                                          </c:otherwise>
+                                      </c:choose>">
+                                    ${i.roomNumber}
+                                    
+                                </strong>
+                            </td>
                             <td>${i.roomTypeID.roomTypeID}</td>
                             <td><span class="
                                       <c:choose>
@@ -187,12 +199,9 @@
                                    style="color: red;margin-left: 5px" 
                                    title="Delete Room" 
                                    data-toggle="modal"><i class="fa-solid fa-delete-left"></i></a>
-
                             </td>
                         </tr>
-
                     </c:forEach>
-
                 </tbody>
             </table>
         </form>
