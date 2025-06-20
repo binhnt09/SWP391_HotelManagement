@@ -368,7 +368,8 @@
                             </button>
                         </c:if>
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-                        <a href="bookingguest" style="border-radius: 10px; background-color: #80bdff" class="btn theme_btn button_hover">Book Now</a>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                        <a id="bookNowBtn" href="#" style="border-radius: 10px; background-color: #80bdff" class="btn theme_btn button_hover">Book Now</a>
                     </div>
                 </div>
             </div>
@@ -421,6 +422,8 @@
                                     let imgSrc2 = info.getAttribute("data-img2");
                                     let imgSrc3 = info.getAttribute("data-img3");
 
+                                    let bookNowBtn = document.getElementById("bookNowBtn");
+                                    bookNowBtn.href = "bookingroom?roomID="+roomID+"&checkin=${checkin}&checkout=${checkout}";
 
                                     document.getElementById("roomNumber").innerHTML = roomNumber + "-" + type;
 
@@ -439,14 +442,14 @@
                                     document.getElementById("imgDetail3").style.height = "90px";
 
                                     //Room Info
-                                    document.getElementById("area").innerHTML = area+ "m²";
-                                    document.getElementById("maxGuest").innerHTML = maxGuest+" People";
-                                    document.getElementById("description").innerHTML = "Description: "+description;
-                                    document.getElementById("bedType").innerHTML ="Bed type: "+ bedType;
-                                    document.getElementById("price").innerHTML = "Giá mỗi đêm: $"+roomPrice+"/night";
-                                    
-                                    
-                                    
+                                    document.getElementById("area").innerHTML = area + "m²";
+                                    document.getElementById("maxGuest").innerHTML = maxGuest + " People";
+                                    document.getElementById("description").innerHTML = "Description: " + description;
+                                    document.getElementById("bedType").innerHTML = "Bed type: " + bedType;
+                                    document.getElementById("price").innerHTML = "Giá mỗi đêm: $" + roomPrice + "/night";
+
+
+
                                 }
 
 
