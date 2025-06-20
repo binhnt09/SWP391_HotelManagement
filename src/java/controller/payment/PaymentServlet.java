@@ -5,22 +5,26 @@
 package controller.payment;
 
 import constant.Config;
-import dao.PaymentDao;
+import dao.BookingDao;
+import entity.Authentication;
 import entity.Booking;
+import entity.BookingDetails;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.sql.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -69,37 +73,74 @@ public class PaymentServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String userIdStr = (String) request.getSession().getAttribute("authLocal");
-        
+        Authentication userIdStr = (Authentication) request.getSession().getAttribute("authLocal");
+
         String bankCode = request.getParameter("bankCode");
         String bookingIdStr = request.getParameter("bookingId");
         String totalBillStr = request.getParameter("totalbill");
-        
-        if (totalBillStr == null || bookingIdStr ==null) {
-            response.sendRedirect(request.getContextPath() + "/payment/payment.jsp");
-            return;
+        String nightsStr = request.getParameter("nights");
+        String voucherIdStr = request.getParameter("voucherId");
+
+        Date checkin = (Date) request.getSession().getAttribute("checkin");
+        Date checkout = (Date) request.getSession().getAttribute("checkout");
+        int roomId = (int) request.getSession().getAttribute("roomIdBooking");
+
+        if (totalBillStr == null || bookingIdStr == null) {
+            throw new IllegalArgumentException("Số tiền không hợp lệ: rỗng abax");
         }
         
-        int userId = Validation.getInt(userIdStr, 0, Integer.MAX_VALUE);
-        
+        totalBillStr = totalBillStr.replaceAll("[^\\d.]", "");
+
+        int userId = userIdStr.getUser().getUserId();
+//        int nights = Validation.getInt(nightsStr, 1, 365);
+        int nights = Validation.getInt(nightsStr, 1, 365);
+
         int bookingId = Validation.getInt(bookingIdStr, 0, Integer.MAX_VALUE);
-        BigDecimal amountDouble = Validation.validateBigDecimal(totalBillStr, BigDecimal.ONE, BigDecimal.TEN);
-        
-        
-        PaymentDao dao = new PaymentDao();
-        Booking book = new Booking();
-        book.setUserID(userId);
-        book.setTotalAmount(amountDouble);
-        
-//        bookingId = 
-        
-        long amount = amountDouble.multiply(BigDecimal.valueOf(100)).longValue();
+        Integer voucherId = (voucherIdStr != null && !voucherIdStr.isEmpty()) ? Integer.valueOf(voucherIdStr) : null;
+//        BigDecimal amountDouble = Validation.validateBigDecimal(totalBillStr, BigDecimal.ONE, new BigDecimal("999999999"));
+        BigDecimal amountDouble;
+        try {
+            amountDouble = new BigDecimal(totalBillStr);
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Số tiền không hợp lệ", e);
+        }
+
+        Booking booking = new Booking();
+        booking.setUserID(userId);
+        booking.setVoucherID(voucherId);
+        booking.setTotalAmount(amountDouble);
+        booking.setStatus("PENDING");
+        booking.setCheckInDate(checkin);
+        booking.setCheckOutDate(checkout);
+
+        BookingDao bookingDAO = new BookingDao();
+        bookingId = bookingDAO.insertBooking(booking);
+        if (bookingId < 1) {
+            response.sendRedirect("booking.jsp");
+            return;
+        }
+
+        BookingDetails detail = new BookingDetails();
+        detail.setBookingID(bookingId);
+        detail.setRoomID(roomId);
+        detail.setPrice(amountDouble);
+        detail.setNights(nights);
+        bookingDAO.insertBookingDetail(detail);
+
+//        long amount = amountDouble.multiply(BigDecimal.valueOf(100)).longValue();
+//        long amount = (long) (amountDouble * 100);
+        long amount = amountDouble
+                .multiply(BigDecimal.valueOf(100))
+                .setScale(0, RoundingMode.DOWN) // đảm bảo không thập phân
+                .longValue();
+
+        System.out.println("Amount gửi VNPay: " + amount);
 
         String vnp_Version = "2.1.0";
         String vnp_Command = "pay";
 
         String txnRef = "BOOK" + bookingId + "_" + System.currentTimeMillis();
-        String ipAddr  = Config.getIpAddress(request);
+        String ipAddr = Config.getIpAddress(request);
 
         String vnp_TmnCode = Config.vnp_TmnCode;
 
@@ -133,10 +174,10 @@ public class PaymentServlet extends HttpServlet {
 
         List fieldNames = new ArrayList(vnp_Params.keySet());
         Collections.sort(fieldNames);
-        
+
         StringBuilder hashData = new StringBuilder();
         StringBuilder query = new StringBuilder();
-        
+
         Iterator itr = fieldNames.iterator();
         while (itr.hasNext()) {
             String fieldName = (String) itr.next();
@@ -156,7 +197,7 @@ public class PaymentServlet extends HttpServlet {
                 }
             }
         }
-        
+
         String queryUrl = query.toString();
         String vnp_SecureHash = Config.hmacSHA512(Config.secretKey, hashData.toString());
         queryUrl += "&vnp_SecureHash=" + vnp_SecureHash;

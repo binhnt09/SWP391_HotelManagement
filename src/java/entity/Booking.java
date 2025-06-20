@@ -6,6 +6,7 @@ package entity;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.sql.Date;
 
 /**
  *
@@ -17,8 +18,8 @@ public class Booking {
     private int userID;
     private Integer voucherID;
     private Timestamp bookingDate;
-    private Timestamp checkInDate;
-    private Timestamp checkOutDate;
+    private Date checkInDate;
+    private Date checkOutDate;
     private BigDecimal totalAmount;
     private String status;
     private Timestamp createdAt;
@@ -62,21 +63,23 @@ public class Booking {
         this.bookingDate = bookingDate;
     }
 
-    public Timestamp getCheckInDate() {
+    public Date getCheckInDate() {
         return checkInDate;
     }
 
-    public void setCheckInDate(Timestamp checkInDate) {
+    public void setCheckInDate(Date checkInDate) {
         this.checkInDate = checkInDate;
     }
 
-    public Timestamp getCheckOutDate() {
+    public Date getCheckOutDate() {
         return checkOutDate;
     }
 
-    public void setCheckOutDate(Timestamp checkOutDate) {
+    public void setCheckOutDate(Date checkOutDate) {
         this.checkOutDate = checkOutDate;
     }
+
+    
 
     public BigDecimal getTotalAmount() {
         return totalAmount;
