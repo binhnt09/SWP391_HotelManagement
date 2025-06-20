@@ -29,6 +29,14 @@
                 <div class="col-md-5 col-lg-3 order-3 order-md-2">
                     <div class="xp-searchbar">
                         <form method="get" action="customerReport">
+                            <input type="hidden" name="bookingRange" value="${param.bookingRange}" />
+                            <input type="hidden" name="spentRange" value="${param.spentRange}" />
+                            <input type="hidden" name="sort" value="${param.sort}" />
+                            <input type="hidden" name="order" value="${param.order}" />
+                            <input type="hidden" name="registerStartDate" value="${param.registerStartDate}" />
+                            <input type="hidden" name="registerEndDate" value="${param.registerEndDate}" />
+                            <input type="hidden" name="bookingStartDate" value="${param.bookingStartDate}" />
+                            <input type="hidden" name="bookingEndDate" value="${param.bookingEndDate}" />
                             <div class="input-group">
                                 <input type="search" class="form-control" name="keyword"
                                        value="<%= request.getParameter("keyword") != null ? request.getParameter("keyword") : "" %>"
@@ -118,6 +126,7 @@
     <div class="main-content"> 
         <div class="row">
             <div class="col-md-12">
+
                 <!-- Filter Section -->
                 <div class="card mb-3">
                     <div class="card-header">
@@ -126,56 +135,47 @@
                     <div class="card-body py-2">
                         <form method="get" action="customerReport">
                             <div class="form-row align-items-end">
-<!--                                <div class="form-group col-md-2 mb-1">
-                                    <label class="small mb-1">Tier</label>
-                                    <select name="tier" class="form-control form-control-sm">
-                                        <option value="">All</option>
-                                        <option value="Bronze">Bronze</option>
-                                        <option value="Silver">Silver</option>
-                                        <option value="Gold">Gold</option>
-                                        <option value="Platinum">Platinum</option>
-                                    </select>
-                                </div>-->
-
+                                <input type="hidden" name="keyword" value="${param.keyword}" />
+                                
                                 <div class="form-group col-md-2 mb-1">
                                     <label class="small mb-1">Bookings</label>
                                     <select name="bookingRange" class="form-control form-control-sm">
-                                        <option value="">All</option>
-                                        <option value="0">0</option>
-                                        <option value="1-5">1–5</option>
-                                        <option value="6-10">6–10</option>
-                                        <option value="11-30">11–30</option>
-                                        <option value="31-50">31–50</option>
-                                        <option value="50+">>50</option>
+                                        <option value="" ${empty bookingRange ? 'selected' : ''}>All</option>
+                                        <option value="0" ${bookingRange == '0' ? 'selected' : ''}>0</option>
+                                        <option value="1-5" ${bookingRange == '1-5' ? 'selected' : ''}>1–5</option>
+                                        <option value="6-10" ${bookingRange == '6-10' ? 'selected' : ''}>6–10</option>
+                                        <option value="11-30" ${bookingRange == '11-30' ? 'selected' : ''}>11–30</option>
+                                        <option value="31-50" ${bookingRange == '31-50' ? 'selected' : ''}>31–50</option>
+                                        <option value="50+" ${bookingRange == '50+' ? 'selected' : ''}>>50</option>
                                     </select>
                                 </div>
 
                                 <div class="form-group col-md-2 mb-1">    
                                     <label class="small mb-1">Spent</label>
                                     <select name="spentRange" class="form-control form-control-sm">
-                                        <option value="">All</option>
-                                        <option value="bronze">Bronze (0 – 4.9M)</option>
-                                        <option value="silver">Silver (5M – 19.9M)</option>
-                                        <option value="gold">Gold (20M – 49.9M)</option>
-                                        <option value="platinum">Platinum (≥ 50M)</option>
+                                        <option value="" ${empty spentRange ? 'selected' : ''}>All</option>
+                                        <option value="bronze" ${spentRange == 'bronze' ? 'selected' : ''}>Bronze (0 – 4.9M)</option>
+                                        <option value="silver" ${spentRange == 'silver' ? 'selected' : ''}>Silver (5M – 19.9M)</option>
+                                        <option value="gold" ${spentRange == 'gold' ? 'selected' : ''}>Gold (20M – 49.9M)</option>
+                                        <option value="platinum" ${spentRange == 'platinum' ? 'selected' : ''}>Platinum (≥ 50M)</option>
                                     </select>
                                 </div>
 
                                 <div class="form-group col-md-2 mb-1">
                                     <label class="small mb-1">Sort</label>
                                     <select name="sort" class="form-control form-control-sm">
-                                        <option value="">None</option>
-                                        <option value="totalSpent">Total Spent</option>
-                                        <option value="totalBookings">Bookings</option>
-                                        <option value="registerDate">Register Date</option>
+                                        <option value="" ${empty sort ? 'selected' : ''}>None</option>
+                                        <option value="totalSpent" ${sort == 'totalSpent' ? 'selected' : ''}>Total Spent</option>
+                                        <option value="totalBookings" ${sort == 'totalBookings' ? 'selected' : ''}>Bookings</option>
+                                        <option value="registerDate" ${sort == 'registerDate' ? 'selected' : ''}>Register Date</option>
                                     </select>
                                 </div>
 
                                 <div class="form-group col-md-1 mb-1">
                                     <label class="small mb-1">Order</label>
                                     <select name="order" class="form-control form-control-sm">
-                                        <option value="asc">Asc</option>
-                                        <option value="desc">Desc</option>
+                                        <option value="asc" ${order == 'asc' ? 'selected' : ''}>Asc</option>
+                                        <option value="desc" ${order == 'desc' ? 'selected' : ''}>Desc</option>
                                     </select>
                                 </div>
 
@@ -189,16 +189,20 @@
                                 <div class="form-group col-md-3 mb-1">
                                     <label class="small mb-1">Register Date</label>
                                     <div class="d-flex gap-1">
-                                        <input type="date" name="registerStartDate" class="form-control form-control-sm mr-1">
-                                        <input type="date" name="registerEndDate" class="form-control form-control-sm">
+                                        <input type="date" name="registerStartDate" class="form-control form-control-sm mr-1"
+                                               value="${registerStartDate}">
+                                        <input type="date" name="registerEndDate" class="form-control form-control-sm"
+                                               value="${registerEndDate}">
                                     </div>
                                 </div>
 
                                 <div class="form-group col-md-3 mb-1">
                                     <label class="small mb-1">Last Booking</label>
                                     <div class="d-flex gap-1">
-                                        <input type="date" name="bookingStartDate" class="form-control form-control-sm mr-1">
-                                        <input type="date" name="bookingEndDate" class="form-control form-control-sm">
+                                        <input type="date" name="bookingStartDate" class="form-control form-control-sm mr-1"
+                                               value="${bookingStartDate}">
+                                        <input type="date" name="bookingEndDate" class="form-control form-control-sm"
+                                               value="${bookingEndDate}">
                                     </div>
                                 </div>
                             </div>
@@ -254,34 +258,68 @@
                         </tbody>
                     </table>
 
+
+                    <c:set var="queryParams" value="" />
+
+                    <c:if test="${not empty param.keyword}">
+                        <c:set var="queryParams" value="${queryParams}&keyword=${fn:trim(param.keyword)}" />
+                    </c:if>
+                    <c:if test="${not empty param.bookingRange}">
+                        <c:set var="queryParams" value="${queryParams}&bookingRange=${fn:trim(param.bookingRange)}" />
+                    </c:if>
+                    <c:if test="${not empty param.spentRange}">
+                        <c:set var="queryParams" value="${queryParams}&spentRange=${fn:trim(param.spentRange)}" />
+                    </c:if>
+                    <c:if test="${not empty param.sort}">
+                        <c:set var="queryParams" value="${queryParams}&sort=${fn:trim(param.sort)}" />
+                    </c:if>
+                    <c:if test="${not empty param.order}">
+                        <c:set var="queryParams" value="${queryParams}&order=${fn:trim(param.order)}" />
+                    </c:if>
+                    <c:if test="${not empty param.registerStartDate}">
+                        <c:set var="queryParams" value="${queryParams}&registerStartDate=${fn:trim(param.registerStartDate)}" />
+                    </c:if>
+                    <c:if test="${not empty param.registerEndDate}">
+                        <c:set var="queryParams" value="${queryParams}&registerEndDate=${fn:trim(param.registerEndDate)}" />
+                    </c:if>
+                    <c:if test="${not empty param.bookingStartDate}">
+                        <c:set var="queryParams" value="${queryParams}&bookingStartDate=${fn:trim(param.bookingStartDate)}" />
+                    </c:if>
+                    <c:if test="${not empty param.bookingEndDate}">
+                        <c:set var="queryParams" value="${queryParams}&bookingEndDate=${fn:trim(param.bookingEndDate)}" />
+                    </c:if>
+
+
                     <div class="clearfix">
-                        <div class="hint-text">showing <b>${customerReport.size()}</b> out of <b>${totalCustomer}</b></div>
+                        <div class="hint-text">
+                            Showing <b>${customerReport.size()}</b> out of <b>${totalCustomer}</b>
+                        </div>
                         <ul class="pagination">
                             <c:choose>
                                 <c:when test="${currentPage > 1}">
                                     <li class="page-item">
-                                        <a href="customerReport?page=${currentPage - 1}&keyword=${param.keyword}" class="page-link">Previous</a>
+                                        <a class="page-link" href="customerReport?page=${currentPage - 1}${queryParams}">Previous</a>
                                     </li>
                                 </c:when>
                                 <c:otherwise>
-                                    <li class="page-item disabled"><a href="#" class="page-link">Previous</a></li>
+                                    <li class="page-item disabled"><a class="page-link" href="#">Previous</a></li>
                                     </c:otherwise>
                                 </c:choose>
 
                             <c:forEach begin="1" end="${totalPages}" var="i">
                                 <li class="page-item ${i == currentPage ? 'active' : ''}">
-                                    <a href="customerReport?page=${i}&keyword=${param.keyword}" class="page-link">${i}</a>
+                                    <a class="page-link" href="customerReport?page=${i}${queryParams}">${i}</a>
                                 </li>
                             </c:forEach>
 
                             <c:choose>
                                 <c:when test="${currentPage < totalPages}">
                                     <li class="page-item">
-                                        <a href="customerReport?page=${currentPage + 1}&keyword=${param.keyword}" class="page-link">Next</a>
+                                        <a class="page-link" href="customerReport?page=${currentPage + 1}${queryParams}">Next</a>
                                     </li>
                                 </c:when>
                                 <c:otherwise>
-                                    <li class="page-item disabled"><a href="#" class="page-link">Next</a></li>
+                                    <li class="page-item disabled"><a class="page-link" href="#">Next</a></li>
                                     </c:otherwise>
                                 </c:choose>
                         </ul>
