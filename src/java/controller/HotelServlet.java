@@ -31,6 +31,7 @@ public class HotelServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
+        request.setAttribute("listRoomType", new dao.RoomTypeDAO().getListRoomType());
         request.getRequestDispatcher("home.jsp").forward(request, response);
     } 
 

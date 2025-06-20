@@ -160,16 +160,16 @@ public class CustomerReportServlet extends HttpServlet {
 
         int totalPages = (int) Math.ceil(totalRecords * 1.0 / recordsPerPage);
 
-//        request.setAttribute("keyword", keyword);
-//        request.setAttribute("tier", tier);
-//        request.setAttribute("bookingRange", bookingRange);
-//        request.setAttribute("spentRange", spentRange);
-//        request.setAttribute("registerStartDate", registerStart);
-//        request.setAttribute("registerEndDate", registerEnd);
-//        request.setAttribute("bookingStartDate", bookingStart);
-//        request.setAttribute("bookingEndDate", bookingEnd);
-//        request.setAttribute("sort", sort);
-//        request.setAttribute("order", order);
+        request.setAttribute("keyword", keyword);
+        request.setAttribute("tier", tier);
+        request.setAttribute("bookingRange", bookingRange);
+        request.setAttribute("spentRange", spentRange);
+        request.setAttribute("registerStartDate", registerStart);
+        request.setAttribute("registerEndDate", registerEnd);
+        request.setAttribute("bookingStartDate", bookingStart);
+        request.setAttribute("bookingEndDate", bookingEnd);
+        request.setAttribute("sort", sort);
+        request.setAttribute("order", order);
         request.setAttribute("customerReport", customerReport);
         request.setAttribute("currentPage", page);
         request.setAttribute("totalPages", totalPages);
