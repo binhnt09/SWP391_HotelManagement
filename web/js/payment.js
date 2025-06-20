@@ -7,50 +7,71 @@
 
 //js cu
 function selectPayment(element) {
-    // Remove selected class from all payment methods
     const allMethods = document.querySelectorAll('.payment-method');
     const qrinfo = document.querySelectorAll('.qr-info');
+
     allMethods.forEach(method => {
         method.classList.remove('selected');
         const radioBtn = method.querySelector('.radio-btn');
-        radioBtn.classList.remove('checked');
+        if (radioBtn) radioBtn.classList.remove('checked');
     });
 
     qrinfo.forEach(detail => {
         detail.classList.remove('active');
     });
 
-    // Add selected class to clicked element
+    // Thêm class selected
     element.classList.add('selected');
     const radioBtn = element.querySelector('.radio-btn');
-    radioBtn.classList.add('checked');
+    if (radioBtn) radioBtn.classList.add('checked');
 
-    const method = element.getAttribute('data-method'); // ví dụ: 'vietqr', 'banktransfer'
+    const method = element.getAttribute('data-method');
     if (method) {
         const detail = document.getElementById(`${method}-details`);
-        if (detail)
-            detail.classList.add('active');
+        if (detail) detail.classList.add('active');
+        // Gán vào input hidden
+        const hiddenInput = document.getElementById("paymentMethod");
+        if (hiddenInput) hiddenInput.value = method;
     }
 }
 
-function processPayment() {
+function processPayment(event) {
+    event.preventDefault(); // Ngăn submit mặc định
+
+    const form = document.getElementById("paymentForm");
     const selectedMethod = document.querySelector('.payment-method.selected');
-    if (selectedMethod) {
-        const methodName = selectedMethod.querySelector('div[style*="font-weight: bold"]').textContent;
-        alert(`Đang xử lý thanh toán bằng: ${methodName}`);
+    const methodInput = document.getElementById("paymentMethod");
 
-        // Simulate payment processing
-        setTimeout(() => {
-            if (methodName === 'VietQR') {
-                alert('Mã QR đã được tạo! Vui lòng quét mã để hoàn tất thanh toán.');
-            } else {
-                alert('Chuyển hướng đến trang thanh toán...');
-            }
-        }, 1000);
-    } else {
+    if (!selectedMethod || !methodInput || !methodInput.value) {
         alert('Vui lòng chọn phương thức thanh toán!');
+        return;
     }
+
+    const methodValue = methodInput.value;
+    const methodLabel = selectedMethod.querySelector('[data-method-label]');
+    const methodName = methodLabel ? methodLabel.textContent.trim() : methodValue;
+
+    alert(`Đang xử lý thanh toán bằng: ${methodName}`);
+
+    // Gán thêm bankCode nếu có
+    if (methodValue === "wallettransfer") {
+        const walletRadio = document.querySelector('input[name="wallet"]:checked');
+        const bankInput = document.getElementById("bankCode");
+        if (walletRadio && bankInput) {
+            bankInput.value = walletRadio.value.toUpperCase();
+        } else {
+            alert("Vui lòng chọn loại ví điện tử!");
+            return;
+        }
+    }
+
+    setTimeout(() => {
+        // Chuyển hướng thực sự
+        form.submit();
+    }, 500);
 }
+
+
 
 // Countdown timer simulation
 let timeLeft = 1 * 60; // 54 minutes 29 seconds

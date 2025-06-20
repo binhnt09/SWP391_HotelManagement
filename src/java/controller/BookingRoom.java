@@ -12,6 +12,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.sql.Timestamp;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.concurrent.TimeUnit;
@@ -65,11 +66,13 @@ public class BookingRoom extends HttpServlet {
         String roomID_raw = request.getParameter("roomID");
         String checkin_raw = request.getParameter("checkin");
         String checkout_raw = request.getParameter("checkout");
-        int roomID = Validation.parseStringToInt(roomID_raw);
+        int roomId = Validation.parseStringToInt(roomID_raw);
 
         //numbre night
         Date checkin = Validation.parseStringToSqlDate(checkin_raw, "yyyy-MM-dd");
         Date checkout = Validation.parseStringToSqlDate(checkout_raw, "yyyy-MM-dd");
+//        Timestamp checkin = Validation.parseStringToSqlTimestamp(checkin_raw, "yyyy-MM-dd HH:mm:ss");
+//        Timestamp checkout = Validation.parseStringToSqlTimestamp(checkout_raw, "yyyy-MM-dd HH:mm:ss");
         long diffInMillies = checkout.getTime() - checkin.getTime();
         long diffDays = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
 
@@ -78,12 +81,15 @@ public class BookingRoom extends HttpServlet {
         long nowTocheckinMillies = checkin.getTime() - currentDateOnly.getTime();
         long nowTocheckinDays = TimeUnit.DAYS.convert(nowTocheckinMillies, TimeUnit.MILLISECONDS);
 
-        Room room = new dao.RoomDAO().getRoomByRoomID(roomID);
+        Room room = new dao.RoomDAO().getRoomByRoomID(roomId);
         double totalPrice = diffDays * room.getPrice();
 
         request.getSession().setAttribute("room", room);
-        request.getSession().setAttribute("checkin", checkin_raw);
-        request.getSession().setAttribute("checkout", checkout_raw);
+        request.getSession().setAttribute("roomIdBooking", roomId);
+//        request.getSession().setAttribute("checkin", checkin_raw);
+//        request.getSession().setAttribute("checkout", checkout_raw);
+        request.getSession().setAttribute("checkin", checkin);
+        request.getSession().setAttribute("checkout", checkout);
         request.getSession().setAttribute("numberNight", diffDays);
         request.setAttribute("nowTocheckin", nowTocheckinDays);
         request.getSession().setAttribute("totalPrice", totalPrice);
