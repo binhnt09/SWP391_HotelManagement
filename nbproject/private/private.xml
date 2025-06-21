@@ -3,15 +3,22 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/Project%20SWP391/SWP391_HotelManagement/src/java/constant/Iconstant.java</file>
-            <file>file:/D:/Project%20SWP391/SWP391_HotelManagement/web/css/managerDashboardCustom.css</file>
-            <file>file:/D:/Project%20SWP391/SWP391_HotelManagement/src/java/dao/ReportDAO.java</file>
-            <file>file:/D:/Project%20SWP391/SWP391_HotelManagement/web/customer-list.jsp</file>
-            <file>file:/D:/Project%20SWP391/SWP391_HotelManagement/src/java/controller/CustomerReportServlet.java</file>
-            <file>file:/D:/Project%20SWP391/SWP391_HotelManagement/src/java/dao/RoomDAO.java</file>
-            <file>file:/D:/Project%20SWP391/SWP391_HotelManagement/web/customer-report.jsp</file>
-            <file>file:/D:/Project%20SWP391/SWP391_HotelManagement/src/java/entity/CustomerReport.java</file>
-            <file>file:/D:/Project%20SWP391/SWP391_HotelManagement/web/room-list.jsp</file>
+            <file>file:/D:/FU%20Learning/Summer%202025/SWP391/SWP_HotelManagement_V1_1/SWP391_HotelManagement_V1/src/java/constant/Config.java</file>
+            <file>file:/D:/FU%20Learning/Summer%202025/SWP391/SWP_HotelManagement_V1_1/SWP391_HotelManagement_V1/web/profile/headerprofile.jsp</file>
+            <file>file:/D:/FU%20Learning/Summer%202025/SWP391/SWP_HotelManagement_V1_1/SWP391_HotelManagement_V1/web/booking.jsp</file>
+            <file>file:/D:/FU%20Learning/Summer%202025/SWP391/SWP_HotelManagement_V1_1/SWP391_HotelManagement_V1/src/java/validation/Validation.java</file>
+            <file>file:/D:/FU%20Learning/Summer%202025/SWP391/SWP_HotelManagement_V1_1/SWP391_HotelManagement_V1/src/java/constant/MailUtil.java</file>
+            <file>file:/D:/FU%20Learning/Summer%202025/SWP391/SWP_HotelManagement_V1_1/SWP391_HotelManagement_V1/web/profile/profile.jsp</file>
+            <file>file:/D:/FU%20Learning/Summer%202025/SWP391/SWP_HotelManagement_V1_1/SWP391_HotelManagement_V1/web/payment/paymentResult.jsp</file>
+            <file>file:/D:/FU%20Learning/Summer%202025/SWP391/SWP_HotelManagement_V1_1/SWP391_HotelManagement_V1/web/payment/payment.jsp</file>
+            <file>file:/D:/FU%20Learning/Summer%202025/SWP391/SWP_HotelManagement_V1_1/SWP391_HotelManagement_V1/src/java/dao/PaymentDao.java</file>
+            <file>file:/D:/FU%20Learning/Summer%202025/SWP391/SWP_HotelManagement_V1_1/SWP391_HotelManagement_V1/src/java/controller/BookingRoom.java</file>
+            <file>file:/D:/FU%20Learning/Summer%202025/SWP391/SWP_HotelManagement_V1_1/SWP391_HotelManagement_V1/src/java/controller/payment/PaymentServlet.java</file>
+            <file>file:/D:/FU%20Learning/Summer%202025/SWP391/SWP_HotelManagement_V1_1/SWP391_HotelManagement_V1/web/js/payment.js</file>
+            <file>file:/D:/FU%20Learning/Summer%202025/SWP391/SWP_HotelManagement_V1_1/SWP391_HotelManagement_V1/src/java/entity/Room.java</file>
+            <file>file:/D:/FU%20Learning/Summer%202025/SWP391/SWP_HotelManagement_V1_1/SWP391_HotelManagement_V1/src/java/dal/DBContext.java</file>
+            <file>file:/D:/FU%20Learning/Summer%202025/SWP391/SWP_HotelManagement_V1_1/SWP391_HotelManagement_V1/src/java/controller/payment/VnpayReturn.java</file>
+            <file>file:/D:/FU%20Learning/Summer%202025/SWP391/SWP_HotelManagement_V1_1/SWP391_HotelManagement_V1/src/java/dao/BookingDao.java</file>
         </group>
     </open-files>
 </project-private>

@@ -39,15 +39,6 @@ import validation.Validation;
 @WebServlet(name = "PaymentServlet", urlPatterns = {"/payment"})
 public class PaymentServlet extends HttpServlet {
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -92,18 +83,11 @@ public class PaymentServlet extends HttpServlet {
         totalBillStr = totalBillStr.replaceAll("[^\\d.]", "");
 
         int userId = userIdStr.getUser().getUserId();
-//        int nights = Validation.getInt(nightsStr, 1, 365);
         int nights = Validation.getInt(nightsStr, 1, 365);
 
         int bookingId = Validation.getInt(bookingIdStr, 0, Integer.MAX_VALUE);
         Integer voucherId = (voucherIdStr != null && !voucherIdStr.isEmpty()) ? Integer.valueOf(voucherIdStr) : null;
-//        BigDecimal amountDouble = Validation.validateBigDecimal(totalBillStr, BigDecimal.ONE, new BigDecimal("999999999"));
-        BigDecimal amountDouble;
-        try {
-            amountDouble = new BigDecimal(totalBillStr);
-        } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("Số tiền không hợp lệ", e);
-        }
+        BigDecimal amountDouble = Validation.validateBigDecimal(totalBillStr, BigDecimal.ONE, new BigDecimal("999999999"));
 
         Booking booking = new Booking();
         booking.setUserID(userId);
@@ -204,15 +188,5 @@ public class PaymentServlet extends HttpServlet {
         String paymentUrl = Config.vnp_PayUrl + "?" + queryUrl;
         response.sendRedirect(paymentUrl);
     }
-
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
 
 }

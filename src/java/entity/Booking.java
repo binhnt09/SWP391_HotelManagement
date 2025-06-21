@@ -79,8 +79,6 @@ public class Booking {
         this.checkOutDate = checkOutDate;
     }
 
-    
-
     public BigDecimal getTotalAmount() {
         return totalAmount;
     }
