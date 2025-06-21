@@ -83,6 +83,13 @@
                         </a>
                     </li>
 
+                    <!-- Room Management hieu -->
+                    <li>
+                        <a href="manageroom">
+                            <i class="material-icons">domain</i>Room
+                        </a>
+                    </li>
+
                     <!-- Review Management -->
                     <li>
                         <a href="reviewmanager">
@@ -103,6 +110,7 @@
                             <i class="material-icons">touch_app</i>Booking
                         </a>
                     </li>
+
 
                     <!-- Payment -->
                     <li>

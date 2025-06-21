@@ -122,13 +122,13 @@ public class CustomerReportServlet extends HttpServlet {
                     spentMin = 50000000;
                     break;
                 default:
-                    if (spentRange.contains("-")) {
-                        String[] parts = spentRange.split("-");
-                        spentMin = Long.parseLong(parts[0]);
-                        spentMax = Long.parseLong(parts[1]);
-                    } else if (spentRange.endsWith("+")) {
-                        spentMin = Long.parseLong(spentRange.replace("+", ""));
-                    }
+//                    if (spentRange.contains("-")) {
+//                        String[] parts = spentRange.split("-");
+//                        spentMin = Long.parseLong(parts[0]);
+//                        spentMax = Long.parseLong(parts[1]);
+//                    } else if (spentRange.endsWith("+")) {
+//                        spentMin = Long.parseLong(spentRange.replace("+", ""));
+//                    }
                     break;
             }
         }
@@ -151,7 +151,7 @@ public class CustomerReportServlet extends HttpServlet {
                 bookingEndTS = Timestamp.valueOf(bookingEnd + " 23:59:59");
             }
         } catch (IllegalArgumentException e) {
-            e.printStackTrace(); // hoặc xử lý lỗi phù hợp
+            e.printStackTrace(); 
         }
 
         ReportDAO dao = new ReportDAO();
