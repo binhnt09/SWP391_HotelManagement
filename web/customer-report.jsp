@@ -136,7 +136,7 @@
                         <form method="get" action="customerReport">
                             <div class="form-row align-items-end">
                                 <input type="hidden" name="keyword" value="${param.keyword}" />
-                                
+
                                 <div class="form-group col-md-2 mb-1">
                                     <label class="small mb-1">Bookings</label>
                                     <select name="bookingRange" class="form-control form-control-sm">
@@ -214,8 +214,24 @@
                     <div class="table-title">
                         <div class="row">
                             <div class="col-sm-2">
-                                <h2 class="ml-lg-2">Customer Report</h2>
+                                <h2 class="mb-0">Customer Report</h2>
                             </div>
+                            <div class="col-sm-10">
+                                <form action="exportExcel" method="post" target="_blank">
+                                    <input type="hidden" name="bookingRange" value="${param.bookingRange}" />
+                                    <input type="hidden" name="spentRange" value="${param.spentRange}" />
+                                    <input type="hidden" name="sort" value="${param.sort}" />
+                                    <input type="hidden" name="order" value="${param.order}" />
+                                    <input type="hidden" name="registerStartDate" value="${param.registerStartDate}" />
+                                    <input type="hidden" name="registerEndDate" value="${param.registerEndDate}" />
+                                    <input type="hidden" name="bookingStartDate" value="${param.bookingStartDate}" />
+                                    <input type="hidden" name="bookingEndDate" value="${param.bookingEndDate}" />
+                                    <input type="hidden" name="keyword" value="${param.keyword}" />
+
+                                    <button type="submit" class="btn btn-success"> <i class="fa fa-file-excel-o"></i>Export Excel</button>
+                                </form>
+                            </div>
+
                         </div>
                     </div>
                     <table class="table table-striped table-hover table-bordered">
@@ -330,7 +346,7 @@
     </div>
 
     <script>
-        // Áp dụng cho Register Date
+        // dùng cho Register Date
         const registerStart = document.querySelector('input[name="registerStartDate"]');
         const registerEnd = document.querySelector('input[name="registerEndDate"]');
 
@@ -346,7 +362,7 @@
             }
         });
 
-        // Áp dụng cho Last Booking
+        // dùng cho Last Booking
         const bookingStart = document.querySelector('input[name="bookingStartDate"]');
         const bookingEnd = document.querySelector('input[name="bookingEndDate"]');
 

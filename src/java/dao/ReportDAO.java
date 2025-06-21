@@ -274,4 +274,106 @@ public class ReportDAO extends DBContext {
 
         return total;
     }
+    
+    public List<CustomerReport> exportCustomerReport(
+            String keyword,
+            int bookingMin, int bookingMax,
+            long spentMin, long spentMax,
+            Timestamp registerStart, Timestamp registerEnd,
+            Timestamp bookingStart, Timestamp bookingEnd,
+            String sort, String order
+    ) {
+        List<CustomerReport> list = new ArrayList<>();
+        StringBuilder sql = new StringBuilder();
+        sql.append("SELECT u.UserID, u.FirstName, u.LastName, u.Email, u.CreatedAt, ");
+        sql.append("COUNT(b.BookingID) AS TotalBookings, ");
+        sql.append("ISNULL(SUM(b.TotalAmount), 0) AS TotalSpent, ");
+        sql.append("MAX(b.BookingDate) AS LastBooking ");
+        sql.append("FROM [User] u ");
+        sql.append("LEFT JOIN Booking b ON u.UserID = b.UserID ");
+        sql.append("WHERE u.IsDeleted = 0 and u.UserRoleID = 5 ");
+
+        // Keyword
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            sql.append(" AND (u.FirstName LIKE ? OR u.LastName LIKE ? OR u.Email LIKE ?) ");
+        }
+
+        // Tier is handled after totalSpent is calculated
+        sql.append("GROUP BY u.UserID, u.FirstName, u.LastName, u.Email, u.CreatedAt ");
+        sql.append("HAVING COUNT(b.BookingID) BETWEEN ? AND ? ");
+        sql.append("AND ISNULL(SUM(b.TotalAmount), 0) BETWEEN ? AND ? ");
+
+        if (registerStart != null) {
+            sql.append(" AND u.CreatedAt >= ? ");
+        }
+        if (registerEnd != null) {
+            sql.append(" AND u.CreatedAt <= ? ");
+        }
+        if (bookingStart != null) {
+            sql.append(" AND MAX(b.BookingDate) >= ? ");
+        }
+        if (bookingEnd != null) {
+            sql.append(" AND MAX(b.BookingDate) <= ? ");
+        }
+
+        // Sorting
+        if (sort != null && !sort.isEmpty()) {
+            if (sort.equals("totalSpent") || sort.equals("totalBookings") || sort.equals("registerDate")) {
+                sql.append(" ORDER BY " + (sort.equals("registerDate") ? "u.CreatedAt" : sort));
+                if ("desc".equalsIgnoreCase(order)) {
+                    sql.append(" DESC");
+                } else {
+                    sql.append(" ASC");
+                }
+            }
+        } else {
+            sql.append(" ORDER BY u.UserID ASC ");
+        }
+
+        try (PreparedStatement ps = connection.prepareStatement(sql.toString())) {
+            int index = 1;
+
+            if (keyword != null && !keyword.trim().isEmpty()) {
+                String likeKeyword = "%" + keyword + "%";
+                ps.setString(index++, likeKeyword);
+                ps.setString(index++, likeKeyword);
+                ps.setString(index++, likeKeyword);
+            }
+
+            ps.setInt(index++, bookingMin);
+            ps.setInt(index++, bookingMax);
+            ps.setLong(index++, spentMin);
+            ps.setLong(index++, spentMax);
+
+            if (registerStart != null) {
+                ps.setTimestamp(index++, registerStart);
+            }
+            if (registerEnd != null) {
+                ps.setTimestamp(index++, registerEnd);
+            }
+            if (bookingStart != null) {
+                ps.setTimestamp(index++, bookingStart);
+            }
+            if (bookingEnd != null) {
+                ps.setTimestamp(index++, bookingEnd);
+            }
+
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                CustomerReport c = new CustomerReport();
+                c.setUserId(rs.getInt("UserID"));
+                c.setFirstName(rs.getString("FirstName"));
+                c.setLastName(rs.getString("LastName"));
+                c.setEmail(rs.getString("Email"));
+                c.setRegisterDate(rs.getTimestamp("CreatedAt"));
+                c.setTotalBookings(rs.getInt("TotalBookings"));
+                c.setTotalSpent(rs.getBigDecimal("TotalSpent"));
+                c.setLastBookingDate(rs.getTimestamp("LastBooking"));
+                list.add(c);
+            }
+        } catch (SQLException e) {
+            Logger.getLogger(ReportDAO.class.getName()).log(Level.SEVERE, null, e);
+        }
+        return list;
+    }
 }
