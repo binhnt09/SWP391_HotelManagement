@@ -109,17 +109,12 @@
                                     </ul>
                                 </li>
                             </ul>
-
-
                         </nav>
-
                     </div>
                 </div>
                 <!-- End XP Col -->
 
             </div> 
-            <!-- End XP Row -->
-
         </div>
     </div>
 
@@ -242,7 +237,7 @@
                                 <th>Last Name</th>
                                 <th>Email</th>
                                 <th>Total Bookings</th>
-                                <th>Total Spent</th>
+                                <th>Total Spent(VND)</th>
                                 <th>Last Booking</th>
                                 <th>Register Date</th>
                                 <th>Tier</th>
@@ -258,7 +253,7 @@
                                             <td>${c.lastName}</td>
                                             <td>${c.email}</td>
                                             <td>${c.totalBookings}</td>
-                                            <td>${c.totalSpent}</td>
+                                            <td><fmt:formatNumber value="${c.totalSpent}" pattern="#,##0" /></td>
                                             <td><fmt:formatDate value="${c.lastBookingDate}" pattern="dd-MM-yyyy HH:mm" /></td>
                                             <td><fmt:formatDate value="${c.registerDate}" pattern="dd-MM-yyyy HH:mm" /></td>
                                             <td>${c.tier}</td>

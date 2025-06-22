@@ -4,21 +4,19 @@
  */
 package controller;
 
-import dao.CustomerDAO;
-import entity.User;
+import dao.ServiceDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.List;
 
 /**
  *
  * @author viet7
  */
-public class CustomerListServlet extends HttpServlet {
+public class ServiceDeleteServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -37,10 +35,10 @@ public class CustomerListServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet CustomerListServlet</title>");
+            out.println("<title>Servlet ServiceDeleteServlet</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet CustomerListServlet at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet ServiceDeleteServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -58,32 +56,20 @@ public class CustomerListServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        int page = 1;
-        int recordsPerPage = 10;
-        String keyword = request.getParameter("keyword");
-
-        if (request.getParameter("page") != null) {
-            page = Integer.parseInt(request.getParameter("page"));
-        }
-
-        int totalCustomer;
-        List<User> customers;
-        CustomerDAO dao = new CustomerDAO();
-        if (keyword != null && !keyword.trim().isEmpty()) {
-            customers = dao.searchCustomersByPage(keyword, (page - 1) * recordsPerPage, recordsPerPage);
-            totalCustomer = dao.getTotalCustomerSearchCount(keyword);
+        int id = Integer.parseInt(request.getParameter("id"));
+        int deletedBy = 2;
+//        int deletedBy = ((User) request.getSession().getAttribute("loggedInUser")).getUserId();
+        ServiceDAO dao = new ServiceDAO();
+        if (!dao.isServiceInUse(id)) {
+            if (dao.deleteService(id, deletedBy)) {
+                request.getSession().setAttribute("successMessage", "Xóa dịch vụ thành công!");
+            } else {
+                request.getSession().setAttribute("errorMessage", "Có lỗi xảy ra, vui lòng thử lại.");
+            }
         } else {
-            customers = dao.getCustomersByPage((page - 1) * recordsPerPage, recordsPerPage);
-            totalCustomer = dao.getTotalCustomerCount();
+            request.getSession().setAttribute("errorMessage", "Không thể xóa, dịch vụ này đang được sử dụng.");
         }
-        int totalPages = (int) Math.ceil(totalCustomer * 1.0 / recordsPerPage);
-
-        request.setAttribute("customers", customers);
-        request.setAttribute("totalCustomer", totalCustomer);
-        request.setAttribute("currentPage", page);
-        request.setAttribute("totalPages", totalPages);
-        request.setAttribute("keyword", keyword);
-        request.getRequestDispatcher("customer-list.jsp").forward(request, response);
+        response.sendRedirect("serviceList");
     }
 
     /**

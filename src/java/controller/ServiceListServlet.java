@@ -4,8 +4,8 @@
  */
 package controller;
 
-import dao.CustomerDAO;
-import entity.User;
+import dao.ServiceDAO;
+import entity.Service;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,7 +18,7 @@ import java.util.List;
  *
  * @author viet7
  */
-public class CustomerListServlet extends HttpServlet {
+public class ServiceListServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -37,10 +37,10 @@ public class CustomerListServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet CustomerListServlet</title>");
+            out.println("<title>Servlet ServiceListServlet</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet CustomerListServlet at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet ServiceListServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -58,32 +58,44 @@ public class CustomerListServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        int page = 1;
+
         int recordsPerPage = 10;
+
+        int page = request.getParameter("page") != null ? Integer.parseInt(request.getParameter("page")) : 1;
+
+        int offset = (page - 1) * recordsPerPage;
+
         String keyword = request.getParameter("keyword");
-
-        if (request.getParameter("page") != null) {
-            page = Integer.parseInt(request.getParameter("page"));
+        if (keyword == null) {
+            keyword = "";
+        }
+        String category = request.getParameter("category");
+        String statusParam = request.getParameter("status");
+        Boolean status = null;
+        if (statusParam != null && !statusParam.isEmpty()) {
+            status = "true".equals(statusParam);
         }
 
-        int totalCustomer;
-        List<User> customers;
-        CustomerDAO dao = new CustomerDAO();
-        if (keyword != null && !keyword.trim().isEmpty()) {
-            customers = dao.searchCustomersByPage(keyword, (page - 1) * recordsPerPage, recordsPerPage);
-            totalCustomer = dao.getTotalCustomerSearchCount(keyword);
-        } else {
-            customers = dao.getCustomersByPage((page - 1) * recordsPerPage, recordsPerPage);
-            totalCustomer = dao.getTotalCustomerCount();
-        }
-        int totalPages = (int) Math.ceil(totalCustomer * 1.0 / recordsPerPage);
+        String sortField = request.getParameter("sortField");
+        String sortOrder = request.getParameter("sortOrder");
 
-        request.setAttribute("customers", customers);
-        request.setAttribute("totalCustomer", totalCustomer);
+        ServiceDAO dao = new ServiceDAO();
+        List<Service> serviceList = dao.searchServicesByFilter(keyword, category, status, sortField, sortOrder, offset, recordsPerPage);
+
+        int totalRecords = dao.countServicesByFilter(keyword, category, status);
+        int totalPages = (int) Math.ceil(totalRecords * 1.0 / recordsPerPage);
+
+        request.setAttribute("serviceList", serviceList);
         request.setAttribute("currentPage", page);
         request.setAttribute("totalPages", totalPages);
+        request.setAttribute("totalService", totalRecords);
         request.setAttribute("keyword", keyword);
-        request.getRequestDispatcher("customer-list.jsp").forward(request, response);
+        request.setAttribute("category", category);
+        request.setAttribute("status", statusParam);
+        request.setAttribute("sortField", sortField);
+        request.setAttribute("sortOrder", sortOrder);
+
+        request.getRequestDispatcher("service-manager.jsp").forward(request, response);
     }
 
     /**
