@@ -59,7 +59,7 @@ public class StaffListSevelet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         int page = 1;
-        int recordsPerPage = 5;
+        int recordsPerPage = 10;
 
         String keyword = request.getParameter("keyword");
 

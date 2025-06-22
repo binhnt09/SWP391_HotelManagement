@@ -90,6 +90,13 @@
                         </a>
                     </li>
 
+                    <!-- Service Management  -->
+                    <li>
+                        <a href="serviceList">
+                            <i class="material-icons">room_service</i>Service
+                        </a>
+                    </li>
+
                     <!-- Review Management -->
                     <li>
                         <a href="reviewmanager">
