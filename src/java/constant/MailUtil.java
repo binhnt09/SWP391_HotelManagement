@@ -18,8 +18,8 @@ public class MailUtil {
     }
 
     public static void send(String toEmail, String code) throws Exception {
-        final String fromEmail = "";
-        final String password = "";     // App password
+        final String fromEmail = "dominhdangcap2@gmail.com";
+        final String password = "nmxb rkyw fwoe ashb";      // App password
 
         Properties props = new Properties();
         props.put("mail.smtp.auth", "true");

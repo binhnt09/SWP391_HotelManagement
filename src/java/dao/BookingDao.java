@@ -7,10 +7,13 @@ package dao;
 import dal.DBContext;
 import entity.Booking;
 import entity.BookingDetails;
+import java.math.BigDecimal;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -74,4 +77,117 @@ public class BookingDao extends DBContext {
         }
         return false;
     }
+
+    public List<Booking> getBookings(
+            int userRoleId,
+            int currentUserId, // ID người đang đăng nhập (nếu là khách)
+            String keyword,
+            String status,
+            String sortBy,
+            boolean isAsc,
+            int pageIndex,
+            int pageSize,
+            Boolean isDeleted
+    ) {
+        List<Booking> list = new ArrayList<>();
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try {
+            StringBuilder sql = new StringBuilder(
+                    "SELECT b.* FROM Booking b "
+                    + "JOIN [User] u ON b.UserID = u.UserID "
+                    + "WHERE 1=1"
+            );
+
+            // Tìm kiếm theo keyword
+            if (keyword != null && !keyword.trim().isEmpty()) {
+                sql.append(" AND (CAST(b.BookingID AS NVARCHAR) LIKE ? ")
+                        .append(" OR b.Status LIKE ? ")
+                        .append(" OR u.FirstName LIKE ? ")
+                        .append(" OR u.LastName LIKE ? )");
+            }
+
+            // Trạng thái booking
+            if (status != null && !status.trim().isEmpty()) {
+                sql.append(" AND b.Status = ?");
+            }
+
+            // Trạng thái xóa
+            if (isDeleted != true) {
+                sql.append(" AND b.IsDeleted = ?");
+            }
+
+            if(currentUserId == 5){
+                sql.append(" AND b.UserID = ?");
+            }
+
+            // Sắp xếp
+//            if (sortBy == null || sortBy.isEmpty()) {
+//                sortBy = "b.CreatedAt";
+//            }
+//            sql.append(" ORDER BY ").append(sortBy).append(isAsc ? " ASC" : " DESC");
+
+            // Phân trang
+//            sql.append(" OFFSET ? ROWS FETCH NEXT ? ROWS ONLY");
+            // Tạo PreparedStatement và gán tham số
+            ps = connection.prepareStatement(sql.toString());
+            System.out.println(sql.toString());
+            int index = 1;
+
+            if (keyword != null && !keyword.trim().isEmpty()) {
+                String kw = "%" + keyword + "%";
+                ps.setString(index++, kw);
+                ps.setString(index++, kw);
+                ps.setString(index++, kw);
+                ps.setString(index++, kw);
+            }
+
+            if (status != null && !status.trim().isEmpty()) {
+                ps.setString(index++, status);
+            }
+
+            if (isDeleted != null) {
+                ps.setBoolean(index++, isDeleted);
+            }
+
+            if (currentUserId == 5) {
+                ps.setInt(index++, userRoleId); // truyền vào ID user đăng nhập
+            }
+
+//            ps.setInt(index++, pageIndex * pageSize);
+//            ps.setInt(index++, pageSize);
+
+            rs = ps.executeQuery();
+            while (rs.next()) {
+           
+                Booking b = new Booking(rs.getInt("bookingid"),
+                        rs.getInt("userid"), 
+                        rs.getInt("voucherid"),
+                        rs.getTimestamp("bookingdate"),
+                        rs.getDate("checkindate"),
+                        rs.getDate("checkoutdate"),
+                        rs.getBigDecimal("totalamount"),
+                         rs.getString("status"),
+                        rs.getTimestamp("CreatedAt"),
+                        rs.getTimestamp("UpdatedAt"),
+                        rs.getTimestamp("DeletedAt"),
+                        rs.getInt("DeletedBy"),
+                        rs.getBoolean("IsDeleted"));
+                list.add(b);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return list;
+    }
+    public static void main(String[] args) {
+        List<Booking> list = new dao.BookingDao().getBookings(5, 5, "", "Confirmed", "", true, 0, 0, false);
+        for(Booking a : list){
+            System.out.println(a.getBookingID());
+        }
+    }
+
 }
