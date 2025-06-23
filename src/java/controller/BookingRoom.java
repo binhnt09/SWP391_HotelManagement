@@ -4,6 +4,7 @@
  */
 package controller;
 
+import entity.Booking;
 import entity.Room;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -15,6 +16,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.sql.Timestamp;
 import java.sql.Date;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 import validation.Validation;
 
@@ -93,7 +95,7 @@ public class BookingRoom extends HttpServlet {
         request.getSession().setAttribute("numberNight", diffDays);
         request.setAttribute("nowTocheckin", nowTocheckinDays);
         request.getSession().setAttribute("totalPrice", totalPrice);
-
+        
         request.getRequestDispatcher("booking.jsp").forward(request, response);
     }
 

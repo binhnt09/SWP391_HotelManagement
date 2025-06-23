@@ -22,10 +22,28 @@ public class BookingDetails {
     private Timestamp deletedAt;
     private Integer deletedBy;
     private boolean isDeleted;
-
+    private Booking bookId ;
+    
     public BookingDetails() {
     }
 
+    
+    //hieu them
+    public BookingDetails(int bookingDetailID, int bookingID, int roomID, BigDecimal price, int nights, Timestamp createdAt, Timestamp updatedAt, Timestamp deletedAt, Integer deletedBy, boolean isDeleted, Booking bookId) {
+        this.bookingDetailID = bookingDetailID;
+        this.bookingID = bookingID;
+        this.roomID = roomID;
+        this.price = price;
+        this.nights = nights;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.deletedAt = deletedAt;
+        this.deletedBy = deletedBy;
+        this.isDeleted = isDeleted;
+        this.bookId = bookId;
+    }
+
+    
     public int getBookingDetailID() {
         return bookingDetailID;
     }

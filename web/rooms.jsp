@@ -59,7 +59,7 @@
                     <h2>Rooms</h2>
                 </div>
             </section>
-            <!-- ##### Breadcumb Area End ##### -->
+         ->
 
             <!-- ##### Book Now Area Start ##### -->
             <style>
@@ -447,67 +447,6 @@
                                     document.getElementById("description").innerHTML = "Description: " + description;
                                     document.getElementById("bedType").innerHTML = "Bed type: " + bedType;
                                     document.getElementById("price").innerHTML = "Giá mỗi đêm: $" + roomPrice + "/night";
-
-
-
                                 }
-
-
-//                                $(document).ready(function () {
-//                                    // Khởi tạo popup cho nút mở login/register
-//                                    $('.login-modal-btn, .register-modal-btn').magnificPopup({
-//                                        type: 'inline',
-//                                        midClick: true
-//                                    });
-//
-//                                    // Xử lý chuyển đổi giữa login <-> register
-//                                    $(document).on('click', '.switch-modal', function (e) {
-//                                        e.preventDefault();
-//                                        const target = $(this).attr('href');
-//
-//                                        // Cập nhật URL hash mà không reload
-//                                        history.pushState(null, '', target);
-//
-//                                        // Đóng popup hiện tại rồi mở cái mới ngay lập tức
-//                                        $.magnificPopup.close();
-//
-//                                        // Mở popup mới ngay lập tức (không delay, không hiệu ứng)
-//                                        $.magnificPopup.open({
-//                                            items: {
-//                                                src: target,
-//                                                type: 'inline'
-//                                            },
-//                                            midClick: true
-//                                        });
-//                                    });
-//
-//                                    // Khi người dùng nhấn nút back (quay lại)
-//                                    window.addEventListener('popstate', function () {
-//                                        const hash = window.location.hash;
-//                                        $.magnificPopup.close();
-//
-//                                        if ($(hash).length) {
-//                                            $.magnificPopup.open({
-//                                                items: {
-//                                                    src: hash,
-//                                                    type: 'inline'
-//                                                },
-//                                                midClick: true
-//                                            });
-//                                        }
-//                                    });
-//
-//                                    // Khi người dùng load trang kèm theo #login-modal hoặc #register-modal
-//                                    const initialHash = window.location.hash;
-//                                    if ($(initialHash).length) {
-//                                        $.magnificPopup.open({
-//                                            items: {
-//                                                src: initialHash,
-//                                                type: 'inline'
-//                                            },
-//                                            midClick: true
-//                                        });
-//                                    }
-//                                });
         </script>
 </html>
