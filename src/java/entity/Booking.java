@@ -27,6 +27,8 @@ public class Booking {
     private Timestamp deletedAt;
     private Integer deletedBy;
     private boolean isDeleted;
+    
+    
 
     public Booking() {
     }

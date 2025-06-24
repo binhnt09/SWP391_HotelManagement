@@ -59,7 +59,6 @@
                     <h2>Rooms</h2>
                 </div>
             </section>
-         ->
 
             <!-- ##### Book Now Area Start ##### -->
             <style>
@@ -367,7 +366,6 @@
                                 Update
                             </button>
                         </c:if>
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
                         <a id="bookNowBtn" href="#" style="border-radius: 10px; background-color: #80bdff" class="btn theme_btn button_hover">Book Now</a>
                     </div>
