@@ -118,7 +118,7 @@ public class BookingDao extends DBContext {
                 sql.append(" AND b.IsDeleted = ?");
             }
 
-            if(currentUserId == 5){
+            if (currentUserId == 5) {
                 sql.append(" AND b.UserID = ?");
             }
 
@@ -127,7 +127,6 @@ public class BookingDao extends DBContext {
 //                sortBy = "b.CreatedAt";
 //            }
 //            sql.append(" ORDER BY ").append(sortBy).append(isAsc ? " ASC" : " DESC");
-
             // Phân trang
 //            sql.append(" OFFSET ? ROWS FETCH NEXT ? ROWS ONLY");
             // Tạo PreparedStatement và gán tham số
@@ -157,18 +156,17 @@ public class BookingDao extends DBContext {
 
 //            ps.setInt(index++, pageIndex * pageSize);
 //            ps.setInt(index++, pageSize);
-
             rs = ps.executeQuery();
             while (rs.next()) {
-           
+
                 Booking b = new Booking(rs.getInt("bookingid"),
-                        rs.getInt("userid"), 
+                        rs.getInt("userid"),
                         rs.getInt("voucherid"),
                         rs.getTimestamp("bookingdate"),
                         rs.getDate("checkindate"),
                         rs.getDate("checkoutdate"),
                         rs.getBigDecimal("totalamount"),
-                         rs.getString("status"),
+                        rs.getString("status"),
                         rs.getTimestamp("CreatedAt"),
                         rs.getTimestamp("UpdatedAt"),
                         rs.getTimestamp("DeletedAt"),
@@ -183,11 +181,44 @@ public class BookingDao extends DBContext {
 
         return list;
     }
+
+    public Booking getBookingById(int id) {
+        Booking book = null;
+        String sql = "select Bookingid ,UserID, VoucherID, BookingDate, CheckInDate, "
+                + " CheckOutDate, TotalAmount, Status, CreatedAt, UpdatedAt, IsDeleted ,deletedat, deletedby"
+                + " from booking"
+                + " where bookingid = ?";
+        try (PreparedStatement pre = connection.prepareStatement(sql)) {
+            pre.setInt(1, id);
+            try (ResultSet rs = pre.executeQuery()) {
+                if (rs.next()) {
+                    book = new Booking(rs.getInt("bookingid"),
+                            rs.getInt("userId"),
+                            rs.getInt("voucherId"),
+                            rs.getTimestamp("bookingdate"),
+                            rs.getDate("checkindate"),
+                            rs.getDate("checkoutdate"),
+                            rs.getBigDecimal("totalamount"), 
+                            rs.getString("status"),
+                            rs.getTimestamp("CreatedAt"),
+                            rs.getTimestamp("UpdatedAt"),
+                            rs.getTimestamp("DeletedAt"),
+                            rs.getInt("DeletedBy"),
+                            rs.getBoolean("IsDeleted"));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return book;
+    }
+
     public static void main(String[] args) {
         List<Booking> list = new dao.BookingDao().getBookings(5, 5, "", "Confirmed", "", true, 0, 0, false);
-        for(Booking a : list){
+        for (Booking a : list) {
             System.out.println(a.getBookingID());
         }
+        System.out.println(new dao.BookingDao().getBookingById(1).getBookingID());
     }
 
 }

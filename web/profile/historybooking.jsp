@@ -36,36 +36,21 @@
 
                     <!-- Main Content -->
                     <div class="col-lg-9 col-md-8 ">
-                        <div class="card main-content-card">
-                            <div class="content-header mb-4">
-                                <h2 class="mb-3">Cài đặt</h2>
-                                <ul class="nav nav-tabs" id="accountTabs" role="tablist">
-                                    <li class="nav-item" role="presentation">
-                                        <button class="nav-link ${empty openTab || openTab == '#account-info' ? 'active' : ''}"
-                                            id="account-info-tab" data-bs-toggle="tab"
-                                            data-bs-target="#account-info" type="button" role="tab">
-                                        Thông tin tài khoản
-                                    </button>
-                                </li>
-                                <li class="nav-item" role="presentation">
-                                    <button class="nav-link ${openTab == '#password-security' ? 'active' : ''}" 
-                                            id="password-security-tab" data-bs-toggle="tab"
-                                            data-bs-target="#password-security" type="button" role="tab">
-                                        Mật khẩu & Bảo mật
-                                    </button>
-                                </li>
-                            </ul>
-
-                        </div>
-
-                    </div>
-                    <c:forEach items="${sessionScope.listBooking}" var="i">                     
-                        <div class="card main-content-card mt-5">
-                            <div class="content-header mb-4">
-                                <p>${i.bookingID}</p>
-
+                        <div class="main-content">
+                            <div class="col-lg-9 col-md-8 ">
+                                <h2 class="mb-3 fw-bold">Lịch sử giao dịch</h2>
                             </div>
-
+                        </div>
+                    <c:forEach items="${sessionScope.listBooking}" var="i">                     
+                        <div class="card">
+                            <div class="card-header">
+                                Featured
+                            </div>
+                            <div class="card-body">
+                                <h5 class="card-title">Special title treatment</h5>
+                                <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+                                <a href="#" class="btn btn-primary">Go somewhere</a>
+                            </div>
                         </div>
                     </c:forEach>   
                 </div>
