@@ -3,12 +3,25 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
+            <file>file:/D:/kì/ki5/SWP/project/SWP391_HotelManagement/src/java/entity/Booking.java</file>
+            <file>file:/D:/kì/ki5/SWP/project/SWP391_HotelManagement/web/profile/historybooking.jsp</file>
+            <file>file:/D:/kì/ki5/SWP/project/SWP391_HotelManagement/web/home.jsp</file>
             <file>file:/D:/kì/ki5/SWP/project/SWP391_HotelManagement/src/java/controller/LoginAccountServlet.java</file>
             <file>file:/D:/kì/ki5/SWP/project/SWP391_HotelManagement/src/java/constant/Iconstant.java</file>
-            <file>file:/D:/kì/ki5/SWP/project/SWP391_HotelManagement/src/java/controller/BookingRoom.java</file>
             <file>file:/D:/kì/ki5/SWP/project/SWP391_HotelManagement/src/java/constant/Config.java</file>
-            <file>file:/D:/kì/ki5/SWP/project/SWP391_HotelManagement/src/java/constant/MailUtil.java</file>
+            <file>file:/D:/kì/ki5/SWP/project/SWP391_HotelManagement/web/profile/sidebarprofile.jsp</file>
+            <file>file:/D:/kì/ki5/SWP/project/SWP391_HotelManagement/web/rooms.jsp</file>
             <file>file:/D:/kì/ki5/SWP/project/SWP391_HotelManagement/src/java/dao/BookingDao.java</file>
+            <file>file:/D:/kì/ki5/SWP/project/SWP391_HotelManagement/web/common/header.jsp</file>
+            <file>file:/D:/kì/ki5/SWP/project/SWP391_HotelManagement/web/dashboard-layout/sidebar.jsp</file>
+            <file>file:/D:/kì/ki5/SWP/project/SWP391_HotelManagement/web/profile/headerprofile.jsp</file>
+            <file>file:/D:/kì/ki5/SWP/project/SWP391_HotelManagement/src/java/controller/BookingCrud.java</file>
+            <file>file:/D:/kì/ki5/SWP/project/SWP391_HotelManagement/src/java/dao/AuthenticationDAO.java</file>
+            <file>file:/D:/kì/ki5/SWP/project/SWP391_HotelManagement/src/java/dao/BookingDetailDAO.java</file>
+            <file>file:/D:/kì/ki5/SWP/project/SWP391_HotelManagement/src/java/controller/BookingRoom.java</file>
+            <file>file:/D:/kì/ki5/SWP/project/SWP391_HotelManagement/src/java/entity/BookingDetails.java</file>
+            <file>file:/D:/kì/ki5/SWP/project/SWP391_HotelManagement/src/java/constant/MailUtil.java</file>
+            <file>file:/D:/kì/ki5/SWP/project/SWP391_HotelManagement/web/dashboard-layout/header.jsp</file>
             <file>file:/D:/kì/ki5/SWP/project/SWP391_HotelManagement/src/java/constant/PasswordUtil.java</file>
         </group>
     </open-files>
