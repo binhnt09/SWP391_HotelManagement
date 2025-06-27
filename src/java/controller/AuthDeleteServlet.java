@@ -4,7 +4,7 @@
  */
 package controller;
 
-import dao.RoomDAO;
+import dao.AuthenticationDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -17,8 +17,8 @@ import java.io.PrintWriter;
  *
  * @author viet7
  */
-@WebServlet(name = "RoomDeleteServlet", urlPatterns = {"/roomDelete"})
-public class RoomDeleteServlet extends HttpServlet {
+@WebServlet(name = "AuthDeleteServlet", urlPatterns = {"/authDelete"})
+public class AuthDeleteServlet extends HttpServlet {
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -28,10 +28,10 @@ public class RoomDeleteServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet RoomDeleteServlet</title>");
+            out.println("<title>Servlet AuthDeleteServlet</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet RoomDeleteServlet at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet AuthDeleteServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -40,14 +40,15 @@ public class RoomDeleteServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        int roomId = Integer.parseInt(request.getParameter("id"));
-
-        // Giả định DeletedBy = 1 (admin), bạn có thể lấy từ session nếu có login
-        int deletedBy = 1;
-
-        RoomDAO dao = new RoomDAO();
-        dao.deleteRoom(roomId, deletedBy);
-        response.sendRedirect("roomList?success=deleted");
+        int id = Integer.parseInt(request.getParameter("id"));
+        int deletedBy = 1; // hoặc lấy từ session người dùng đăng nhập: ((User) session.getAttribute("user")).getId()
+        AuthenticationDAO dao = new AuthenticationDAO();
+        if (dao.softDeleteAuth(id, deletedBy)) {
+            request.getSession().setAttribute("successMessage", "Xóa bản ghi thành công!");
+        } else {
+            request.getSession().setAttribute("errorMessage", "Xóa thất bại!");
+        }
+        response.sendRedirect("authenticationList");
     }
 
     @Override

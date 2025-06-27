@@ -137,15 +137,16 @@ public class StaffDAO extends DBContext {
         return 0;
     }
 
-    public void deleteStaff(int id, int deletedBy) {
+    public boolean deleteStaff(int id, int deletedBy) {
         String sql = "UPDATE [User] SET IsDeleted = 1, DeletedAt = GETDATE(), DeletedBy = ? WHERE UserID = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setInt(1, deletedBy);
             stmt.setInt(2, id);
-            stmt.executeUpdate();
+            return stmt.executeUpdate() >0;
         } catch (Exception e) {
             Logger.getLogger(StaffDAO.class.getName()).log(Level.SEVERE, null, e);
         }
+        return false;
     }
 
     public boolean insertUser(User user) {

@@ -8,6 +8,7 @@ import dao.ServiceDAO;
 import entity.Service;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
+import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -22,6 +23,7 @@ import java.nio.file.Paths;
  *
  * @author viet7
  */
+@WebServlet(name = "ServiceUpdateServlet", urlPatterns = {"/serviceUpdate"})
 @MultipartConfig(
         fileSizeThreshold = 1024 * 1024, // 1MB
         maxFileSize = 1024 * 1024 * 5, // 5MB
@@ -29,15 +31,6 @@ import java.nio.file.Paths;
 )
 public class ServiceUpdateServlet extends HttpServlet {
 
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
@@ -55,29 +48,12 @@ public class ServiceUpdateServlet extends HttpServlet {
         }
     }
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         processRequest(request, response);
     }
 
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -114,7 +90,7 @@ public class ServiceUpdateServlet extends HttpServlet {
         service.setStatus(status);
 
         ServiceDAO dao = new ServiceDAO();
-        
+
         if ("update".equals(request.getParameter("action"))) {
             //Lấy Id và file 
             int id = Integer.parseInt(request.getParameter("serviceID"));
@@ -135,8 +111,7 @@ public class ServiceUpdateServlet extends HttpServlet {
         } else {
             if (imageURL != null) {
                 service.setImageURL(imageURL);
-            }
-            else{
+            } else {
                 service.setImageURL("");
             }
             if (dao.insertService(service)) {
@@ -148,11 +123,6 @@ public class ServiceUpdateServlet extends HttpServlet {
         response.sendRedirect("serviceList");
     }
 
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
     @Override
     public String getServletInfo() {
         return "Short description";
