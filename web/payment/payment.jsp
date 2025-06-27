@@ -31,7 +31,7 @@
                 <form id="paymentForm" action="${pageContext.request.contextPath}/payment" method="post">
                     <div class="payment-section">
                         <input type="hidden" name="bookingId" value="1" />
-                        <input type="hidden" id="paymentMethod" name="method" value="vietqr" />
+                        
                         <input type="hidden" id="transactionCode" name="transactionCode" />
                         <input type="hidden" id="bankCode" name="bankCode" />
                         <input type="hidden" id="gatewayResponse" name="gatewayResponse" />
@@ -44,6 +44,8 @@
                         <h2 class="section-title">Bạn muốn thanh toán thế nào?</h2>
 
                         <div class="payment-method selected" onclick="selectPayment(this)" data-method="vietqr">
+                            <!--<input type="hidden" name="method" value="Vnpay" />-->
+                            <input type="hidden" id="paymentMethod" name="method" value="vietqr" />
                             <div class="payment-method-header">
                                 <div class="radio-btn checked"></div>
                                 <div>
@@ -64,7 +66,8 @@
                             </div>
                         </div>
 
-                        <div class="payment-method" onclick="selectPayment(this)" data-method="wallettransfer">
+                        <div class="payment-method" onclick="selectPayment(this)" data-method="Vnpay">
+                            <input type="hidden" name="method" value="Vnpay" />
                             <div class="payment-method-header">
                                 <div class="radio-btn"></div>
                                 <div style="font-weight: bold;">E-Wallet</div>
@@ -73,7 +76,7 @@
                                     <div class="payment-icon momo">MOMO</div>
                                 </div>
                             </div>
-                            <div class="qr-info" id="wallettransfer-details">
+<!--                            <div class="qr-info" id="Vnpay-details">
                                 <ul>
                                     <label><input type="radio" name="wallet" value="vnpay"> VNPay</label><br>
                                     <label><input type="radio" name="wallet" value="momo"> MOMO</label><br>
@@ -83,7 +86,7 @@
                                         <img id="qr-image" src="" alt="QR Code" style="width: 150px; height: 150px;">
                                     </div>
                                 </ul>
-                            </div>
+                            </div>-->
                         </div>
 
                         <div class="payment-method" onclick="selectPayment(this)" data-method="banktransfer">
@@ -95,13 +98,14 @@
                                     <div class="payment-icon" style="background: #1E3A8A;">IB</div>
                                 </div>
                             </div>
-                            <div class="qr-info" id="banktransfer-details">
+<!--                            <div class="qr-info" id="banktransfer-details">
                                 <ul>
                                     <li>VNPay</li>
                                     <li>MOMO</li>
                                 </ul>
-                            </div>
+                            </div>-->
                         </div>
+                        
                         <div class="payment-method" onclick="selectPayment(this)" data-method="cash">
                             <div class="payment-method-header">
                                 <div class="radio-btn"></div>

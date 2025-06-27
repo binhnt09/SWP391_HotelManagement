@@ -64,6 +64,79 @@ public class PaymentServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        String method = request.getParameter("method");
+        
+        if ("Vnpay".equals(method)) {
+            paymentWithVnpay(request, response);
+        } else if("vietqr".equals(method)){
+            paymentWithVietQr(request, response);
+        }
+    }
+
+    public void paymentWithVietQr(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        Authentication userIdStr = (Authentication) request.getSession().getAttribute("authLocal");
+
+        String bookingIdStr = request.getParameter("bookingId");
+        String totalBillStr = request.getParameter("totalbill");
+        String nightsStr = request.getParameter("nights");
+        String voucherIdStr = request.getParameter("voucherId");
+
+        Date checkin = (Date) request.getSession().getAttribute("checkin");
+        Date checkout = (Date) request.getSession().getAttribute("checkout");
+        int roomId = (int) request.getSession().getAttribute("roomIdBooking");
+
+        if (totalBillStr == null || bookingIdStr == null) {
+            throw new IllegalArgumentException("Số tiền không hợp lệ: rỗng abax");
+        }
+
+        totalBillStr = totalBillStr.replaceAll("[^\\d.]", "");
+
+        int userId = userIdStr.getUser().getUserId();
+        int nights = Validation.getInt(nightsStr, 1, 365);
+
+        int bookingId = Validation.getInt(bookingIdStr, 0, Integer.MAX_VALUE);
+        Integer voucherId = (voucherIdStr != null && !voucherIdStr.isEmpty()) ? Integer.valueOf(voucherIdStr) : null;
+        BigDecimal amountDouble = Validation.validateBigDecimal(totalBillStr, BigDecimal.ONE, new BigDecimal("999999999"));
+
+        Booking booking = new Booking();
+        booking.setUserID(userId);
+        booking.setVoucherID(voucherId);
+        booking.setTotalAmount(amountDouble);
+        booking.setStatus("PENDING");
+        booking.setCheckInDate(checkin);
+        booking.setCheckOutDate(checkout);
+
+        BookingDao bookingDAO = new BookingDao();
+        bookingId = bookingDAO.insertBooking(booking);
+        if (bookingId < 1) {
+            response.sendRedirect("booking.jsp");
+            return;
+        }
+
+        BookingDetails detail = new BookingDetails();
+        detail.setBookingID(bookingId);
+        detail.setRoomID(roomId);
+        detail.setPrice(amountDouble);
+        detail.setNights(nights);
+        bookingDAO.insertBookingDetail(detail);
+
+        String bank = "MB";
+        String account = "0328633494";
+        String accountName = "NGO THANH BINH";
+
+        String description = "Thanh toan hoa don " + bookingId + System.currentTimeMillis();
+
+        String encodedDescription = URLEncoder.encode(description, StandardCharsets.UTF_8);
+        String qrContent = "https://img.vietqr.io/image/" + bank + "-" + account + "-compact.png?amount=" + amountDouble + "&addInfo=" + encodedDescription + "&accountName=" + accountName + "&t=" + System.currentTimeMillis();
+
+        request.setAttribute("qrUrl", qrContent);
+        request.setAttribute("bookingId", bookingId);
+        request.setAttribute("amount", amountDouble);
+        request.setAttribute("description", description);
+        request.getRequestDispatcher("/payment/vietqr.jsp").forward(request, response);
+    }
+
+    public void paymentWithVnpay(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Authentication userIdStr = (Authentication) request.getSession().getAttribute("authLocal");
 
         String bankCode = request.getParameter("bankCode");
@@ -79,7 +152,7 @@ public class PaymentServlet extends HttpServlet {
         if (totalBillStr == null || bookingIdStr == null) {
             throw new IllegalArgumentException("Số tiền không hợp lệ: rỗng abax");
         }
-        
+
         totalBillStr = totalBillStr.replaceAll("[^\\d.]", "");
 
         int userId = userIdStr.getUser().getUserId();
@@ -188,5 +261,4 @@ public class PaymentServlet extends HttpServlet {
         String paymentUrl = Config.vnp_PayUrl + "?" + queryUrl;
         response.sendRedirect(paymentUrl);
     }
-
 }

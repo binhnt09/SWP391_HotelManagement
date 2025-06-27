@@ -2,10 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/JavaScript.js to edit this template
  */
-//js moi
 
-
-//js cu
 function selectPayment(element) {
     const allMethods = document.querySelectorAll('.payment-method');
     const qrinfo = document.querySelectorAll('.qr-info');
@@ -64,7 +61,6 @@ function processPayment(event) {
             return;
         }
     }
-
     setTimeout(() => {
         // Chuyển hướng thực sự
         form.submit();
