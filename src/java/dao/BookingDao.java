@@ -20,6 +20,41 @@ import java.util.logging.Logger;
  */
 public class BookingDao extends DBContext {
 
+    public Booking getBookingById(int bookingId) {
+        Booking booking = null;
+
+        String sql = "SELECT bookingID, UserID, VoucherID, BookingDate, CheckInDate, "
+                + " CheckOutDate, TotalAmount, Status, CreatedAt, UpdatedAt, deletedAt, deletedBy, isDeleted"
+                + " FROM Booking WHERE bookingID = ? AND isDeleted = 0";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+
+            ps.setInt(1, bookingId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    booking = new Booking();
+                    booking.setBookingID(rs.getInt("bookingID"));
+                    booking.setUserID(rs.getInt("userID"));
+                    booking.setVoucherID(rs.getObject("voucherID") != null ? rs.getInt("voucherID") : null);
+                    booking.setBookingDate(rs.getTimestamp("bookingDate"));
+                    booking.setCheckInDate(rs.getDate("checkInDate"));
+                    booking.setCheckOutDate(rs.getDate("checkOutDate"));
+                    booking.setTotalAmount(rs.getBigDecimal("totalAmount"));
+                    booking.setStatus(rs.getString("status"));
+                    booking.setCreatedAt(rs.getTimestamp("createdAt"));
+                    booking.setUpdatedAt(rs.getTimestamp("updatedAt"));
+                    booking.setDeletedAt(rs.getTimestamp("deletedAt"));
+                    booking.setDeletedBy(rs.getObject("deletedBy") != null ? rs.getInt("deletedBy") : null);
+                    booking.setIsDeleted(rs.getBoolean("isDeleted"));
+                }
+            }
+        } catch (SQLException e) {
+            Logger.getLogger(BookingDao.class.getName()).log(Level.SEVERE, null, e);
+        }
+
+        return booking;
+    }
+
     public int insertBooking(Booking booking) {
         String sql = "INSERT INTO Booking (UserID, VoucherID, BookingDate, CheckInDate, "
                 + " CheckOutDate, TotalAmount, Status, CreatedAt, UpdatedAt, IsDeleted) "
