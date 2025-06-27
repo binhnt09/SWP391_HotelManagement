@@ -15,11 +15,10 @@
     </div>
 
     <ul class="list-unstyled components">
-        <li>
-            <a href="managerDashboard.jsp" class="dashboard" >
-                <i class="material-icons">dashboard</i>
-                <!--<b>Welcome ${sessionScope.acc.username}</b>-->
-                <b>Manager Dashboard</b>
+        <li class="nav-item">
+            <a href="managerDashboard.jsp" class="nav-link p-3 rounded bg-light d-flex flex-column align-items-start hover-shadow">
+                <span class="text-secondary small font-weight-bold text-uppercase mb-1">${sessionScope.authLocal.user.roleName}</span>
+                <span class="text-dark font-weight-bold h6 mb-0">${sessionScope.authLocal.user.firstName} ${sessionScope.authLocal.user.lastName}</span>
             </a>
         </li>
 
@@ -52,6 +51,20 @@
             </a>
         </li>
 
+        <!-- Room Management hieu -->
+        <li>
+            <a href="manageroom">
+                <i class="material-icons">domain</i>Room
+            </a>
+        </li>
+
+        <!-- Service Management  -->
+        <li>
+            <a href="serviceList">
+                <i class="material-icons">room_service</i>Service
+            </a>
+        </li>
+
         <!-- Review Management -->
         <li>
             <a href="reviewmanager">
@@ -80,13 +93,20 @@
             </a>
         </li>
 
+        <!-- Account -->
+        <li>
+            <a href="authenticationList">
+                <i class="material-icons">circle</i>Account
+            </a>
+        </li>
+
         <!-- Reports -->
         <li class="dropdown">
             <a href="#reportMenu" data-toggle="collapse" class="dropdown-toggle" aria-expanded="false">
                 <i class="material-icons">insights</i>Reports
             </a>
             <ul class="collapse list-unstyled menu" id="reportMenu">
-                <li><a href="revenueReport"><i class="material-icons">bar_chart</i>Revenue</a></li>
+                <li><a href="customerReport"><i class="material-icons">bar_chart</i>Revenue</a></li>
                 <li><a href="bookingReport"><i class="material-icons">pie_chart</i>Booking Rate</a></li>
             </ul>
         </li>

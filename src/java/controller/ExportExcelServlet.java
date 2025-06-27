@@ -7,6 +7,7 @@ package controller;
 import dao.ReportDAO;
 import entity.CustomerReport;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -25,17 +26,9 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  *
  * @author viet7
  */
+@WebServlet(name = "ExportExcelServlet", urlPatterns = {"/exportExcel"})
 public class ExportExcelServlet extends HttpServlet {
 
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
@@ -53,33 +46,16 @@ public class ExportExcelServlet extends HttpServlet {
         }
     }
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         processRequest(request, response);
     }
 
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-         //lấy keyword 
+        //lấy keyword 
         String keyword = request.getParameter("keyword");
         if (keyword == null) {
             keyword = "";
@@ -163,10 +139,9 @@ public class ExportExcelServlet extends HttpServlet {
                 bookingEndTS = Timestamp.valueOf(bookingEnd + " 23:59:59");
             }
         } catch (IllegalArgumentException e) {
-            e.printStackTrace(); 
+            e.printStackTrace();
         }
-        
-        
+
         ReportDAO dao = new ReportDAO();
         List<CustomerReport> reportList = dao.exportCustomerReport(keyword, bookingMin, bookingMax, spentMin, spentMax, registerStartTS, registerEndTS, bookingStartTS, bookingEndTS, sort, order);
 
@@ -174,7 +149,7 @@ public class ExportExcelServlet extends HttpServlet {
         Sheet sheet = workbook.createSheet("Customer Report");
 
         Row header = sheet.createRow(0);
-        String[] columns = {"User ID", "First Name", "Last Name", "Email", "Total Bookings", "Total Spent", "Last Booking", "Register Date","Tier"};
+        String[] columns = {"User ID", "First Name", "Last Name", "Email", "Total Bookings", "Total Spent", "Last Booking", "Register Date", "Tier"};
         for (int i = 0; i < columns.length; i++) {
             Cell cell = header.createCell(i);
             cell.setCellValue(columns[i]);
@@ -203,11 +178,6 @@ public class ExportExcelServlet extends HttpServlet {
         os.close();
     }
 
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
     @Override
     public String getServletInfo() {
         return "Short description";

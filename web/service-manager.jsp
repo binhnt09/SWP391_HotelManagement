@@ -162,8 +162,8 @@
                                         <label class="small mb-1">Status</label>
                                         <select name="status" class="form-control form-control-sm">
                                             <option value="" ${empty param.status ? 'selected' : ''}>All</option>
-                                            <option value="1" ${param.status == '1' ? 'selected' : ''}>Active</option>
-                                            <option value="0" ${param.status == '0' ? 'selected' : ''}>Inactive</option>
+                                            <option value="true" ${param.status == 'true' ? 'selected' : ''}>Active</option>
+                                            <option value="false" ${param.status == 'false' ? 'selected' : ''}>Inactive</option>
                                         </select>
                                     </div>
 
