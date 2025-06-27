@@ -65,7 +65,14 @@
 
                             <!-- Navbar Toggler -->
                             <div class="classy-navbar-toggler">
-                                <span class="navbarToggler"><span></span><span></span><span></span></span>
+                                <span class="navbarToggler">
+                                    <span>
+                                        <a href="#login-modal" class="switch-modal">
+                                            <i class="fa fa-lock"> Login |</i>
+                                            <i class="fa fa-user"> Register</i>
+                                        </a>
+                                    </span>
+                                    <span></span><span></span></span>
                             </div>
 
                             <!-- Menu -->
