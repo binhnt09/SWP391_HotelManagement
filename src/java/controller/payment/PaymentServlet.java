@@ -92,18 +92,19 @@ public class PaymentServlet extends HttpServlet {
         int roomId = (int) request.getSession().getAttribute("roomIdBooking");
 
         if (totalBillStr == null || bookingIdStr == null) {
-            throw new IllegalArgumentException("Số tiền không hợp lệ: rỗng abax");
+            throw new IllegalArgumentException("Số tiền không hợp lệ: rỗng");
         }
 
+// Làm sạch dữ liệu số tiền
         totalBillStr = totalBillStr.replaceAll("[^\\d.]", "");
 
         int userId = userIdStr.getUser().getUserId();
         int nights = Validation.getInt(nightsStr, 1, 365);
-
         int bookingId = Validation.getInt(bookingIdStr, 0, Integer.MAX_VALUE);
         Integer voucherId = (voucherIdStr != null && !voucherIdStr.isEmpty()) ? Integer.valueOf(voucherIdStr) : null;
         BigDecimal amountDouble = Validation.validateBigDecimal(totalBillStr, BigDecimal.ONE, new BigDecimal("999999999"));
 
+// Tạo booking
         Booking booking = new Booking();
         booking.setUserID(userId);
         booking.setVoucherID(voucherId);
@@ -114,11 +115,13 @@ public class PaymentServlet extends HttpServlet {
 
         BookingDao bookingDAO = new BookingDao();
         bookingId = bookingDAO.insertBooking(booking);
+
         if (bookingId < 1) {
             response.sendRedirect("booking.jsp");
             return;
         }
 
+// Chi tiết booking
         BookingDetails detail = new BookingDetails();
         detail.setBookingID(bookingId);
         detail.setRoomID(roomId);
@@ -126,55 +129,32 @@ public class PaymentServlet extends HttpServlet {
         detail.setNights(nights);
         bookingDAO.insertBookingDetail(detail);
 
-        // Chuẩn bị dữ liệu gửi SePay
+// Tạo QR code để hiển thị
+        String bank = "MB";
+        String account = "0328633494";
+        String accountName = "NGO THANH BINH";
+        String template = "compact";
+        String download = "0";
+
+// Phải để đúng format để webhook tách được
         String description = "BOOK" + bookingId;
-        String sepayApi = "https://api.sepay.vn/v1/create-qr";
-        URL url = new URL(sepayApi);
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        String encodedDescription = URLEncoder.encode(description, StandardCharsets.UTF_8);
 
-        conn.setRequestMethod("POST");
-        conn.setRequestProperty("Content-Type", "application/json");
-        conn.setRequestProperty("Authorization", "Bearer YOUR_SEPAY_TOKEN"); // ← thay bằng token thật
-        conn.setDoOutput(true);
+        String qrUrl = "https://qr.sepay.vn/img?"
+                + "acc=" + account
+                + "&bank=" + bank
+                + "&amount=" + amountDouble
+                + "&des=" + encodedDescription
+                + "&template=" + template
+                + "&download=" + download;
 
-        // Gửi JSON body
-        JSONObject jsonBody = new JSONObject();
-        jsonBody.put("amount", amountDouble);  // số tiền
-        jsonBody.put("note", description);    // nội dung chuyển khoản
-        jsonBody.put("account_number", "0328633494");
-        jsonBody.put("bank_code", "MB");
-        jsonBody.put("account_name", "NGO THANH BINH");
+// Gửi dữ liệu sang JSP để hiển thị mã QR
+        request.setAttribute("bookingId", bookingId);
+        request.setAttribute("amount", amountDouble);
+        request.setAttribute("description", description);
+        request.setAttribute("qrUrl", qrUrl);
+        request.getRequestDispatcher("/payment/vietqr.jsp").forward(request, response);
 
-        try (OutputStream os = conn.getOutputStream()) {
-            byte[] input = jsonBody.toString().getBytes("utf-8");
-            os.write(input, 0, input.length);
-        }
-
-        // Nhận phản hồi JSON từ SePay
-        int responseCode = conn.getResponseCode();
-        if (responseCode == 200) {
-            BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream(), "utf-8"));
-            StringBuilder responseStr = new StringBuilder();
-            String responseLine;
-            while ((responseLine = br.readLine()) != null) {
-                responseStr.append(responseLine.trim());
-            }
-
-            JSONObject responseJson = new JSONObject(responseStr.toString());
-            String qrUrl = responseJson.getString("qr_url");
-
-            request.setAttribute("qrUrl", qrUrl);
-            request.getRequestDispatcher("/payment/vietqr.jsp").forward(request, response);
-        } else {
-            throw new IOException("Failed to call SePay API. Response code: " + responseCode);
-        }
-
-//        request.setAttribute("qrUrl", qrUrl);
-//        request.setAttribute("bookingId", bookingId);
-//        request.setAttribute("amount", amountDouble);
-//        request.setAttribute("description", description);
-//        // Truyền sang JSP để hiển thị
-//        request.getRequestDispatcher("/payment/vietqr.jsp").forward(request, response);
     }
 
     public void paymentWithVnpay(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

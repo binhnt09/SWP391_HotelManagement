@@ -2,7 +2,6 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-
 package controller.payment;
 
 import dao.BookingDao;
@@ -17,6 +16,8 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import org.json.JSONObject;
 
@@ -24,35 +25,38 @@ import org.json.JSONObject;
  *
  * @author ASUS
  */
-@WebServlet(name="VietQrSepaycallback", urlPatterns={"/sepay-callback"})
+@WebServlet(name = "VietQrSepaycallback", urlPatterns = {"/sepay-callback"})
 public class VietQrSepaycallback extends HttpServlet {
-   
-    /** 
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
+
+    /**
+     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
+     * methods.
+     *
      * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
+            throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet VietQrSepaycallback</title>");  
+            out.println("<title>Servlet VietQrSepaycallback</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet VietQrSepaycallback at " + request.getContextPath () + "</h1>");
+            out.println("<h1>Servlet VietQrSepaycallback at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
-    } 
+    }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /** 
+    /**
      * Handles the HTTP <code>GET</code> method.
+     *
      * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
@@ -60,12 +64,13 @@ public class VietQrSepaycallback extends HttpServlet {
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
-        doPost(request, response);
-    } 
+            throws ServletException, IOException {
+//        doPost(request, response);
+    }
 
-    /** 
+    /**
      * Handles the HTTP <code>POST</code> method.
+     *
      * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
@@ -73,38 +78,76 @@ public class VietQrSepaycallback extends HttpServlet {
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
-        String json = request.getReader().lines().collect(Collectors.joining());
-        JSONObject obj = new JSONObject(json);
+            throws ServletException, IOException {
+        response.setContentType("application/json");
+        PrintWriter out = response.getWriter();
 
-        String note = obj.getString("note");
-        BigDecimal amount = obj.getBigDecimal("amount");
-        String transactionCode = obj.getString("transaction_code");
-        String bank = obj.getString("sender_bank");
+        String contentType = request.getContentType();
+        System.out.println("Webhook Content-Type: " + contentType);
 
-        int bookingId = Integer.parseInt(note.replace("BOOK", ""));
+        String content = null;
+        String amountStr = null;
 
-        BookingDao bookingDao = new BookingDao();
-        Booking booking = bookingDao.getBookingById(bookingId);
-        if (booking != null && booking.getTotalAmount().compareTo(amount) == 0) {
-            bookingDao.updateStatus(bookingId, "PAID");
+        try {
+            if (contentType != null && contentType.contains("application/json")) {
+                String rawJson = request.getReader().lines().collect(Collectors.joining());
+                System.out.println("Webhook JSON Body: " + rawJson);
 
-            Payment payment = new Payment();
-            payment.setBookingID(bookingId);
-            payment.setAmount(amount);
-            payment.setMethod("VietQR-SePay");
-            payment.setStatus("Paid");
-            payment.setTransactionCode(transactionCode);
-            payment.setBankCode(bank);
-            payment.setGatewayResponse("Webhook Confirmed");
-
-            new PaymentDao().insertPayment(payment);
+                JSONObject json = new JSONObject(rawJson);
+                content = json.optString("content");
+                amountStr = json.optString("transferAmount");
+            } else {
+                System.out.println("Webhook Form Data: content=" + request.getParameter("content") + ", amount=" + request.getParameter("transferAmount"));
+                content = request.getParameter("content");
+                amountStr = request.getParameter("transferAmount");
+            }
+        } catch (Exception e) {
+            System.err.println("Error parsing JSON: " + e.getMessage());
+            out.write("{\"success\": false, \"error\": \"Error parsing webhook JSON: " + e.getMessage() + "\"}");
+            return;
         }
-        response.setStatus(HttpServletResponse.SC_OK);
+
+        if (content == null || amountStr == null || content.isEmpty() || amountStr.isEmpty()) {
+            out.write("{\"success\": false, \"error\": \"Missing content or amount\"}");
+            return;
+        }
+
+        // Bóc mã booking ID từ content
+        int bookingId = -1;
+        Matcher matcher = Pattern.compile("BOOK(\\d+)").matcher(content);
+        if (matcher.find()) {
+            bookingId = Integer.parseInt(matcher.group(1));
+        }
+
+        if (bookingId == -1) {
+            out.write("{\"success\": false, \"message\": \"Invalid booking ID format\"}");
+            return;
+        }
+
+        // So khớp với booking
+        BigDecimal amount = new BigDecimal(amountStr);
+        BookingDao dao = new BookingDao();
+        Booking booking = dao.getBookingById(bookingId);
+        System.out.println("✔️ content = " + content);
+        System.out.println("✔️ amount = " + amountStr);
+        System.out.println("✔️ bookingId = " + bookingId);
+
+        if (booking != null) {
+
+            // ✅ Cập nhật trạng thái
+            dao.updateStatus(bookingId, "PAID");
+
+            // ✅ Ghi log hoặc insert vào bảng Payment nếu cần
+            out.write("{\"success\": true, \"message\": \"Booking updated to PAID\"}");
+            return;
+        } else {
+            out.write("{\"success\": false, \"message\": \"Booking not matched or already PAID\"}");
+        }
     }
 
-    /** 
+    /**
      * Returns a short description of the servlet.
+     *
      * @return a String containing servlet description
      */
     @Override
