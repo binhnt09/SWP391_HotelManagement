@@ -51,7 +51,6 @@ public class BookingDao extends DBContext {
         } catch (SQLException e) {
             Logger.getLogger(BookingDao.class.getName()).log(Level.SEVERE, null, e);
         }
-
         return booking;
     }
 
@@ -109,4 +108,23 @@ public class BookingDao extends DBContext {
         }
         return false;
     }
+
+    public String getStatusById(int bookingId) {
+        String status = null;
+        String sql = "SELECT Status FROM Booking WHERE bookingID = ? AND isDeleted = 0";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, bookingId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    status = rs.getString("Status");
+                }
+            }
+        } catch (SQLException e) {
+            Logger.getLogger(BookingDao.class.getName()).log(Level.SEVERE, null, e);
+        }
+
+        return status;
+    }
+
 }
