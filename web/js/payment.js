@@ -10,7 +10,8 @@ function selectPayment(element) {
     allMethods.forEach(method => {
         method.classList.remove('selected');
         const radioBtn = method.querySelector('.radio-btn');
-        if (radioBtn) radioBtn.classList.remove('checked');
+        if (radioBtn)
+            radioBtn.classList.remove('checked');
     });
 
     qrinfo.forEach(detail => {
@@ -20,27 +21,35 @@ function selectPayment(element) {
     // Thêm class selected
     element.classList.add('selected');
     const radioBtn = element.querySelector('.radio-btn');
-    if (radioBtn) radioBtn.classList.add('checked');
+    if (radioBtn)
+        radioBtn.classList.add('checked');
 
     const method = element.getAttribute('data-method');
     if (method) {
         const detail = document.getElementById(`${method}-details`);
-        if (detail) detail.classList.add('active');
+        if (detail)
+            detail.classList.add('active');
         // Gán vào input hidden
         const hiddenInput = document.getElementById("paymentMethod");
-        if (hiddenInput) hiddenInput.value = method;
+        if (hiddenInput)
+            hiddenInput.value = method;
     }
 }
 
 function processPayment(event) {
-    event.preventDefault(); // Ngăn submit mặc định
+    event.preventDefault();
 
     const form = document.getElementById("paymentForm");
     const selectedMethod = document.querySelector('.payment-method.selected');
     const methodInput = document.getElementById("paymentMethod");
 
     if (!selectedMethod || !methodInput || !methodInput.value) {
-        alert('Vui lòng chọn phương thức thanh toán!');
+        Swal.fire({
+            icon: "warning",
+            title: "Thiếu thông tin!",
+            text: "Vui lòng chọn phương thức thanh toán!",
+            confirmButtonText: "OK"
+        });
         return;
     }
 
@@ -48,23 +57,51 @@ function processPayment(event) {
     const methodLabel = selectedMethod.querySelector('[data-method-label]');
     const methodName = methodLabel ? methodLabel.textContent.trim() : methodValue;
 
-    alert(`Đang xử lý thanh toán bằng: ${methodName}`);
-
-    // Gán thêm bankCode nếu có
     if (methodValue === "wallettransfer") {
         const walletRadio = document.querySelector('input[name="wallet"]:checked');
         const bankInput = document.getElementById("bankCode");
         if (walletRadio && bankInput) {
             bankInput.value = walletRadio.value.toUpperCase();
         } else {
-            alert("Vui lòng chọn loại ví điện tử!");
+            Swal.fire({
+                icon: "warning",
+                title: "Thiếu thông tin!",
+                text: "Vui lòng chọn loại ví điện tử!",
+                confirmButtonText: "OK"
+            });
             return;
         }
     }
-    setTimeout(() => {
-        // Chuyển hướng thực sự
-        form.submit();
-    }, 500);
+    
+    Swal.fire({
+        icon: "info",
+        title: "Xác nhận thanh toán",
+        html: `Phương thức: <b>${methodName}</b>`,
+        confirmButtonText: "Tiếp tục",
+        cancelButtonText: "Hủy",
+        showCancelButton: true,
+        timer: 10000,
+        timerProgressBar: true,
+    }).then((result) => {
+        if (result.isConfirmed) {
+            form.submit(); // chỉ submit nếu bấm "Tiếp tục"
+        }
+    });
+
+//    Swal.fire({
+//        icon: "info",
+//        title: "Đang xử lý...",
+//        html: `Phương thức: <b>${methodName}</b><br>Vui lòng chờ trong giây lát...`,
+//        timer: 3000,
+//        timerProgressBar: true,
+//        showConfirmButton: false,
+//        didOpen: () => {
+//            Swal.showLoading();
+//        },
+//        willClose: () => {
+//            form.submit(); // Submit sau khi countdown xong
+//        }
+//    });
 }
 
 

@@ -1,0 +1,158 @@
+/*
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css to edit this template
+*/
+/* 
+    Created on : Jun 29, 2025, 10:44:19 PM
+    Author     : ASUS
+*/
+
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f5f5f5;
+}
+
+.payment-container {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 30px;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.payment-header {
+    text-align: center;
+}
+
+.payment-header h2 {
+    color: #0a5d8c;
+    font-size: 32px;
+    font-weight: bold;
+}
+
+.payment-header p {
+    font-size: 16px;
+    color: #777;
+}
+
+.payment-body {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.qr-container,
+.info-container {
+    flex: 1;
+    min-width: 320px;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.05);
+}
+
+.qr-container img {
+    width: 80%;
+    display: block;
+    margin: 0 auto;
+}
+
+.qr-container .info {
+    font-size: 16px;
+    color: #333;
+    margin-top: 20px;
+    text-align: center;
+}
+
+.info-container h3 {
+    font-size: 18px;
+    color: #0a5d8c;
+    margin-bottom: 20px;
+}
+
+.info-container .info {
+    font-size: 16px;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.info-container hr {
+  border: none;
+  border-top: 1px solid rgba(0, 0, 0, 0.15);
+  margin: 20px 0;
+}
+
+.info-container .info strong {
+    font-weight: bold;
+}
+
+.info-container .back-link {
+    display: block;
+    margin-top: 20px;
+    text-decoration: none;
+    color: #007bff;
+    font-size: 16px;
+}
+
+.success-message {
+    text-align: center;
+    color: #28a745;
+    font-size: 18px;
+    margin-top: 20px;
+}
+
+.download-btn {
+    display: block;
+    margin: 20px auto 0 auto; 
+    background-color: #0a5d8c;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 5px;
+    border: 1px solid #777;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.download-btn:hover {
+    background-color: #074a6b;
+}
+
+.bank-logo {
+    max-width: 120px;
+    margin-top: 20px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.payment-footer {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #e0e0e0;
+    text-align: center;
+    font-size: 16px;
+}
+
+.payment-footer a {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: 500;
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #f0f8ff;
+    border-radius: 8px;
+    transition: all 0.25s ease;
+}
+
+.payment-footer a:hover {
+    background-color: #e0f0ff;
+    color: #0056b3;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
