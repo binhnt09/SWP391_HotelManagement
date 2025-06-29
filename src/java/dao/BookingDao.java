@@ -214,9 +214,9 @@ public class BookingDao extends DBContext {
     }
 
     public static void main(String[] args) {
-        List<Booking> list = new dao.BookingDao().getBookings(5, 5, "", "Confirmed", "", true, 0, 0, false);
+        List<Booking> list= new dao.BookingDao().getBookings(3,5, null, null, null, true, 0, 0, false);
         for (Booking a : list) {
-            System.out.println(a.getBookingID());
+            System.out.println(a.getUserID());
         }
         System.out.println(new dao.BookingDao().getBookingById(1).getBookingID());
     }
