@@ -7,6 +7,7 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ include file="/dashboard-layout/header.jsp" %>
 <%@ include file="/dashboard-layout/sidebar.jsp" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <div id="content">
 
@@ -28,7 +29,7 @@
                 <!-- Start XP Col -->
                 <div class="col-md-5 col-lg-3 order-3 order-md-2">
                     <div class="xp-searchbar">
-                        <form method="get" action="roomList">
+                        <form method="get" action="bookingcrud">
                             <div class="input-group">
                                 <input type="search" class="form-control" name="keyword"
                                        value="<%= request.getParameter("keyword") != null ? request.getParameter("keyword") : "" %>"
@@ -126,6 +127,7 @@
     </div>
     <!------main-content-start----------->
 
+
     <div class="main-content"> 
         <div class="row">
             <div class="col-md-12">
@@ -135,22 +137,57 @@
                             Xóa thành công!
                         </div>
                     </c:if>
+                    <div class="row align-items-end justify-content-between" style="background-color: #F7F8FA">
+                        <div class="col-md-9 ms-auto">
+                            <div class="row g-2">
 
-                    <div class="table-title">
-                        <div class="row">
-                            <div class="col-sm-6">
-                                <h2 class="ml-lg-2">Manage Rooms</h2>
-                            </div>
-                            <div class="col-sm-6 text-right">
-                                <a href="#addRoomModal" class="btn btn-success" data-toggle="modal">
-                                    <i class="material-icons">&#xE147;</i> <span>Add New Room</span>
-                                </a>
-                                <a href="#deleteRoomModal" class="btn btn-danger" data-toggle="modal">
-                                    <i class="material-icons">&#xE15C;</i> <span>Delete</span>
-                                </a>
+                                <!-- Trạng thái -->
+                                <div class="col-md-3">
+                                    <label class="form-label">Trạng thái:</label>
+                                    <select class="form-select" id="statusFilter">
+                                        <option value="">Tất cả trạng thái</option>
+                                        <option value="Check-In">Check-In</option>
+                                        <option value="Pending">Pending</option>
+                                        <option value="Checked-Out">Checked-Out</option>
+                                    </select>
+                                </div>
+
+                                <!-- Phòng -->
+                                <div class="col-md-2">
+                                    <label class="form-label">Phòng:</label>
+                                    <select class="form-select" id="roomFilter">
+                                        <option value="">Tất cả phòng</option>
+                                        <option value="101A">101A</option>
+                                        <option value="101B">101B</option>
+                                        <option value="102A">102A</option>
+                                        <option value="105A">105A</option>
+                                    </select>
+                                </div>
+
+                                <!-- Tên khách hàng -->
+                                <div class="col-md-4">
+                                    <label class="form-label">Tên khách hàng:</label>
+                                    <input type="text" class="form-control" id="customerFilter" placeholder="Tìm theo tên khách hàng">
+                                </div>
+
+                                <!-- Ngày check-in -->
+                                <div class="col-md-3">
+                                    <label class="form-label">Ngày Check-In:</label>
+                                    <input type="date" class="form-control" id="dateFilter">
+                                </div>
+
                             </div>
                         </div>
+
                     </div>
+                    <div class="table-title">
+                        <div class="col-md-3 d-flex align-items-center">
+                            <h4 class="mb-0">Manage Booking</h4>
+                        </div>
+                    </div>
+
+
+
                     <table class="table table-striped table-hover">
                         <thead>
                             <tr>
@@ -162,8 +199,8 @@
                                 <th>Check-in</th>
                                 <th>Check-out</th>
                                 <th>Total amount</th>
-                                <th>Status</th>
                                 <th>Action</th>
+                                <th colspan="2">Status</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -175,20 +212,21 @@
                                             entity.BookingDetails detail = new dao.BookingDetailDAO().getBookingDetailByBookingId(booking.getBookingID());
 
                                             entity.Room room = (entity.Room) detail.getRoom();
+                                            entity.User user = new dao.BookingDao().getUserByBookingId(booking.getBookingID());
                                             pageContext.setAttribute("room", room);
                                             pageContext.setAttribute("detail", detail);
+                                            pageContext.setAttribute("userInfo", user);
                                         %>
                                         <tr>
                                             <td>
                                                 <input type="checkbox" name="roomCheckbox" value="${b.bookingID}">
                                             </td>
                                             <td>${b.bookingID}</td>
-                                            <td>${b.userID}</td>
+                                            <td>${userInfo.firstName} ${userInfo.lastName}</td>
                                             <td>${room.roomNumber}</td>
                                             <td>${b.bookingDate}</td>
                                             <td>${b.checkInDate}</td>
                                             <td>${b.checkOutDate}</td>
-                                            <td>${b.status}</td>
                                             <td>${b.totalAmount}</td>
 
                                             <td>
@@ -200,18 +238,90 @@
                                                 </a>
                                                 <a href="booking?id=${b.bookingID}" class="delete" title="Delete" onclick="return confirm('Xác nhận xóa phòng này?');"><i class="material-icons">&#xE872;</i></a>
                                             </td>
+                                            <td>
+                                                <c:choose>
+                                                    <c:when test="${fn:toLowerCase(b.status) == 'pending'}">
+                                                        <button class="btn btn-primary btn-sm">Pending</button>
+                                                    </c:when>
+
+                                                    <c:when test="${fn:toLowerCase(b.status) == 'confirmed'}">
+                                                        <form action="bookingcrud" method="post">
+                                                            <input type="hidden" name="bookingID" value="${b.bookingID}"/>
+                                                            <input type="hidden" name="statusbooking" value="occupied"/>
+                                                            <button type="submit" class="btn btn-success btn-sm">Check-In</button>
+                                                        </form>
+                                                    </c:when>
+
+                                                    <c:when test="${fn:toLowerCase(b.status) == 'occupied'}">
+                                                        <button class="btn btn-warning btn-sm">Occupied</button>
+                                                        <form action="bookingcrud" method="post">
+                                                            <input type="hidden" name="bookingID" value="${b.bookingID}"/>
+                                                            <input type="hidden" name="statusbooking" value="checkedout"/>
+                                                            <button type="submit" class="btn btn-success btn-sm">Check-Out</button>
+                                                        </form>
+                                                    </c:when>
+
+                                                    <c:when test="${fn:toLowerCase(b.status) == 'checkedout'}">
+                                                        <form action="bookingcrud" method="post">
+                                                            <input type="hidden" name="bookingID" value="${b.bookingID}"/>
+                                                            <input type="hidden" name="statusbooking" value="bookingdone"/>
+                                                            <button type="submit" class="btn btn-info btn-sm">Cleaning</button>
+                                                        </form>
+                                                    </c:when>
+
+
+                                                    <c:when test="${fn:toLowerCase(b.status) == 'bookingdone'}">
+                                                        <button class="btn btn-secondary btn-sm" disabled>Cancelled</button>
+                                                    </c:when>
+                                                </c:choose>
+                                            </td>
+
                                         </tr>
                                     </c:forEach>
                                 </c:when>
                                 <c:otherwise>
                                     <tr>
-                                        <td colspan="9" style="text-align:center;">Không có booking nào.</td>
+                                        <td colspan="10" style="text-align:center;">Không có booking nào.</td>
                                     </tr>
                                 </c:otherwise>
                             </c:choose>
 
                         </tbody>
                     </table>
+                    <div class="clearfix">
+                        <div class="hint-text">
+                            Showing <b>${listBooking.size()}</b> of <b>${totalPages * 5}</b> bookings
+                        </div>
+                        <ul class="pagination">
+                            <c:choose>
+                                <c:when test="${currentPage > 1}">
+                                    <li class="page-item">
+                                        <a href="bookingcrud?page=${currentPage - 1}&keyword=${keyword}" class="page-link">Previous</a>
+                                    </li>
+                                </c:when>
+                                <c:otherwise>
+                                    <li class="page-item disabled"><span class="page-link">Previous</span></li>
+                                    </c:otherwise>
+                                </c:choose>
+
+                            <c:forEach begin="1" end="${totalPages}" var="i">
+                                <li class="page-item ${i == currentPage ? 'active' : ''}">
+                                    <a class="page-link" href="bookingcrud?page=${i}&keyword=${keyword}">${i}</a>
+                                </li>
+                            </c:forEach>
+
+                            <c:choose>
+                                <c:when test="${currentPage < totalPages}">
+                                    <li class="page-item">
+                                        <a href="bookingcrud?page=${currentPage + 1}&keyword=${keyword}" class="page-link">Next</a>
+                                    </li>
+                                </c:when>
+                                <c:otherwise>
+                                    <li class="page-item disabled"><span class="page-link">Next</span></li>
+                                    </c:otherwise>
+                                </c:choose>
+                        </ul>
+                    </div>
 
                 </div>
             </div>

@@ -7,7 +7,8 @@ package dao;
 import dal.DBContext;
 import entity.Booking;
 import entity.BookingDetails;
-import java.math.BigDecimal;
+import entity.User;
+import java.sql.Timestamp;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -52,7 +53,7 @@ public class BookingDao extends DBContext {
     }
 
     public boolean updateStatus(int bookingId, String status) {
-        String sql = "UPDATE Booking SET Status = ? WHERE BookingID = ?";
+        String sql = "UPDATE Booking SET Status = ?, UpdatedAt = GETDATE() WHERE BookingID = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, status);
             ps.setInt(2, bookingId);
@@ -62,6 +63,8 @@ public class BookingDao extends DBContext {
         }
         return false;
     }
+   
+
 
     public boolean insertBookingDetail(BookingDetails detail) {
         String sql = "INSERT INTO BookingDetail (BookingID, RoomID, Price, Nights, CreatedAt, UpdatedAt, IsDeleted) "
@@ -80,8 +83,7 @@ public class BookingDao extends DBContext {
 
     public List<Booking> getBookings(
             int userRoleId,
-            int currentUserId, // ID người đang đăng nhập (nếu là khách)
-            String keyword,
+            int currentUserId,
             String status,
             String sortBy,
             boolean isAsc,
@@ -96,70 +98,66 @@ public class BookingDao extends DBContext {
         try {
             StringBuilder sql = new StringBuilder(
                     "SELECT b.* FROM Booking b "
-                    + "JOIN [User] u ON b.UserID = u.UserID "
-                    + "WHERE 1=1"
+                    + "JOIN [User] u ON b.UserID = u.UserID WHERE 1=1"
             );
 
-            // Tìm kiếm theo keyword
-            if (keyword != null && !keyword.trim().isEmpty()) {
-                sql.append(" AND (CAST(b.BookingID AS NVARCHAR) LIKE ? ")
-                        .append(" OR b.Status LIKE ? ")
-                        .append(" OR u.FirstName LIKE ? ")
-                        .append(" OR u.LastName LIKE ? )");
-            }
-
-            // Trạng thái booking
+//            if (keyword != null && !keyword.trim().isEmpty()) {
+//                sql.append(" AND (CAST(b.BookingID AS NVARCHAR) LIKE ? ")
+//                        .append(" OR b.Status LIKE ? ")
+//                        .append(" OR u.FirstName LIKE ? ")
+//                        .append(" OR u.LastName LIKE ? )");
+//            }
             if (status != null && !status.trim().isEmpty()) {
                 sql.append(" AND b.Status = ?");
             }
 
-            // Trạng thái xóa
-            if (isDeleted != true) {
+            if (isDeleted != null && !isDeleted) {
                 sql.append(" AND b.IsDeleted = ?");
             }
 
-            if (currentUserId == 5) {
+            if (userRoleId == 5) { // giả sử roleId=3 là guest
                 sql.append(" AND b.UserID = ?");
             }
 
-            // Sắp xếp
-//            if (sortBy == null || sortBy.isEmpty()) {
-//                sortBy = "b.CreatedAt";
-//            }
-//            sql.append(" ORDER BY ").append(sortBy).append(isAsc ? " ASC" : " DESC");
-            // Phân trang
-//            sql.append(" OFFSET ? ROWS FETCH NEXT ? ROWS ONLY");
-            // Tạo PreparedStatement và gán tham số
-            ps = connection.prepareStatement(sql.toString());
-            System.out.println(sql.toString());
-            int index = 1;
-
-            if (keyword != null && !keyword.trim().isEmpty()) {
-                String kw = "%" + keyword + "%";
-                ps.setString(index++, kw);
-                ps.setString(index++, kw);
-                ps.setString(index++, kw);
-                ps.setString(index++, kw);
+            if (sortBy == null || sortBy.isEmpty()) {
+                sortBy = "b.CreatedAt";
             }
+
+            sql.append(" ORDER BY ").append(sortBy).append(isAsc ? " ASC" : " DESC");
+            sql.append(" OFFSET ? ROWS FETCH NEXT ? ROWS ONLY");
+
+            System.out.println(sql.toString());
+
+            ps = connection.prepareStatement(sql.toString());
+
+            int index = 1;
+//            if (keyword != null && !keyword.trim().isEmpty()) {
+//                String kw = "%" + keyword + "%";
+//                ps.setString(index++, kw);
+//                ps.setString(index++, kw);
+//                ps.setString(index++, kw);
+//                ps.setString(index++, kw);
+//            }
 
             if (status != null && !status.trim().isEmpty()) {
                 ps.setString(index++, status);
             }
 
-            if (isDeleted != null) {
+            if (isDeleted != null && !isDeleted) {
                 ps.setBoolean(index++, isDeleted);
             }
 
-            if (currentUserId == 5) {
-                ps.setInt(index++, userRoleId); // truyền vào ID user đăng nhập
+            if (userRoleId == 5) {
+                ps.setInt(index++, currentUserId);
             }
 
-//            ps.setInt(index++, pageIndex * pageSize);
-//            ps.setInt(index++, pageSize);
+            ps.setInt(index++, pageIndex * pageSize);
+            ps.setInt(index++, pageSize);
+
             rs = ps.executeQuery();
             while (rs.next()) {
-
-                Booking b = new Booking(rs.getInt("bookingid"),
+                Booking b = new Booking(
+                        rs.getInt("bookingid"),
                         rs.getInt("userid"),
                         rs.getInt("voucherid"),
                         rs.getTimestamp("bookingdate"),
@@ -171,7 +169,8 @@ public class BookingDao extends DBContext {
                         rs.getTimestamp("UpdatedAt"),
                         rs.getTimestamp("DeletedAt"),
                         rs.getInt("DeletedBy"),
-                        rs.getBoolean("IsDeleted"));
+                        rs.getBoolean("IsDeleted")
+                );
                 list.add(b);
             }
 
@@ -182,6 +181,109 @@ public class BookingDao extends DBContext {
         return list;
     }
 
+//    public List<Booking> getBookings(
+//            int userRoleId,
+//            int currentUserId, // ID người đang đăng nhập (nếu là khách)
+//            String keyword,
+//            String status,
+//            String sortBy,
+//            boolean isAsc,
+//            int pageIndex,
+//            int pageSize,
+//            Boolean isDeleted
+//    ) {
+//        List<Booking> list = new ArrayList<>();
+//        PreparedStatement ps = null;
+//        ResultSet rs = null;
+//
+//        try {
+//            StringBuilder sql = new StringBuilder(
+//                    "SELECT b.* FROM Booking b "
+//                    + "JOIN [User] u ON b.UserID = u.UserID "
+//                    + "WHERE 1=1"
+//            );
+//
+//            // Tìm kiếm theo keyword
+//            if (keyword != null && !keyword.trim().isEmpty()) {
+//                sql.append(" AND (CAST(b.BookingID AS NVARCHAR) LIKE ? ")
+//                        .append(" OR b.Status LIKE ? ")
+//                        .append(" OR u.FirstName LIKE ? ")
+//                        .append(" OR u.LastName LIKE ? )");
+//            }
+//
+//            // Trạng thái booking
+//            if (status != null && !status.trim().isEmpty()) {
+//                sql.append(" AND b.Status = ?");
+//            }
+//
+//            // Trạng thái xóa
+//            if (isDeleted != true) {
+//                sql.append(" AND b.IsDeleted = ?");
+//            }
+//
+//            if (currentUserId == 5) {
+//                sql.append(" AND b.UserID = ?");
+//            }
+//
+//            // Sắp xếp
+////            if (sortBy == null || sortBy.isEmpty()) {
+////                sortBy = "b.CreatedAt";
+////            }
+////            sql.append(" ORDER BY ").append(sortBy).append(isAsc ? " ASC" : " DESC");
+//            // Phân trang
+////            sql.append(" OFFSET ? ROWS FETCH NEXT ? ROWS ONLY");
+//            // Tạo PreparedStatement và gán tham số
+//            ps = connection.prepareStatement(sql.toString());
+//            System.out.println(sql.toString());
+//            int index = 1;
+//
+//            if (keyword != null && !keyword.trim().isEmpty()) {
+//                String kw = "%" + keyword + "%";
+//                ps.setString(index++, kw);
+//                ps.setString(index++, kw);
+//                ps.setString(index++, kw);
+//                ps.setString(index++, kw);
+//            }
+//
+//            if (status != null && !status.trim().isEmpty()) {
+//                ps.setString(index++, status);
+//            }
+//
+//            if (isDeleted != null) {
+//                ps.setBoolean(index++, isDeleted);
+//            }
+//
+//            if (currentUserId == 5) {
+//                ps.setInt(index++, userRoleId); // truyền vào ID user đăng nhập
+//            }
+//
+////            ps.setInt(index++, pageIndex * pageSize);
+////            ps.setInt(index++, pageSize);
+//            rs = ps.executeQuery();
+//            while (rs.next()) {
+//
+//                Booking b = new Booking(rs.getInt("bookingid"),
+//                        rs.getInt("userid"),
+//                        rs.getInt("voucherid"),
+//                        rs.getTimestamp("bookingdate"),
+//                        rs.getDate("checkindate"),
+//                        rs.getDate("checkoutdate"),
+//                        rs.getBigDecimal("totalamount"),
+//                        rs.getString("status"),
+//                        rs.getTimestamp("CreatedAt"),
+//                        rs.getTimestamp("UpdatedAt"),
+//                        rs.getTimestamp("DeletedAt"),
+//                        rs.getInt("DeletedBy"),
+//                        rs.getBoolean("IsDeleted"));
+//                list.add(b);
+//            }
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//
+//        return list;
+//    }
     public Booking getBookingById(int id) {
         Booking book = null;
         String sql = "select Bookingid ,UserID, VoucherID, BookingDate, CheckInDate, "
@@ -198,7 +300,7 @@ public class BookingDao extends DBContext {
                             rs.getTimestamp("bookingdate"),
                             rs.getDate("checkindate"),
                             rs.getDate("checkoutdate"),
-                            rs.getBigDecimal("totalamount"), 
+                            rs.getBigDecimal("totalamount"),
                             rs.getString("status"),
                             rs.getTimestamp("CreatedAt"),
                             rs.getTimestamp("UpdatedAt"),
@@ -213,12 +315,84 @@ public class BookingDao extends DBContext {
         return book;
     }
 
+    public int countBookings(String keyword, String status) {
+        int total = 0;
+        try {
+            StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM Booking b JOIN [User] u ON b.UserID = u.UserID WHERE 1=1");
+
+            if (keyword != null && !keyword.trim().isEmpty()) {
+                sql.append(" AND (CAST(b.BookingID AS NVARCHAR) LIKE ? OR b.Status LIKE ? OR u.FirstName LIKE ? OR u.LastName LIKE ?)");
+            }
+
+            if (status != null && !status.trim().isEmpty()) {
+                sql.append(" AND b.Status = ?");
+            }
+
+            sql.append(" AND b.IsDeleted = 0");
+
+            PreparedStatement ps = connection.prepareStatement(sql.toString());
+            int i = 1;
+            if (keyword != null && !keyword.trim().isEmpty()) {
+                String kw = "%" + keyword + "%";
+                ps.setString(i++, kw);
+                ps.setString(i++, kw);
+                ps.setString(i++, kw);
+                ps.setString(i++, kw);
+            }
+            if (status != null && !status.trim().isEmpty()) {
+                ps.setString(i++, status);
+            }
+
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                total = rs.getInt(1);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return total;
+    }
+
+    public User getUserByBookingId(int bookingId) {
+        User user = null;
+        String sql = "select * from [user] where userid = (select userid from booking where bookingid = ?)";
+        try (PreparedStatement pre = connection.prepareStatement(sql)) {
+            pre.setInt(1, bookingId);
+            try (ResultSet rs = pre.executeQuery()) {
+                if (rs.next()) {
+                    user = new User(rs.getInt("userid"),
+                            rs.getString("firstName"),
+                            rs.getString("lastname"),
+                            rs.getString("email"),
+                            rs.getString("phone"),
+                            rs.getString("sex"),
+                            rs.getTimestamp("birthDay"),
+                            rs.getString("address"),
+                            rs.getTimestamp("CreatedAt"),
+                            rs.getTimestamp("UpdatedAt"),
+                            rs.getTimestamp("DeletedAt"),
+                            rs.getInt("DeletedBy"),
+                            rs.getBoolean("IsDeleted"),
+                            rs.getBoolean("isverifiedemail"),
+                             rs.getInt("userroleid"));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return user;
+    }
+
+    
     public static void main(String[] args) {
-        List<Booking> list= new dao.BookingDao().getBookings(3,5, null, null, null, true, 0, 0, false);
+        List<Booking> list = new dao.BookingDao().getBookings(3, 5, null, null, true, 1, 5, false);
         for (Booking a : list) {
             System.out.println(a.getUserID());
         }
         System.out.println(new dao.BookingDao().getBookingById(1).getBookingID());
+        System.out.println("User: " + new dao.BookingDao().getUserByBookingId(1));
     }
 
 }

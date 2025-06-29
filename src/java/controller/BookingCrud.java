@@ -4,6 +4,7 @@
  */
 package controller;
 
+import dao.BookingDao;
 import entity.Booking;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -56,11 +57,44 @@ public class BookingCrud extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
+    
+    int pageIndex = 0;
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        List<Booking> listBooking = new dao.BookingDao().getBookings(3, 5, null, null, null, true, 0, 0, false);
-        request.setAttribute("listBooking", listBooking); 
+        
+
+        
+         BookingDao dao = new BookingDao();
+
+        int pageSize = 5;
+
+        String pageParam = request.getParameter("page");
+        if (pageParam != null) {
+            pageIndex = Integer.parseInt(pageParam) - 1; // Vì page bắt đầu từ 1
+        }
+
+        String keyword = request.getParameter("keyword");
+        String status = request.getParameter("status");
+
+        int totalRecords = dao.countBookings(keyword, status); // bạn cần tạo hàm này
+        int totalPages = (int) Math.ceil((double) totalRecords / pageSize);
+
+        List<Booking> list = dao.getBookings(
+                0, // userRoleId
+                -1, // currentUserId (nếu không lọc theo user)
+                status,
+                "b.BookingID", // sortBy
+                true, // isAsc
+                pageIndex,
+                pageSize,
+                false // isDeleted
+        );
+
+        request.setAttribute("listBooking", list);
+        request.setAttribute("totalPages", totalPages);
+        request.setAttribute("currentPage", pageIndex + 1);
+        request.setAttribute("keyword", keyword);
         request.getRequestDispatcher("bookingmanage.jsp").forward(request, response);
 
     }
@@ -76,7 +110,16 @@ public class BookingCrud extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        String bookingIdRaw = request.getParameter("bookingID");
+        String status = request.getParameter("statusbooking");
+        boolean check = new dao.BookingDao().updateStatus(validation.Validation.parseStringToInt(bookingIdRaw), status);
+        if(check){
+            doGet(request, response);
+        }else{
+            System.out.println("asghkfyasgfsagfaushgfuo");
+        }
+        
+        
     }
 
     /**
@@ -89,4 +132,5 @@ public class BookingCrud extends HttpServlet {
         return "Short description";
     }// </editor-fold>
 
+ 
 }
