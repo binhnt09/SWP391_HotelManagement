@@ -9,109 +9,103 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>JSP Page</title>
-        <style>
-            body {
-                font-family: 'Segoe UI', sans-serif;
-                background-color: #f5f7fa;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                padding: 40px;
-            }
-            .qr-container {
-                background-color: white;
-                border-radius: 16px;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-                padding: 32px;
-                max-width: 500px;
-                width: 100%;
-                text-align: center;
-            }
-            .qr-container h2 {
-                color: #0f294d;
-            }
-            .qr-image {
-                margin: 20px auto;
-                width: 300px;
-            }
-            .info {
-                font-size: 16px;
-                margin: 10px 0;
-                color: #333;
-            }
-            .confirm-btn {
-                margin-top: 20px;
-                padding: 12px 24px;
-                font-size: 16px;
-                background-color: #0f63f5;
-                color: white;
-                border: none;
-                border-radius: 8px;
-                cursor: pointer;
-            }
-            .confirm-btn:hover {
-                background-color: #084ed2;
-            }
-            .back-link {
-                margin-top: 20px;
-                display: inline-block;
-                color: #0f63f5;
-                text-decoration: none;
-            }
-            .back-link:hover {
-                text-decoration: underline;
-            }
-        </style>
+        <title>The palatin - QR</title>
+        <link rel="icon" href="${pageContext.request.contextPath}/img/core-img/favicon.ico">
+
+        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/sepayQR.css">
     </head>
     <body>
-        <div id="checkout_box">
-            <div class="qr-container">
-                <h2>Quét mã VietQR để thanh toán</h2>
-                <div class="info">Số tiền: <strong><%= request.getAttribute("amount") %></strong> VND</div>
-                <div class="info">Nội dung chuyển khoản:</div>
-                <div class="info"><strong><%= request.getAttribute("description") %></strong></div>
-                <img class="qr-image" src="${qrUrl}" alt="QR Code thanh toán" />
-
-                <!-- Nút xác nhận thủ công -->
-                <!--<form action="vietqrreturn" method="get">-->
-                <input type="hidden" name="bookingId" value="${bookingId}" />
-                <input type="hidden" name="amount" value="<%= request.getAttribute("amount") %>" />
-                <input type="hidden" name="bankCode" value="Manual" />
-                <label for="transactionCode">Mã giao dịch (nếu có):</label><br/>
-                <input type="text" name="transactionCode" id="transactionCode" placeholder="Nhập mã chuyển khoản" style="margin-top:5px; padding:8px; width:80%;"/><br/>
-                <button class="confirm-btn" type="submit">Tôi đã thanh toán</button>
-                <!--</form>-->
-
-                <a class="back-link" href="loadtohome">← Quay lại trang chủ</a>
+        <div class="payment-container">
+            <div class="payment-header">
+                <h2>✅ Đặt hàng thành công</h2>
+                <p>Mã đơn hàng: <strong><%= session.getAttribute("description") %></strong></p>
+                <p>Số tiền: <strong><%= session.getAttribute("amount") %></strong> VND</p>
             </div>
-        </div>
 
-        <div id="success_box" style="display:none;">
-            <div class="qr-container">
-                <h2 style="color: green;">✅ Thanh toán thành công!</h2>
-                <p>Cảm ơn bạn đã thanh toán. Đơn hàng của bạn đang được xử lý.</p>
-                <a class="back-link" href="loadtohome">← Quay lại trang chủ</a>
+            <div class="payment-body">
+                <!-- LEFT: QR Code -->
+                <div class="qr-container">
+                    <h3>Cách 1: Quét mã QR</h3>
+                    <img class="qr-image" src="<%= session.getAttribute("qrUrl") %>" alt="QR Code thanh toán" />
+                    <div class="info">
+                        Trạng thái: <em>Chờ thanh toán...</em>
+                    </div>
+                    <button onclick="downloadQR()" class="download-btn">Tải ảnh QR</button>
+                </div>
+
+                <!-- RIGHT: Bank Info -->
+                <div class="info-container">
+                    <h3>Cách 2: Chuyển khoản thủ công</h3>
+                    <img src="${pageContext.request.contextPath}/img/Logo_MB.png" alt="MB Bank" class="bank-logo" />
+                    <h3 style="text-align: center">Ngân hàng MB</h3>
+                    <div class="info">
+                        <strong>Chủ tài khoản:</strong> <%= session.getAttribute("accountName") %>
+                    </div>
+                    <hr/>
+                    <div class="info">
+                        <strong>Số tài khoản:</strong> <%= session.getAttribute("stk") %>
+                    </div>
+                    <hr/>
+                    <div class="info">
+                        <strong>Số tiền:</strong> <%= session.getAttribute("amount") %> VND
+                    </div>
+                    <hr/>
+                    <div class="info">
+                        <strong>Nội dung chuyển khoản:</strong> <%= session.getAttribute("description") %>
+                    </div>
+                    <hr/>
+                    <div class="info">
+                        <small>🔁 Vui lòng giữ nguyên nội dung chuyển khoản để hệ thống tự động xác nhận thanh toán.</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="success-message" id="success_box" style="display:none;">
+                ✅ Thanh toán thành công! Đơn hàng đang được xử lý.
+            </div>
+
+            <div class="payment-footer">
+                <a href="${pageContext.request.contextPath}/loadtohome">← Quay lại trang chủ</a>
             </div>
         </div>
 
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script>
+        </script>
+        <script>
             var contextPath = "<%= request.getContextPath() %>"; // lấy đúng context path
-            var bookingId = "<%= request.getAttribute("bookingId") %>";
+            var bookingId = "<%= session.getAttribute("bookingId") %>";
 
-            setInterval(() => {
+            const intervalId = setInterval(() => {
                 $.post(contextPath + '/check-payment-status', {bookingId: bookingId}, function (data) {
                     if (data.payment_status === "PAID") {
                         $('#checkout_box').hide();
                         $('#success_box').show();
+                        clearInterval(intervalId);
                     }
                 }, 'json');
             }, 2000);
+            window.addEventListener('beforeunload', () => {
+                clearInterval(intervalId);
+            });
         </script>
 
-
-
-
+        <!--download QR-->
+        <script>
+            function downloadQR() {
+                fetch('<%= session.getAttribute("qrUrl") %>')
+                        .then(res => res.blob())
+                        .then(blob => {
+                            const url = URL.createObjectURL(blob);
+                            const a = document.createElement('a');
+                            a.href = url;
+                            a.download = 'vietqr.png';
+                            document.body.appendChild(a);
+                            a.click();
+                            a.remove();
+                            URL.revokeObjectURL(url);
+                        });
+            }
+        </script>
     </body>
 </html>

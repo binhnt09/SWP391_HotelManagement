@@ -87,6 +87,8 @@ public class VietQrSepaycallback extends HttpServlet {
 
         String content = null;
         String amountStr = null;
+        String transactionCode = null;
+        String bankCode = null;
 
         try {
             if (contentType != null && contentType.contains("application/json")) {
@@ -96,10 +98,14 @@ public class VietQrSepaycallback extends HttpServlet {
                 JSONObject json = new JSONObject(rawJson);
                 content = json.optString("content");
                 amountStr = json.optString("transferAmount");
+                bankCode = json.optString("sender_bank");
+                transactionCode =json.optString("code");
             } else {
                 System.out.println("Webhook Form Data: content=" + request.getParameter("content") + ", amount=" + request.getParameter("transferAmount"));
                 content = request.getParameter("content");
                 amountStr = request.getParameter("transferAmount");
+                bankCode = request.getParameter("sender_bank");
+                transactionCode = request.getParameter("code");
             }
         } catch (Exception e) {
             System.err.println("Error parsing JSON: " + e.getMessage());
@@ -133,13 +139,21 @@ public class VietQrSepaycallback extends HttpServlet {
         System.out.println("✔️ bookingId = " + bookingId);
 
         if (booking != null) {
-
-            // ✅ Cập nhật trạng thái
             dao.updateStatus(bookingId, "PAID");
 
             // ✅ Ghi log hoặc insert vào bảng Payment nếu cần
+            Payment payment = new Payment();
+            payment.setBookingID(bookingId);
+            payment.setAmount(amount);
+            payment.setMethod("VietQR");
+            payment.setStatus("Paid");
+            payment.setTransactionCode(transactionCode);
+            payment.setBankCode(bankCode);
+            payment.setGatewayResponse("User Confirmed");
+
+            PaymentDao paymentDao = new PaymentDao();
+            paymentDao.insertPayment(payment);
             out.write("{\"success\": true, \"message\": \"Booking updated to PAID\"}");
-            return;
         } else {
             out.write("{\"success\": false, \"message\": \"Booking not matched or already PAID\"}");
         }

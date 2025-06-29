@@ -75,16 +75,11 @@ public class VietQrPaymentStatus extends HttpServlet {
             throws ServletException, IOException {
         String bookingIdStr = request.getParameter("bookingId");
         int bookingId = validation.Validation.getInt(bookingIdStr, 0, Integer.MAX_VALUE);
-//        try {
-//            bookingId = Integer.parseInt(bookingIdStr);
-//        } catch (NumberFormatException e) {
-//            System.out.println(e);
-//        }
         BookingDao bookingDao = new BookingDao();
         String status = bookingDao.getStatusById(bookingId);
 
         JSONObject result = new JSONObject();
-        request.setAttribute("bookingId", bookingId);
+//        request.setAttribute("bookingId", bookingId);
         result.put("payment_status", status);
         response.setContentType("application/json");
         response.getWriter().write(result.toString());

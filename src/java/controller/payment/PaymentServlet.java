@@ -95,7 +95,7 @@ public class PaymentServlet extends HttpServlet {
             throw new IllegalArgumentException("Số tiền không hợp lệ: rỗng");
         }
 
-// Làm sạch dữ liệu số tiền
+        // Làm sạch dữ liệu số tiền
         totalBillStr = totalBillStr.replaceAll("[^\\d.]", "");
 
         int userId = userIdStr.getUser().getUserId();
@@ -104,7 +104,7 @@ public class PaymentServlet extends HttpServlet {
         Integer voucherId = (voucherIdStr != null && !voucherIdStr.isEmpty()) ? Integer.valueOf(voucherIdStr) : null;
         BigDecimal amountDouble = Validation.validateBigDecimal(totalBillStr, BigDecimal.ONE, new BigDecimal("999999999"));
 
-// Tạo booking
+        // Tạo booking
         Booking booking = new Booking();
         booking.setUserID(userId);
         booking.setVoucherID(voucherId);
@@ -121,7 +121,7 @@ public class PaymentServlet extends HttpServlet {
             return;
         }
 
-// Chi tiết booking
+        // Chi tiết booking
         BookingDetails detail = new BookingDetails();
         detail.setBookingID(bookingId);
         detail.setRoomID(roomId);
@@ -129,14 +129,14 @@ public class PaymentServlet extends HttpServlet {
         detail.setNights(nights);
         bookingDAO.insertBookingDetail(detail);
 
-// Tạo QR code để hiển thị
+        // Tạo QR code để hiển thị
         String bank = "MB";
         String account = "0328633494";
         String accountName = "NGO THANH BINH";
         String template = "compact";
         String download = "0";
 
-// Phải để đúng format để webhook tách được
+        // Phải để đúng format để webhook tách được
         String description = "BOOK" + bookingId;
         String encodedDescription = URLEncoder.encode(description, StandardCharsets.UTF_8);
 
@@ -148,12 +148,15 @@ public class PaymentServlet extends HttpServlet {
                 + "&template=" + template
                 + "&download=" + download;
 
-// Gửi dữ liệu sang JSP để hiển thị mã QR
-        request.setAttribute("bookingId", bookingId);
-        request.setAttribute("amount", amountDouble);
-        request.setAttribute("description", description);
-        request.setAttribute("qrUrl", qrUrl);
-        request.getRequestDispatcher("/payment/vietqr.jsp").forward(request, response);
+        // Gửi dữ liệu sang JSP để hiển thị mã QR
+        request.getSession().setAttribute("bookingId", bookingId);
+        request.getSession().setAttribute("accountName", accountName);
+        request.getSession().setAttribute("stk", account);
+        request.getSession().setAttribute("amount", amountDouble);
+        request.getSession().setAttribute("description", description);
+        request.getSession().setAttribute("qrUrl", qrUrl);
+//        request.getRequestDispatcher("/payment/vietqr.jsp").forward(request, response);
+        response.sendRedirect(request.getContextPath() + "/payment/vietqr.jsp");
 
     }
 
