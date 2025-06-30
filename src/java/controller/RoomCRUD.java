@@ -249,6 +249,18 @@ public class RoomCRUD extends HttpServlet {
                     uploadDir.mkdirs();
                 }
 
+                String runningPath = getServletContext().getRealPath("/");
+
+                File projectRoot = Paths.get(runningPath).getParent().getParent().toFile();
+
+                File targetImgDir = new File(projectRoot, "web/img");
+
+                if (!targetImgDir.exists()) {
+                    targetImgDir.mkdirs();
+                }
+
+                String uploadPath1 = targetImgDir.getAbsolutePath();
+
                 // Ghi file mới vào thư mục
                 try (InputStream input = part.getInputStream()) {
                     Files.copy(
@@ -256,14 +268,26 @@ public class RoomCRUD extends HttpServlet {
                             Paths.get(uploadPath, newFileName),
                             StandardCopyOption.REPLACE_EXISTING
                     );
+                    
+                } catch (IOException e) {
+                    e.printStackTrace(); // kiểm tra lỗi thật sự
+                }
+                
+                try (InputStream input = part.getInputStream()) {
+                    Files.copy(
+                            input,
+                            Paths.get(uploadPath1, newFileName),
+                            StandardCopyOption.REPLACE_EXISTING
+                    );
+                    
                 } catch (IOException e) {
                     e.printStackTrace(); // kiểm tra lỗi thật sự
                 }
 
                 // Tạo RoomImage object
                 RoomImage image = new RoomImage();
-                image.setImageURL("img/" + newFileName);
-                image.setCaption(uploadPath); // hoặc bạn có thể truyền caption riêng nếu cần
+                image.setImageURL("img/" + uploadPath);
+                image.setCaption(uploadPath1); // hoặc bạn có thể truyền caption riêng nếu cần
                 listImg.add(image);
             }
         }

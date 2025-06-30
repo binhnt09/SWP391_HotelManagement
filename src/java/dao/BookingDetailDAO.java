@@ -47,17 +47,17 @@ public class BookingDetailDAO extends DBContext {
         }
         return detail;
     }
-    
-    public List<Integer> getAllRoomIdByBookingDetail(){
+
+    public List<Integer> getAllRoomIdByBookingDetail() {
         List<Integer> list = new ArrayList<>();
         String sql = "select DISTINCT roomid from BookingDetail";
-        try(PreparedStatement pre = connection.prepareStatement(sql)){
-            try(ResultSet rs = pre.executeQuery()){
-                while(rs.next()){
+        try (PreparedStatement pre = connection.prepareStatement(sql)) {
+            try (ResultSet rs = pre.executeQuery()) {
+                while (rs.next()) {
                     list.add(rs.getInt("roomid"));
                 }
             }
-        }catch(SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return list;

@@ -7,6 +7,10 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ page import="java.util.concurrent.TimeUnit" %>
+<%@ page import="java.sql.Date" %>
+<%@ page import="java.time.LocalDate" %>
+<%@ page import="validation.Validation" %>
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -25,7 +29,7 @@
 
 
         <style>
-            
+
             .booking-card {
                 border-radius: 15px;
                 box-shadow: 0 4px 15px rgba(0,0,0,0.1);
@@ -33,7 +37,7 @@
                 overflow: hidden;
                 font-size: 13px
             }
-            
+
             .card-header {
                 background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
                 color: white;
@@ -107,121 +111,128 @@
                                 <h2 class="mb-3 fw-bold">Lịch sử giao dịch</h2>
                             </div>
                         </div>
+                        <input type="hidden" value="${sessionScope.authLocal.user.userId}" name="currentUserId">
                     <c:forEach items="${listBooking}" var="i">     
                         <%
                             entity.Booking booking = (entity.Booking) pageContext.getAttribute("i");
-                            entity.BookingDetails detail = new dao.BookingDetailDAO().getBookingDetailByBookingId(booking.getBookingID());
+                            entity.BookingDetails bookingDetail = new dao.BookingDetailDAO().getBookingDetailByBookingId(booking.getBookingID());
                             
-                            entity.Room room = (entity.Room) detail.getRoom();
+                            entity.Room room = (entity.Room) bookingDetail.getRoom();
+                            
+                            Date checkin = Validation.parseStringToSqlDate(booking.getCheckInDate(), "yyyy-MM-dd");
+                            Date checkout = Validation.parseStringToSqlDate(booking.getCheckOutDate(), "yyyy-MM-dd");
+                            long diffInMillies = checkout.getTime() - checkin.getTime();
+                            long diffDays = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
+                            
                             pageContext.setAttribute("room", room);
-                            pageContext.setAttribute("detail", detail);
+                            pageContext.setAttribute("numberNight", diffDays);
+                            pageContext.setAttribute("bookingDetail", bookingDetail);
                         %>
-                        <div class="row justify-content-center">
-                            <div class="col-12 col-xl-10">
-                                <div class="card booking-card position-relative">
-                                    <!-- Status Badge -->
-                                    <span class="badge bg-success status-badge">
-                                        <i class="fas fa-check-circle me-1"></i> Đã xác nhận
-                                    </span>
+                        <div class="container my-4">
+                            <div class="row justify-content-center">
+                                <div class="col-12 col-xl-10">
+                                    <div class="card booking-card h-100">
+                                        <!-- Status Badge -->
+                                        <span class="badge bg-success status-badge position-absolute top-0 end-0 m-3">
+                                            <i class="fas fa-check-circle me-1"></i> Đã xác nhận
+                                        </span>
 
-                                    <div class="row g-0">
-                                        <!-- Left Column - Room Info -->
-                                        <div class="col-md-4">
-                                            <div class="card-header h-100 d-flex flex-column justify-content-center font-price">
-                                                <h5 class="mb-2">Phòng 203B-Superior</h4>
-
-                                                <!-- Price in left column -->
-                                                <div class="price-highlight mt-3">
-                                                    <div class="info-label text-white-50 mb-1">Tổng chi phí</div>
-                                                    <h5 class="mb-0">2.400.000 VNĐ</h3>
+                                        <div class="row g-0 h-100 align-items-stretch">
+                                            <!-- Left Column - Room Info -->
+                                            <div class="col-md-4 d-flex">
+                                                <div class="card-header w-100 d-flex flex-column justify-content-center text-white font-price"
+                                                     style="background: linear-gradient(to bottom right, #5B69E2, #D45CFF); border-top-left-radius: .5rem; border-bottom-left-radius: .5rem;">
+                                                    <h5 class="mb-2">Phòng 203B-Superior</h5>
+                                                    <div class="price-highlight mt-3 bg-danger text-white p-3 rounded text-center">
+                                                        <div class="info-label text-white-50 mb-1">Tổng chi phí</div>
+                                                        <h5 class="mb-0">${i.totalAmount} VNĐ</h5>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
 
-                                        <!-- Right Column - Booking Details -->
-                                        <div class="col-md-8">
-                                            <div class="card-body">
-                                                <!-- Guest Information -->
-                                                <div class="row">
-                                                    <div class="col-md-6">
-                                                        <div class="info-row d-flex align-items-center">
-                                                            <div class="icon-circle me-3">
-                                                                <i class="fas fa-user"></i>
-                                                            </div>
-                                                            <div class="flex-grow-1">
-                                                                <div class="info-label">Khách hàng</div>
-                                                                <div class="info-value">${sessionScope.authLocal.user.firstName} ${sessionScope.authLocal.user.lastName}</div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <div class="info-row d-flex align-items-center">
-                                                            <div class="icon-circle me-3">
-                                                                <i class="fas fa-users"></i>
-                                                            </div>
-                                                            <div class="flex-grow-1">
-                                                                <div class="info-label">Số khách</div>
-                                                                <div class="info-value">2 người lớn, 1 trẻ em</div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <!-- Check-in & Check-out -->
-                                                <div class="row">
-                                                    <div class="col-md-6">
-                                                        <div class="info-row d-flex align-items-center">
-                                                            <div class="icon-circle me-3">
-                                                                <i class="fas fa-calendar-plus"></i>
-                                                            </div>
-                                                            <div class="flex-grow-1">
-                                                                <div class="info-label">Ngày nhận phòng</div>
-                                                                <div class="info-value">25/06/2025 - 14:00</div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <div class="info-row d-flex align-items-center">
-                                                            <div class="icon-circle me-3">
-                                                                <i class="fas fa-calendar-minus"></i>
-                                                            </div>
-                                                            <div class="flex-grow-1">
-                                                                <div class="info-label">Ngày trả phòng</div>
-                                                                <div class="info-value">28/06/2025 - 12:00</div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <!-- Duration & Booking ID -->
-                                                <div class="row">
-                                                    <div class="col-md-6">
-                                                        <div class="info-row d-flex align-items-center">
-                                                            <div class="icon-circle me-3">
-                                                                <i class="fas fa-clock"></i>
-                                                            </div>
-                                                            <div class="flex-grow-1">
-                                                                <div class="info-label">Thời gian lưu trú</div>
-                                                                <div class="info-value">3 ngày 2 đêm</div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-6">
-
-                                                        <!-- Booking ID -->
-                                                        <div class="info-row d-flex align-items-center">
-                                                            <div class="icon-circle me-3">
-                                                                <i class="fas fa-hashtag"></i>
-                                                            </div>
-                                                            <div class="flex-grow-1">
-                                                                <div class="info-label">Mã đặt phòng</div>
-                                                                <div class="info-value">#BK240625001</div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                    <!-- Special Requests -->
+                                            <!-- Right Column - Booking Details -->
+                                            <div class="col-md-8">
+                                                <div class="card-body h-100 d-flex flex-column justify-content-between">
+                                                    <!-- Guest Information -->
                                                     <div class="row">
+                                                        <div class="col-md-6 mb-3">
+                                                            <div class="info-row d-flex align-items-center">
+                                                                <div class="icon-circle me-3">
+                                                                    <i class="fas fa-user"></i>
+                                                                </div>
+                                                                <div>
+                                                                    <div class="info-label">Customer</div>
+                                                                    <div class="info-value">dang hieu</div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6 mb-3">
+                                                            <div class="info-row d-flex align-items-center">
+                                                                <div class="icon-circle me-3">
+                                                                    <i class="fas fa-users"></i>
+                                                                </div>
+                                                                <div>
+                                                                    <div class="info-label">Số khách</div>
+                                                                    <div class="info-value">${room.roomDetail.maxGuest}</div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Check-in & Check-out -->
+                                                    <div class="row">
+                                                        <div class="col-md-6 mb-3">
+                                                            <div class="info-row d-flex align-items-center">
+                                                                <div class="icon-circle me-3">
+                                                                    <i class="fas fa-calendar-plus"></i>
+                                                                </div>
+                                                                <div>
+                                                                    <div class="info-label">Ngày nhận phòng</div>
+                                                                    <div class="info-value">${i.checkInDate} - 14:00</div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6 mb-3">
+                                                            <div class="info-row d-flex align-items-center">
+                                                                <div class="icon-circle me-3">
+                                                                    <i class="fas fa-calendar-minus"></i>
+                                                                </div>
+                                                                <div>
+                                                                    <div class="info-label">Ngày trả phòng</div>
+                                                                    <div class="info-value">${i.checkOutDate} - 12:00</div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Duration & Booking ID -->
+                                                    <div class="row">
+                                                        <div class="col-md-6 mb-3">
+                                                            <div class="info-row d-flex align-items-center">
+                                                                <div class="icon-circle me-3">
+                                                                    <i class="fas fa-clock"></i>
+                                                                </div>
+                                                                <div>
+                                                                    <div class="info-label">Thời gian lưu trú</div>
+                                                                    <div class="info-value">3 ngày 2 đêm</div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6 mb-3">
+                                                            <div class="info-row d-flex align-items-center">
+                                                                <div class="icon-circle me-3">
+                                                                    <i class="fas fa-hashtag"></i>
+                                                                </div>
+                                                                <div>
+                                                                    <div class="info-label">Mã đặt phòng</div>
+                                                                    <div class="info-value">#BK240625001</div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Special Requests & Buttons -->
+                                                    <div class="row mt-2 align-items-end">
                                                         <div class="col-md-6">
                                                             <div class="info-label mb-2">
                                                                 <i class="fas fa-comment-dots me-2"></i>Yêu cầu đặc biệt
@@ -230,10 +241,8 @@
                                                                 <small class="text-muted">Phòng tầng cao, view biển. Chuẩn bị bánh sinh nhật cho trẻ em.</small>
                                                             </div>
                                                         </div>
-
-                                                        <!-- Action Buttons -->
-                                                        <div class="col-md-6" style="margin-top: 20px">
-                                                            <button class="btn btn-primary btn-booking flex-grow-1">
+                                                        <div class="col-md-6 d-flex justify-content-end gap-2 mt-3 mt-md-0">
+                                                            <button class="btn btn-primary">
                                                                 <i class="fas fa-edit me-2"></i>Chỉnh sửa
                                                             </button>
                                                             <button class="btn btn-outline-secondary">
@@ -245,34 +254,37 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        </div>
-                                    </div>
+                                            </div> <!-- end right col -->
+                                        </div> <!-- end row -->
+                                    </div> <!-- end card -->
                                 </div>
-                            </c:forEach>   
+                            </div>
                         </div>
-                    </div>
+
+                    </c:forEach>   
                 </div>
             </div>
         </div>
+    </div>
+</div>
 
 
-        <!-- Footer -->
-        <jsp:include page="/profile/footerprofile.jsp"></jsp:include>
+<!-- Footer -->
+<jsp:include page="/profile/footerprofile.jsp"></jsp:include>
 
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-            <!-- jQuery (vì Bootstrap 4 phụ thuộc) -->
-            <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <!-- jQuery (vì Bootstrap 4 phụ thuộc) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-            <!-- Popper.js -->
-            <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <!-- Popper.js -->
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
 
-            <!-- Bootstrap 4 JS -->
-            <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!-- Bootstrap 4 JS -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
-            <script src="${pageContext.request.contextPath}/js/profile.js"></script>
-        <script src="${pageContext.request.contextPath}/js/authentication.js"></script>
+    <script src="${pageContext.request.contextPath}/js/profile.js"></script>
+<script src="${pageContext.request.contextPath}/js/authentication.js"></script>
 
-    </body>
+</body>
 </html>
 
