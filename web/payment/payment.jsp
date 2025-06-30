@@ -20,7 +20,7 @@
                 <div class="bird-icon"></div>
                 <div class="logo"><a href="loadtohome" style="text-decoration: none; color: white">The Palatin</a></div>
                 <div style="margin-left: auto; font-weight: normal;">
-                    Đừng lo lắng, giá vẫn giữ nguyên. Hoàn tất thanh toán của bạn bằng <span style="color: #FFD700;">00:01:00</span> ⏰
+                    Đừng lo lắng, giá vẫn giữ nguyên. Hoàn tất thanh toán của bạn bằng <span style="color: #FFD700;" id="countdownPayment">55:00</span> ⏰
                 </div>
             </div>
 
@@ -195,6 +195,9 @@
             </div>
         </div>
 
+        <script>
+            const contextPath = "<%= request.getContextPath() %>";
+        </script>
         <script src="${pageContext.request.contextPath}/js/payment.js"></script>
         <!-- SweetAlert2 -->
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

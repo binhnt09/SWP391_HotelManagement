@@ -72,7 +72,7 @@ function processPayment(event) {
             return;
         }
     }
-    
+
     Swal.fire({
         icon: "info",
         title: "Xác nhận thanh toán",
@@ -107,28 +107,32 @@ function processPayment(event) {
 
 
 // Countdown timer simulation
-let timeLeft = 1 * 60; // 54 minutes 29 seconds
+const countdown = document.getElementById("countdownPayment");
 
-function updateTimer() {
-    const minutes = Math.floor(timeLeft / 60);
-    const seconds = timeLeft % 60;
-    const timerElement = document.querySelector('.header span[style*="color: #FFD700"]');
-    if (timerElement) {
-        timerElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-    }
+if (countdown) {
+    let timeLeft = 55 * 60;
 
-    if (timeLeft > 0) {
+    const timer = setInterval(() => {
+        const minutes = String(Math.floor(timeLeft / 60)).padStart(2, '0');
+        const seconds = String(timeLeft % 60).padStart(2, '0');
+
+        countdown.textContent = `${minutes}:${seconds}`;
         timeLeft--;
-        setTimeout(updateTimer, 1000);
-    } else {
-        alert('Thời gian giữ giá đã hết! Vui lòng thực hiện lại giao dịch.');
-    }
+
+        if (timeLeft < 0) {
+            clearInterval(timer);
+            Swal.fire({
+                icon: "error",
+                title: "Giao dịch hết hạn!",
+                text: "Bạn chưa thanh toán trong thời gian quy định. Đặt phòng đã bị hủy.",
+                confirmButtonText: "Quay lại trang thanh toán"
+            }).then(() => {
+                window.location.href = contextPath + "/booking.jsp"; // hoặc loadtohome
+            });
+        }
+    }, 1000);
 }
 
-// Start timer when page loads
-document.addEventListener('DOMContentLoaded', function () {
-    updateTimer();
-});
 
 // Add coupon functionality
 document.getElementById('coupon-input').addEventListener('keypress', function (e) {

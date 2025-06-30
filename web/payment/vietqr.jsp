@@ -16,6 +16,9 @@
     </head>
     <body>
         <div class="payment-container">
+            <div class="countdown-box">
+                <span class="countdown-time" id="countdown">15:00</span> ⏰
+            </div>
             <div class="payment-header">
                 <h2>✅ Đặt hàng thành công</h2>
                 <p>Mã đơn hàng: <strong><%= session.getAttribute("description") %></strong></p>
@@ -26,11 +29,17 @@
                 <!-- LEFT: QR Code -->
                 <div class="qr-container">
                     <h3>Cách 1: Quét mã QR</h3>
-                    <img class="qr-image" src="<%= session.getAttribute("qrUrl") %>" alt="QR Code thanh toán" />
-                    <div class="info">
-                        Trạng thái: <em>Chờ thanh toán...</em>
+                    <div id="checkout_box">
+                        <img class="qr-image" src="<%= session.getAttribute("qrUrl") %>" alt="QR Code thanh toán" />
+                        <div class="info">
+                            Trạng thái: <em>Chờ thanh toán...</em>
+                        </div>
+                        <button onclick="downloadQR()" class="download-btn">Tải ảnh QR</button>
                     </div>
-                    <button onclick="downloadQR()" class="download-btn">Tải ảnh QR</button>
+                    <div class="success-message" id="success_box" style="display:none;">
+                        ✅ Thanh toán thành công! Bạn có thể kiểm tra booking
+                        <a href="${pageContext.request.contextPath}/profile/historypayment.jsp" class="success-link">tại đây </a>
+                    </div>
                 </div>
 
                 <!-- RIGHT: Bank Info -->
@@ -60,18 +69,11 @@
                 </div>
             </div>
 
-            <div class="success-message" id="success_box" style="display:none;">
-                ✅ Thanh toán thành công! Đơn hàng đang được xử lý.
-            </div>
-
             <div class="payment-footer">
                 <a href="${pageContext.request.contextPath}/loadtohome">← Quay lại trang chủ</a>
             </div>
         </div>
 
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-        <script>
-        </script>
         <script>
             var contextPath = "<%= request.getContextPath() %>"; // lấy đúng context path
             var bookingId = "<%= session.getAttribute("bookingId") %>";
@@ -90,22 +92,51 @@
             });
         </script>
 
-        <!--download QR-->
+        <!--download qr-->
         <script>
             function downloadQR() {
-                fetch('<%= session.getAttribute("qrUrl") %>')
-                        .then(res => res.blob())
-                        .then(blob => {
-                            const url = URL.createObjectURL(blob);
-                            const a = document.createElement('a');
-                            a.href = url;
-                            a.download = 'vietqr.png';
-                            document.body.appendChild(a);
-                            a.click();
-                            a.remove();
-                            URL.revokeObjectURL(url);
-                        });
+                fetch('<%= session.getAttribute("qrUrl") %>').then(res => res.blob()).then(blob => {
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'vietqr.png';
+                    document.body.appendChild(a);
+                    a.click();
+                    a.remove();
+                    URL.revokeObjectURL(url);
+                });
             }
         </script>
+
+        <script>
+            const countdown = document.getElementById("countdown");
+
+            if (countdown) {
+                let timeLeft = 15 * 60;
+
+                const timer = setInterval(() => {
+                    const minutes = String(Math.floor(timeLeft / 60)).padStart(2, '0');
+                    const seconds = String(timeLeft % 60).padStart(2, '0');
+
+                    countdown.textContent = `\${minutes}:\${seconds}`;
+                    timeLeft--;
+
+                    if (timeLeft < 0) {
+                        clearInterval(timer);
+                        Swal.fire({
+                            icon: "error",
+                            title: "Giao dịch hết hạn!",
+                            text: "Bạn chưa thanh toán trong thời gian quy định. Đặt phòng đã bị hủy.",
+                            confirmButtonText: "Quay lại trang thanh toán"
+                        }).then(() => {
+                            window.location.href = "<%= request.getContextPath() %>/payment"; // hoặc loadtohome
+                        });
+                    }
+                }, 1000);
+            }
+        </script>
+
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     </body>
 </html>
