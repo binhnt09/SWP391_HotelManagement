@@ -24,6 +24,8 @@ body {
     display: flex;
     flex-wrap: wrap;
     gap: 20px;
+    position: relative;
+    font-family: 'Segoe UI', Tahoma, sans-serif;
 }
 
 .payment-header {
@@ -39,6 +41,28 @@ body {
 .payment-header p {
     font-size: 16px;
     color: #777;
+}
+
+.countdown-box {
+    position: absolute;
+    top: 30px;
+    right: 30px;
+    font-size: 16px;
+    font-weight: bold;
+    color: #555;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.countdown-time {
+    color: #ff5722;
+    font-size: 18px;
+    background: #fff5e0;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-weight: 600;
+    border: 1px solid #ffc107;
 }
 
 .payment-body {
@@ -102,10 +126,34 @@ body {
 }
 
 .success-message {
-    text-align: center;
-    color: #28a745;
-    font-size: 18px;
+    background-color: #e6f7ec;
+    color: #2e7d32;
+    border: 1px solid #c8e6c9;
+    border-radius: 8px;
+    padding: 16px 20px;
     margin-top: 20px;
+    font-size: 18px;
+    font-weight: 500;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    animation: fadeIn 0.4s ease-in-out;
+    text-align: center;
+}
+
+.success-message a.success-link {
+    color: #0a5d8c;
+    text-decoration: none;
+    font-weight: bold;
+    margin-left: 5px;
+}
+
+.success-message a.success-link:hover {
+    text-decoration: underline;
+    color: #084d75;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .download-btn {

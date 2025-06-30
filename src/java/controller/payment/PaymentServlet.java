@@ -155,9 +155,7 @@ public class PaymentServlet extends HttpServlet {
         request.getSession().setAttribute("amount", amountDouble);
         request.getSession().setAttribute("description", description);
         request.getSession().setAttribute("qrUrl", qrUrl);
-//        request.getRequestDispatcher("/payment/vietqr.jsp").forward(request, response);
         response.sendRedirect(request.getContextPath() + "/payment/vietqr.jsp");
-
     }
 
     public void paymentWithVnpay(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

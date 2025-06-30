@@ -15,10 +15,12 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.math.BigDecimal;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
@@ -98,16 +100,20 @@ public class VietQrSepaycallback extends HttpServlet {
                 JSONObject json = new JSONObject(rawJson);
                 content = json.optString("content");
                 amountStr = json.optString("transferAmount");
-                bankCode = json.optString("sender_bank");
-                transactionCode =json.optString("code");
+                if (json.isNull("code") || json.optString("code").isEmpty()) {
+                    if (content != null && content.contains("-")) {
+                        bankCode = content.split("-")[0];
+                    }
+                } else {
+                    bankCode = json.optString("code");
+                }
+                transactionCode = json.optString("referenceCode");
             } else {
                 System.out.println("Webhook Form Data: content=" + request.getParameter("content") + ", amount=" + request.getParameter("transferAmount"));
                 content = request.getParameter("content");
                 amountStr = request.getParameter("transferAmount");
-                bankCode = request.getParameter("sender_bank");
-                transactionCode = request.getParameter("code");
             }
-        } catch (Exception e) {
+        } catch (IOException | JSONException e) {
             System.err.println("Error parsing JSON: " + e.getMessage());
             out.write("{\"success\": false, \"error\": \"Error parsing webhook JSON: " + e.getMessage() + "\"}");
             return;
@@ -149,10 +155,22 @@ public class VietQrSepaycallback extends HttpServlet {
             payment.setStatus("Paid");
             payment.setTransactionCode(transactionCode);
             payment.setBankCode(bankCode);
-            payment.setGatewayResponse("User Confirmed");
+            payment.setGatewayResponse("Sepay Confirmed");
 
             PaymentDao paymentDao = new PaymentDao();
             paymentDao.insertPayment(payment);
+            
+            Booking updateBooking = dao.getBookingById(bookingId);
+            if(updateBooking != null && "PAID".equalsIgnoreCase(updateBooking.getStatus())){
+                HttpSession session = request.getSession();
+                session.removeAttribute("bookingId");
+                session.removeAttribute("accountName");
+                session.removeAttribute("stk");
+                session.removeAttribute("amount");
+                session.removeAttribute("description");
+                session.removeAttribute("qrUrl");
+            }
+            System.out.println("✅ bookingId after clear: " + request.getSession().getAttribute("bookingId")); // Should be null
             out.write("{\"success\": true, \"message\": \"Booking updated to PAID\"}");
         } else {
             out.write("{\"success\": false, \"message\": \"Booking not matched or already PAID\"}");
