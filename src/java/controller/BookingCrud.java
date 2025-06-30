@@ -136,6 +136,7 @@ public class BookingCrud extends HttpServlet {
         String status = request.getParameter("statusbooking");
         boolean check = new dao.BookingDao().updateStatus(validation.Validation.parseStringToInt(bookingIdRaw), status);
         if(check){
+            pageIndex =0;
             doGet(request, response);
         }else{
             System.out.println("asghkfyasgfsagfaushgfuo");

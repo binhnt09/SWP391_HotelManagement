@@ -4,7 +4,6 @@
  */
 package controller;
 
-import entity.Booking;
 import entity.Room;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -13,10 +12,8 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.sql.Timestamp;
 import java.sql.Date;
 import java.time.LocalDate;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 import validation.Validation;
 
