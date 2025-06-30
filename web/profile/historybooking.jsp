@@ -107,7 +107,7 @@
                                 <h2 class="mb-3 fw-bold">Lịch sử giao dịch</h2>
                             </div>
                         </div>
-                    <c:forEach items="${sessionScope.listBooking}" var="i">     
+                    <c:forEach items="${listBooking}" var="i">     
                         <%
                             entity.Booking booking = (entity.Booking) pageContext.getAttribute("i");
                             entity.BookingDetails detail = new dao.BookingDetailDAO().getBookingDetailByBookingId(booking.getBookingID());
@@ -116,7 +116,7 @@
                             pageContext.setAttribute("room", room);
                             pageContext.setAttribute("detail", detail);
                         %>
-                        <div class="row justify-content-center w-25">
+                        <div class="row justify-content-center">
                             <div class="col-12 col-xl-10">
                                 <div class="card booking-card position-relative">
                                     <!-- Status Badge -->

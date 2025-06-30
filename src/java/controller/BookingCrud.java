@@ -6,6 +6,7 @@ package controller;
 
 import dao.BookingDao;
 import entity.Booking;
+import entity.Room;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -13,6 +14,8 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import java.sql.Date;
 import java.util.List;
 
 /**
@@ -63,10 +66,16 @@ public class BookingCrud extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
-
+        String status = request.getParameter("status");
+        String roomIdRaw = request.getParameter("roomId");
+        String keyword = request.getParameter("keyword");
+        String checkinRaw = request.getParameter("checkin");
         
-         BookingDao dao = new BookingDao();
+        
 
+        int roomId = validation.Validation.parseStringToInt(roomIdRaw);
+        Date checkin = validation.Validation.parseStringToSqlDate(checkinRaw, "yyyy-MM-dd");
+        
         int pageSize = 5;
 
         String pageParam = request.getParameter("page");
@@ -74,23 +83,36 @@ public class BookingCrud extends HttpServlet {
             pageIndex = Integer.parseInt(pageParam) - 1; // Vì page bắt đầu từ 1
         }
 
-        String keyword = request.getParameter("keyword");
-        String status = request.getParameter("status");
 
-        int totalRecords = dao.countBookings(keyword, status); // bạn cần tạo hàm này
+        int totalRecords = new BookingDao().countBookings(keyword, status,roomId); // bạn cần tạo hàm này
         int totalPages = (int) Math.ceil((double) totalRecords / pageSize);
 
-        List<Booking> list = dao.getBookings(
+        List<Booking> list = new BookingDao().getBookings(
                 0, // userRoleId
                 -1, // currentUserId (nếu không lọc theo user)
+                roomId, 
                 status,
                 "b.BookingID", // sortBy
+                keyword, // sortBy
                 true, // isAsc
                 pageIndex,
                 pageSize,
                 false // isDeleted
         );
+        
+        List<Room> listRoomBooked = new ArrayList<>();
+        List<Integer> listRoomId = new dao.BookingDetailDAO().getAllRoomIdByBookingDetail();
+        for (Integer id : listRoomId) {
+            listRoomBooked.add(new dao.RoomDAO().getRoomByRoomID(id));
+            System.out.println(id);
+        }
 
+        
+        request.setAttribute("status", status);
+        request.setAttribute("roomId", roomIdRaw);
+        request.setAttribute("keyword", keyword);
+        request.setAttribute("checkin", checkinRaw);
+        request.setAttribute("listRoomBooked", listRoomBooked);
         request.setAttribute("listBooking", list);
         request.setAttribute("totalPages", totalPages);
         request.setAttribute("currentPage", pageIndex + 1);
@@ -131,6 +153,5 @@ public class BookingCrud extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
-
  
 }

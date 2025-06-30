@@ -11,6 +11,8 @@ import entity.Room;
 import java.sql.ResultSet;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -45,7 +47,26 @@ public class BookingDetailDAO extends DBContext {
         }
         return detail;
     }
+    
+    public List<Integer> getAllRoomIdByBookingDetail(){
+        List<Integer> list = new ArrayList<>();
+        String sql = "select DISTINCT roomid from BookingDetail";
+        try(PreparedStatement pre = connection.prepareStatement(sql)){
+            try(ResultSet rs = pre.executeQuery()){
+                while(rs.next()){
+                    list.add(rs.getInt("roomid"));
+                }
+            }
+        }catch(SQLException e){
+            e.printStackTrace();
+        }
+        return list;
+    }
+
     public static void main(String[] args) {
         System.out.println(new dao.BookingDetailDAO().getBookingDetailByBookingId(1).getBookId());
+        for (Integer a : new dao.BookingDetailDAO().getAllRoomIdByBookingDetail()) {
+            System.out.println(a);
+        }
     }
 }

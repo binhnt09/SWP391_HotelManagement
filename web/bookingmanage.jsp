@@ -144,42 +144,59 @@
                                 <!-- Trạng thái -->
                                 <div class="col-md-3">
                                     <label class="form-label">Trạng thái:</label>
-                                    <select class="form-select" id="statusFilter">
+                                    <select class="form-select" id="statusFilter" onchange="applyFilters()">
                                         <option value="">Tất cả trạng thái</option>
-                                        <option value="Check-In">Check-In</option>
-                                        <option value="Pending">Pending</option>
-                                        <option value="Checked-Out">Checked-Out</option>
+                                        <option value="Pending" >Pending</option>
+                                        <option value="Checkin">Check-In</option>
+                                        <option value="Occupied">Occupied</option>
+                                        <option value="CheckedOut">Checked-Out</option>
                                     </select>
                                 </div>
 
                                 <!-- Phòng -->
                                 <div class="col-md-2">
                                     <label class="form-label">Phòng:</label>
-                                    <select class="form-select" id="roomFilter">
-                                        <option value="">Tất cả phòng</option>
-                                        <option value="101A">101A</option>
-                                        <option value="101B">101B</option>
-                                        <option value="102A">102A</option>
-                                        <option value="105A">105A</option>
+                                    <select class="form-select" id="roomFilter" onchange="applyFilters()">
+                                        <option value="-1">Tất cả phòng</option>
+                                        <c:forEach items="${listRoomBooked}" var="room" >
+                                            <option value="${room.roomID}" ${room.roomID == roomId ? 'selected' : ''}>${room.roomNumber}</option>
+                                        </c:forEach>
                                     </select>
                                 </div>
 
                                 <!-- Tên khách hàng -->
                                 <div class="col-md-4">
                                     <label class="form-label">Tên khách hàng:</label>
-                                    <input type="text" class="form-control" id="customerFilter" placeholder="Tìm theo tên khách hàng">
+                                    <input type="text" value="${keyword}" class="form-control" id="keywordFilter" oninput="applyFilters()" placeholder="Tìm theo tên khách">
                                 </div>
 
                                 <!-- Ngày check-in -->
                                 <div class="col-md-3">
                                     <label class="form-label">Ngày Check-In:</label>
-                                    <input type="date" class="form-control" id="dateFilter">
+                                    <input type="date" class="form-control" id="checkinFilter" onchange="applyFilters()">
                                 </div>
 
                             </div>
                         </div>
 
                     </div>
+                    <script>
+                        function applyFilters() {
+                            const status = document.getElementById("statusFilter").value;
+                            const roomId = document.getElementById("roomFilter").value;
+                            const keyword = document.getElementById("keywordFilter").value;
+                            const checkin = document.getElementById("checkinFilter").value;
+
+                            const query = "status=" + encodeURIComponent(status) +
+                                    "&roomId=" + encodeURIComponent(roomId) +
+                                    "&keyword=" + encodeURIComponent(keyword) +
+                                    "&checkin=" + encodeURIComponent(checkin);
+
+                            // Chuyển hướng tới URL có chứa tham số
+                            window.location.href = "bookingcrud?"+query;
+
+                        }
+                    </script>
                     <div class="table-title">
                         <div class="col-md-3 d-flex align-items-center">
                             <h4 class="mb-0">Manage Booking</h4>
