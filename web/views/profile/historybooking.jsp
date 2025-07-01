@@ -26,8 +26,8 @@
 
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>        
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 
         <style>
 
@@ -98,12 +98,12 @@
 
     <body>
         <!-- header -->
-        <jsp:include page="/profile/headerprofile.jsp"></jsp:include>
+        <jsp:include page="/views/profile/headerprofile.jsp"></jsp:include>
 
             <div class="container-fluid mt-4">
                 <div class="row">
                     <!-- Sidebar -->
-                <jsp:include page="/profile/sidebarprofile.jsp"></jsp:include>
+                <jsp:include page="/views/profile/sidebarprofile.jsp"></jsp:include>
 
                     <!-- Main Content -->
                     <div class="col-lg-9 col-md-8 ">
@@ -116,7 +116,7 @@
                     <c:forEach items="${listBooking}" var="i">     
                         <%
                             entity.Booking booking = (entity.Booking) pageContext.getAttribute("i");
-                            entity.BookingDetails bookingDetail = new dao.BookingDetailDAO().getBookingDetailByBookingId(booking.getBookingID());
+                            entity.BookingDetails bookingDetail = new dao.BookingDetailDAO().getBookingDetailByBookingId(booking.getBookingId());
                             
                             entity.Room room = (entity.Room) bookingDetail.getRoom();
                             
@@ -292,107 +292,103 @@
                 </div>
             </div>
         </div>
-    </div>
-</div>
 
-<style>
-    .custom-modal-width {
-        max-width: 75%; /* hoặc 1200px */
-    }
 
-</style>
-<div class="modal fade" id="editbooking" tabindex="-1">
-    <div class="modal-dialog custom-modal-width">
-        <form id="editRoomForm" method="get" action="bookingroomcustomer"  enctype="multipart/form-data">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Edit Room</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
 
-                <div class="modal-body">
-                    <input type="hidden" name="action" value="editBook">
-                    <input type="hidden" id="bookRoomId" name="roomId">
-                    <input type="hidden" id="bookRoomDetail" name="bookRoomDetail">
-                    <input type="hidden" id="bookNumberNight" name="bookNumberNight">
-
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label>Room Number</label>
-                            <input type="text" id="bookRoomNumber" name="bookRoomNumber" class="form-control" readonly="">
+        <style>
+            .custom-modal-width {
+                max-width: 75%; /* hoặc 1200px */
+            }
+        </style>
+        <div class="modal fade" id="editbooking" tabindex="-1">
+            <div class="modal-dialog custom-modal-width">
+                <form id="editRoomForm" method="get" action="bookingroomcustomer"  enctype="multipart/form-data">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Edit Room</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
-                        <div class="col-md-6 mb-3">
-                            <label>Status</label>
-                            <input type="text" id="bookStatus" name="bookStatus" class="form-control" readonly="">
+
+                        <div class="modal-body">
+                            <input type="hidden" name="action" value="editBook">
+                            <input type="hidden" id="bookRoomId" name="roomId">
+                            <input type="hidden" id="bookRoomDetail" name="bookRoomDetail">
+                            <input type="hidden" id="bookNumberNight" name="bookNumberNight">
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label>Room Number</label>
+                                    <input type="text" id="bookRoomNumber" name="bookRoomNumber" class="form-control" readonly="">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label>Status</label>
+                                    <input type="text" id="bookStatus" name="bookStatus" class="form-control" readonly="">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label>Total Price</label>
+                                    <input type="number" id="bookPricePerNight" name="bookPricePerNight" class="form-control">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label>Number people</label>
+                                    <input type="number" id="bookMaxGuest" name="bookMaxGuest" class="form-control">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label>Check-in</label>
+                                    <input type="date" id="bookCheckin" name="bookCheckin" class="form-control">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label>Check-out</label>
+                                    <input type="date" id="bookCheckout" name="bookCheckout" class="form-control">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label>Number Night</label>
+                                    <input type="text" id="bookTextNumberNight" class="form-control" readonly="">
+                                </div>
+                            </div>
                         </div>
-                        <div class="col-md-6 mb-3">
-                            <label>Total Price</label>
-                            <input type="number" id="bookPricePerNight" name="bookPricePerNight" class="form-control">
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-primary">Update Room</button>
                         </div>
-                        <div class="col-md-6 mb-3">
-                            <label>Number people</label>
-                            <input type="number" id="bookMaxGuest" name="bookMaxGuest" class="form-control">
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label>Check-in</label>
-                            <input type="date" id="bookCheckin" name="bookCheckin" class="form-control">
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label>Check-out</label>
-                            <input type="date" id="bookCheckout" name="bookCheckout" class="form-control">
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label>Number Night</label>
-                            <input type="text" id="bookTextNumberNight" class="form-control" readonly="">
-                        </div>
-                    </div>
-                </div>
+                    </div>  
+                </form>
+            </div>
+        </div>
 
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Update Room</button>
-                </div>
-            </div>  
-        </form>
-    </div>
-</div>
+        <!-- Footer -->
+        <jsp:include page="/profile/footerprofile.jsp"></jsp:include>
+
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+            <!-- jQuery (vì Bootstrap 4 phụ thuộc) -->
+
+            <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 
+            <!-- Popper.js -->
+            <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
 
+            <!-- Bootstrap 4 JS -->
+            <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
-<!-- Footer -->
-<jsp:include page="/profile/footerprofile.jsp"></jsp:include>
+            <script src="${pageContext.request.contextPath}/js/profile.js"></script>
+        <script src="${pageContext.request.contextPath}/js/authentication.js"></script>
+        <script>
+            $(document).on('click', '[data-bs-toggle="modal"]', function () {
+                const button = $(this);
+                $('#bookRoomId').val(button.data('roomid'));
+                $('#bookRoomDetail').val(button.data('roomdetail'));
+                $('#bookRoomNumber').val(button.data('roomnumber'));
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-    <!-- jQuery (vì Bootstrap 4 phụ thuộc) -->
-
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-
-    <!-- Popper.js -->
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
-
-    <!-- Bootstrap 4 JS -->
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
-    <script src="${pageContext.request.contextPath}/js/profile.js"></script>
-<script src="${pageContext.request.contextPath}/js/authentication.js"></script>
-<script>
-    $(document).on('click', '[data-bs-toggle="modal"]', function () {
-        const button = $(this);
-        $('#bookRoomId').val(button.data('roomid'));
-        $('#bookRoomDetail').val(button.data('roomdetail'));
-        $('#bookRoomNumber').val(button.data('roomnumber'));
-
-        $('#bookStatus').val(button.data('status'));
-        $('#bookPricePerNight').val(button.data('pricepernight'));
-        $('#bookMaxGuest').val(button.data('maxguest'));
-        $('#bookCheckin').val(button.data('checkin'));
-        $('#bookCheckout').val(button.data('checkout'));
-        $('#bookNumberNight').val(button.data('numbernight'));
-        $('#bookTextNumberNight').val(button.data('textnumbernight'));
-    });
-</script>
-</body>
+                $('#bookStatus').val(button.data('status'));
+                $('#bookPricePerNight').val(button.data('pricepernight'));
+                $('#bookMaxGuest').val(button.data('maxguest'));
+                $('#bookCheckin').val(button.data('checkin'));
+                $('#bookCheckout').val(button.data('checkout'));
+                $('#bookNumberNight').val(button.data('numbernight'));
+                $('#bookTextNumberNight').val(button.data('textnumbernight'));
+            });
+        </script>
+    </body>
 </html>
 
