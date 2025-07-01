@@ -73,7 +73,7 @@ public class BookingRoom extends HttpServlet {
         request.getSession().setAttribute("numberNight", diffDays);
         request.setAttribute("nowTocheckin", nowTocheckinDays);
         request.getSession().setAttribute("totalPrice", totalPrice);
-
+        
         request.getRequestDispatcher("booking.jsp").forward(request, response);
     }
 

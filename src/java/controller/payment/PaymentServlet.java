@@ -108,8 +108,8 @@ public class PaymentServlet extends HttpServlet {
 
         // Chi tiết booking
         BookingDetails detail = new BookingDetails();
-        detail.setBookingID(bookingId);
-        detail.setRoomID(roomId);
+        detail.setBookingId(bookingId);
+        detail.setRoomId(roomId);
         detail.setPrice(amountDouble);
         detail.setNights(nights);
         bookingDAO.insertBookingDetail(detail);
@@ -185,8 +185,8 @@ public class PaymentServlet extends HttpServlet {
         }
 
         BookingDetails detail = new BookingDetails();
-        detail.setBookingID(bookingId);
-        detail.setRoomID(roomId);
+        detail.setBookingId(bookingId);
+        detail.setRoomId(roomId);
         detail.setPrice(amountDouble);
         detail.setNights(nights);
         bookingDAO.insertBookingDetail(detail);
