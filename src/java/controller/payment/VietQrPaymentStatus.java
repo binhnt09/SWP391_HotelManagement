@@ -2,11 +2,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package controller;
+package controller.payment;
 
 import dao.BookingDao;
-import entity.Authentication;
-import entity.Booking;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -14,14 +12,14 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.List;
+import org.json.JSONObject;
 
 /**
  *
- * @author Admin
+ * @author ASUS
  */
-@WebServlet(name = "BookingRoomCustomer", urlPatterns = {"/bookingroomcustomer"})
-public class BookingRoomCustomer extends HttpServlet {
+@WebServlet(name = "VietQrPaymentStatus", urlPatterns = {"/check-payment-status"})
+public class VietQrPaymentStatus extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -40,10 +38,10 @@ public class BookingRoomCustomer extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet BookingRoomCustomer</title>");
+            out.println("<title>Servlet VietQrPaymentStatus</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet BookingRoomCustomer at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet VietQrPaymentStatus at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -61,47 +59,7 @@ public class BookingRoomCustomer extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
-        String action = request.getParameter("action");
-        String roomIdRaw = request.getParameter("roomId");
-        String roomDetailId = request.getParameter("bookRoomDetail");
-        
-        
-        Authentication auth = (Authentication) request.getSession().getAttribute("authLocal");
-        List<Booking> list = new BookingDao().getBookings(
-                5, // userRoleId
-                auth.getUser().getUserId(), // currentUserId (nếu không lọc theo user)
-                -1,
-                null,
-                "b.BookingID", // sortBy
-                null, // sortBy
-                true, // isAsc
-                0,
-                0,
-                false // isDeleted
-        );
-        request.setAttribute("listBooking", list);
-        
-
-        request.getRequestDispatcher("/views/profile/historybooking.jsp").forward(request, response);
-    }
-
-    public static void main(String[] args) {
-        List<Booking> list = new BookingDao().getBookings(
-                5, // userRoleId
-                52, // currentUserId (nếu không lọc theo user)
-                -1,
-                null,
-                "b.BookingID", // sortBy
-                null, // sortBy
-                true, // isAsc
-                0,
-                0,
-                false // isDeleted
-        );
-        for (Booking booking : list) {
-            System.out.println(booking.getBookingId());
-        }
+        doPost(request, response);
     }
 
     /**
@@ -115,7 +73,16 @@ public class BookingRoomCustomer extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        String bookingIdStr = request.getParameter("bookingId");
+        int bookingId = validation.Validation.getInt(bookingIdStr, 0, Integer.MAX_VALUE);
+        BookingDao bookingDao = new BookingDao();
+        String status = bookingDao.getStatusById(bookingId);
+
+        JSONObject result = new JSONObject();
+//        request.setAttribute("bookingId", bookingId);
+        result.put("payment_status", status);
+        response.setContentType("application/json");
+        response.getWriter().write(result.toString());
     }
 
     /**

@@ -13,7 +13,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        <title>The Palatin - Giao dịch của tôi</title>
+        <title>The Palatin - Cài đặt tài khoản</title>
         <link rel="icon" href="${pageContext.request.contextPath}/img/core-img/favicon.ico">
 
         <link rel="stylesheet" href="${pageContext.request.contextPath}/css/profile.css">
@@ -26,12 +26,12 @@
 
     <body>
         <!-- header -->
-        <jsp:include page="/profile/headerprofile.jsp"></jsp:include>
+        <jsp:include page="/views/profile/headerprofile.jsp"></jsp:include>
 
             <div class="container-fluid mt-4">
                 <div class="row">
                     <!-- Sidebar -->
-                <jsp:include page="/profile/sidebarprofile.jsp"></jsp:include>
+                <jsp:include page="/views/profile/sidebarprofile.jsp"></jsp:include>
 
                     <!-- Main Content -->
                     <div class="col-lg-9 col-md-8">
@@ -59,7 +59,7 @@
                         <div class="tab-content p-4" id="accountTabsContent">
                             <!-- Account Info Tab -->
                             <div class="tab-pane fade ${empty openTab || openTab == '#account-info' ? 'show active' : ''}" id="account-info" role="tabpanel">
-                                <form action="updateprofile" method="post" id="profileForm">
+                                <form action="${pageContext.request.contextPath}/updateprofile" method="post" id="profileForm">
                                     <input type="hidden" name="action" value="updateProfile"/>
                                     <!-- Personal Data Section -->
                                     <div class="mb-5">
@@ -184,7 +184,7 @@
                             <!-- Password & Security Tab -->
                             <div class="tab-pane fade ${openTab == '#password-security' ? 'show active' : ''}" id="password-security" role="tabpanel">
                                 <c:if test="${sessionScope.authLocal.authType eq 'local'}">
-                                    <form id="formChange-password-profile" action="changeassword" method="post" class="password-form">
+                                    <form id="formChange-password-profile" action="${pageContext.request.contextPath}/changeassword" method="post" class="formChangePass">
                                         <input type="hidden" name="action" value="changePasswordInProfile"/>
                                         <div class="mb-4">
                                             <h5 class="mb-3">Đổi mật khẩu</h5>
@@ -221,16 +221,16 @@
                                     </form>
                                 </c:if>
 
-                                <c:if test="${not empty successUpProfile}">
+                                <c:if test="${not empty successChange}">
                                     <div class="alert alert-success d-flex align-items-center" style="margin-bottom: 0px">
                                         <i class="fa fa-check" aria-hidden="true" style="margin-right: 8px;"></i>
-                                        ${success}
+                                        ${successChange}
                                     </div>
                                 </c:if>
-                                <c:if test="${not empty errorUpProfile}">
+                                <c:if test="${not empty errorChange}">
                                     <div class="alert alert-danger" style="margin-bottom: 10px">
                                         <i class="fa fa-exclamation-triangle" style="margin-right: 8px;"></i>
-                                        ${error}
+                                        ${errorChange}
                                     </div>
                                 </c:if>
                             </div>
@@ -250,7 +250,7 @@
         </c:if>
 
         <!-- Footer -->
-        <jsp:include page="/profile/footerprofile.jsp"></jsp:include>
+        <jsp:include page="/views/profile/footerprofile.jsp"></jsp:include>
 
             <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
             <!-- jQuery (vì Bootstrap 4 phụ thuộc) -->
@@ -264,7 +264,5 @@
 
             <script src="${pageContext.request.contextPath}/js/profile.js"></script>
         <script src="${pageContext.request.contextPath}/js/authentication.js"></script>
-
     </body>
 </html>
-
