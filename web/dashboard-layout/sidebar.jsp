@@ -68,7 +68,7 @@
 
         <!-- Booking -->
         <li>
-            <a href="booking">
+            <a href="bookingcrud">
                 <i class="material-icons">touch_app</i>Booking
             </a>
         </li>

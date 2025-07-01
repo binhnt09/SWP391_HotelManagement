@@ -22,10 +22,61 @@ public class BookingDetails {
     private Timestamp deletedAt;
     private Integer deletedBy;
     private boolean isDeleted;
-
+    private Booking book ;
+    private Room room;
+    
     public BookingDetails() {
     }
 
+    public BookingDetails(int bookingDetailID,BigDecimal price, int nights, Timestamp createdAt, Timestamp updatedAt, Timestamp deletedAt, Integer deletedBy, boolean isDeleted, Booking bookId, Room room) {
+        this.bookingDetailID = bookingDetailID;
+        this.price = price;
+        this.nights = nights;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.deletedAt = deletedAt;
+        this.deletedBy = deletedBy;
+        this.isDeleted = isDeleted;
+        this.book= bookId;
+        this.room = room;
+    }
+
+ 
+    
+    //hieu them
+    public BookingDetails(int bookingDetailID, int bookingID, int roomID, BigDecimal price, int nights, Timestamp createdAt, Timestamp updatedAt, Timestamp deletedAt, Integer deletedBy, boolean isDeleted) {
+        this.bookingDetailID = bookingDetailID;
+        this.bookingID = bookingID;
+        this.roomID = roomID;
+        this.price = price;
+        this.nights = nights;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.deletedAt = deletedAt;
+        this.deletedBy = deletedBy;
+        this.isDeleted = isDeleted;
+    }
+
+
+    
+    
+
+    public Booking getBookId() {
+        return book;
+    }
+
+    public void setBookId(Booking bookId) {
+        this.book = bookId;
+    }
+
+    public Room getRoom() {
+        return room;
+    }
+
+    public void setRoom(Room room) {
+        this.room = room;
+    }
+    
     public int getBookingDetailID() {
         return bookingDetailID;
     }

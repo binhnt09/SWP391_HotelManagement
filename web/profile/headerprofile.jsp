@@ -59,7 +59,7 @@
                             <a class="dropdown-item" href="${pageContext.request.contextPath}/updateprofile">
                                 <i class="fa fa-user-edit mr-2 text-primary"></i> Cập nhật hồ sơ
                             </a>
-                            <a class="dropdown-item" href="${pageContext.request.contextPath}/profile/historybooking.jsp">
+                            <a class="dropdown-item" href="${pageContext.request.contextPath}/bookingroomcustomer">
                                 <i class="fas fa-bed mr-2 text-primary"></i> Đặt chỗ của tôi
                             </a>
                             <a class="dropdown-item" href="${pageContext.request.contextPath}/profile/historypayment.jsp">
