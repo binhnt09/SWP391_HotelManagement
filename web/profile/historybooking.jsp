@@ -24,8 +24,9 @@
 
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 
 
         <style>
@@ -119,8 +120,8 @@
                             
                             entity.Room room = (entity.Room) bookingDetail.getRoom();
                             
-                            Date checkin = Validation.parseStringToSqlDate(booking.getCheckInDate(), "yyyy-MM-dd");
-                            Date checkout = Validation.parseStringToSqlDate(booking.getCheckOutDate(), "yyyy-MM-dd");
+                            Date checkin = booking.getCheckInDate();
+                            Date checkout = booking.getCheckOutDate();
                             long diffInMillies = checkout.getTime() - checkin.getTime();
                             long diffDays = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
                             
@@ -134,7 +135,7 @@
                                     <div class="card booking-card h-100">
                                         <!-- Status Badge -->
                                         <span class="badge bg-success status-badge position-absolute top-0 end-0 m-3">
-                                            <i class="fas fa-check-circle me-1"></i> Đã xác nhận
+                                            <i class="fas fa-check-circle me-1"></i> ${i.status}
                                         </span>
 
                                         <div class="row g-0 h-100 align-items-stretch">
@@ -142,7 +143,7 @@
                                             <div class="col-md-4 d-flex">
                                                 <div class="card-header w-100 d-flex flex-column justify-content-center text-white font-price"
                                                      style="background: linear-gradient(to bottom right, #5B69E2, #D45CFF); border-top-left-radius: .5rem; border-bottom-left-radius: .5rem;">
-                                                    <h5 class="mb-2">Phòng 203B-Superior</h5>
+                                                    <h5 class="mb-2">Phòng ${room.roomNumber}</h5>
                                                     <div class="price-highlight mt-3 bg-danger text-white p-3 rounded text-center">
                                                         <div class="info-label text-white-50 mb-1">Tổng chi phí</div>
                                                         <h5 class="mb-0">${i.totalAmount} VNĐ</h5>
@@ -162,7 +163,7 @@
                                                                 </div>
                                                                 <div>
                                                                     <div class="info-label">Customer</div>
-                                                                    <div class="info-value">dang hieu</div>
+                                                                    <div class="info-value">${sessionScope.authLocal.user.firstName} ${sessionScope.authLocal.user.lastName}</div>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -214,18 +215,25 @@
                                                                 </div>
                                                                 <div>
                                                                     <div class="info-label">Thời gian lưu trú</div>
-                                                                    <div class="info-value">3 ngày 2 đêm</div>
+                                                                    <div class="info-value">
+                                                                        ${numberNight} ngày 
+                                                                        <c:choose>
+                                                                            <c:when test="${numberNight < 2}">
+                                                                                1 đêm
+                                                                            </c:when>
+                                                                            <c:otherwise>
+                                                                                ${numberNight - 1} đêm
+                                                                            </c:otherwise>
+                                                                        </c:choose>
+                                                                    </div>
                                                                 </div>
                                                             </div>
                                                         </div>
                                                         <div class="col-md-6 mb-3">
                                                             <div class="info-row d-flex align-items-center">
-                                                                <div class="icon-circle me-3">
-                                                                    <i class="fas fa-hashtag"></i>
-                                                                </div>
                                                                 <div>
                                                                     <div class="info-label">Mã đặt phòng</div>
-                                                                    <div class="info-value">#BK240625001</div>
+                                                                    <div class="info-value"><i class="fas fa-hashtag"></i>${i.bookingID}</div>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -234,16 +242,35 @@
                                                     <!-- Special Requests & Buttons -->
                                                     <div class="row mt-2 align-items-end">
                                                         <div class="col-md-6">
-                                                            <div class="info-label mb-2">
-                                                                <i class="fas fa-comment-dots me-2"></i>Yêu cầu đặc biệt
-                                                            </div>
-                                                            <div class="info-value">
-                                                                <small class="text-muted">Phòng tầng cao, view biển. Chuẩn bị bánh sinh nhật cho trẻ em.</small>
-                                                            </div>
+                                                            <!--                                                            <div class="info-label mb-2">
+                                                                                                                            <i class="fas fa-comment-dots me-2"></i>Yêu cầu đặc biệt
+                                                                                                                        </div>
+                                                                                                                        <div class="info-value">
+                                                                                                                            <small class="text-muted">Phòng tầng cao, view biển. Chuẩn bị bánh sinh nhật cho trẻ em.</small>
+                                                                                                                        </div>-->
                                                         </div>
+                                                        <%
+                                                            long soNgay = diffDays;
+                                                            String soDem = (soNgay <= 1) ? "1 đêm" : (soNgay - 1) + " đêm";
+                                                            String textTongThoiGian = soNgay + " ngày - " + soDem;
+                                                            pageContext.setAttribute("numberNightSoon", textTongThoiGian);
+                                                        %>
                                                         <div class="col-md-6 d-flex justify-content-end gap-2 mt-3 mt-md-0">
-                                                            <button class="btn btn-primary">
-                                                                <i class="fas fa-edit me-2"></i>Chỉnh sửa
+                                                            <button class="btn btn-primary"
+                                                                    data-bs-toggle="modal"
+                                                                    data-bs-target="#editbooking"
+                                                                    data-roomID="${room.roomID}"
+                                                                    data-roomDetail="${room.roomDetail.roomDetailID}"
+                                                                    data-roomNumber="${room.roomNumber}"
+                                                                    data-status="${i.status}"
+                                                                    data-pricePerNight="${i.totalAmount}"
+                                                                    data-checkin="${i.checkInDate}"
+                                                                    data-checkout="${i.checkOutDate}"
+                                                                    data-numberNight="${numberNight}"
+                                                                    data-textNumberNight="${numberNightSoon}"
+                                                                    data-maxGuest="${room.roomDetail.maxGuest}"
+                                                                    title="Edit Room">
+                                                                <i class="fas fa-phone"></i>Chỉnh sửa
                                                             </button>
                                                             <button class="btn btn-outline-secondary">
                                                                 <i class="fas fa-phone"></i>
@@ -268,13 +295,79 @@
     </div>
 </div>
 
+<style>
+    .custom-modal-width {
+        max-width: 75%; /* hoặc 1200px */
+    }
+
+</style>
+<div class="modal fade" id="editbooking" tabindex="-1">
+    <div class="modal-dialog custom-modal-width">
+        <form id="editRoomForm" method="get" action="bookingroomcustomer"  enctype="multipart/form-data">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Room</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+                    <input type="hidden" name="action" value="editBook">
+                    <input type="hidden" id="bookRoomId" name="roomId">
+                    <input type="hidden" id="bookRoomDetail" name="bookRoomDetail">
+                    <input type="hidden" id="bookNumberNight" name="bookNumberNight">
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label>Room Number</label>
+                            <input type="text" id="bookRoomNumber" name="bookRoomNumber" class="form-control" readonly="">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label>Status</label>
+                            <input type="text" id="bookStatus" name="bookStatus" class="form-control" readonly="">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label>Total Price</label>
+                            <input type="number" id="bookPricePerNight" name="bookPricePerNight" class="form-control">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label>Number people</label>
+                            <input type="number" id="bookMaxGuest" name="bookMaxGuest" class="form-control">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label>Check-in</label>
+                            <input type="date" id="bookCheckin" name="bookCheckin" class="form-control">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label>Check-out</label>
+                            <input type="date" id="bookCheckout" name="bookCheckout" class="form-control">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label>Number Night</label>
+                            <input type="text" id="bookTextNumberNight" class="form-control" readonly="">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Update Room</button>
+                </div>
+            </div>  
+        </form>
+    </div>
+</div>
+
+
+
 
 <!-- Footer -->
 <jsp:include page="/profile/footerprofile.jsp"></jsp:include>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <!-- jQuery (vì Bootstrap 4 phụ thuộc) -->
+
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 
     <!-- Popper.js -->
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
@@ -284,7 +377,22 @@
 
     <script src="${pageContext.request.contextPath}/js/profile.js"></script>
 <script src="${pageContext.request.contextPath}/js/authentication.js"></script>
+<script>
+    $(document).on('click', '[data-bs-toggle="modal"]', function () {
+        const button = $(this);
+        $('#bookRoomId').val(button.data('roomid'));
+        $('#bookRoomDetail').val(button.data('roomdetail'));
+        $('#bookRoomNumber').val(button.data('roomnumber'));
 
+        $('#bookStatus').val(button.data('status'));
+        $('#bookPricePerNight').val(button.data('pricepernight'));
+        $('#bookMaxGuest').val(button.data('maxguest'));
+        $('#bookCheckin').val(button.data('checkin'));
+        $('#bookCheckout').val(button.data('checkout'));
+        $('#bookNumberNight').val(button.data('numbernight'));
+        $('#bookTextNumberNight').val(button.data('textnumbernight'));
+    });
+</script>
 </body>
 </html>
 

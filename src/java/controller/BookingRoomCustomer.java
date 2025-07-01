@@ -63,6 +63,11 @@ public class BookingRoomCustomer extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
+        String action = request.getParameter("action");
+        String roomIdRaw = request.getParameter("roomId");
+        String roomDetailId = request.getParameter("bookRoomDetail");
+        
+        
         Authentication auth = (Authentication) request.getSession().getAttribute("authLocal");
         List<Booking> list = new BookingDao().getBookings(
                 5, // userRoleId
@@ -77,6 +82,7 @@ public class BookingRoomCustomer extends HttpServlet {
                 false // isDeleted
         );
         request.setAttribute("listBooking", list);
+        
 
         request.getRequestDispatcher("profile/historybooking.jsp").forward(request, response);
     }
