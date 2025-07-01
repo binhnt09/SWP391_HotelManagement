@@ -7,6 +7,10 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ page import="java.util.concurrent.TimeUnit" %>
+<%@ page import="java.sql.Date" %>
+<%@ page import="java.time.LocalDate" %>
+<%@ page import="validation.Validation" %>
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -20,8 +24,76 @@
 
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
+
+        <style>
+
+            .booking-card {
+                border-radius: 15px;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+                border: none;
+                overflow: hidden;
+                font-size: 13px
+            }
+
+            .card-header {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+                border: none;
+                padding: 20px;
+            }
+            .room-type {
+                background-color: rgba(255,255,255,0.2);
+                padding: 5px 15px;
+                border-radius: 20px;
+                font-size: 0.9rem;
+                display: inline-block;
+                margin-bottom: 10px;
+            }
+
+            .info-row {
+                border-bottom: 1px solid #eee;
+                padding: 12px 0;
+            }
+            .info-row:last-child {
+                border-bottom: none;
+            }
+            .info-label {
+                color: #6c757d;
+                font-weight: 500;
+                font-size: 0.9rem;
+            }
+            .booking-card {
+                border-radius: 15px;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+                border: none;
+                overflow: hidden;
+                width: 900px; /* hoặc 800px, tùy bạn */
+                margin: 0 auto;
+            }
+            .info-value {
+                color: #333;
+                font-weight: 600;
+            }
+            .price-highlight {
+                background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+                color: white;
+                padding: 15px;
+                border-radius: 10px;
+                text-align: center;
+                margin: 15px 0;
+            }
+            .status-badge {
+                position: absolute;
+                top: 15px;
+                right: 15px;
+                z-index: 10;
+            }
+
+        </style>
     </head>
 
     <body>
@@ -34,237 +106,293 @@
                 <jsp:include page="/profile/sidebarprofile.jsp"></jsp:include>
 
                     <!-- Main Content -->
-                    <div class="col-lg-9 col-md-8">
-                        <div class="card main-content-card">
-                            <div class="content-header">
-                                <h2 class="mb-3">Cài đặt</h2>
-                                <ul class="nav nav-tabs" id="accountTabs" role="tablist">
-                                    <li class="nav-item" role="presentation">
-                                        <button class="nav-link ${empty openTab || openTab == '#account-info' ? 'active' : ''}"
-                                            id="account-info-tab" data-bs-toggle="tab"
-                                            data-bs-target="#account-info" type="button" role="tab">
-                                        Thông tin tài khoản
-                                    </button>
-                                </li>
-                                <li class="nav-item" role="presentation">
-                                    <button class="nav-link ${openTab == '#password-security' ? 'active' : ''}" 
-                                            id="password-security-tab" data-bs-toggle="tab"
-                                            data-bs-target="#password-security" type="button" role="tab">
-                                        Mật khẩu & Bảo mật
-                                    </button>
-                                </li>
-                            </ul>
-                        </div>
-
-                        <div class="tab-content p-4" id="accountTabsContent">
-                            <!-- Account Info Tab -->
-                            <div class="tab-pane fade ${empty openTab || openTab == '#account-info' ? 'show active' : ''}" id="account-info" role="tabpanel">
-                                <form action="updateprofile" method="post" id="profileForm">
-                                    <input type="hidden" name="action" value="updateProfile"/>
-                                    <!-- Personal Data Section -->
-                                    <div class="mb-5">
-                                        <c:if test="${not empty successUpProfile}">
-                                            <div id="notification" class="alert alert-success d-flex align-items-center" style="margin-bottom: 0px">
-                                                <i class="fa fa-check" aria-hidden="true" style="margin-right: 8px;"></i>
-                                                ${successUpProfile}
-                                            </div><br/>
-                                            <c:remove var="successUpProfile" scope="session" />
-                                        </c:if>
-                                        <c:if test="${not empty errorUpProfile}">
-                                            <div class="alert alert-danger" style="margin-bottom: 10px">
-                                                <i class="fa fa-exclamation-triangle" style="margin-right: 8px;"></i>
-                                                ${errorUpProfile}
-                                            </div><br/>
-                                        </c:if>
-                                        <h5 class="mb-3">Dữ liệu cá nhân</h5>
-
-                                        <div class="row mb-3">
-                                            <div class="col-6">
-                                                <label for="" class="form-label">Họ</label>
-                                                <input type="text" name="firstName" class="form-control" value="${sessionScope.authLocal.user.firstName}" required>
-                                            </div>
-                                            <div class="col-6">
-                                                <label for="" class="form-label">Tên</label>
-                                                <input type="text" name="lastName" class="form-control" value="${sessionScope.authLocal.user.lastName}" required>
-                                            </div>
-                                        </div>
-
-                                        <div class="row mb-3">
-                                            <div class="col-md-4">
-                                                <label for="gender" class="form-label">Giới tính</label>
-                                                <select name="gender" class="form-select" id="gender">
-                                                    <option value="">Chọn giới tính</option>
-                                                    <option value="male" ${sessionScope.authLocal.user.sex=='male'?'selected':''}>Nam</option>
-                                                    <option value="female" ${sessionScope.authLocal.user.sex=='female'?'selected':''}>Nữ</option>
-                                                    <option value="other" ${sessionScope.authLocal.user.sex=='other'?'selected':''}>Khác</option>
-                                                </select>
-                                            </div>
-                                            <script>
-                                                // Lấy giá trị từ phía server
-                                                var birthYear = ${fn:substring(sessionScope.authLocal.user.birthDay, 0, 4)};
-                                                var birthMonth = ${fn:substring(sessionScope.authLocal.user.birthDay, 5, 7)};
-                                                var birthDay = ${fn:substring(sessionScope.authLocal.user.birthDay, 8, 10)};
-                                            </script>
-                                            <div class="col-md-3">
-                                                <label for="birthDay" class="form-label">Ngày sinh</label>
-                                                <select name="birthDay" class="form-select" id="birthDay">
-                                                    <option value="">Ngày</option>
-                                                </select>
-                                            </div>
-                                            <div class="col-md-3">
-                                                <label for="birthMonth" class="form-label">Tháng</label>
-                                                <select name="birthMonth" class="form-select" id="birthMonth">
-                                                    <option value="">Tháng</option>
-                                                </select>
-                                            </div>
-                                            <div class="col-md-2">
-                                                <label for="birthYear" class="form-label">Năm</label>
-                                                <select name="birthYear" class="form-select" id="birthYear">
-                                                    <option value="">Năm</option>
-                                                </select>
-                                            </div>
-                                        </div>
-
-                                        <div class="row mb-3">
-                                            <div class="col-md-6">
-                                                <label for="city" class="form-label">Thành phố cư trú</label>
-                                                <input type="text" name="city" value="${sessionScope.authLocal.user.address}" class="form-control" id="city" placeholder="Thành phố cư trú">
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- Email Section -->
-                                    <div class="mb-5">
-                                        <h5 class="mb-2">Email</h5>
-                                        <div id="email-list" class="mb-3">
-                                            <div class="contact-item">
-                                                <div>
-                                                    <span>${sessionScope.authLocal.user.email}</span>
-                                                    <span class="verified-badge">Đã kích hoạt</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- Phone Section -->
-                                    <div class="mb-5">
-                                        <h5 class="mb-2">
-                                            <label for="phone" class="form-label">Phone number</label>
-                                        </h5>
-                                        <div class="contact-item" style="width: 50%">
-                                            <input type="text" value="${sessionScope.authLocal.user.phone}" name="phone" class="form-control" id="phone" style="width: 80%">
-                                            <c:if test="${not empty sessionScope.authLocal.user.phone}">
-                                                <span class="verified-badge">Đã kích hoạt</span>
-                                            </c:if>
-                                        </div>
-                                    </div>
-
-                                    <!-- Linked Accounts Section -->
-                                    <c:if test="${sessionScope.authLocal.authType eq 'google'}">
-                                        <div class="mb-4">
-                                            <h5 class="mb-2">Tài khoản đã Liên kết</h5>
-                                            <p class="text-muted mb-3">Liên kết tài khoản mạng xã hội của bạn để đăng nhập Palatin dễ dàng</p>
-                                            <div class="social-account-item">
-                                                <div class="d-flex align-items-center">
-                                                    <div class="social-icon">
-                                                        <img src="${pageContext.request.contextPath}/img/logo.svg.webp" alt="Google logo" width="20">
-                                                    </div>
-                                                    <span>Google</span>
-                                                </div>
-                                                <button class="btn link-btn linked" data-account="google">Đã liên kết</button>
-                                            </div>
-                                        </div>
-                                    </c:if>
-
-                                    <button type="submit" id="cancelProfile" class="btn btn-secondary" disabled>Để sau</button>
-                                    <button type="submit" id="submitProfile" class="btn btn-primary" disabled>Lưu thay đổi</button>
-                                </form>
-                            </div>
-
-                            <!-- Password & Security Tab -->
-                            <div class="tab-pane fade ${openTab == '#password-security' ? 'show active' : ''}" id="password-security" role="tabpanel">
-                                <c:if test="${sessionScope.authLocal.authType eq 'local'}">
-                                    <form id="formChange-password-profile" action="changeassword" method="post" class="password-form">
-                                        <input type="hidden" name="action" value="changePasswordInProfile"/>
-                                        <div class="mb-4">
-                                            <h5 class="mb-3">Đổi mật khẩu</h5>
-                                            <div class="row">
-                                                <div class="col-md-6">
-                                                    <label for="passCurrent" class="form-label">Mật khẩu hiện tại</label>
-                                                    <div class="mb-3 password-toggle">
-                                                        <input type="password" class="form-control" name="currentPassword" value="${param.currentPassword}" placeholder="Current Password" id="passCurrent" required 
-                                                               pattern ="(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}" 
-                                                               title="Mật khẩu phải có ít nhất 6 ký tự, bao gồm chữ hoa, chữ thường, số và ký tự đặc biệt.">
-                                                        <i class="material-icons toggle-icon toggle-password" toggle="#passCurrent">remove_red_eye</i>
-                                                    </div>
-
-                                                    <label for="newpassChange" class="form-label">Mật khẩu mới</label>
-                                                    <div class="mb-3 password-toggle">
-                                                        <input type="password" class="form-control" placeholder="New Password" name="pass" value="${param.pass}" id="newpassChange" required 
-                                                               pattern ="(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}" 
-                                                               title="Mật khẩu phải có ít nhất 6 ký tự, bao gồm chữ hoa, chữ thường, số và ký tự đặc biệt.">
-                                                        <i class="material-icons toggle-icon toggle-password" toggle="#newpassChange">remove_red_eye</i>
-                                                        <small id="newpass-error" style="color: red; margin-top: 10px; display: none"></small>
-                                                    </div>
-
-                                                    <label for="repassChange" class="form-label">Xác nhận mật khẩu mới</label>
-                                                    <div class="mb-3 password-toggle">
-                                                        <input type="password" class="form-control" placeholder="Confirm New Password" name="repass" value="${param.repass}" id="repassChange" required>
-                                                        <i class="material-icons toggle-icon toggle-password" toggle="#repassChange">remove_red_eye</i>
-                                                        <small id="repassch-error-profile" style="color: red; display: none;">Mật khẩu nhập lại không khớp.</small>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <button type="submit" class="btn btn-primary">Cập nhật mật khẩu</button>
-                                    </form>
-                                </c:if>
-
-                                <c:if test="${not empty successUpProfile}">
-                                    <div class="alert alert-success d-flex align-items-center" style="margin-bottom: 0px">
-                                        <i class="fa fa-check" aria-hidden="true" style="margin-right: 8px;"></i>
-                                        ${success}
-                                    </div>
-                                </c:if>
-                                <c:if test="${not empty errorUpProfile}">
-                                    <div class="alert alert-danger" style="margin-bottom: 10px">
-                                        <i class="fa fa-exclamation-triangle" style="margin-right: 8px;"></i>
-                                        ${error}
-                                    </div>
-                                </c:if>
+                    <div class="col-lg-9 col-md-8 ">
+                        <div class="main-content">
+                            <div class="col-lg-9 col-md-8 ">
+                                <h2 class="mb-3 fw-bold">Lịch sử giao dịch</h2>
                             </div>
                         </div>
-                    </div>
+                        <input type="hidden" value="${sessionScope.authLocal.user.userId}" name="currentUserId">
+                    <c:forEach items="${listBooking}" var="i">     
+                        <%
+                            entity.Booking booking = (entity.Booking) pageContext.getAttribute("i");
+                            entity.BookingDetails bookingDetail = new dao.BookingDetailDAO().getBookingDetailByBookingId(booking.getBookingID());
+                            
+                            entity.Room room = (entity.Room) bookingDetail.getRoom();
+                            
+                            Date checkin = booking.getCheckInDate();
+                            Date checkout = booking.getCheckOutDate();
+                            long diffInMillies = checkout.getTime() - checkin.getTime();
+                            long diffDays = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
+                            
+                            pageContext.setAttribute("room", room);
+                            pageContext.setAttribute("numberNight", diffDays);
+                            pageContext.setAttribute("bookingDetail", bookingDetail);
+                        %>
+                        <div class="container my-4">
+                            <div class="row justify-content-center">
+                                <div class="col-12 col-xl-10">
+                                    <div class="card booking-card h-100">
+                                        <!-- Status Badge -->
+                                        <span class="badge bg-success status-badge position-absolute top-0 end-0 m-3">
+                                            <i class="fas fa-check-circle me-1"></i> ${i.status}
+                                        </span>
+
+                                        <div class="row g-0 h-100 align-items-stretch">
+                                            <!-- Left Column - Room Info -->
+                                            <div class="col-md-4 d-flex">
+                                                <div class="card-header w-100 d-flex flex-column justify-content-center text-white font-price"
+                                                     style="background: linear-gradient(to bottom right, #5B69E2, #D45CFF); border-top-left-radius: .5rem; border-bottom-left-radius: .5rem;">
+                                                    <h5 class="mb-2">Phòng ${room.roomNumber}</h5>
+                                                    <div class="price-highlight mt-3 bg-danger text-white p-3 rounded text-center">
+                                                        <div class="info-label text-white-50 mb-1">Tổng chi phí</div>
+                                                        <h5 class="mb-0">${i.totalAmount} VNĐ</h5>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- Right Column - Booking Details -->
+                                            <div class="col-md-8">
+                                                <div class="card-body h-100 d-flex flex-column justify-content-between">
+                                                    <!-- Guest Information -->
+                                                    <div class="row">
+                                                        <div class="col-md-6 mb-3">
+                                                            <div class="info-row d-flex align-items-center">
+                                                                <div class="icon-circle me-3">
+                                                                    <i class="fas fa-user"></i>
+                                                                </div>
+                                                                <div>
+                                                                    <div class="info-label">Customer</div>
+                                                                    <div class="info-value">${sessionScope.authLocal.user.firstName} ${sessionScope.authLocal.user.lastName}</div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6 mb-3">
+                                                            <div class="info-row d-flex align-items-center">
+                                                                <div class="icon-circle me-3">
+                                                                    <i class="fas fa-users"></i>
+                                                                </div>
+                                                                <div>
+                                                                    <div class="info-label">Số khách</div>
+                                                                    <div class="info-value">${room.roomDetail.maxGuest}</div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Check-in & Check-out -->
+                                                    <div class="row">
+                                                        <div class="col-md-6 mb-3">
+                                                            <div class="info-row d-flex align-items-center">
+                                                                <div class="icon-circle me-3">
+                                                                    <i class="fas fa-calendar-plus"></i>
+                                                                </div>
+                                                                <div>
+                                                                    <div class="info-label">Ngày nhận phòng</div>
+                                                                    <div class="info-value">${i.checkInDate} - 14:00</div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6 mb-3">
+                                                            <div class="info-row d-flex align-items-center">
+                                                                <div class="icon-circle me-3">
+                                                                    <i class="fas fa-calendar-minus"></i>
+                                                                </div>
+                                                                <div>
+                                                                    <div class="info-label">Ngày trả phòng</div>
+                                                                    <div class="info-value">${i.checkOutDate} - 12:00</div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Duration & Booking ID -->
+                                                    <div class="row">
+                                                        <div class="col-md-6 mb-3">
+                                                            <div class="info-row d-flex align-items-center">
+                                                                <div class="icon-circle me-3">
+                                                                    <i class="fas fa-clock"></i>
+                                                                </div>
+                                                                <div>
+                                                                    <div class="info-label">Thời gian lưu trú</div>
+                                                                    <div class="info-value">
+                                                                        ${numberNight} ngày 
+                                                                        <c:choose>
+                                                                            <c:when test="${numberNight < 2}">
+                                                                                1 đêm
+                                                                            </c:when>
+                                                                            <c:otherwise>
+                                                                                ${numberNight - 1} đêm
+                                                                            </c:otherwise>
+                                                                        </c:choose>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6 mb-3">
+                                                            <div class="info-row d-flex align-items-center">
+                                                                <div>
+                                                                    <div class="info-label">Mã đặt phòng</div>
+                                                                    <div class="info-value"><i class="fas fa-hashtag"></i>${i.bookingID}</div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Special Requests & Buttons -->
+                                                    <div class="row mt-2 align-items-end">
+                                                        <div class="col-md-6">
+                                                            <!--                                                            <div class="info-label mb-2">
+                                                                                                                            <i class="fas fa-comment-dots me-2"></i>Yêu cầu đặc biệt
+                                                                                                                        </div>
+                                                                                                                        <div class="info-value">
+                                                                                                                            <small class="text-muted">Phòng tầng cao, view biển. Chuẩn bị bánh sinh nhật cho trẻ em.</small>
+                                                                                                                        </div>-->
+                                                        </div>
+                                                        <%
+                                                            long soNgay = diffDays;
+                                                            String soDem = (soNgay <= 1) ? "1 đêm" : (soNgay - 1) + " đêm";
+                                                            String textTongThoiGian = soNgay + " ngày - " + soDem;
+                                                            pageContext.setAttribute("numberNightSoon", textTongThoiGian);
+                                                        %>
+                                                        <div class="col-md-6 d-flex justify-content-end gap-2 mt-3 mt-md-0">
+                                                            <button class="btn btn-primary"
+                                                                    data-bs-toggle="modal"
+                                                                    data-bs-target="#editbooking"
+                                                                    data-roomID="${room.roomID}"
+                                                                    data-roomDetail="${room.roomDetail.roomDetailID}"
+                                                                    data-roomNumber="${room.roomNumber}"
+                                                                    data-status="${i.status}"
+                                                                    data-pricePerNight="${i.totalAmount}"
+                                                                    data-checkin="${i.checkInDate}"
+                                                                    data-checkout="${i.checkOutDate}"
+                                                                    data-numberNight="${numberNight}"
+                                                                    data-textNumberNight="${numberNightSoon}"
+                                                                    data-maxGuest="${room.roomDetail.maxGuest}"
+                                                                    title="Edit Room">
+                                                                <i class="fas fa-phone"></i>Chỉnh sửa
+                                                            </button>
+                                                            <button class="btn btn-outline-secondary">
+                                                                <i class="fas fa-phone"></i>
+                                                            </button>
+                                                            <button class="btn btn-outline-danger">
+                                                                <i class="fas fa-times"></i>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div> <!-- end right col -->
+                                        </div> <!-- end row -->
+                                    </div> <!-- end card -->
+                                </div>
+                            </div>
+                        </div>
+
+                    </c:forEach>   
                 </div>
             </div>
         </div>
-        <c:if test="${not empty openTab}">
-            <script>
-                document.addEventListener("DOMContentLoaded", function () {
-                    const el = document.querySelector(`button[data-bs-target='${openTab}']`);
-                    if (el)
-                        new bootstrap.Tab(el).show();
-                });
-            </script>
-        </c:if>
+    </div>
+</div>
 
-        <!-- Footer -->
-        <jsp:include page="/profile/footerprofile.jsp"></jsp:include>
+<style>
+    .custom-modal-width {
+        max-width: 75%; /* hoặc 1200px */
+    }
 
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-            <!-- jQuery (vì Bootstrap 4 phụ thuộc) -->
-            <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</style>
+<div class="modal fade" id="editbooking" tabindex="-1">
+    <div class="modal-dialog custom-modal-width">
+        <form id="editRoomForm" method="get" action="bookingroomcustomer"  enctype="multipart/form-data">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Room</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
 
-            <!-- Popper.js -->
-            <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+                <div class="modal-body">
+                    <input type="hidden" name="action" value="editBook">
+                    <input type="hidden" id="bookRoomId" name="roomId">
+                    <input type="hidden" id="bookRoomDetail" name="bookRoomDetail">
+                    <input type="hidden" id="bookNumberNight" name="bookNumberNight">
 
-            <!-- Bootstrap 4 JS -->
-            <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label>Room Number</label>
+                            <input type="text" id="bookRoomNumber" name="bookRoomNumber" class="form-control" readonly="">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label>Status</label>
+                            <input type="text" id="bookStatus" name="bookStatus" class="form-control" readonly="">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label>Total Price</label>
+                            <input type="number" id="bookPricePerNight" name="bookPricePerNight" class="form-control">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label>Number people</label>
+                            <input type="number" id="bookMaxGuest" name="bookMaxGuest" class="form-control">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label>Check-in</label>
+                            <input type="date" id="bookCheckin" name="bookCheckin" class="form-control">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label>Check-out</label>
+                            <input type="date" id="bookCheckout" name="bookCheckout" class="form-control">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label>Number Night</label>
+                            <input type="text" id="bookTextNumberNight" class="form-control" readonly="">
+                        </div>
+                    </div>
+                </div>
 
-            <script src="${pageContext.request.contextPath}/js/profile.js"></script>
-        <script src="${pageContext.request.contextPath}/js/authentication.js"></script>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Update Room</button>
+                </div>
+            </div>  
+        </form>
+    </div>
+</div>
 
-    </body>
+
+
+
+<!-- Footer -->
+<jsp:include page="/profile/footerprofile.jsp"></jsp:include>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <!-- jQuery (vì Bootstrap 4 phụ thuộc) -->
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
+    <!-- Popper.js -->
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+
+    <!-- Bootstrap 4 JS -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script src="${pageContext.request.contextPath}/js/profile.js"></script>
+<script src="${pageContext.request.contextPath}/js/authentication.js"></script>
+<script>
+    $(document).on('click', '[data-bs-toggle="modal"]', function () {
+        const button = $(this);
+        $('#bookRoomId').val(button.data('roomid'));
+        $('#bookRoomDetail').val(button.data('roomdetail'));
+        $('#bookRoomNumber').val(button.data('roomnumber'));
+
+        $('#bookStatus').val(button.data('status'));
+        $('#bookPricePerNight').val(button.data('pricepernight'));
+        $('#bookMaxGuest').val(button.data('maxguest'));
+        $('#bookCheckin').val(button.data('checkin'));
+        $('#bookCheckout').val(button.data('checkout'));
+        $('#bookNumberNight').val(button.data('numbernight'));
+        $('#bookTextNumberNight').val(button.data('textnumbernight'));
+    });
+</script>
+</body>
 </html>
 

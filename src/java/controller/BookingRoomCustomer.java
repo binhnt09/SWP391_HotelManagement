@@ -4,7 +4,10 @@
  */
 package controller;
 
-import entity.Room;
+import dao.BookingDao;
+import entity.Authentication;
+import entity.Booking;
+import entity.User;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -12,17 +15,14 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.sql.Date;
-import java.time.LocalDate;
-import java.util.concurrent.TimeUnit;
-import validation.Validation;
+import java.util.List;
 
 /**
  *
  * @author Admin
  */
-@WebServlet(name = "BookingRoom", urlPatterns = {"/bookingroom"})
-public class BookingRoom extends HttpServlet {
+@WebServlet(name = "BookingRoomCustomer", urlPatterns = {"/bookingroomcustomer"})
+public class BookingRoomCustomer extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -41,10 +41,10 @@ public class BookingRoom extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet BookingRoom</title>");
+            out.println("<title>Servlet BookingRoomCustomer</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet BookingRoom at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet BookingRoomCustomer at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -62,38 +62,47 @@ public class BookingRoom extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String roomID_raw = request.getParameter("roomID");
-        String checkin_raw = request.getParameter("checkin");
-        String checkout_raw = request.getParameter("checkout");
-        int roomId = Validation.parseStringToInt(roomID_raw);
 
-        //numbre night
-        Date checkin = Validation.parseStringToSqlDate(checkin_raw, "yyyy-MM-dd");
-        Date checkout = Validation.parseStringToSqlDate(checkout_raw, "yyyy-MM-dd");
-//        Timestamp checkin = Validation.parseStringToSqlTimestamp(checkin_raw, "yyyy-MM-dd HH:mm:ss");
-//        Timestamp checkout = Validation.parseStringToSqlTimestamp(checkout_raw, "yyyy-MM-dd HH:mm:ss");
-        long diffInMillies = checkout.getTime() - checkin.getTime();
-        long diffDays = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
-
-        //khoảng thời gian từ hiện tại đến checkin
-        Date currentDateOnly = java.sql.Date.valueOf(LocalDate.now());
-        long nowTocheckinMillies = checkin.getTime() - currentDateOnly.getTime();
-        long nowTocheckinDays = TimeUnit.DAYS.convert(nowTocheckinMillies, TimeUnit.MILLISECONDS);
-
-        Room room = new dao.RoomDAO().getRoomByRoomID(roomId);
-        double totalPrice = diffDays * room.getPrice();
-
-        request.getSession().setAttribute("room", room);
-        request.getSession().setAttribute("roomIdBooking", roomId);
-//        request.getSession().setAttribute("checkin", checkin_raw);
-//        request.getSession().setAttribute("checkout", checkout_raw);
-        request.getSession().setAttribute("checkin", checkin);
-        request.getSession().setAttribute("checkout", checkout);
-        request.getSession().setAttribute("numberNight", diffDays);
-        request.setAttribute("nowTocheckin", nowTocheckinDays);
-        request.getSession().setAttribute("totalPrice", totalPrice);
+        String action = request.getParameter("action");
+        String roomIdRaw = request.getParameter("roomId");
+        String roomDetailId = request.getParameter("bookRoomDetail");
         
-        request.getRequestDispatcher("booking.jsp").forward(request, response);
+        
+        Authentication auth = (Authentication) request.getSession().getAttribute("authLocal");
+        List<Booking> list = new BookingDao().getBookings(
+                5, // userRoleId
+                auth.getUser().getUserId(), // currentUserId (nếu không lọc theo user)
+                -1,
+                null,
+                "b.BookingID", // sortBy
+                null, // sortBy
+                true, // isAsc
+                0,
+                0,
+                false // isDeleted
+        );
+        request.setAttribute("listBooking", list);
+        
+
+        request.getRequestDispatcher("profile/historybooking.jsp").forward(request, response);
+    }
+
+    public static void main(String[] args) {
+        List<Booking> list = new BookingDao().getBookings(
+                5, // userRoleId
+                52, // currentUserId (nếu không lọc theo user)
+                -1,
+                null,
+                "b.BookingID", // sortBy
+                null, // sortBy
+                true, // isAsc
+                0,
+                0,
+                false // isDeleted
+        );
+        for (Booking booking : list) {
+            System.out.println(booking.getBookingID());
+        }
     }
 
     /**

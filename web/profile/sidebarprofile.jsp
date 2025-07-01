@@ -17,7 +17,7 @@
         </div>
         <div class="list-group list-group-flush sidebar-menu">
             <div class="list-group-item ${pageContext.request.requestURI.endsWith('historybooking.jsp') ? 'active' : ''}">
-                <a class="dropdown-item" href="${pageContext.request.contextPath}/profile/historybooking.jsp">
+                <a class="dropdown-item" href="${pageContext.request.contextPath}/bookingroomcustomer">
                     <i class="fas fa-bed"></i> Đặt chỗ của tôi
                 </a>
             </div>
