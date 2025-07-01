@@ -33,9 +33,9 @@ public class BookingDao extends DBContext {
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     booking = new Booking();
-                    booking.setBookingID(rs.getInt("bookingID"));
-                    booking.setUserID(rs.getInt("userID"));
-                    booking.setVoucherID(rs.getObject("voucherID") != null ? rs.getInt("voucherID") : null);
+                    booking.setBookingId(rs.getInt("bookingID"));
+                    booking.setUserId(rs.getInt("userID"));
+                    booking.setVoucherId(rs.getObject("voucherID") != null ? rs.getInt("voucherID") : null);
                     booking.setBookingDate(rs.getTimestamp("bookingDate"));
                     booking.setCheckInDate(rs.getDate("checkInDate"));
                     booking.setCheckOutDate(rs.getDate("checkOutDate"));
@@ -59,9 +59,9 @@ public class BookingDao extends DBContext {
                 + " CheckOutDate, TotalAmount, Status, CreatedAt, UpdatedAt, IsDeleted) "
                 + " VALUES (?, ?, GETDATE(), ?, ?, ?, ?, GETDATE(), GETDATE(), 0)";
         try (PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            ps.setInt(1, booking.getUserID());
-            if (booking.getVoucherID() != null) {
-                ps.setInt(2, booking.getVoucherID());
+            ps.setInt(1, booking.getUserId());
+            if (booking.getVoucherId() != null) {
+                ps.setInt(2, booking.getVoucherId());
             } else {
                 ps.setNull(2, java.sql.Types.INTEGER);
             }

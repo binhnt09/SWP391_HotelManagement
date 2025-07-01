@@ -82,7 +82,7 @@ public class VietQrReturn extends HttpServlet {
             Logger.getLogger(VietQrReturn.class.getName()).log(Level.SEVERE, null, e);
             request.getSession().setAttribute(TRANS_RESULT, false);
         }
-        response.sendRedirect(request.getContextPath() + "/payment/paymentResult.jsp");
+        response.sendRedirect(request.getContextPath() + "/views/payment/paymentResult.jsp");
     }
 
     /**

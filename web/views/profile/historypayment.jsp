@@ -26,12 +26,12 @@
 
     <body>
         <!-- header -->
-        <jsp:include page="/profile/headerprofile.jsp"></jsp:include>
+        <jsp:include page="/views/profile/headerprofile.jsp"></jsp:include>
 
             <div class="container-fluid mt-4">
                 <div class="row">
                     <!-- Sidebar -->
-                <jsp:include page="/profile/sidebarprofile.jsp"></jsp:include>
+                <jsp:include page="/views/profile/sidebarprofile.jsp"></jsp:include>
 
                     <!-- Main Content -->
                     <div class="col-lg-9 col-md-8">
@@ -250,7 +250,7 @@
         </c:if>
 
         <!-- Footer -->
-        <jsp:include page="/profile/footerprofile.jsp"></jsp:include>
+        <jsp:include page="/views/profile/footerprofile.jsp"></jsp:include>
 
             <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
             <!-- jQuery (vì Bootstrap 4 phụ thuộc) -->

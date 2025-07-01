@@ -72,7 +72,7 @@ public class changePasswordServlet extends HttpServlet {
             request.setAttribute("errorChange", "Mật khẩu hiện tại không đúng.");
         }
         request.setAttribute("openTab", "#password-security");
-        request.getRequestDispatcher("/profile/profile.jsp").forward(request, response);
+        request.getRequestDispatcher("/views/profile/profile.jsp").forward(request, response);
     }
     
     public void changePassword(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

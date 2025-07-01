@@ -5,8 +5,11 @@
 package controller.payment;
 
 import constant.Config;
+import constant.MailUtil;
 import dao.BookingDao;
 import dao.PaymentDao;
+import entity.Authentication;
+import entity.Invoice;
 import entity.Payment;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
@@ -45,6 +48,9 @@ public class VnpayReturn extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
 
+        Authentication authLocal = (Authentication) request.getSession().getAttribute("authLocal");
+        String email = authLocal.getUser().getEmail();
+
         try {
             Map<String, String> fields = new HashMap<>();
             for (Enumeration<String> params = request.getParameterNames(); params.hasMoreElements();) {
@@ -75,6 +81,7 @@ public class VnpayReturn extends HttpServlet {
                 BigDecimal amount = new BigDecimal(request.getParameter("vnp_Amount")).divide(BigDecimal.valueOf(100));
 
                 boolean transSuccess = false;
+                    PaymentDao paymentDao = new PaymentDao();
                 if ("00".equals(request.getParameter("vnp_TransactionStatus"))) {
                     transSuccess = true;
 
@@ -92,9 +99,11 @@ public class VnpayReturn extends HttpServlet {
                     payment.setBankCode(bankCode);
                     payment.setGatewayResponse("Success");
 
-                    PaymentDao paymentDao = new PaymentDao();
                     paymentDao.insertPayment(payment);
+
                 }
+                    Invoice invoice = paymentDao.getInvoice(bookingId);
+                    MailUtil.sendInvoice(email, invoice);
 
                 request.getSession().setAttribute(TRANS_RESULT, transSuccess);
                 responseToPaymentResult(request, response);
@@ -112,7 +121,7 @@ public class VnpayReturn extends HttpServlet {
 
     private void responseToPaymentResult(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        response.sendRedirect(request.getContextPath() + "/payment/paymentResult.jsp");
+        response.sendRedirect(request.getContextPath() + "/views/payment/paymentResult.jsp");
     }
 
 // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

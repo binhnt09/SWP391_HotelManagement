@@ -17,12 +17,12 @@
         </div>
         <div class="list-group list-group-flush sidebar-menu">
             <div class="list-group-item ${pageContext.request.requestURI.endsWith('historybooking.jsp') ? 'active' : ''}">
-                <a class="dropdown-item" href="${pageContext.request.contextPath}/profile/historybooking.jsp">
+                <a class="dropdown-item" href="${pageContext.request.contextPath}/views/profile/historybooking.jsp">
                     <i class="fas fa-bed"></i> Đặt chỗ của tôi
                 </a>
             </div>
             <div class="list-group-item ${pageContext.request.requestURI.endsWith('historypayment.jsp') ? 'active' : ''}">
-                <a class="dropdown-item" href="${pageContext.request.contextPath}/profile/historypayment.jsp">
+                <a class="dropdown-item" href="${pageContext.request.contextPath}/views/profile/historypayment.jsp">
                     <i class="fas fa-list"></i> Danh sách giao dịch
                 </a>
             </div>
@@ -42,7 +42,7 @@
                 </a>
             </div>
             <div class="list-group-item ${pageContext.request.requestURI.endsWith('profile.jsp') ? 'active' : ''}">
-                <a class="dropdown-item" href="${pageContext.request.contextPath}/profile/profile.jsp">
+                <a class="dropdown-item" href="${pageContext.request.contextPath}/views/profile/profile.jsp">
                     <i class="fas fa-cog"></i> Tài khoản
                 </a>
             </div>
