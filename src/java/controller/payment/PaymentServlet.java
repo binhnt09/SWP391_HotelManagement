@@ -15,16 +15,10 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -36,7 +30,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 import validation.Validation;
-import org.json.JSONObject;
 
 /**
  *
@@ -48,15 +41,7 @@ public class PaymentServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-//        HttpSession session = request.getSession(false);
-//        if (session != null) {
-//            session.removeAttribute("checkin");
-//            session.removeAttribute("checkout");
-//            session.removeAttribute("numberNight");
-//            session.removeAttribute("totalPrice");
-//            session.removeAttribute("room");
-//        }
-        request.getRequestDispatcher("/payment/payment.jsp").forward(request, response);
+        request.getRequestDispatcher("/views/payment/payment.jsp").forward(request, response);
     }
 
     /**
@@ -106,8 +91,8 @@ public class PaymentServlet extends HttpServlet {
 
         // Tạo booking
         Booking booking = new Booking();
-        booking.setUserID(userId);
-        booking.setVoucherID(voucherId);
+        booking.setUserId(userId);
+        booking.setVoucherId(voucherId);
         booking.setTotalAmount(amountDouble);
         booking.setStatus("PENDING");
         booking.setCheckInDate(checkin);
@@ -155,7 +140,7 @@ public class PaymentServlet extends HttpServlet {
         request.getSession().setAttribute("amount", amountDouble);
         request.getSession().setAttribute("description", description);
         request.getSession().setAttribute("qrUrl", qrUrl);
-        response.sendRedirect(request.getContextPath() + "/payment/vietqr.jsp");
+        response.sendRedirect(request.getContextPath() + "/views/payment/vietqr.jsp");
     }
 
     public void paymentWithVnpay(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -185,8 +170,8 @@ public class PaymentServlet extends HttpServlet {
         BigDecimal amountDouble = Validation.validateBigDecimal(totalBillStr, BigDecimal.ONE, new BigDecimal("999999999"));
 
         Booking booking = new Booking();
-        booking.setUserID(userId);
-        booking.setVoucherID(voucherId);
+        booking.setUserId(userId);
+        booking.setVoucherId(voucherId);
         booking.setTotalAmount(amountDouble);
         booking.setStatus("PENDING");
         booking.setCheckInDate(checkin);

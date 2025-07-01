@@ -30,7 +30,7 @@ public class UpdateProfile extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.getRequestDispatcher("/profile/profile.jsp").forward(request, response);
+        request.getRequestDispatcher("/views/profile/profile.jsp").forward(request, response);
 //        response.getWriter().println("Hello from doGet.");
     }
 
@@ -90,7 +90,7 @@ public class UpdateProfile extends HttpServlet {
 
         if (dao.existPhone(phone, user.getUserId())) {
             request.setAttribute("errorUpProfile", "Số điện thoại này đã tồn tại!");
-            request.getRequestDispatcher("/profile/profile.jsp").forward(request, response);
+            request.getRequestDispatcher("/views/profile/profile.jsp").forward(request, response);
             return;
         }
 
@@ -108,10 +108,10 @@ public class UpdateProfile extends HttpServlet {
             request.getSession().setAttribute("authLocal", auth);
 
             request.getSession().setAttribute("successUpProfile", "Cập nhật thông tin cá nhân thành công!");
-            response.sendRedirect(request.getContextPath() + "/profile/profile.jsp");
+            response.sendRedirect(request.getContextPath() + "/views/profile/profile.jsp");
         } else {
             request.setAttribute("errorUpProfile", "Cập nhật thất bại!");
-            request.getRequestDispatcher("/profile/profile.jsp").forward(request, response);
+            request.getRequestDispatcher("/views/profile/profile.jsp").forward(request, response);
         }
     }
 

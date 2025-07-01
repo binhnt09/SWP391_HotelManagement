@@ -14,9 +14,9 @@ import java.sql.Date;
  */
 public class Booking {
 
-    private int bookingID;
-    private int userID;
-    private Integer voucherID;
+    private int bookingId;
+    private int userId;
+    private Integer voucherId;
     private Timestamp bookingDate;
     private Date checkInDate;
     private Date checkOutDate;
@@ -27,32 +27,34 @@ public class Booking {
     private Timestamp deletedAt;
     private Integer deletedBy;
     private boolean isDeleted;
+    
+    private Voucher voucher;
 
     public Booking() {
     }
 
-    public int getBookingID() {
-        return bookingID;
+    public int getBookingId() {
+        return bookingId;
     }
 
-    public void setBookingID(int bookingID) {
-        this.bookingID = bookingID;
+    public void setBookingId(int bookingId) {
+        this.bookingId = bookingId;
     }
 
-    public int getUserID() {
-        return userID;
+    public int getUserId() {
+        return userId;
     }
 
-    public void setUserID(int userID) {
-        this.userID = userID;
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
-    public Integer getVoucherID() {
-        return voucherID;
+    public Integer getVoucherId() {
+        return voucherId;
     }
 
-    public void setVoucherID(Integer voucherID) {
-        this.voucherID = voucherID;
+    public void setVoucherId(Integer voucherId) {
+        this.voucherId = voucherId;
     }
 
     public Timestamp getBookingDate() {
@@ -135,9 +137,17 @@ public class Booking {
         this.isDeleted = isDeleted;
     }
 
-    @Override
-    public String toString() {
-        return "Booking{" + "bookingID=" + bookingID + ", userID=" + userID + ", voucherID=" + voucherID + ", bookingDate=" + bookingDate + ", checkInDate=" + checkInDate + ", checkOutDate=" + checkOutDate + ", totalAmount=" + totalAmount + ", status=" + status + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + ", deletedAt=" + deletedAt + ", deletedBy=" + deletedBy + ", isDeleted=" + isDeleted + '}';
+    public Voucher getVoucher() {
+        return voucher;
     }
 
+    public void setVoucher(Voucher voucher) {
+        this.voucher = voucher;
+    }
+
+    @Override
+    public String toString() {
+        return "Booking{" + "bookingID=" + bookingId + ", userID=" + userId + ", voucherID=" + voucherId + ", bookingDate=" + bookingDate + ", checkInDate=" + checkInDate + ", checkOutDate=" + checkOutDate + ", totalAmount=" + totalAmount + ", status=" + status + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + ", deletedAt=" + deletedAt + ", deletedBy=" + deletedBy + ", isDeleted=" + isDeleted + ", voucher=" + voucher + '}';
+    }
+    
 }

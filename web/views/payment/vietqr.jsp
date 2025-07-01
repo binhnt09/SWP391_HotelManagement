@@ -38,7 +38,7 @@
                     </div>
                     <div class="success-message" id="success_box" style="display:none;">
                         ✅ Thanh toán thành công! Bạn có thể kiểm tra booking
-                        <a href="${pageContext.request.contextPath}/profile/historypayment.jsp" class="success-link">tại đây </a>
+                        <a href="${pageContext.request.contextPath}/views/profile/historypayment.jsp" class="success-link">tại đây </a>
                     </div>
                 </div>
 

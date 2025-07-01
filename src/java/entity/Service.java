@@ -4,52 +4,61 @@
  */
 package entity;
 
-import java.math.BigDecimal;
-import java.sql.Timestamp;
-
 /**
  *
  * @author ASUS
  */
-public class BookingDetails {
-    private int bookingDetailID;
-    private int bookingID;
-    private int roomID;
+import java.math.BigDecimal;
+import java.sql.Timestamp;
+
+public class Service {
+
+    private int serviceId;
+    private String name;
+    private String imageUrl;
+    private String description;
     private BigDecimal price;
-    private int nights;
+    private String category;
+    private boolean status;
     private Timestamp createdAt;
     private Timestamp updatedAt;
     private Timestamp deletedAt;
     private Integer deletedBy;
     private boolean isDeleted;
 
-    private Room room;
-    
-    public BookingDetails() {
+    public Service() {
     }
 
-    public int getBookingDetailID() {
-        return bookingDetailID;
+    public int getServiceId() {
+        return serviceId;
     }
 
-    public void setBookingDetailID(int bookingDetailID) {
-        this.bookingDetailID = bookingDetailID;
+    public void setServiceId(int serviceId) {
+        this.serviceId = serviceId;
     }
 
-    public int getBookingID() {
-        return bookingID;
+    public String getName() {
+        return name;
     }
 
-    public void setBookingID(int bookingID) {
-        this.bookingID = bookingID;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public int getRoomID() {
-        return roomID;
+    public String getImageUrl() {
+        return imageUrl;
     }
 
-    public void setRoomID(int roomID) {
-        this.roomID = roomID;
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public BigDecimal getPrice() {
@@ -60,12 +69,20 @@ public class BookingDetails {
         this.price = price;
     }
 
-    public int getNights() {
-        return nights;
+    public String getCategory() {
+        return category;
     }
 
-    public void setNights(int nights) {
-        this.nights = nights;
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public boolean isStatus() {
+        return status;
+    }
+
+    public void setStatus(boolean status) {
+        this.status = status;
     }
 
     public Timestamp getCreatedAt() {
@@ -108,17 +125,9 @@ public class BookingDetails {
         this.isDeleted = isDeleted;
     }
 
-    public Room getRoom() {
-        return room;
-    }
-
-    public void setRoom(Room room) {
-        this.room = room;
-    }
-
     @Override
     public String toString() {
-        return "BookingDetails{" + "bookingDetailID=" + bookingDetailID + ", bookingID=" + bookingID + ", roomID=" + roomID + ", price=" + price + ", nights=" + nights + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + ", deletedAt=" + deletedAt + ", deletedBy=" + deletedBy + ", isDeleted=" + isDeleted + ", room=" + room + '}';
+        return "Service{" + "serviceId=" + serviceId + ", name=" + name + ", imageUrl=" + imageUrl + ", description=" + description + ", price=" + price + ", category=" + category + ", status=" + status + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + ", deletedAt=" + deletedAt + ", deletedBy=" + deletedBy + ", isDeleted=" + isDeleted + '}';
     }
 
 }

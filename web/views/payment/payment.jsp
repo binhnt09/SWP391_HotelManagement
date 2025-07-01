@@ -18,7 +18,7 @@
         <div class="container">
             <div class="header">
                 <div class="bird-icon"></div>
-                <div class="logo"><a href="loadtohome" style="text-decoration: none; color: white">The Palatin</a></div>
+                <div class="logo"><a href="${pageContext.request.contextPath}/loadtohome" style="text-decoration: none; color: white">The Palatin</a></div>
                 <div style="margin-left: auto; font-weight: normal;">
                     Đừng lo lắng, giá vẫn giữ nguyên. Hoàn tất thanh toán của bạn bằng <span style="color: #FFD700;" id="countdownPayment">55:00</span> ⏰
                 </div>
