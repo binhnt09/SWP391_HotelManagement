@@ -29,8 +29,39 @@ public class Booking {
     private boolean isDeleted;
     
     private Voucher voucher;
+    
 
     public Booking() {
+    }
+
+    public Booking(int bookingId, int userId, Integer voucherId, Timestamp bookingDate, Date checkInDate, Date checkOutDate, BigDecimal totalAmount, String status, Timestamp createdAt, Timestamp updatedAt, Timestamp deletedAt, Integer deletedBy, boolean isDeleted) {
+        this.bookingId = bookingId;
+        this.userId = userId;
+        this.voucherId = voucherId;
+        this.bookingDate = bookingDate;
+        this.checkInDate = checkInDate;
+        this.checkOutDate = checkOutDate;
+        this.totalAmount = totalAmount;
+        this.status = status;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.deletedAt = deletedAt;
+        this.deletedBy = deletedBy;
+        this.isDeleted = isDeleted;
+    }
+    public Booking(int bookingId, Integer voucherId, Timestamp bookingDate, Date checkInDate, Date checkOutDate, BigDecimal totalAmount, String status, Timestamp createdAt, Timestamp updatedAt, Timestamp deletedAt, Integer deletedBy, boolean isDeleted) {
+        this.bookingId = bookingId;
+        this.voucherId = voucherId;
+        this.bookingDate = bookingDate;
+        this.checkInDate = checkInDate;
+        this.checkOutDate = checkOutDate;
+        this.totalAmount = totalAmount;
+        this.status = status;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.deletedAt = deletedAt;
+        this.deletedBy = deletedBy;
+        this.isDeleted = isDeleted;
     }
 
     public int getBookingId() {

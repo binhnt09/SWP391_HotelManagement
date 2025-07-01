@@ -59,7 +59,6 @@
                     <h2>Rooms</h2>
                 </div>
             </section>
-            <!-- ##### Breadcumb Area End ##### -->
 
             <!-- ##### Book Now Area Start ##### -->
             <style>
@@ -312,9 +311,15 @@
             </div>
         </footer>
 
+        <style>
+            .custom-modal-width {
+                max-width: 75%; /* hoặc 1200px */
+            }
+
+        </style>
         <!--CHI TIẾT PHÒNG-->
         <div class="modal fade" id="roomDetailModal" tabindex="-1" aria-labelledby="roomDetailLabel" aria-hidden="true">
-            <div class="modal-dialog modal-lg">
+            <div class="modal-dialog modal-lg custom-modal-width">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="roomNumber"></h5>
@@ -322,14 +327,34 @@
                     </div>
                     <div class="row modal-body mainbody">
                         <!-- Hình ảnh phòng -->
-                        <div class="a col-6 ">
-                            <div class="mainImg">
-                                <img id="imgDetail"  class="img-fluid" alt="Room luxury" >
-                            </div>
-                            <div class="moreImg row">
-                                <img id="imgDetail1" class="img-fluid" alt="Room luxury">
-                                <img id="imgDetail2" class="img-fluid" alt="Room luxury">
-                                <img id="imgDetail3" class="img-fluid" alt="Room luxury">
+                        <div class="col-6 ">
+                            <div id="roomCarousel" class="carousel slide mb-3">
+                                <div class="carousel-inner rounded">
+                                    <div class="carousel-item active">
+                                        <img id="imgDetail"
+                                             class="d-block w-100 rounded" style="height: 400px; object-fit: cover;" alt="Bedroom">
+                                    </div>
+                                    <div class="carousel-item">
+                                        <img id="imgDetail1"
+                                             class="d-block w-100 rounded" style="height: 400px; object-fit: cover;" alt="Bathroom">
+                                    </div>
+                                    <div class="carousel-item">
+                                        <img id="imgDetail2"
+                                             class="d-block w-100 rounded" style="height: 400px; object-fit: cover;" alt="Living Area">
+                                    </div>
+                                    <div class="carousel-item">
+                                        <img id="imgDetail3" 
+                                             class="d-block w-100 rounded" style="height: 400px; object-fit: cover;" alt="City View">
+                                    </div>
+                                </div>
+                                <button class="carousel-control-prev" type="button" data-bs-target="#roomCarousel" data-bs-slide="prev">
+                                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                    <span class="visually-hidden">Previous</span>
+                                </button>
+                                <button class="carousel-control-next" type="button" data-bs-target="#roomCarousel" data-bs-slide="next">
+                                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                    <span class="visually-hidden">Next</span>
+                                </button>
                             </div>
                         </div>
 
@@ -357,17 +382,6 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <c:if test="${not empty sessionScope.acc && sessionScope.acc != null}">
-                            <button type="button" class="btn btn-secondary" onclick="deleteRoom()" data-bs-dismiss="modal">Delete</button>
-
-                            <button type="button" onclick="getRoomInfo()" class="btn btn-primary" 
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#updateroominfo"
-                                    >
-                                Update
-                            </button>
-                        </c:if>
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
                         <a id="bookNowBtn" href="#" style="border-radius: 10px; background-color: #80bdff" class="btn theme_btn button_hover">Book Now</a>
                     </div>
@@ -423,7 +437,7 @@
                                     let imgSrc3 = info.getAttribute("data-img3");
 
                                     let bookNowBtn = document.getElementById("bookNowBtn");
-                                    bookNowBtn.href = "bookingroom?roomID="+roomID+"&checkin=${checkin}&checkout=${checkout}";
+                                    bookNowBtn.href = "bookingroom?roomID=" + roomID + "&checkin=${checkin}&checkout=${checkout}";
 
                                     document.getElementById("roomNumber").innerHTML = roomNumber + "-" + type;
 
@@ -432,14 +446,8 @@
                                     document.getElementById("imgDetail").style.width = "400px";// Đổi chiều cao thành 200px
 
                                     document.getElementById("imgDetail1").src = imgSrc1;
-                                    document.getElementById("imgDetail1").style.width = "130px";
-                                    document.getElementById("imgDetail1").style.height = "90px";
                                     document.getElementById("imgDetail2").src = imgSrc2;
-                                    document.getElementById("imgDetail2").style.width = "130px";
-                                    document.getElementById("imgDetail2").style.height = "90px";
                                     document.getElementById("imgDetail3").src = imgSrc3;
-                                    document.getElementById("imgDetail3").style.width = "130px";
-                                    document.getElementById("imgDetail3").style.height = "90px";
 
                                     //Room Info
                                     document.getElementById("area").innerHTML = area + "m²";
@@ -447,67 +455,6 @@
                                     document.getElementById("description").innerHTML = "Description: " + description;
                                     document.getElementById("bedType").innerHTML = "Bed type: " + bedType;
                                     document.getElementById("price").innerHTML = "Giá mỗi đêm: $" + roomPrice + "/night";
-
-
-
                                 }
-
-
-//                                $(document).ready(function () {
-//                                    // Khởi tạo popup cho nút mở login/register
-//                                    $('.login-modal-btn, .register-modal-btn').magnificPopup({
-//                                        type: 'inline',
-//                                        midClick: true
-//                                    });
-//
-//                                    // Xử lý chuyển đổi giữa login <-> register
-//                                    $(document).on('click', '.switch-modal', function (e) {
-//                                        e.preventDefault();
-//                                        const target = $(this).attr('href');
-//
-//                                        // Cập nhật URL hash mà không reload
-//                                        history.pushState(null, '', target);
-//
-//                                        // Đóng popup hiện tại rồi mở cái mới ngay lập tức
-//                                        $.magnificPopup.close();
-//
-//                                        // Mở popup mới ngay lập tức (không delay, không hiệu ứng)
-//                                        $.magnificPopup.open({
-//                                            items: {
-//                                                src: target,
-//                                                type: 'inline'
-//                                            },
-//                                            midClick: true
-//                                        });
-//                                    });
-//
-//                                    // Khi người dùng nhấn nút back (quay lại)
-//                                    window.addEventListener('popstate', function () {
-//                                        const hash = window.location.hash;
-//                                        $.magnificPopup.close();
-//
-//                                        if ($(hash).length) {
-//                                            $.magnificPopup.open({
-//                                                items: {
-//                                                    src: hash,
-//                                                    type: 'inline'
-//                                                },
-//                                                midClick: true
-//                                            });
-//                                        }
-//                                    });
-//
-//                                    // Khi người dùng load trang kèm theo #login-modal hoặc #register-modal
-//                                    const initialHash = window.location.hash;
-//                                    if ($(initialHash).length) {
-//                                        $.magnificPopup.open({
-//                                            items: {
-//                                                src: initialHash,
-//                                                type: 'inline'
-//                                            },
-//                                            midClick: true
-//                                        });
-//                                    }
-//                                });
         </script>
 </html>

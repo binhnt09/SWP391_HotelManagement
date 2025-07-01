@@ -140,7 +140,7 @@ public class PaymentDao extends DBContext {
 //                    detail.getRoom().setRoomID(rs.getInt("RoomID"));
 //                    detail.getRoom().setRoomNumber(rs.getString("RoomNumber"));
 //                    detail.getRoom().setPrice(rs.getDouble("RoomPrice"));
-                    detail.setBookingDetailID(rs.getInt("BookingServiceID"));
+                    detail.setBookingDetailId(rs.getInt("BookingServiceID"));
                     detail.setNights(rs.getInt("Nights"));
                     invoice.setBookingDetails(detail);
 

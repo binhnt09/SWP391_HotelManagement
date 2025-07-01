@@ -95,6 +95,9 @@
                                                 <li class="${pageContext.request.requestURI.endsWith('manageroom.jsp') ? 'active' : ''}"><a href="manageroom">Manage Room</a></li>
                                                 <li class="${pageContext.request.requestURI.endsWith('managerDashboard.jsp') ? 'active' : ''}"><a href="managerDashboard.jsp">Manage</a></li>
                                                 <li><a href="services.jsp">Services</a></li>
+                                                <li><a class="dropdown-item" href="${pageContext.request.contextPath}/bookingcrud">
+                                                         Đặt chỗ của tôi
+                                                    </a></li>
                                                 <li><a href="searchroom">Rooms</a></li>
                                                 <li><a href="blog.jsp">News</a></li>
                                                 <li><a href="contact.jsp">Contact</a></li>
