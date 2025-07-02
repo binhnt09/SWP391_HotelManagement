@@ -2,10 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/JavaScript.js to edit this template
  */
-//js moi
 
-
-//js cu
 function selectPayment(element) {
     const allMethods = document.querySelectorAll('.payment-method');
     const qrinfo = document.querySelectorAll('.qr-info');
@@ -13,7 +10,8 @@ function selectPayment(element) {
     allMethods.forEach(method => {
         method.classList.remove('selected');
         const radioBtn = method.querySelector('.radio-btn');
-        if (radioBtn) radioBtn.classList.remove('checked');
+        if (radioBtn)
+            radioBtn.classList.remove('checked');
     });
 
     qrinfo.forEach(detail => {
@@ -23,27 +21,35 @@ function selectPayment(element) {
     // Thêm class selected
     element.classList.add('selected');
     const radioBtn = element.querySelector('.radio-btn');
-    if (radioBtn) radioBtn.classList.add('checked');
+    if (radioBtn)
+        radioBtn.classList.add('checked');
 
     const method = element.getAttribute('data-method');
     if (method) {
         const detail = document.getElementById(`${method}-details`);
-        if (detail) detail.classList.add('active');
+        if (detail)
+            detail.classList.add('active');
         // Gán vào input hidden
         const hiddenInput = document.getElementById("paymentMethod");
-        if (hiddenInput) hiddenInput.value = method;
+        if (hiddenInput)
+            hiddenInput.value = method;
     }
 }
 
 function processPayment(event) {
-    event.preventDefault(); // Ngăn submit mặc định
+    event.preventDefault();
 
     const form = document.getElementById("paymentForm");
     const selectedMethod = document.querySelector('.payment-method.selected');
     const methodInput = document.getElementById("paymentMethod");
 
     if (!selectedMethod || !methodInput || !methodInput.value) {
-        alert('Vui lòng chọn phương thức thanh toán!');
+        Swal.fire({
+            icon: "warning",
+            title: "Thiếu thông tin!",
+            text: "Vui lòng chọn phương thức thanh toán!",
+            confirmButtonText: "OK"
+        });
         return;
     }
 
@@ -51,51 +57,82 @@ function processPayment(event) {
     const methodLabel = selectedMethod.querySelector('[data-method-label]');
     const methodName = methodLabel ? methodLabel.textContent.trim() : methodValue;
 
-    alert(`Đang xử lý thanh toán bằng: ${methodName}`);
-
-    // Gán thêm bankCode nếu có
     if (methodValue === "wallettransfer") {
         const walletRadio = document.querySelector('input[name="wallet"]:checked');
         const bankInput = document.getElementById("bankCode");
         if (walletRadio && bankInput) {
             bankInput.value = walletRadio.value.toUpperCase();
         } else {
-            alert("Vui lòng chọn loại ví điện tử!");
+            Swal.fire({
+                icon: "warning",
+                title: "Thiếu thông tin!",
+                text: "Vui lòng chọn loại ví điện tử!",
+                confirmButtonText: "OK"
+            });
             return;
         }
     }
 
-    setTimeout(() => {
-        // Chuyển hướng thực sự
-        form.submit();
-    }, 500);
+    Swal.fire({
+        icon: "info",
+        title: "Xác nhận thanh toán",
+        html: `Phương thức: <b>${methodName}</b>`,
+        confirmButtonText: "Tiếp tục",
+        cancelButtonText: "Hủy",
+        showCancelButton: true,
+        timer: 10000,
+        timerProgressBar: true,
+    }).then((result) => {
+        if (result.isConfirmed) {
+            form.submit(); // chỉ submit nếu bấm "Tiếp tục"
+        }
+    });
+
+//    Swal.fire({
+//        icon: "info",
+//        title: "Đang xử lý...",
+//        html: `Phương thức: <b>${methodName}</b><br>Vui lòng chờ trong giây lát...`,
+//        timer: 3000,
+//        timerProgressBar: true,
+//        showConfirmButton: false,
+//        didOpen: () => {
+//            Swal.showLoading();
+//        },
+//        willClose: () => {
+//            form.submit(); // Submit sau khi countdown xong
+//        }
+//    });
 }
 
 
 
 // Countdown timer simulation
-let timeLeft = 1 * 60; // 54 minutes 29 seconds
+const countdown = document.getElementById("countdownPayment");
 
-function updateTimer() {
-    const minutes = Math.floor(timeLeft / 60);
-    const seconds = timeLeft % 60;
-    const timerElement = document.querySelector('.header span[style*="color: #FFD700"]');
-    if (timerElement) {
-        timerElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-    }
+if (countdown) {
+    let timeLeft = 55 * 60;
 
-    if (timeLeft > 0) {
+    const timer = setInterval(() => {
+        const minutes = String(Math.floor(timeLeft / 60)).padStart(2, '0');
+        const seconds = String(timeLeft % 60).padStart(2, '0');
+
+        countdown.textContent = `${minutes}:${seconds}`;
         timeLeft--;
-        setTimeout(updateTimer, 1000);
-    } else {
-        alert('Thời gian giữ giá đã hết! Vui lòng thực hiện lại giao dịch.');
-    }
+
+        if (timeLeft < 0) {
+            clearInterval(timer);
+            Swal.fire({
+                icon: "error",
+                title: "Giao dịch hết hạn!",
+                text: "Bạn chưa thanh toán trong thời gian quy định. Đặt phòng đã bị hủy.",
+                confirmButtonText: "Quay lại trang thanh toán"
+            }).then(() => {
+                window.location.href = contextPath + "/booking.jsp"; // hoặc loadtohome
+            });
+        }
+    }, 1000);
 }
 
-// Start timer when page loads
-document.addEventListener('DOMContentLoaded', function () {
-    updateTimer();
-});
 
 // Add coupon functionality
 document.getElementById('coupon-input').addEventListener('keypress', function (e) {

@@ -78,7 +78,7 @@ public class ServiceDAO extends DBContext {
 
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, s.getName());
-            ps.setString(2, s.getImageURL());
+            ps.setString(2, s.getImageUrl());
             ps.setString(3, s.getDescription());
             ps.setBigDecimal(4, s.getPrice());
             ps.setString(5, s.getCategory());
@@ -99,12 +99,12 @@ public class ServiceDAO extends DBContext {
 
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, s.getName());
-            ps.setString(2, s.getImageURL());
+            ps.setString(2, s.getImageUrl());
             ps.setString(3, s.getDescription());
             ps.setBigDecimal(4, s.getPrice());
             ps.setString(5, s.getCategory());
             ps.setBoolean(6, s.isStatus());
-            ps.setInt(7, s.getServiceID());
+            ps.setInt(7, s.getServiceId());
 
             return ps.executeUpdate() > 0;
 
@@ -287,29 +287,5 @@ public class ServiceDAO extends DBContext {
         );
     }
     
-    public static void main(String[] args) {
-        ServiceDAO dao = new ServiceDAO();
-
-        // Các tham số lọc
-        String keyword = "";          // hoặc "" nếu muốn lấy tất cả
-        String category = "";         // hoặc null nếu không filter theo category
-        Boolean status = null;           // true: Active, false: Inactive, null: lấy cả 2
-        String sortField = "";      // "Name", "Price", "CreatedAt" hoặc null
-        String sortOrder = "";       // "asc" hoặc "desc"
-        int offset = 0;
-        int limit = 10;
-
-        // Test count
-        int total = dao.countServicesByFilter(keyword, category, status);
-        System.out.println("Total matched services: " + total);
-
-        // Test search
-        List<Service> services = dao.searchServicesByFilter(keyword, category, status, sortField, sortOrder, offset, limit);
-
-        for (Service s : services) {
-            System.out.println("[" + s.getServiceID() + "] " + s.getName() + " - " + s.getCategory() +
-                               " - " + s.getPrice() + " - " + (s.isStatus() ? "Active" : "Inactive"));
-        }
-    }
 
 }

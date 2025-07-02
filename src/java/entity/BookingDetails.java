@@ -12,9 +12,9 @@ import java.sql.Timestamp;
  * @author ASUS
  */
 public class BookingDetails {
-    private int bookingDetailID;
-    private int bookingID;
-    private int roomID;
+    private int bookingDetailId;
+    private int bookingId;
+    private int roomId;
     private BigDecimal price;
     private int nights;
     private Timestamp createdAt;
@@ -23,31 +23,61 @@ public class BookingDetails {
     private Integer deletedBy;
     private boolean isDeleted;
 
+    private Booking book ;
+    private Room room;
+    
     public BookingDetails() {
     }
 
-    public int getBookingDetailID() {
-        return bookingDetailID;
+    public BookingDetails(int bookingDetailId,BigDecimal price, int nights, Timestamp createdAt, Timestamp updatedAt, Timestamp deletedAt, Integer deletedBy, boolean isDeleted, Booking bookId, Room room) {
+        this.bookingDetailId = bookingDetailId;
+        this.price = price;
+        this.nights = nights;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.deletedAt = deletedAt;
+        this.deletedBy = deletedBy;
+        this.isDeleted = isDeleted;
+        this.book= bookId;
+        this.room = room;
     }
 
-    public void setBookingDetailID(int bookingDetailID) {
-        this.bookingDetailID = bookingDetailID;
+    //hieu them
+    public BookingDetails(int bookingDetailId, int bookingId, int roomId, BigDecimal price, int nights, Timestamp createdAt, Timestamp updatedAt, Timestamp deletedAt, Integer deletedBy, boolean isDeleted) {
+        this.bookingDetailId = bookingDetailId;
+        this.bookingId = bookingId;
+        this.roomId = roomId;
+        this.price = price;
+        this.nights = nights;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.deletedAt = deletedAt;
+        this.deletedBy = deletedBy;
+        this.isDeleted = isDeleted;
     }
 
-    public int getBookingID() {
-        return bookingID;
+    public int getBookingDetailId() {
+        return bookingDetailId;
     }
 
-    public void setBookingID(int bookingID) {
-        this.bookingID = bookingID;
+    public void setBookingDetailId(int bookingDetailId) {
+        this.bookingDetailId = bookingDetailId;
     }
 
-    public int getRoomID() {
-        return roomID;
+    public int getBookingId() {
+        return bookingId;
     }
 
-    public void setRoomID(int roomID) {
-        this.roomID = roomID;
+    public void setBookingId(int bookingId) {
+        this.bookingId = bookingId;
+    }
+
+    public int getRoomId() {
+        return roomId;
+    }
+
+    public void setRoomId(int roomId) {
+        this.roomId = roomId;
     }
 
     public BigDecimal getPrice() {
@@ -106,9 +136,25 @@ public class BookingDetails {
         this.isDeleted = isDeleted;
     }
 
+    public Booking getBook() {
+        return book;
+    }
+
+    public void setBook(Booking book) {
+        this.book = book;
+    }
+
+    public Room getRoom() {
+        return room;
+    }
+
+    public void setRoom(Room room) {
+        this.room = room;
+    }
+
     @Override
     public String toString() {
-        return "BookingDetails{" + "bookingDetailID=" + bookingDetailID + ", bookingID=" + bookingID + ", roomID=" + roomID + ", price=" + price + ", nights=" + nights + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + ", deletedAt=" + deletedAt + ", deletedBy=" + deletedBy + ", isDeleted=" + isDeleted + '}';
+        return "BookingDetails{" + "bookingDetailId=" + bookingDetailId + ", bookingId=" + bookingId + ", roomId=" + roomId + ", price=" + price + ", nights=" + nights + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + ", deletedAt=" + deletedAt + ", deletedBy=" + deletedBy + ", isDeleted=" + isDeleted + ", book=" + book + ", room=" + room + '}';
     }
-    
+
 }

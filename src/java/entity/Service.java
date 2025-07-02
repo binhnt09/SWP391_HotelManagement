@@ -7,14 +7,11 @@ package entity;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 
-/**
- *
- * @author viet7
- */
 public class Service {
-    private int serviceID;
+
+    private int serviceId;
     private String name;
-    private String imageURL;
+    private String imageUrl;
     private String description;
     private BigDecimal price;
     private String category;
@@ -28,10 +25,10 @@ public class Service {
     public Service() {
     }
 
-    public Service(int serviceID, String name, String imageURL, String description, BigDecimal price, String category, boolean status, Timestamp createdAt, Timestamp updatedAt, Timestamp deletedAt, Integer deletedBy, boolean isDeleted) {
-        this.serviceID = serviceID;
+    public Service(int serviceId, String name, String imageUrl, String description, BigDecimal price, String category, boolean status, Timestamp createdAt, Timestamp updatedAt, Timestamp deletedAt, Integer deletedBy, boolean isDeleted) {
+        this.serviceId = serviceId;
         this.name = name;
-        this.imageURL = imageURL;
+        this.imageUrl = imageUrl;
         this.description = description;
         this.price = price;
         this.category = category;
@@ -42,15 +39,13 @@ public class Service {
         this.deletedBy = deletedBy;
         this.isDeleted = isDeleted;
     }
-    
-    
 
-    public int getServiceID() {
-        return serviceID;
+    public int getServiceId() {
+        return serviceId;
     }
 
-    public void setServiceID(int serviceID) {
-        this.serviceID = serviceID;
+    public void setServiceId(int serviceId) {
+        this.serviceId = serviceId;
     }
 
     public String getName() {
@@ -61,12 +56,12 @@ public class Service {
         this.name = name;
     }
 
-    public String getImageURL() {
-        return imageURL;
+    public String getImageUrl() {
+        return imageUrl;
     }
 
-    public void setImageURL(String imageURL) {
-        this.imageURL = imageURL;
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 
     public String getDescription() {
@@ -140,6 +135,10 @@ public class Service {
     public void setIsDeleted(boolean isDeleted) {
         this.isDeleted = isDeleted;
     }
-    
-    
+
+    @Override
+    public String toString() {
+        return "Service{" + "serviceId=" + serviceId + ", name=" + name + ", imageUrl=" + imageUrl + ", description=" + description + ", price=" + price + ", category=" + category + ", status=" + status + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + ", deletedAt=" + deletedAt + ", deletedBy=" + deletedBy + ", isDeleted=" + isDeleted + '}';
+    }
+
 }

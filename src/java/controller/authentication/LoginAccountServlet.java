@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package controller;
+package controller.authentication;
 
 import constant.MailUtil;
 import dao.AuthenticationDAO;
@@ -67,6 +67,17 @@ public class LoginAccountServlet extends HttpServlet {
         String pass = request.getParameter("pass");
         String remember = request.getParameter("remember");
 
+        String logout = request.getParameter("logout");
+
+        if (logout != null && "true".equals(logout)) {
+            HttpSession session = request.getSession(false);
+            if (session != null) {
+                session.invalidate(); // xóa session
+            }
+            response.sendRedirect("loadtohome");
+            return;
+        }
+
         AuthenticationDAO dao = new AuthenticationDAO();
         boolean isValid = dao.isValidLogin(email, pass);
 
@@ -81,13 +92,20 @@ public class LoginAccountServlet extends HttpServlet {
 
             if ("on".equals(remember)) {
                 Cookie ck = new Cookie(emailName, email);
+                Cookie passCookie = new Cookie("password", pass);
+                
                 ck.setMaxAge(60 * 60 * 24 * 7);
-                session.setMaxInactiveInterval(100);
-                session.setAttribute("emailLogin", email);
+                passCookie.setMaxAge(60 * 60 * 24 * 7);
+                
+                ck.setPath("/");
+                passCookie.setPath("/");
+                
                 response.addCookie(ck);
+                response.addCookie(passCookie);
             } else {
                 Cookie ck = new Cookie(emailName, "");
                 ck.setMaxAge(0);
+                ck.setPath("/");
                 response.addCookie(ck);
             }
             response.sendRedirect("loadtohome");
