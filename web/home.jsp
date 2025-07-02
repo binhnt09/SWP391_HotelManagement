@@ -26,8 +26,10 @@
         <!-- Core Stylesheet -->
         <link rel="stylesheet" href="style.css">
 
-        <script src="${pageContext.request.contextPath}/assets/js/jquery.magnific-popup.min.js"></script>
-        <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/magnific-popup.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/style.css">
     </head>
 
@@ -403,10 +405,10 @@
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 
         <!-- Popper + Bootstrap + Plugin + Active -->
-        <!--<script src="js/bootstrap/popper.min.js"></script>-->
-        <!--<script src="js/bootstrap/bootstrap.min.js"></script>-->
+        <script src="js/bootstrap/popper.min.js"></script>
+        <script src="js/bootstrap/bootstrap.min.js"></script>
         <script src="js/plugins/plugins.js"></script>
-        <!--<script src="js/active.js"></script>-->
+        <script src="js/active.js"></script>
 
         <!-- Script khởi tạo -->
         <script>

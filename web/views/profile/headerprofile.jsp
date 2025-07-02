@@ -53,19 +53,19 @@
                                 <div class="font-weight-bold text-dark">🥉 Bronze Priority</div>
                                 <div class="text-muted small">0 Điểm</div>
                             </div>
-                            <a class="dropdown-item" href="${pageContext.request.contextPath}/profile/profile.jsp">
+                            <a class="dropdown-item" href="${pageContext.request.contextPath}/views/profile/profile.jsp">
                                 <i class="fa fa-user mr-2 text-primary"></i> Tài khoản của tôi
                             </a>
                             <a class="dropdown-item" href="${pageContext.request.contextPath}/updateprofile">
                                 <i class="fa fa-user-edit mr-2 text-primary"></i> Cập nhật hồ sơ
                             </a>
-                            <a class="dropdown-item" href="${pageContext.request.contextPath}/profile/historybooking.jsp">
+                            <a class="dropdown-item" href="${pageContext.request.contextPath}/bookingroomcustomer">
                                 <i class="fas fa-bed mr-2 text-primary"></i> Đặt chỗ của tôi
                             </a>
-                            <a class="dropdown-item" href="${pageContext.request.contextPath}/profile/historypayment.jsp">
+                            <a class="dropdown-item" href="${pageContext.request.contextPath}/views/profile/historypayment.jsp">
                                 <i class="fas fa-list mr-2 text-primary"></i> Danh sách giao dịch
                             </a>
-                            <a class="dropdown-item" href="${pageContext.request.contextPath}/payment/payment.jsp">
+                            <a class="dropdown-item" href="${pageContext.request.contextPath}/views/payment/payment.jsp">
                                 <i class="fa fa-credit-card mr-2 text-primary"></i> Payment
                             </a>
 

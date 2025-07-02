@@ -94,13 +94,13 @@ public class ServiceUpdateServlet extends HttpServlet {
         if ("update".equals(request.getParameter("action"))) {
             //Lấy Id và file 
             int id = Integer.parseInt(request.getParameter("serviceID"));
-            service.setServiceID(id);
+            service.setServiceId(id);
 
             if (imageURL != null) {
-                service.setImageURL(imageURL);
+                service.setImageUrl(imageURL);
             } else {
                 Service old = new ServiceDAO().getServiceById(id);
-                service.setImageURL(old.getImageURL());
+                service.setImageUrl(old.getImageUrl());
             }
 
             if (dao.updateService(service)) {
@@ -110,9 +110,9 @@ public class ServiceUpdateServlet extends HttpServlet {
             }
         } else {
             if (imageURL != null) {
-                service.setImageURL(imageURL);
+                service.setImageUrl(imageURL);
             } else {
-                service.setImageURL("");
+                service.setImageUrl("");
             }
             if (dao.insertService(service)) {
                 request.getSession().setAttribute("successMessage", "Cập nhật service thành công!");
