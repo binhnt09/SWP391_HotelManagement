@@ -52,11 +52,9 @@ public class CleaningListServlet extends HttpServlet {
 
         try {
             CleaningHistoryDAO dao = new CleaningHistoryDAO();
-
-            // Danh sách phòng cần dọn (Checkout)
+            
             List<Room> pendingRooms = dao.getListRoomForCleaner();
 
-            // Danh sách phòng đang được cleaner này dọn (InProgress)
             List<CleaningHistory> inProgressTasks = dao.getCleaningHistoryByCleanerInProgress(cleaner);
 
             // Đẩy dữ liệu sang JSP
