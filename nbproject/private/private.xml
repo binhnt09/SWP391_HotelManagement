@@ -3,14 +3,13 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/Project%20SWP391/SWP391_HotelManagement/src/java/dao/AuthenticationDAO.java</file>
-            <file>file:/D:/Project%20SWP391/SWP391_HotelManagement/src/java/controller/AuthenticationListServlet.java</file>
-            <file>file:/D:/Project%20SWP391/SWP391_HotelManagement/src/java/controller/AuthDeleteServlet.java</file>
-            <file>file:/D:/Project%20SWP391/SWP391_HotelManagement/src/java/entity/Authentication.java</file>
-            <file>file:/D:/Project%20SWP391/SWP391_HotelManagement/src/java/controller/AuthRestoreServlet.java</file>
-            <file>file:/D:/Project%20SWP391/SWP391_HotelManagement/web/authentication-list.jsp</file>
-            <file>file:/D:/Project%20SWP391/SWP391_HotelManagement/src/java/controller/CustomerListServlet.java</file>
-            <file>file:/D:/Project%20SWP391/SWP391_HotelManagement/src/java/controller/StaffDeleteServlet.java</file>
+            <file>file:/D:/Project%20SWP391/SWP391_HotelManagement/src/java/controller/StartCleaningServlet.java</file>
+            <file>file:/D:/Project%20SWP391/SWP391_HotelManagement/web/cleaning-list.jsp</file>
+            <file>file:/D:/Project%20SWP391/SWP391_HotelManagement/src/java/entity/Room.java</file>
+            <file>file:/D:/Project%20SWP391/SWP391_HotelManagement/src/java/controller/CleaningListServlet.java</file>
+            <file>file:/D:/Project%20SWP391/SWP391_HotelManagement/src/java/dao/CleaningHistoryDAO.java</file>
+            <file>file:/D:/Project%20SWP391/SWP391_HotelManagement/src/java/entity/CleaningHistory.java</file>
+            <file>file:/D:/Project%20SWP391/SWP391_HotelManagement/web/service-manager.jsp</file>
         </group>
     </open-files>
 </project-private>
