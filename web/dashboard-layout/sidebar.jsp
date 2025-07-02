@@ -72,6 +72,13 @@
             </a>
         </li>
 
+        <!-- Cleaning List -->
+        <li>
+            <a href="cleaningList">
+                <i class="material-icons">square</i>Cleaner
+            </a>
+        </li>
+
         <!-- Promotion Management -->
         <li>
             <a href="promotionmanager">

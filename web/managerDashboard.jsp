@@ -102,6 +102,13 @@
                             <i class="material-icons">rate_review</i>Review
                         </a>
                     </li>
+                    
+                    <!-- Cleaning List -->
+                    <li>
+                        <a href="cleaningList">
+                            <i class="material-icons">square</i>Cleaner
+                        </a>
+                    </li>
 
                     <!-- Promotion Management -->
                     <li>
