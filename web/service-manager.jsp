@@ -252,10 +252,10 @@
                                     <c:forEach var="s" items="${serviceList}">
                                         <tr>
                                             <td>
-                                                <input type="checkbox" name="serviceCheckbox" value="${s.serviceID}">
+                                                <input type="checkbox" name="serviceCheckbox" value="${s.serviceId}">
                                             </td>
                                             <td>
-                                                <img src="${s.imageURL}" alt="${s.name}" style="width: 60px; height: 60px; object-fit: cover; border-radius: 6px;" />
+                                                <img src="${s.imageUrl}" alt="${s.name}" style="width: 60px; height: 60px; object-fit: cover; border-radius: 6px;" />
                                             </td>
                                             <td>${s.name}</td>
                                             <td>${s.category}</td>
@@ -280,17 +280,17 @@
                                             </td>
                                             <td>
                                                 <a href="#" class="editServiceBtn" 
-                                                   data-id="${s.serviceID}" 
+                                                   data-id="${s.serviceId}" 
                                                    data-name="${s.name}" 
                                                    data-category="${s.category}" 
                                                    data-description="${s.description}" 
                                                    data-price="${s.price}" 
-                                                   data-image="${s.imageURL}" 
+                                                   data-image="${s.imageUrl}" 
                                                    data-status="${s.status}" 
                                                    data-toggle="modal" data-target="#editServiceModal">
                                                     <i class="material-icons">&#xE254;</i>
                                                 </a>
-                                                <a href="serviceDelete?id=${s.serviceID}" class="delete" title="Delete"
+                                                <a href="serviceDelete?id=${s.serviceId}" class="delete" title="Delete"
                                                    onclick="return confirm('Xác nhận xóa dịch vụ này?');">
                                                     <i class="material-icons">&#xE872;</i>
                                                 </a>

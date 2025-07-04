@@ -141,7 +141,7 @@
                         </div>
                         <c:remove var="successMessage" scope="session" />
                     </c:if> 
-                    
+
                     <c:if test="${not empty sessionScope.errorMessage}">
                         <div class="alert alert-danger alert-dismissible fade show" role="alert">
                             ${sessionScope.errorMessage}
@@ -193,12 +193,14 @@
                                                             </c:otherwise>
                                                         </c:choose>
                                                     </td>
-                                                    <td class="align-middle">
-                                                        <form method="post" action="startCleaning">
-                                                            <input type="hidden" name="roomId" value="${room.roomID}" />
-                                                            <button class="btn btn-sm btn-primary">Bắt đầu dọn</button>
-                                                        </form>
-                                                    </td>
+                                                    <c:if test="${room.status == 'Checkout'}">
+                                                        <td class="align-middle">
+                                                            <form method="post" action="startCleaning">
+                                                                <input type="hidden" name="roomId" value="${room.roomID}" />
+                                                                <button class="btn btn-sm btn-primary">Bắt đầu dọn</button>
+                                                            </form>
+                                                        </td>
+                                                    </c:if>
                                                 </tr>
                                             </c:forEach>
                                         </c:when>
@@ -257,7 +259,8 @@
                                                     </td>
                                                     <td>
                                                         <form method="post" action="finishCleaning">
-                                                            <input type="hidden" name="roomId" value="${task.roomID}" />
+                                                            <input type="hidden" name="cleaningId" value="${task.cleaningID}" />
+                                                            <input type="hidden" name="roomId" value="${task.room.roomID}" />
                                                             <textarea name="note" class="form-control form-control-sm" placeholder="Ghi chú nếu có"></textarea>
                                                     </td>
                                                     <td>
@@ -277,9 +280,6 @@
                             </table>
                         </div>
                     </div>
-
-
-
                 </div>
             </div>
         </div>
