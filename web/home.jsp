@@ -137,7 +137,7 @@
                                         </div>
                                         <div class="col-4 col-lg-4">
                                             <label style="font-weight: 600; font-size: initial; margin-top: 20px">Loại phòng:</label>
-                                            <select name="roomType" class="form-select"   >
+                                            <select name="roomType" class="form-control"   >
                                                 <option value="-1" >Select room type </option>
                                                 <c:forEach items="${listRoomType}" var="tmp">
                                                     <option value="${tmp.roomTypeID}" <c:if test="${tmp.roomTypeID == type}">selected</c:if>>${tmp.typeName}</option>

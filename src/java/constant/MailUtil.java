@@ -25,8 +25,9 @@ public class MailUtil {
     private static final String PASS_CONFIG_EMAIL = "nmxb rkyw fwoe ashb";
 
     public static void send(String toEmail, String code) throws Exception {
+
         final String fromEmail = EMAIL_CONFIG_EMAIL;
-        final String password = PASS_CONFIG_EMAIL;     // App password
+        final String password = PASS_CONFIG_EMAIL;     
 
         Properties props = new Properties();
         props.put("mail.smtp.auth", "true");

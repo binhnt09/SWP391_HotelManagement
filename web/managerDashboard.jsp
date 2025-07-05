@@ -40,17 +40,16 @@
                     <h3>
                         <a href="loadtohome">
                             <img src="image/Logo.png" class="img-fluid"/>
-                            <b>Royal Hotel</b>
+                            <b>Paletin Hotel</b>
                         </a>
                     </h3>
                 </div>
 
                 <ul class="list-unstyled components"> 
-                    <li>
-                        <a href="managerDashboard.jsp" class="dashboard">
-                            <i class="material-icons">dashboard</i>
-                            <b>Manager dashboard</b>
-                            <!--<b>Welcome ${sessionScope.acc.username}</b>-->
+                    <li class="nav-item">
+                        <a href="managerDashboard.jsp" class="nav-link p-3 rounded bg-light d-flex flex-column align-items-start hover-shadow">
+                            <span class="text-secondary small font-weight-bold text-uppercase mb-1">${sessionScope.authLocal.user.roleName}</span>
+                            <span class="text-dark font-weight-bold h6 mb-0">${sessionScope.authLocal.user.firstName} ${sessionScope.authLocal.user.lastName}</span>
                         </a>
                     </li>
 
@@ -83,10 +82,31 @@
                         </a>
                     </li>
 
+                    <!-- Room Management hieu -->
+                    <li>
+                        <a href="manageroom">
+                            <i class="material-icons">domain</i>Room
+                        </a>
+                    </li>
+
+                    <!-- Service Management  -->
+                    <li>
+                        <a href="serviceList">
+                            <i class="material-icons">room_service</i>Service
+                        </a>
+                    </li>
+
                     <!-- Review Management -->
                     <li>
                         <a href="reviewmanager">
                             <i class="material-icons">rate_review</i>Review
+                        </a>
+                    </li>
+                    
+                    <!-- Cleaning List -->
+                    <li>
+                        <a href="cleaningList">
+                            <i class="material-icons">square</i>Cleaner
                         </a>
                     </li>
 
@@ -104,10 +124,18 @@
                         </a>
                     </li>
 
+
                     <!-- Payment -->
                     <li>
                         <a href="paymentaddmin">
                             <i class="material-icons">payment</i>Payment
+                        </a>
+                    </li>
+
+                    <!-- Account -->
+                    <li>
+                        <a href="authenticationList">
+                            <i class="material-icons">circle</i>Account
                         </a>
                     </li>
 

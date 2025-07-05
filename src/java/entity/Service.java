@@ -4,10 +4,6 @@
  */
 package entity;
 
-/**
- *
- * @author ASUS
- */
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 
@@ -27,6 +23,21 @@ public class Service {
     private boolean isDeleted;
 
     public Service() {
+    }
+
+    public Service(int serviceId, String name, String imageUrl, String description, BigDecimal price, String category, boolean status, Timestamp createdAt, Timestamp updatedAt, Timestamp deletedAt, Integer deletedBy, boolean isDeleted) {
+        this.serviceId = serviceId;
+        this.name = name;
+        this.imageUrl = imageUrl;
+        this.description = description;
+        this.price = price;
+        this.category = category;
+        this.status = status;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.deletedAt = deletedAt;
+        this.deletedBy = deletedBy;
+        this.isDeleted = isDeleted;
     }
 
     public int getServiceId() {

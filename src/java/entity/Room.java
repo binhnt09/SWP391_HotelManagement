@@ -25,6 +25,16 @@ public class Room {
     private Timestamp deletedAt;
     private int deletedBy;
     private boolean isDeleted;
+    
+    private RoomType roomType;
+
+    public RoomType getRoomType() {
+        return roomType;
+    }
+
+    public void setRoomType(RoomType roomType) {
+        this.roomType = roomType;
+    }
 
     public Room() {
     }
