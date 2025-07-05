@@ -48,9 +48,6 @@ public class VnpayReturn extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
 
-        Authentication authLocal = (Authentication) request.getSession().getAttribute("authLocal");
-        String email = authLocal.getUser().getEmail();
-
         try {
             Map<String, String> fields = new HashMap<>();
             for (Enumeration<String> params = request.getParameterNames(); params.hasMoreElements();) {
@@ -81,14 +78,18 @@ public class VnpayReturn extends HttpServlet {
                 BigDecimal amount = new BigDecimal(request.getParameter("vnp_Amount")).divide(BigDecimal.valueOf(100));
 
                 boolean transSuccess = false;
-                    PaymentDao paymentDao = new PaymentDao();
                 if ("00".equals(request.getParameter("vnp_TransactionStatus"))) {
+                    Authentication authLocal = (Authentication) request.getSession().getAttribute("authLocal");
+                    String email = authLocal.getUser().getEmail();
+                    System.out.println("auth: " + authLocal);
+
                     transSuccess = true;
 
                     // Update booking status
                     BookingDao bookingDao = new BookingDao();
                     bookingDao.updateStatus(bookingId, "PAID");
 
+                    PaymentDao paymentDao = new PaymentDao();
                     // Insert payment
                     Payment payment = new Payment();
                     payment.setBookingID(bookingId);
@@ -101,9 +102,10 @@ public class VnpayReturn extends HttpServlet {
 
                     paymentDao.insertPayment(payment);
 
-                }
+                    // send invoice
                     Invoice invoice = paymentDao.getInvoice(bookingId);
                     MailUtil.sendInvoice(email, invoice);
+                }
 
                 request.getSession().setAttribute(TRANS_RESULT, transSuccess);
                 responseToPaymentResult(request, response);

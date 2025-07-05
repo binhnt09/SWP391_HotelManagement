@@ -4,10 +4,14 @@
  */
 package controller.payment;
 
+import constant.MailUtil;
 import dao.BookingDao;
 import dao.PaymentDao;
+import entity.Authentication;
 import entity.Booking;
+import entity.Invoice;
 import entity.Payment;
+import entity.User;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -17,6 +21,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.math.BigDecimal;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -139,14 +145,18 @@ public class VietQrSepaycallback extends HttpServlet {
         // So khớp với booking
         BigDecimal amount = new BigDecimal(amountStr);
         BookingDao dao = new BookingDao();
-        Booking booking = dao.getBookingById(bookingId);
+        Booking booking = dao.findUserByBookingId(bookingId);
         System.out.println("✔️ content = " + content);
         System.out.println("✔️ amount = " + amountStr);
         System.out.println("✔️ bookingId = " + bookingId);
 
         if (booking != null) {
             dao.updateStatus(bookingId, "PAID");
+            User user = booking.getUser();
+            String email = user.getEmail();
 
+            System.out.println(user);
+            System.out.println("Email: " + email);
             // ✅ Ghi log hoặc insert vào bảng Payment nếu cần
             Payment payment = new Payment();
             payment.setBookingID(bookingId);
@@ -159,9 +169,16 @@ public class VietQrSepaycallback extends HttpServlet {
 
             PaymentDao paymentDao = new PaymentDao();
             paymentDao.insertPayment(payment);
-            
+
+            Invoice invoice = paymentDao.getInvoice(bookingId);
+            try {
+                MailUtil.sendInvoice(email, invoice);
+            } catch (Exception ex) {
+                Logger.getLogger(VietQrSepaycallback.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
             Booking updateBooking = dao.getBookingById(bookingId);
-            if(updateBooking != null && "PAID".equalsIgnoreCase(updateBooking.getStatus())){
+            if (updateBooking != null && "PAID".equalsIgnoreCase(updateBooking.getStatus())) {
                 HttpSession session = request.getSession();
                 session.removeAttribute("bookingId");
                 session.removeAttribute("accountName");

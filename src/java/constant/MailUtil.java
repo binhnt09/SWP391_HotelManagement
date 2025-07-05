@@ -153,15 +153,15 @@ public class MailUtil {
         if (invoice.getUser() != null) {
             sb.append("<p>Xin chào <strong>").append(invoice.getUser().getFirstName())
                     .append(invoice.getUser().getLastName()).append("</strong>,</p>");
-            sb.append("<p>Email: <strong>").append(invoice.getUser().getEmail()).append("</strong>,</p>");
-            sb.append("<p>Phone: <strong>").append(invoice.getUser().getPhone()).append("</strong>,</p>");
+            sb.append("<p>Email: <strong>").append(invoice.getUser().getEmail()).append("</strong></p>");
+            sb.append("<p>Phone: <strong>").append(invoice.getUser().getPhone()).append("</strong></p>");
         } else {
             sb.append("<p><strong>Không tìm thấy thông tin người dùng.</strong></p>");
         }
 
         if (invoice.getBooking() != null) {
             sb.append("<h3>Thông tin đặt phòng</h3><ul>");
-            sb.append("<li>Mã Booking: ").append(invoice.getBooking().getBookingId()).append("</li>");
+            sb.append("<li>Mã Booking: ").append(invoice.getBooking().getBookingId()).append(System.currentTimeMillis()).append("</li>");
             sb.append("<li>Ngày đặt: ").append(invoice.getBooking().getBookingDate()).append("</li>");
             sb.append("<li>Check-in: ").append(invoice.getBooking().getCheckInDate()).append("</li>");
             sb.append("<li>Check-out: ").append(invoice.getBooking().getCheckOutDate()).append("</li></ul>");
@@ -185,7 +185,7 @@ public class MailUtil {
         if (invoice.getBookingServices() != null && !invoice.getBookingServices().isEmpty()) {
             sb.append("<h3>Thông tin dịch vụ đã sử dụng</h3><ul>");
             for (BookingServices bs : invoice.getBookingServices()) {
-                sb.append("<li>Mã dịch vụ: ").append(bs.getService().getServiceId()).append("</li>");
+//                sb.append("<li>Mã dịch vụ: ").append(bs.getService().getServiceId()).append("</li>");
                 sb.append("<li>Tên dịch vụ: ").append(bs.getService().getName()).append("</li>");
                 sb.append("<li>Price: ").append(bs.getService().getPrice()).append("</li>");
                 sb.append("<li>BookingServiceId: ").append(bs.getBookingServiceId()).append("</li>");
@@ -194,24 +194,23 @@ public class MailUtil {
                 sb.append("<li>UseAt: ").append(bs.getUsedAt()).append("</li></ul>");
             }
         } else {
-            sb.append("<p><strong>Không có dịch vụ nào được sử dụng.</strong></p>");
+            sb.append("<strong>Không có dịch vụ nào được sử dụng.</strong>");
         }
 
         if (invoice.getBooking() != null && invoice.getBooking().getVoucher() != null) {
             sb.append("<h3>Voucher</h3><ul>");
             sb.append("<h3>Thông tin đặt phòng</h3><ul>");
-            sb.append("<li>VoucherId: ").append(invoice.getBooking().getVoucher().getVoucherId()).append("</li>");
+//            sb.append("<li>VoucherId: ").append(invoice.getBooking().getVoucher().getVoucherId()).append("</li>");
             sb.append("<li>Mã voucher: ").append(invoice.getBooking().getVoucher().getCode()).append("</li>");
             sb.append("<li>Giảm giá: ").append(invoice.getBooking().getVoucher().getDiscountPercentage()).append("</li>");
             sb.append("<li>Có hiệu lực từ: ").append(invoice.getBooking().getVoucher().getValidFrom()).append("</li></ul>");
             sb.append("<li>Ngày hết hạn: ").append(invoice.getBooking().getVoucher().getValidTo()).append("</li></ul>");
         } else {
-            sb.append("<p><strong>Không có voucher nào được sử dụng.</strong></p>");
+            sb.append("<strong>Không có voucher nào được sử dụng.</strong>");
         }
 
         if (invoice.getPayment()!= null) {
             sb.append("<h3>Thông tin thanh toán</h3><ul>");
-            sb.append("<li>Phương thức: ").append(invoice.getPayment().getPaymentID()).append("</li>");
             sb.append("<li>Phương thức: ").append(invoice.getPayment().getMethod()).append("</li>");
             sb.append("<li>Mã giao dịch: ").append(invoice.getPayment().getTransactionCode()).append("</li>");
             sb.append("<li>Ngân hàng: ").append(invoice.getPayment().getBankCode()).append("</li>");

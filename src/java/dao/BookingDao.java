@@ -57,6 +57,48 @@ public class BookingDao extends DBContext {
         return booking;
     }
 
+    public Booking findUserByBookingId(int bookingId) {
+        Booking booking = null;
+
+        String sql = "SELECT b.bookingID, b.UserID, b.VoucherID, b.BookingDate, b.CheckInDate, "
+                + "b.CheckOutDate, b.TotalAmount, b.Status, b.CreatedAt, b.UpdatedAt, "
+                + "b.deletedAt, b.deletedBy, b.isDeleted, u.UserID, u.email "
+                + "FROM Booking b "
+                + "JOIN [User] u ON b.UserID = u.userID "
+                + "WHERE b.bookingID = ? AND b.isDeleted = 0";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, bookingId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    booking = new Booking();
+                    booking.setBookingId(rs.getInt("bookingID"));
+                    booking.setUserId(rs.getInt("UserID"));
+                    booking.setVoucherId(rs.getObject("VoucherID") != null ? rs.getInt("VoucherID") : null);
+                    booking.setBookingDate(rs.getTimestamp("BookingDate"));
+                    booking.setCheckInDate(rs.getDate("CheckInDate"));
+                    booking.setCheckOutDate(rs.getDate("CheckOutDate"));
+                    booking.setTotalAmount(rs.getBigDecimal("TotalAmount"));
+                    booking.setStatus(rs.getString("Status"));
+                    booking.setCreatedAt(rs.getTimestamp("CreatedAt"));
+                    booking.setUpdatedAt(rs.getTimestamp("UpdatedAt"));
+                    booking.setDeletedAt(rs.getTimestamp("DeletedAt"));
+                    booking.setDeletedBy(rs.getObject("DeletedBy") != null ? rs.getInt("DeletedBy") : null);
+                    booking.setIsDeleted(rs.getBoolean("isDeleted"));
+
+                    User user = new User();
+                    user.setUserId(rs.getInt("userId"));
+                    user.setEmail(rs.getString("email"));
+                    booking.setUser(user); 
+                }
+            }
+        } catch (SQLException e) {
+            Logger.getLogger(BookingDao.class.getName()).log(Level.SEVERE, null, e);
+        }
+
+        return booking;
+    }
+
     public int insertBooking(Booking booking) {
         String sql = "INSERT INTO Booking (UserID, VoucherID, BookingDate, CheckInDate, "
                 + " CheckOutDate, TotalAmount, Status, CreatedAt, UpdatedAt, IsDeleted) "

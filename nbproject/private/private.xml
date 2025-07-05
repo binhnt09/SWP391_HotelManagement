@@ -7,21 +7,8 @@
             <file>file:/D:/FU%20Learning/Summer%202025/SWP391/SWP_HotelManagement_V1_1/SWP391_HotelManagement_V1/src/java/constant/MailUtil.java</file>
             <file>file:/D:/FU%20Learning/Summer%202025/SWP391/SWP_HotelManagement_V1_1/SWP391_HotelManagement_V1/src/java/controller/payment/VietQrSepaycallback.java</file>
             <file>file:/D:/FU%20Learning/Summer%202025/SWP391/SWP_HotelManagement_V1_1/SWP391_HotelManagement_V1/src/java/dao/PaymentDao.java</file>
+            <file>file:/D:/FU%20Learning/Summer%202025/SWP391/SWP_HotelManagement_V1_1/SWP391_HotelManagement_V1/src/java/controller/payment/VnpayReturn.java</file>
             <file>file:/D:/FU%20Learning/Summer%202025/SWP391/SWP_HotelManagement_V1_1/SWP391_HotelManagement_V1/src/java/controller/payment/VietQrReturn.java</file>
-
-            <file>file:/D:/Project%20SWP391/SWP391_HotelManagement/src/java/entity/Room.java</file>
-            <file>file:/D:/Project%20SWP391/SWP391_HotelManagement/src/java/controller/CleaningListServlet.java</file>
-            <file>file:/D:/Project%20SWP391/SWP391_HotelManagement/src/java/dao/CleaningHistoryDAO.java</file>
-            <file>file:/D:/Project%20SWP391/SWP391_HotelManagement/src/java/controller/payment/VietQrSepaycallback.java</file>
-            <file>file:/D:/Project%20SWP391/SWP391_HotelManagement/src/java/controller/StartCleaningServlet.java</file>
-            <file>file:/D:/Project%20SWP391/SWP391_HotelManagement/src/java/dao/ServiceDAO.java</file>
-            <file>file:/D:/Project%20SWP391/SWP391_HotelManagement/web/cleaning-list.jsp</file>
-            <file>file:/D:/Project%20SWP391/SWP391_HotelManagement/src/java/controller/ServiceUpdateServlet.java</file>
-            <file>file:/D:/Project%20SWP391/SWP391_HotelManagement/src/java/entity/Service.java</file>
-            <file>file:/D:/Project%20SWP391/SWP391_HotelManagement/src/java/constant/MailUtil.java</file>
-            <file>file:/D:/Project%20SWP391/SWP391_HotelManagement/src/java/controller/ExportExcelServlet.java</file>
-            <file>file:/D:/Project%20SWP391/SWP391_HotelManagement/web/service-manager.jsp</file>
-            <file>file:/D:/Project%20SWP391/SWP391_HotelManagement/src/java/entity/CleaningHistory.java</file>
         </group>
     </open-files>
 </project-private>

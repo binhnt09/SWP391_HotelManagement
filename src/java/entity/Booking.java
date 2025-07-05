@@ -29,6 +29,7 @@ public class Booking {
     private boolean isDeleted;
     
     private Voucher voucher;
+    private User user;
     
 
     public Booking() {
@@ -176,9 +177,17 @@ public class Booking {
         this.voucher = voucher;
     }
 
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
     @Override
     public String toString() {
-        return "Booking{" + "bookingID=" + bookingId + ", userID=" + userId + ", voucherID=" + voucherId + ", bookingDate=" + bookingDate + ", checkInDate=" + checkInDate + ", checkOutDate=" + checkOutDate + ", totalAmount=" + totalAmount + ", status=" + status + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + ", deletedAt=" + deletedAt + ", deletedBy=" + deletedBy + ", isDeleted=" + isDeleted + ", voucher=" + voucher + '}';
+        return "Booking{" + "bookingId=" + bookingId + ", userId=" + userId + ", voucherId=" + voucherId + ", bookingDate=" + bookingDate + ", checkInDate=" + checkInDate + ", checkOutDate=" + checkOutDate + ", totalAmount=" + totalAmount + ", status=" + status + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + ", deletedAt=" + deletedAt + ", deletedBy=" + deletedBy + ", isDeleted=" + isDeleted + ", voucher=" + voucher + ", user=" + user + '}';
     }
-    
+
 }
