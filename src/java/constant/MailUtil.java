@@ -10,6 +10,7 @@ import entity.Invoice;
 import javax.mail.*;
 import javax.mail.internet.*;
 import java.util.Properties;
+import java.util.UUID;
 
 /**
  *
@@ -45,6 +46,7 @@ public class MailUtil {
         msg.setRecipient(Message.RecipientType.TO, new InternetAddress(toEmail));
         msg.setSubject(MimeUtility.encodeText("Mã xác minh tài khoản Palatin", "utf-8", "B"));
         msg.setContent("Mã xác minh tài khoản Palatin", "text/html; charset=UTF-8");
+        msg.setHeader("Message-ID", "<" + UUID.randomUUID().toString() + "@palatin.vn>");
         String html = String.format("""
             <!DOCTYPE html>
             <html lang="vi">
@@ -134,8 +136,11 @@ public class MailUtil {
         Message msg = new MimeMessage(session);
         msg.setFrom(new InternetAddress(fromEmail, "Palatin Support", "UTF-8"));
         msg.setRecipient(Message.RecipientType.TO, new InternetAddress(toEmail));
-        msg.setSubject(MimeUtility.encodeText("Thông tin chi tiết booking và hóa đơn", "utf-8", "B"));
-        msg.setContent("Hóa đơn thanh toán - Palatin", "text/html; charset=UTF-8");
+        String subject = "Hóa đơn #" + invoice.getBooking().getBookingId() + " - " + System.currentTimeMillis();
+        msg.setSubject(MimeUtility.encodeText(subject, "utf-8", "B"));
+//        msg.setContent("Hóa đơn thanh toán - Palatin", "text/html; charset=UTF-8");
+        msg.setHeader("Message-ID", "<" + UUID.randomUUID().toString() + "@palatin.vn>");
+
         String html = buildInvoiceHtml(invoice);
         msg.setContent(html, "text/html; charset=UTF-8");
         Transport.send(msg);
