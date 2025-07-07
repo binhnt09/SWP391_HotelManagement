@@ -27,7 +27,7 @@ public class MailUtil {
     public static void send(String toEmail, String code) throws Exception {
 
         final String fromEmail = EMAIL_CONFIG_EMAIL;
-        final String password = PASS_CONFIG_EMAIL;     
+        final String password = PASS_CONFIG_EMAIL;
 
         Properties props = new Properties();
         props.put("mail.smtp.auth", "true");
@@ -149,78 +149,103 @@ public class MailUtil {
     private static String buildInvoiceHtml(Invoice invoice) {
         StringBuilder sb = new StringBuilder();
 
-        sb.append("<h2>Hóa đơn đặt phòng - Palatin Hotel</h2>");
+        sb.append("<html><head><style>")
+                .append("body { font-family: Arial, sans-serif; background-color: #f9f9f9; padding: 20px; }")
+                .append("h2, h3 { color: #2c3e50; }")
+                .append("table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }")
+                .append("table, th, td { border: 1px solid #ccc; }")
+                .append("th, td { padding: 10px; text-align: left; }")
+                .append("th { background-color: #ecf0f1; }")
+                .append("ul { list-style-type: none; padding: 0; }")
+                .append("li { margin-bottom: 5px; }")
+                .append("</style></head><body>");
+
+        sb.append("<h2>🧾 HÓA ĐƠN ĐẶT PHÒNG - PALATIN HOTEL</h2>");
+
         if (invoice.getUser() != null) {
-            sb.append("<p>Xin chào <strong>").append(invoice.getUser().getFirstName())
-                    .append(invoice.getUser().getLastName()).append("</strong>,</p>");
-            sb.append("<p>Email: <strong>").append(invoice.getUser().getEmail()).append("</strong></p>");
-            sb.append("<p>Phone: <strong>").append(invoice.getUser().getPhone()).append("</strong></p>");
+            sb.append("<h3>👤 Thông tin khách hàng</h3><ul>")
+                    .append("<li><strong>Họ tên:</strong> ").append(invoice.getUser().getFirstName())
+                    .append(" ").append(invoice.getUser().getLastName()).append("</li>")
+                    .append("<li><strong>Email:</strong> ").append(invoice.getUser().getEmail()).append("</li>")
+                    .append("<li><strong>Số điện thoại:</strong> ").append(invoice.getUser().getPhone()).append("</li>")
+                    .append("</ul>");
         } else {
-            sb.append("<p><strong>Không tìm thấy thông tin người dùng.</strong></p>");
+            sb.append("<p><strong>❌ Không tìm thấy thông tin người dùng.</strong></p>");
         }
 
         if (invoice.getBooking() != null) {
-            sb.append("<h3>Thông tin đặt phòng</h3><ul>");
-            sb.append("<li>Mã Booking: ").append(invoice.getBooking().getBookingId()).append(System.currentTimeMillis()).append("</li>");
-            sb.append("<li>Ngày đặt: ").append(invoice.getBooking().getBookingDate()).append("</li>");
-            sb.append("<li>Check-in: ").append(invoice.getBooking().getCheckInDate()).append("</li>");
-            sb.append("<li>Check-out: ").append(invoice.getBooking().getCheckOutDate()).append("</li></ul>");
+            sb.append("<h3>🛏️ Thông tin đặt phòng</h3><ul>")
+                    .append("<li><strong>Mã Booking:</strong> ").append(invoice.getBooking().getBookingId()).append("</li>")
+                    .append("<li><strong>Ngày đặt:</strong> ").append(invoice.getBooking().getBookingDate()).append("</li>")
+                    .append("<li><strong>Check-in:</strong> ").append(invoice.getBooking().getCheckInDate()).append("</li>")
+                    .append("<li><strong>Check-out:</strong> ").append(invoice.getBooking().getCheckOutDate()).append("</li>")
+                    .append("</ul>");
         } else {
-            sb.append("<p><strong>Không tìm thấy thông tin booking.</strong></p>");
+            sb.append("<p><strong>❌ Không tìm thấy thông tin booking.</strong></p>");
         }
 
         BookingDetails bd = invoice.getBookingDetails();
         if (bd != null && bd.getRoom() != null) {
-            sb.append("<h3>Chi tiết phòng</h3><table border='1'><tr><th>Phòng</th><th>Giá</th><th>Số đêm</th></tr>");
-            sb.append("<tr>")
+            sb.append("<h3>🏨 Chi tiết phòng</h3>")
+                    .append("<table><thead><tr>")
+                    .append("<th>Số phòng</th><th>Giá mỗi đêm</th><th>Số đêm</th>")
+                    .append("</tr></thead><tbody><tr>")
                     .append("<td>").append(bd.getRoom().getRoomNumber()).append("</td>")
                     .append("<td>").append(bd.getRoom().getPrice()).append("</td>")
                     .append("<td>").append(bd.getNights()).append("</td>")
-                    .append("</tr>");
-            sb.append("</table>");
+                    .append("</tr></tbody></table>");
         } else {
-            sb.append("<p><strong>Không có chi tiết phòng.</strong></p>");
+            sb.append("<p><strong>❌ Không có chi tiết phòng.</strong></p>");
         }
 
         if (invoice.getBookingServices() != null && !invoice.getBookingServices().isEmpty()) {
-            sb.append("<h3>Thông tin dịch vụ đã sử dụng</h3><ul>");
+            sb.append("<h3>🛎️ Dịch vụ đã sử dụng</h3>")
+                    .append("<table><thead><tr>")
+                    .append("<th>Tên dịch vụ</th><th>Giá</th><th>Số lượng</th><th>Giá lúc sử dụng</th><th>Thời gian sử dụng</th>")
+                    .append("</tr></thead><tbody>");
+
             for (BookingServices bs : invoice.getBookingServices()) {
-//                sb.append("<li>Mã dịch vụ: ").append(bs.getService().getServiceId()).append("</li>");
-                sb.append("<li>Tên dịch vụ: ").append(bs.getService().getName()).append("</li>");
-                sb.append("<li>Price: ").append(bs.getService().getPrice()).append("</li>");
-                sb.append("<li>BookingServiceId: ").append(bs.getBookingServiceId()).append("</li>");
-                sb.append("<li>Số lượng: ").append(bs.getQuantity()).append("</li></ul>");
-                sb.append("<li>PriceUse: ").append(bs.getPriceAtUse()).append("</li></ul>");
-                sb.append("<li>UseAt: ").append(bs.getUsedAt()).append("</li></ul>");
+                sb.append("<tr>")
+                        .append("<td>").append(bs.getService().getName()).append("</td>")
+                        .append("<td>").append(bs.getService().getPrice()).append("</td>")
+                        .append("<td>").append(bs.getQuantity()).append("</td>")
+                        .append("<td>").append(bs.getPriceAtUse()).append("</td>")
+                        .append("<td>").append(bs.getUsedAt()).append("</td>")
+                        .append("</tr>");
             }
+
+            sb.append("</tbody></table>");
         } else {
-            sb.append("<strong>Không có dịch vụ nào được sử dụng.</strong>");
+            sb.append("<p><strong>❌ Không có dịch vụ nào được sử dụng.</strong></p>");
         }
 
         if (invoice.getBooking() != null && invoice.getBooking().getVoucher() != null) {
-            sb.append("<h3>Voucher</h3><ul>");
-            sb.append("<h3>Thông tin đặt phòng</h3><ul>");
-//            sb.append("<li>VoucherId: ").append(invoice.getBooking().getVoucher().getVoucherId()).append("</li>");
-            sb.append("<li>Mã voucher: ").append(invoice.getBooking().getVoucher().getCode()).append("</li>");
-            sb.append("<li>Giảm giá: ").append(invoice.getBooking().getVoucher().getDiscountPercentage()).append("</li>");
-            sb.append("<li>Có hiệu lực từ: ").append(invoice.getBooking().getVoucher().getValidFrom()).append("</li></ul>");
-            sb.append("<li>Ngày hết hạn: ").append(invoice.getBooking().getVoucher().getValidTo()).append("</li></ul>");
+            sb.append("<h3>🎟️ Voucher áp dụng</h3><ul>")
+                    .append("<li><strong>Mã voucher:</strong> ").append(invoice.getBooking().getVoucher().getCode()).append("</li>")
+                    .append("<li><strong>Giảm giá:</strong> ").append(invoice.getBooking().getVoucher().getDiscountPercentage()).append("%</li>")
+                    .append("<li><strong>Hiệu lực:</strong> ").append(invoice.getBooking().getVoucher().getValidFrom())
+                    .append(" → ").append(invoice.getBooking().getVoucher().getValidTo()).append("</li>")
+                    .append("</ul>");
         } else {
-            sb.append("<strong>Không có voucher nào được sử dụng.</strong>");
+            sb.append("<p><strong>❌ Không có voucher nào được sử dụng.</strong></p>");
         }
 
-        if (invoice.getPayment()!= null) {
-            sb.append("<h3>Thông tin thanh toán</h3><ul>");
-            sb.append("<li>Phương thức: ").append(invoice.getPayment().getMethod()).append("</li>");
-            sb.append("<li>Mã giao dịch: ").append(invoice.getPayment().getTransactionCode()).append("</li>");
-            sb.append("<li>Ngân hàng: ").append(invoice.getPayment().getBankCode()).append("</li>");
-            sb.append("<li>Tổng thanh toán: ").append(invoice.getPayment().getAmount()).append(" VND</li></ul>");
+        if (invoice.getPayment() != null) {
+            sb.append("<h3>💳 Thanh toán</h3><ul>")
+                    .append("<li><strong>Phương thức:</strong> ").append(invoice.getPayment().getMethod()).append("</li>")
+                    .append("<li><strong>Mã giao dịch:</strong> ").append(invoice.getPayment().getTransactionCode()).append("</li>")
+                    .append("<li><strong>Ngân hàng:</strong> ").append(invoice.getPayment().getBankCode()).append("</li>")
+                    .append("<li><strong>Tổng thanh toán:</strong> ").append(invoice.getPayment().getAmount()).append(" VND</li>")
+                    .append("</ul>");
         } else {
-            sb.append("<p><strong>Không có payment.</strong></p>");
+            sb.append("<p><strong>❌ Không có thông tin thanh toán.</strong></p>");
         }
 
-        sb.append("<p>Trân trọng,</p><p><strong>Palatin Hotel</strong></p>");
+        sb.append("<p>Trân trọng,</p>")
+                .append("<p><strong>Palatin Hotel</strong></p>");
 
+        sb.append("</body></html>");
         return sb.toString();
     }
+
 }

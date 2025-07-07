@@ -22,7 +22,7 @@
                 </a>
             </div>
             <div class="list-group-item ${pageContext.request.requestURI.endsWith('historypayment.jsp') ? 'active' : ''}">
-                <a class="dropdown-item" href="${pageContext.request.contextPath}/views/profile/historypayment.jsp">
+                <a class="dropdown-item" href="${pageContext.request.contextPath}/paymenthistory">
                     <i class="fas fa-list"></i> Danh sách giao dịch
                 </a>
             </div>
@@ -42,7 +42,7 @@
                 </a>
             </div>
             <div class="list-group-item ${pageContext.request.requestURI.endsWith('profile.jsp') ? 'active' : ''}">
-                <a class="dropdown-item" href="${pageContext.request.contextPath}/views/profile/profile.jsp">
+                <a class="dropdown-item" href="${pageContext.request.contextPath}/updateprofile">
                     <i class="fas fa-cog"></i> Tài khoản
                 </a>
             </div>

@@ -29,12 +29,75 @@ import java.util.logging.Logger;
  */
 public class PaymentDao extends DBContext {
 
+    public List<Payment> getAllPayments() {
+        List<Payment> list = new ArrayList<>();
+
+        String sql = """
+                     SELECT p.PaymentID, p.BookingID, p.Method, p.TransactionCode, p.BankCode, p.Amount, p.Status, p.CreatedAt
+                     FROM Payment p
+                     WHERE p.IsDeleted = 0
+                     ORDER BY p.CreatedAt DESC;""";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                Payment p = new Payment();
+                p.setPaymentId(rs.getInt("PaymentID"));
+                p.setBookingId(rs.getInt("BookingID"));
+                p.setMethod(rs.getString("Method"));
+                p.setTransactionCode(rs.getString("TransactionCode"));
+                p.setBankCode(rs.getString("BankCode"));
+                p.setAmount(rs.getBigDecimal("Amount"));
+                p.setStatus(rs.getString("Status"));
+                p.setCreatedAt(rs.getTimestamp("CreatedAt"));
+
+                list.add(p);
+            }
+        } catch (SQLException e) {
+            Logger.getLogger(PaymentDao.class.getName()).log(Level.SEVERE, null, e);
+        }
+        return list;
+    }
+
+    public List<Payment> getAllPaymentsByUserId(int UserId) {
+        List<Payment> list = new ArrayList<>();
+
+        String sql = """
+                     SELECT p.PaymentID, p.BookingID, p.Method, p.BankCode,
+                     \t   p.TransactionCode, p.Amount, p.Status, p.CreatedAt
+                     FROM Payment p
+                     \tJOIN Booking b ON p.BookingID = b.BookingID
+                     WHERE b.UserID = ? AND p.IsDeleted = 0
+                     ORDER BY p.CreatedAt DESC;""";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql);) {
+            ps.setInt(1, UserId);
+            ResultSet rs = ps.executeQuery();
+            
+            while (rs.next()) {
+                Payment p = new Payment();
+                p.setPaymentId(rs.getInt("PaymentID"));
+                p.setBookingId(rs.getInt("BookingID"));
+                p.setMethod(rs.getString("Method"));
+                p.setTransactionCode(rs.getString("TransactionCode"));
+                p.setBankCode(rs.getString("BankCode"));
+                p.setAmount(rs.getBigDecimal("Amount"));
+                p.setStatus(rs.getString("Status"));
+                p.setCreatedAt(rs.getTimestamp("CreatedAt"));
+
+                list.add(p);
+            }
+        } catch (SQLException e) {
+            Logger.getLogger(PaymentDao.class.getName()).log(Level.SEVERE, null, e);
+        }
+        return list;
+    }
+
     public int insertPayment(Payment payment) {
         String sql = "INSERT INTO [dbo].[Payment] "
                 + "([BookingID], [Amount], [Method], [Status], [TransactionCode], [BankCode], [GatewayResponse], [QRRef], [CreatedAt], [UpdatedAt], [IsDeleted]) "
                 + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, GETDATE(), GETDATE(), 0)";
         try (PreparedStatement st = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            st.setInt(1, payment.getBookingID());
+            st.setInt(1, payment.getBookingId());
             st.setBigDecimal(2, payment.getAmount());
             st.setString(3, payment.getMethod());
             st.setString(4, payment.getStatus());
@@ -65,7 +128,7 @@ public class PaymentDao extends DBContext {
         String sql = "UPDATE [dbo].[Payment] SET [Status] = ?, [UpdatedAt] = GETDATE() WHERE [PaymentID] = ?";
         try (PreparedStatement st = connection.prepareStatement(sql)) {
             st.setString(1, payment.getStatus());
-            st.setInt(2, payment.getPaymentID());
+            st.setInt(2, payment.getPaymentId());
             return st.executeUpdate() > 0;
         } catch (SQLException e) {
             Logger.getLogger(PaymentDao.class.getName()).log(Level.SEVERE, null, e);
@@ -77,21 +140,22 @@ public class PaymentDao extends DBContext {
         Invoice invoice = new Invoice();
         List<BookingServices> bookServices = new ArrayList<>();
 
-        String sql = "SELECT \n"
-                + "	b.BookingID, u.FirstName, u.LastName, u.Email, u.phone, r.RoomID, r.RoomNumber, r.Price AS RoomPrice, \n"
-                + "	bd.BookingDetailID, bd.Nights, s.ServiceID, s.Name AS ServiceName, s.Category, s.Price AS ServicePrice,\n"
-                + "	bs.BookingServiceID, bs.Quantity, bs.PriceAtUse, bs.UsedAt, v.VoucherID, v.Code, v.DiscountPercentage,\n"
-                + "	v.ValidFrom, v.ValidTo, p.PaymentID, p.Amount, p.Method, p.Status, p.TransactionCode,\n"
-                + "	p.BankCode, b.BookingDate, b.CheckInDate, b.CheckOutDate\n"
-                + "FROM Booking b\n"
-                + "	JOIN BookingDetail bd ON bd.BookingID = b.BookingID\n"
-                + "	JOIN Room r ON r.RoomID = bd.RoomID\n"
-                + "	JOIN Payment p ON p.BookingID = b.BookingID\n"
-                + "	JOIN [User] u ON u.UserID = b.UserID\n"
-                + "	LEFT JOIN Voucher v ON v.VoucherID = b.VoucherID\n"
-                + "	LEFT JOIN BookingService bs ON bs.BookingID = b.BookingID AND bs.IsDeleted = 0\n"
-                + "	LEFT JOIN [Service] s ON s.ServiceID = bs.ServiceID\n"
-                + "WHERE b.BookingID = ?";
+        String sql = """
+                     SELECT 
+                     \tb.BookingID, u.FirstName, u.LastName, u.Email, u.phone, r.RoomID, r.RoomNumber, r.Price AS RoomPrice, 
+                     \tbd.BookingDetailID, bd.Nights, s.ServiceID, s.Name AS ServiceName, s.Category, s.Price AS ServicePrice,
+                     \tbs.BookingServiceID, bs.Quantity, bs.PriceAtUse, bs.UsedAt, v.VoucherID, v.Code, v.DiscountPercentage,
+                     \tv.ValidFrom, v.ValidTo, p.PaymentID, p.Amount, p.Method, p.Status, p.TransactionCode,
+                     \tp.BankCode, b.BookingDate, b.CheckInDate, b.CheckOutDate
+                     FROM Booking b
+                     \tJOIN BookingDetail bd ON bd.BookingID = b.BookingID
+                     \tJOIN Room r ON r.RoomID = bd.RoomID
+                     \tJOIN Payment p ON p.BookingID = b.BookingID
+                     \tJOIN [User] u ON u.UserID = b.UserID
+                     \tLEFT JOIN Voucher v ON v.VoucherID = b.VoucherID
+                     \tLEFT JOIN BookingService bs ON bs.BookingID = b.BookingID AND bs.IsDeleted = 0
+                     \tLEFT JOIN [Service] s ON s.ServiceID = bs.ServiceID
+                     WHERE b.BookingID = ?""";
 
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
 
@@ -136,17 +200,13 @@ public class PaymentDao extends DBContext {
                     room.setRoomNumber(rs.getString("RoomNumber"));
                     room.setPrice(rs.getDouble("RoomPrice"));
                     detail.setRoom(room);
-                    // BookingDetail
-//                    detail.getRoom().setRoomID(rs.getInt("RoomID"));
-//                    detail.getRoom().setRoomNumber(rs.getString("RoomNumber"));
-//                    detail.getRoom().setPrice(rs.getDouble("RoomPrice"));
                     detail.setBookingDetailId(rs.getInt("BookingServiceID"));
                     detail.setNights(rs.getInt("Nights"));
                     invoice.setBookingDetails(detail);
 
                     // Payment
                     Payment payment = new Payment();
-                    payment.setPaymentID(rs.getInt("PaymentID"));
+                    payment.setPaymentId(rs.getInt("PaymentID"));
                     payment.setAmount(rs.getBigDecimal("Amount"));
                     payment.setMethod(rs.getString("Method"));
                     payment.setStatus(rs.getString("Status"));
@@ -180,5 +240,15 @@ public class PaymentDao extends DBContext {
             Logger.getLogger(PaymentDao.class.getName()).log(Level.SEVERE, null, e);
         }
         return invoice;
+    }
+    
+    public static void main(String[] args) {
+        PaymentDao a = new PaymentDao();
+        List<Payment> listins = a.getAllPaymentsByUserId(52);
+
+        for (Payment ins : listins) {
+            System.out.println(ins);
+        }
+        System.out.println("Booking List Size: " + (listins == null ? "NULL" : listins.size()));
     }
 }

@@ -92,7 +92,7 @@ public class VnpayReturn extends HttpServlet {
                     PaymentDao paymentDao = new PaymentDao();
                     // Insert payment
                     Payment payment = new Payment();
-                    payment.setBookingID(bookingId);
+                    payment.setBookingId(bookingId);
                     payment.setAmount(amount);
                     payment.setMethod("VNPay");
                     payment.setStatus("Paid");

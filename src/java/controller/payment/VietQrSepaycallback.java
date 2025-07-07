@@ -91,7 +91,7 @@ public class VietQrSepaycallback extends HttpServlet {
         PrintWriter out = response.getWriter();
 
         String contentType = request.getContentType();
-        System.out.println("Webhook Content-Type: " + contentType);
+//        System.out.println("Webhook Content-Type: " + contentType);
 
         String content = null;
         String amountStr = null;
@@ -115,12 +115,11 @@ public class VietQrSepaycallback extends HttpServlet {
                 }
                 transactionCode = json.optString("referenceCode");
             } else {
-                System.out.println("Webhook Form Data: content=" + request.getParameter("content") + ", amount=" + request.getParameter("transferAmount"));
+//                System.out.println("Webhook Form Data: content=" + request.getParameter("content") + ", amount=" + request.getParameter("transferAmount"));
                 content = request.getParameter("content");
                 amountStr = request.getParameter("transferAmount");
             }
         } catch (IOException | JSONException e) {
-            System.err.println("Error parsing JSON: " + e.getMessage());
             out.write("{\"success\": false, \"error\": \"Error parsing webhook JSON: " + e.getMessage() + "\"}");
             return;
         }
@@ -146,20 +145,15 @@ public class VietQrSepaycallback extends HttpServlet {
         BigDecimal amount = new BigDecimal(amountStr);
         BookingDao dao = new BookingDao();
         Booking booking = dao.findUserByBookingId(bookingId);
-        System.out.println("✔️ content = " + content);
-        System.out.println("✔️ amount = " + amountStr);
-        System.out.println("✔️ bookingId = " + bookingId);
 
         if (booking != null) {
             dao.updateStatus(bookingId, "PAID");
             User user = booking.getUser();
             String email = user.getEmail();
 
-            System.out.println(user);
-            System.out.println("Email: " + email);
-            // ✅ Ghi log hoặc insert vào bảng Payment nếu cần
+            // Ghi log hoặc insert vào bảng Payment nếu cần
             Payment payment = new Payment();
-            payment.setBookingID(bookingId);
+            payment.setBookingId(bookingId);
             payment.setAmount(amount);
             payment.setMethod("VietQR");
             payment.setStatus("Paid");
@@ -187,7 +181,6 @@ public class VietQrSepaycallback extends HttpServlet {
                 session.removeAttribute("description");
                 session.removeAttribute("qrUrl");
             }
-            System.out.println("✅ bookingId after clear: " + request.getSession().getAttribute("bookingId")); // Should be null
             out.write("{\"success\": true, \"message\": \"Booking updated to PAID\"}");
         } else {
             out.write("{\"success\": false, \"message\": \"Booking not matched or already PAID\"}");
