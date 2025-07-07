@@ -272,9 +272,11 @@
                                                                 <div class="font-weight-bold text-dark">🥉 Bronze Priority</div>
                                                                 <div class="text-muted small">0 Điểm</div>
                                                             </div>
-                                                            <a class="dropdown-item" href="updateprofile" style="color: black"><i class="fa fa-user mr-2 text-primary"></i> Tài khoản của tôi</a>
-                                                            <a class="dropdown-item" href="updateprofile" style="color: black"><i class="fa fa-user mr-2 text-primary"></i> Cập nhật hồ sơ</a>
-                                                            <a class="dropdown-item" href="payment" style="color: black"><i class="fa fa-credit-card mr-2 text-primary"></i> Payment</a>
+                                                            <a class="dropdown-item" href="updateprofile" style="color: black"><i class="fa fa-user mr-2 text-primary"></i> Điểm</a>
+                                                            <a class="dropdown-item" href="updateprofile" style="color: black"><i class="fa fa-user mr-2 text-primary"></i> Chỉnh sửa hồ sơ</a>
+                                                            <a class="dropdown-item" href="${pageContext.request.contextPath}/paymenthistory" style="color: black"><i class="fas fa-list mr-2 text-primary"></i> Danh sách giao dịch</a>
+                                                            <a class="dropdown-item" href="${pageContext.request.contextPath}/bookingroomcustomer" style="color: black"><i class="fas fa-bed mr-2 text-primary"></i> Đặt chỗ của tôi</a>
+                                                            <a class="dropdown-item" href="${pageContext.request.contextPath}/updateprofile" style="color: black"><i class="fa fa-credit-card mr-2 text-primary"></i> Khuyến mãi</a>
                                                             <!--<a href="#verifyEmailChange-modal" class="dropdown-item switch-modal" style="font-size: 14px; color: black">Change your password </a>-->
                                                             <c:if test="${sessionScope.authLocal.authType eq 'local'}">
                                                                 <a href="#changePassword-modal" class="dropdown-item switch-modal" style="font-size: 14px; color: black">

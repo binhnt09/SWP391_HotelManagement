@@ -91,7 +91,7 @@
                                         <button class="btn btn-outline-primary filter-btn active" data-range="90days">90 ngày qua</button>
                                         <button class="btn btn-outline-primary filter-btn" data-range="6-2025">Tháng 6 2025</button>
                                         <button class="btn btn-outline-primary filter-btn" data-range="5-2025">Tháng 5 2025</button>
-                                        <button class="btn btn-outline-primary" onclick="toggleCustomDate()">Ngày tùy chọn</button>
+                                        <button class="btn btn-outline-primary filter-btn" data-range="custom" onclick="toggleCustomDate()">Ngày tùy chọn</button>
                                     </div>
 
                                     <div id="customDateForm" class="custom-date-form d-none mt-4 p-4">
@@ -121,7 +121,7 @@
                                     <img src="images/no-transaction.png" alt="No Transaction" style="height: 100px">
                                     <h5 class="mt-3">Không tìm thấy giao dịch</h5>
                                     <p>Không có giao dịch nào trong khoảng thời gian bạn chọn.</p>
-                                    <a href="payment-history" class="btn btn-outline-primary">Đặt lại bộ lọc</a>
+                                    <a href="searchroom" class="btn btn-outline-primary">Tạo mới giao dịch</a>
                                 </div>
 
                                 <!-- Table transaction -->
@@ -141,7 +141,7 @@
                                         </thead>
                                         <tbody>
                                         <c:forEach var="p" items="${listPayments}" varStatus="i">
-                                            <tr data-date="${p.createdAt}">
+                                            <tr data-date="<fmt:formatDate value='${p.createdAt}' pattern='yyyy-MM-dd'/>">
                                                 <td>${i.index + 1}</td>
                                                 <td>${p.paymentId}</td>
                                                 <td>${p.amount} VND</td>
@@ -150,31 +150,97 @@
                                                 <td>
                                                     <span class="badge ${p.status == 'Paid' ? 'bg-success' : 'bg-secondary'}">${p.status}</span>
                                                 </td>
-                                                <td><fmt:formatDate value="${p.createdAt}" pattern="yyyy-MM-dd"/></td>
+                                                <td><fmt:formatDate value="${p.createdAt}" pattern="yyyy-MM-dd HH:mm"/></td>
                                                 <td>
-                                                    <a href="view-invoice?paymentId=${p.paymentId}" class="btn btn-sm btn-outline-primary">Xem</a>
-                                                    <a href="download-invoice?paymentId=${p.paymentId}" class="btn btn-sm btn-outline-success">Tải</a>
+                                                    <!--<a href="view-invoice?paymentId=${p.paymentId}" class="btn btn-sm btn-outline-primary">Xem</a>-->
+                                                    <a href="javascript:void(0);" class="btn btn-sm btn-outline-primary btn-view-invoice"
+                                                       data-paymFentid="${p.paymentId}" data-amount="${p.amount}" data-method="${p.method}" data-bank="${p.bankCode}" 
+                                                       data-status="${p.status}" ata-date="<fmt:formatDate value='${p.createdAt}' pattern='yyyy-MM-dd HH:mm'/>"> Xem </a>
+
+                                                    <!--<a href="download-invoice?paymentId=${p.paymentId}" class="btn btn-sm btn-outline-success">Tải</a>-->
+                                                    <a href="downloadinvoice?paymentId=${p.paymentId}" class="btn btn-outline-success">
+                                                        <i class="bi bi-download"></i> Tải hóa đơn
+                                                    </a>
+
+
                                                 </td>
                                             </tr>
                                         </c:forEach>
                                     </tbody>
                                 </table>
                             </div>
-
                             <!-- Pagination -->
-                            <nav class="mt-4">
-                                <ul class="pagination justify-content-center">
-                                    <c:forEach begin="1" end="${totalPages}" var="page">
-                                        <li class="page-item ${page == pageIndex ? 'active' : ''}">
-                                            <a class="page-link" href="?page=${page}">${page}</a>
-                                        </li>
-                                    </c:forEach>
-                                </ul>
-                            </nav>
+                            <nav class="mt-4"><ul class="pagination justify-content-center" id="pagination"></ul></nav>
                         </div>
 
 
+                        <!-- Popup hóa đơn -->
+                        <div class="modal fade" id="invoiceModal" tabindex="-1" role="dialog" aria-labelledby="invoiceModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">
+                                <div class="modal-content border-0 shadow">
+                                    <div class="modal-header bg-primary text-white">
+                                        <h5 class="modal-title" id="invoiceModalLabel">
+                                            <i class="bi bi-receipt-cutoff me-2"></i>HÓA ĐƠN ĐẶT PHÒNG - PALATIN HOTEL
+                                        </h5>
+                                        <button style="background: none; border: none; color: white; font-size: 20px" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <i class="fa fa-times" aria-hidden="true"></i>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body p-4">
+                                        <!-- Thông tin khách hàng -->
+                                        <div class="mb-4">
+                                            <h6><i class="bi bi-person-fill me-2"></i>Thông tin khách hàng</h6>
+                                            <p><strong>Họ tên:</strong> <span id="customerName"></span></p>
+                                            <p><strong>Email:</strong> <span id="customerEmail"></span></p>
+                                            <p><strong>Số điện thoại:</strong> <span id="customerPhone"></span></p>
+                                        </div>
+
+                                        <!-- Thông tin đặt phòng -->
+                                        <div class="mb-4">
+                                            <h6><i class="bi bi-calendar-check-fill me-2"></i>Thông tin đặt phòng</h6>
+                                            <p><strong>Mã Booking:</strong> <span id="bookingId"></span></p>
+                                            <p><strong>Ngày đặt:</strong> <span id="bookingDate"></span></p>
+                                            <p><strong>Check-in:</strong> <span id="checkInDate"></span></p>
+                                            <p><strong>Check-out:</strong> <span id="checkOutDate"></span></p>
+                                        </div>
+
+                                        <!-- Chi tiết phòng -->
+                                        <div class="mb-4">
+                                            <h6><i class="bi bi-house-door-fill me-2"></i>Chi tiết phòng</h6>
+                                            <table class="table table-bordered text-center">
+                                                <thead class="table-light">
+                                                    <tr>
+                                                        <th>Số phòng</th>
+                                                        <th>Giá mỗi đêm</th>
+                                                        <th>Số đêm</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td id="roomNumber">101A</td>
+                                                        <td id="pricePerNight">100000.0</td>
+                                                        <td id="numNights">1</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                            <div class="text-danger"><i class="bi bi-x-circle"></i> Không có dịch vụ nào được sử dụng.</div>
+                                            <div class="text-danger"><i class="bi bi-x-circle"></i> Không có voucher nào được sử dụng.</div>
+                                        </div>
+
+                                        <!-- Thanh toán -->
+                                        <div class="mb-3">
+                                            <h6><i class="bi bi-credit-card-fill me-2"></i>Thanh toán</h6>
+                                            <p><strong>Phương thức:</strong> <span id="paymentMethod"></span></p>
+                                            <p><strong>Mã giao dịch:</strong> <span id="paymentId"></span></p>
+                                            <p><strong>Ngân hàng:</strong> <span id="paymentBank"></span></p>
+                                            <p><strong>Tổng thanh toán:</strong> <span id="totalAmount"></span> VND</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
+
                 </div>
             </div>
         </div>
@@ -182,21 +248,14 @@
         <!-- Footer -->
         <jsp:include page="/views/profile/footerprofile.jsp"></jsp:include>
 
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-            <!-- jQuery (vì Bootstrap 4 phụ thuộc) -->
             <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-            <!-- Popper.js -->
             <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
-
-            <!-- Bootstrap 4 JS -->
             <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
             <script src="${pageContext.request.contextPath}/js/profile.js"></script>
 
         <script src="${pageContext.request.contextPath}/js/payment/paymenthistory.js"></script>
         <script src="${pageContext.request.contextPath}/js/authentication.js"></script>
-
     </body>
 </html>
 
