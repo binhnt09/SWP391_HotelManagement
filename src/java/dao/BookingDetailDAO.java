@@ -8,6 +8,7 @@ import dal.DBContext;
 import entity.Booking;
 import entity.BookingDetails;
 import entity.Room;
+import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -61,6 +62,20 @@ public class BookingDetailDAO extends DBContext {
             e.printStackTrace();
         }
         return list;
+    }
+
+    public boolean insertBookingDetail(BookingDetails bd) {
+        String sql = "INSERT INTO BookingDetail (BookingID, RoomID, Price, Nights) VALUES (?, ?, ?, ?)";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, bd.getBookingId());
+            ps.setInt(2, bd.getRoomId());
+            ps.setBigDecimal(3, bd.getPrice());
+            ps.setInt(4, bd.getNights());
+            return ps.executeUpdate() > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
 }

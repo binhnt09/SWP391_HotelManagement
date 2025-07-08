@@ -7,7 +7,9 @@ package dao;
 import dal.DBContext;
 import entity.Booking;
 import entity.BookingDetails;
+import entity.BookingInfo;
 import entity.User;
+import java.sql.Timestamp;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -316,6 +318,111 @@ public class BookingDao extends DBContext {
             e.printStackTrace();
         }
         return user;
+    }
+
+    public List<BookingInfo> getFutureBookings(int roomId) {
+        List<BookingInfo> list = new ArrayList<>();
+
+        String sql = """
+        SELECT b.BookingID, b.CheckInDate, b.CheckOutDate, b.Status,
+               u.FirstName, u.LastName
+        FROM BookingDetail bd
+        JOIN Booking b ON bd.BookingID = b.BookingID AND b.IsDeleted = 0
+        JOIN [User] u ON b.UserID = u.UserID AND u.IsDeleted = 0
+        WHERE bd.RoomID = ? AND bd.IsDeleted = 0 and CheckOutDate >= getdate()
+        ORDER BY b.CheckInDate DESC
+    """;
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, roomId);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                BookingInfo booking = new BookingInfo();
+                booking.setBookingID(rs.getInt("BookingID"));
+                booking.setCheckInDate(rs.getTimestamp("CheckInDate"));
+                booking.setCheckOutDate(rs.getTimestamp("CheckOutDate"));
+                booking.setStatus(rs.getString("Status"));
+
+                String fullName = ((rs.getString("FirstName") != null ? rs.getString("FirstName") : "") + " "
+                        + (rs.getString("LastName") != null ? rs.getString("LastName") : "")).trim();
+                booking.setGuestName(fullName);
+
+                list.add(booking);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return list;
+    }
+
+    public BookingInfo getCurrentStay(int roomId) {
+        String sql = """
+        SELECT TOP 1 
+            u.FirstName, u.LastName,
+            b.CheckInDate, b.CheckOutDate,
+            b.TotalAmount, b.Status
+        FROM BookingDetail bd
+        JOIN Booking b ON bd.BookingID = b.BookingID
+        JOIN [User] u ON b.UserID = u.UserID
+        WHERE bd.RoomID = ?
+          AND b.IsDeleted = 0
+          AND b.Status = 'Checked-in'
+          AND CAST(GETDATE() AS DATE) BETWEEN CAST(b.CheckInDate AS DATE) AND CAST(b.CheckOutDate AS DATE)
+        ORDER BY b.CheckInDate DESC
+    """;
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, roomId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    BookingInfo info = new BookingInfo();
+                    String fullName = (rs.getString("FirstName") + " " + rs.getString("LastName")).trim();
+                    info.setGuestName(fullName);
+                    info.setCheckInDate(rs.getTimestamp("CheckInDate"));
+                    info.setCheckOutDate(rs.getTimestamp("CheckOutDate"));
+                    info.setTotalAmount(rs.getBigDecimal("TotalAmount"));
+                    info.setStatus(rs.getString("Status"));
+                    return info;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public void updateRoomStatus(int roomId, String status) {
+        String sql = "UPDATE Room SET Status = ?, UpdatedAt = GETDATE() WHERE RoomID = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, status);
+            ps.setInt(2, roomId);
+            ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public int insertBookingForGuest(Booking booking) {
+        String sql = "INSERT INTO Booking (UserID, CheckInDate, CheckOutDate, TotalAmount, Status) VALUES (?, ?, ?, ?, ?)";
+        try (PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            ps.setInt(1, booking.getUserId());
+            ps.setTimestamp(2, Timestamp.valueOf(booking.getCheckInDate().toString() + " 14:00:00")); // Check-in: 14:00
+            ps.setTimestamp(3, Timestamp.valueOf(booking.getCheckOutDate().toString() + " 12:00:00")); // Check-out: 12:00
+            ps.setBigDecimal(4, booking.getTotalAmount());
+            ps.setString(5, booking.getStatus());
+            ps.executeUpdate();
+            try (ResultSet rs = ps.getGeneratedKeys()) {
+                if (rs.next()) {
+                    return rs.getInt(1); // Trả về BookingID vừa insert
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return -1;  
     }
 
 }

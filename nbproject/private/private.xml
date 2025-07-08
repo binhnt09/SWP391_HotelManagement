@@ -4,11 +4,14 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/D:/Project%20SWP391/SWP391_HotelManagement/web/dashboard-layout/header.jsp</file>
-            <file>file:/D:/Project%20SWP391/SWP391_HotelManagement/src/java/controller/ServiceListServlet.java</file>
-            <file>file:/D:/Project%20SWP391/SWP391_HotelManagement/src/java/dao/ServiceDAO.java</file>
-            <file>file:/D:/Project%20SWP391/SWP391_HotelManagement/src/java/entity/Room.java</file>
-            <file>file:/D:/Project%20SWP391/SWP391_HotelManagement/src/java/entity/Service.java</file>
-            <file>file:/D:/Project%20SWP391/SWP391_HotelManagement/web/service-manager.jsp</file>
+            <file>file:/D:/Project%20SWP391/SWP391_HotelManagement/src/java/entity/Booking.java</file>
+            <file>file:/D:/Project%20SWP391/SWP391_HotelManagement/src/java/dao/ReportDAO.java</file>
+            <file>file:/D:/Project%20SWP391/SWP391_HotelManagement/web/cleaning-list.jsp</file>
+            <file>file:/D:/Project%20SWP391/SWP391_HotelManagement/src/java/entity/CustomerReport.java</file>
+            <file>file:/D:/Project%20SWP391/SWP391_HotelManagement/src/java/controller/CleaningListServlet.java</file>
+            <file>file:/D:/Project%20SWP391/SWP391_HotelManagement/src/java/dao/CleaningHistoryDAO.java</file>
+            <file>file:/D:/Project%20SWP391/SWP391_HotelManagement/web/roommap.jsp</file>
+            <file>file:/D:/Project%20SWP391/SWP391_HotelManagement/web/room-list.jsp</file>
         </group>
     </open-files>
 </project-private>
