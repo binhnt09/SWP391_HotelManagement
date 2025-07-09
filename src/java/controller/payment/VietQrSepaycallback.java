@@ -6,8 +6,8 @@ package controller.payment;
 
 import constant.MailUtil;
 import dao.BookingDao;
+import dao.InvoiceDao;
 import dao.PaymentDao;
-import entity.Authentication;
 import entity.Booking;
 import entity.Invoice;
 import entity.Payment;
@@ -162,10 +162,13 @@ public class VietQrSepaycallback extends HttpServlet {
             payment.setGatewayResponse("Sepay Confirmed");
 
             PaymentDao paymentDao = new PaymentDao();
-            paymentDao.insertPayment(payment);
+            InvoiceDao invoiceDao = new InvoiceDao();
 
-            Invoice invoice = paymentDao.getInvoice(bookingId);
+            paymentDao.insertPayment(payment);
+            
             try {
+                int invoiceId = invoiceDao.generateInvoice(bookingId);
+                Invoice invoice = invoiceDao.getInvoice(invoiceId);
                 MailUtil.sendInvoice(email, invoice);
             } catch (Exception ex) {
                 Logger.getLogger(VietQrSepaycallback.class.getName()).log(Level.SEVERE, null, ex);

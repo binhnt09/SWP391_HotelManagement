@@ -15,7 +15,6 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.nio.file.Files;
 
 /**
  *
@@ -71,8 +70,8 @@ public class DownloadInvoice extends HttpServlet {
         }
 
         // Đường dẫn đến thư mục chứa hóa đơn
-        String invoiceDir = getServletContext().getRealPath("/common");
-        File invoiceFile = new File(invoiceDir, "invoice.pdf");
+        String invoiceDir = getServletContext().getRealPath("/invoices");
+        File invoiceFile = new File(invoiceDir,  ".pdf");
 
         if (!invoiceFile.exists()) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND, "Invoice not found.");

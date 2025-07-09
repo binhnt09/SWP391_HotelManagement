@@ -4,6 +4,8 @@
  */
 package entity;
 
+import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.List;
 
 /**
@@ -12,38 +14,222 @@ import java.util.List;
  */
 public class Invoice {
 
-    private User user;
-    private Booking booking;
-    private BookingDetails bookingDetails;
+    private int invoiceId;
+    private int paymentId;
+    private int bookingId;
+    private String firstName;
+    private String lastName;
+    private String email;
+    private String phone;
+    private String address;
+
+    private String voucherCode;
+    private double discountAmount;
+
+    private String roomNumber;
+    private double roomPrice;
+    private int nights;
+    private BigDecimal TotalRoomPrice;
+
+    private Timestamp issueDate;
+    private String note;
+    private String pdfUrl;
+    private String status;
+
+    private Timestamp createdAt;
+    private Timestamp updatedAt;
+    private Timestamp deletedAt;
+    private Integer deletedBy;
+    private boolean isDeleted;
+
     private Payment payment;
-    private Room rooms;
-    private List<BookingServices> bookingServices;
+    private List<InvoiceServiceDetail> listService;
 
     public Invoice() {
     }
 
-    public User getUser() {
-        return user;
+    public int getInvoiceId() {
+        return invoiceId;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setInvoiceId(int invoiceId) {
+        this.invoiceId = invoiceId;
     }
 
-    public Booking getBooking() {
-        return booking;
+    public int getPaymentId() {
+        return paymentId;
     }
 
-    public void setBooking(Booking booking) {
-        this.booking = booking;
+    public void setPaymentId(int paymentId) {
+        this.paymentId = paymentId;
     }
 
-    public BookingDetails getBookingDetails() {
-        return bookingDetails;
+    public int getBookingId() {
+        return bookingId;
     }
 
-    public void setBookingDetails(BookingDetails bookingDetails) {
-        this.bookingDetails = bookingDetails;
+    public void setBookingId(int bookingId) {
+        this.bookingId = bookingId;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getVoucherCode() {
+        return voucherCode;
+    }
+
+    public void setVoucherCode(String voucherCode) {
+        this.voucherCode = voucherCode;
+    }
+
+    public double getDiscountAmount() {
+        return discountAmount;
+    }
+
+    public void setDiscountAmount(double discountAmount) {
+        this.discountAmount = discountAmount;
+    }
+
+    public String getRoomNumber() {
+        return roomNumber;
+    }
+
+    public void setRoomNumber(String roomNumber) {
+        this.roomNumber = roomNumber;
+    }
+
+    public double getRoomPrice() {
+        return roomPrice;
+    }
+
+    public void setRoomPrice(double roomPrice) {
+        this.roomPrice = roomPrice;
+    }
+
+    public int getNights() {
+        return nights;
+    }
+
+    public BigDecimal getTotalRoomPrice() {
+        return TotalRoomPrice;
+    }
+
+    public void setTotalRoomPrice(BigDecimal TotalRoomPrice) {
+        this.TotalRoomPrice = TotalRoomPrice;
+    }
+    
+    public void setNights(int nights) {
+        this.nights = nights;
+    }
+
+    public Timestamp getIssueDate() {
+        return issueDate;
+    }
+
+    public void setIssueDate(Timestamp issueDate) {
+        this.issueDate = issueDate;
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
+    }
+
+    public String getPdfUrl() {
+        return pdfUrl;
+    }
+
+    public void setPdfUrl(String pdfUrl) {
+        this.pdfUrl = pdfUrl;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public Timestamp getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Timestamp createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public Timestamp getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Timestamp updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public Timestamp getDeletedAt() {
+        return deletedAt;
+    }
+
+    public void setDeletedAt(Timestamp deletedAt) {
+        this.deletedAt = deletedAt;
+    }
+
+    public Integer getDeletedBy() {
+        return deletedBy;
+    }
+
+    public void setDeletedBy(Integer deletedBy) {
+        this.deletedBy = deletedBy;
+    }
+
+    public boolean isIsDeleted() {
+        return isDeleted;
+    }
+
+    public void setIsDeleted(boolean isDeleted) {
+        this.isDeleted = isDeleted;
     }
 
     public Payment getPayment() {
@@ -54,25 +240,19 @@ public class Invoice {
         this.payment = payment;
     }
 
-    public Room getRooms() {
-        return rooms;
+    public List<InvoiceServiceDetail> getListService() {
+        return listService;
     }
 
-    public void setRooms(Room rooms) {
-        this.rooms = rooms;
-    }
-
-    public List<BookingServices> getBookingServices() {
-        return bookingServices;
-    }
-
-    public void setBookingServices(List<BookingServices> bookingServices) {
-        this.bookingServices = bookingServices;
+    public void setListService(List<InvoiceServiceDetail> listService) {
+        this.listService = listService;
     }
 
     @Override
     public String toString() {
-        return "Invoice{" + "user=" + user + ", booking=" + booking + ", bookingDetails=" + bookingDetails + ", payment=" + payment + ", rooms=" + rooms + ", bookingServices=" + bookingServices + '}';
+        return "Invoice{" + "invoiceId=" + invoiceId + ", paymentId=" + paymentId + ", bookingId=" + bookingId + ", firstName=" + firstName + ", lastName=" + lastName + ", email=" + email + ", phone=" + phone + ", address=" + address
+                + ", voucherCode=" + voucherCode + ", discountAmount=" + discountAmount + ", roomNumber=" + roomNumber + ", roomPrice=" + roomPrice + ", nights=" + nights + ", TotalRoomPice=" + TotalRoomPrice + ", issueDate=" + issueDate + ", note=" + note + ", "
+                + "pdfUrl=" + pdfUrl + "," + " status=" + status + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + ", deletedAt=" + deletedAt + ", deletedBy=" + deletedBy + ", isDeleted=" + isDeleted + ", payment=" + payment + ", listService=" + listService + '}';
     }
 
 }

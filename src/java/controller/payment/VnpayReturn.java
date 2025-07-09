@@ -7,6 +7,7 @@ package controller.payment;
 import constant.Config;
 import constant.MailUtil;
 import dao.BookingDao;
+import dao.InvoiceDao;
 import dao.PaymentDao;
 import entity.Authentication;
 import entity.Invoice;
@@ -103,7 +104,9 @@ public class VnpayReturn extends HttpServlet {
                     paymentDao.insertPayment(payment);
 
                     // send invoice
-                    Invoice invoice = paymentDao.getInvoice(bookingId);
+                    InvoiceDao invoiceDao = new InvoiceDao();
+                    int invoiceId = invoiceDao.generateInvoice(bookingId);
+                    Invoice invoice = invoiceDao.getInvoice(invoiceId);
                     MailUtil.sendInvoice(email, invoice);
                 }
 

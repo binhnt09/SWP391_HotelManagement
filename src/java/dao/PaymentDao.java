@@ -8,7 +8,7 @@ import dal.DBContext;
 import entity.Booking;
 import entity.BookingDetails;
 import entity.BookingServices;
-import entity.Invoice;
+import entity.Invoices;
 import entity.Payment;
 import entity.Room;
 import entity.Service;
@@ -33,24 +33,15 @@ public class PaymentDao extends DBContext {
         List<Payment> list = new ArrayList<>();
 
         String sql = """
-                     SELECT p.PaymentID, p.BookingID, p.Method, p.TransactionCode, p.BankCode, p.Amount, p.Status, p.CreatedAt
+                     SELECT p.PaymentID, p.BookingID, p.Method, p.TransactionCode, p.BankCode, p.Amount, p.Status,  
+                     p.CreatedAt, p.UpdatedAt, p.DeletedBy, p.IsDeleted
                      FROM Payment p
                      WHERE p.IsDeleted = 0
                      ORDER BY p.CreatedAt DESC;""";
 
         try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
-                Payment p = new Payment();
-                p.setPaymentId(rs.getInt("PaymentID"));
-                p.setBookingId(rs.getInt("BookingID"));
-                p.setMethod(rs.getString("Method"));
-                p.setTransactionCode(rs.getString("TransactionCode"));
-                p.setBankCode(rs.getString("BankCode"));
-                p.setAmount(rs.getBigDecimal("Amount"));
-                p.setStatus(rs.getString("Status"));
-                p.setCreatedAt(rs.getTimestamp("CreatedAt"));
-
-                list.add(p);
+                list.add(extractPayment(rs));
             }
         } catch (SQLException e) {
             Logger.getLogger(PaymentDao.class.getName()).log(Level.SEVERE, null, e);
@@ -64,6 +55,7 @@ public class PaymentDao extends DBContext {
         String sql = """
                      SELECT p.PaymentID, p.BookingID, p.Method, p.BankCode,
                      \t   p.TransactionCode, p.Amount, p.Status, p.CreatedAt
+                     \t   p.UpdatedAt, p.DeletedBy, p.IsDeleted
                      FROM Payment p
                      \tJOIN Booking b ON p.BookingID = b.BookingID
                      WHERE b.UserID = ? AND p.IsDeleted = 0
@@ -72,19 +64,9 @@ public class PaymentDao extends DBContext {
         try (PreparedStatement ps = connection.prepareStatement(sql);) {
             ps.setInt(1, UserId);
             ResultSet rs = ps.executeQuery();
-            
-            while (rs.next()) {
-                Payment p = new Payment();
-                p.setPaymentId(rs.getInt("PaymentID"));
-                p.setBookingId(rs.getInt("BookingID"));
-                p.setMethod(rs.getString("Method"));
-                p.setTransactionCode(rs.getString("TransactionCode"));
-                p.setBankCode(rs.getString("BankCode"));
-                p.setAmount(rs.getBigDecimal("Amount"));
-                p.setStatus(rs.getString("Status"));
-                p.setCreatedAt(rs.getTimestamp("CreatedAt"));
 
-                list.add(p);
+            while (rs.next()) {
+                list.add(extractPayment(rs));
             }
         } catch (SQLException e) {
             Logger.getLogger(PaymentDao.class.getName()).log(Level.SEVERE, null, e);
@@ -136,8 +118,29 @@ public class PaymentDao extends DBContext {
         }
     }
 
-    public Invoice getInvoice(int bookingId) {
-        Invoice invoice = new Invoice();
+    public Payment getPaymentByBookingId(int bookingId) {
+        String sql = """
+                     SELECT p.PaymentID, p.BookingID, p.Method, p.TransactionCode, p.BankCode, p.Amount, p.Status,
+                            p.CreatedAt, p.UpdatedAt, p.DeletedBy, p.IsDeleted, b.BookingID 
+                     FROM Payment p 
+                        JOIN Booking b ON p.BookingID = b.BookingID
+                     WHERE p.BookingID = ? AND p.IsDeleted = 0""";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, bookingId);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                return extractPayment(rs);
+            }
+        } catch (SQLException e) {
+            Logger.getLogger(PaymentDao.class.getName()).log(Level.SEVERE, null, e);
+        }
+        return null;
+    }
+
+    public Invoices getInvoices(int bookingId) {
+        Invoices invoice = new Invoices();
         List<BookingServices> bookServices = new ArrayList<>();
 
         String sql = """
@@ -200,6 +203,7 @@ public class PaymentDao extends DBContext {
                     room.setRoomNumber(rs.getString("RoomNumber"));
                     room.setPrice(rs.getDouble("RoomPrice"));
                     detail.setRoom(room);
+
                     detail.setBookingDetailId(rs.getInt("BookingServiceID"));
                     detail.setNights(rs.getInt("Nights"));
                     invoice.setBookingDetails(detail);
@@ -241,14 +245,52 @@ public class PaymentDao extends DBContext {
         }
         return invoice;
     }
-    
-    public static void main(String[] args) {
-        PaymentDao a = new PaymentDao();
-        List<Payment> listins = a.getAllPaymentsByUserId(52);
 
-        for (Payment ins : listins) {
-            System.out.println(ins);
+    public List<BookingServices> getBookingServiceByBookingId(int bookingId) {
+        List<BookingServices> list = new ArrayList<>();
+        String sql = "SELECT BookingServiceID, BookingID, ServiceID, Quantity, PriceAtUse, UsedAt, "
+                + " IsPreOrdered, CreatedAt, UpdatedAt, DeletedAt, DeletedBy, IsDeleted"
+                + " FROM BookingService WHERE BookingID = ? AND IsDeleted = 0";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, bookingId);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                BookingServices bs = new BookingServices();
+                bs.setBookingServiceId(rs.getInt("BookingServiceID"));
+                bs.setBookingId(rs.getInt("BookingID"));
+                bs.setServiceId(rs.getInt("ServiceID"));
+                bs.setQuantity(rs.getInt("Quantity"));
+                bs.setPriceAtUse(rs.getBigDecimal("PriceAtUse"));
+                bs.setUsedAt(rs.getTimestamp("UsedAt"));
+                bs.setIsPreOrdered(rs.getBoolean("IsPreOrdered"));
+                bs.setCreatedAt(rs.getTimestamp("CreatedAt"));
+                bs.setUpdatedAt(rs.getTimestamp("UpdatedAt"));
+                bs.setDeletedBy(rs.getInt("DeletedBy"));
+                bs.setIsDeleted(rs.getBoolean("IsDeleted"));
+
+                list.add(bs);
+            }
+        } catch (Exception e) {
+            Logger.getLogger(PaymentDao.class.getName()).log(Level.SEVERE, null, e);
         }
-        System.out.println("Booking List Size: " + (listins == null ? "NULL" : listins.size()));
+        return list;
+    }
+
+    private Payment extractPayment(ResultSet rs) throws SQLException {
+        Payment p = new Payment();
+        p.setPaymentId(rs.getInt("PaymentID"));
+        p.setBookingId(rs.getInt("BookingID"));
+        p.setMethod(rs.getString("Method"));
+        p.setTransactionCode(rs.getString("TransactionCode"));
+        p.setBankCode(rs.getString("BankCode"));
+        p.setAmount(rs.getBigDecimal("Amount"));
+        p.setStatus(rs.getString("Status"));
+        p.setCreatedAt(rs.getTimestamp("CreatedAt"));
+        p.setUpdatedAt(rs.getTimestamp("UpdatedAt"));
+        p.setDeletedBy(rs.getInt("DeletedBy"));
+        p.setIsDeleted(rs.getBoolean("IsDeleted"));
+        return p;
     }
 }

@@ -13,6 +13,8 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -43,9 +45,44 @@ public class BookingDetailDAO extends DBContext {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            Logger.getLogger(BookingDetailDAO.class.getName()).log(Level.SEVERE, null, e);
         }
         return detail;
+    }
+
+    public BookingDetails getDetailByBookingId(int id) {
+        String sql = """
+                     select bd.bookingdetailid, bd.bookingid , bd.roomid, bd.price, bd.nights, bd.createdat, 
+                        bd.updatedat, bd.deletedat, bd.deletedby, bd.isdeleted , b.BookingID 
+                     from bookingdetail bd
+                        JOIN Booking b ON bd.BookingID = b.BookingID
+                     where bd.bookingid = ? """;
+        try (PreparedStatement pre = connection.prepareStatement(sql)) {
+            pre.setInt(1, id);
+            try (ResultSet rs = pre.executeQuery()) {
+                if (rs.next()) {
+                    return extractBookingDetails(rs);
+                }
+            }
+        } catch (SQLException e) {
+            Logger.getLogger(BookingDetailDAO.class.getName()).log(Level.SEVERE, null, e);
+        }
+        return null;
+    }
+
+    private BookingDetails extractBookingDetails(ResultSet rs) throws SQLException {
+        BookingDetails bd = new BookingDetails();
+        bd.setBookingDetailId(rs.getInt("BookingDetailID"));
+        bd.setBookingId(rs.getInt("bookingid"));
+        bd.setRoomId(rs.getInt("roomid"));
+        bd.setPrice(rs.getBigDecimal("price"));
+        bd.setNights(rs.getInt("nights"));
+        bd.setCreatedAt(rs.getTimestamp("CreatedAt"));
+        bd.setUpdatedAt(rs.getTimestamp("UpdatedAt"));
+        bd.setDeletedAt(rs.getTimestamp("DeletedAt"));
+        bd.setDeletedBy(rs.getInt("DeletedBy"));
+        bd.setIsDeleted(rs.getBoolean("IsDeleted"));
+        return bd;
     }
 
     public List<Integer> getAllRoomIdByBookingDetail() {
@@ -58,7 +95,7 @@ public class BookingDetailDAO extends DBContext {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            Logger.getLogger(BookingDetailDAO.class.getName()).log(Level.SEVERE, null, e);
         }
         return list;
     }
