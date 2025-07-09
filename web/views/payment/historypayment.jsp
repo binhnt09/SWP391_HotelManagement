@@ -153,15 +153,19 @@
                                                 <td><fmt:formatDate value="${p.createdAt}" pattern="yyyy-MM-dd HH:mm"/></td>
                                                 <td>
                                                     <!--<a href="view-invoice?paymentId=${p.paymentId}" class="btn btn-sm btn-outline-primary">Xem</a>-->
-                                                    <a href="javascript:void(0);" class="btn btn-sm btn-outline-primary btn-view-invoice"
-                                                       data-paymFentid="${p.paymentId}" data-amount="${p.amount}" data-method="${p.method}" data-bank="${p.bankCode}" 
-                                                       data-status="${p.status}" ata-date="<fmt:formatDate value='${p.createdAt}' pattern='yyyy-MM-dd HH:mm'/>"> Xem </a>
+                                                    <a href="javascript:void(0);"
+                                                       class="btn btn-sm btn-outline-primary btn-view-invoice"
+                                                       data-paymentid="${p.paymentId}" data-amount="${p.amount}" data-method="${p.method}"
+                                                       data-bank="${p.bankCode}" data-status="${p.status}"
+                                                       data-date="<fmt:formatDate value='${p.createdAt}' pattern='yyyy-MM-dd HH:mm'/>">
+                                                        <i class="bi bi-eye"></i> Xem
+                                                    </a>
+
 
                                                     <!--<a href="download-invoice?paymentId=${p.paymentId}" class="btn btn-sm btn-outline-success">Tải</a>-->
                                                     <a href="downloadinvoice?paymentId=${p.paymentId}" class="btn btn-outline-success">
                                                         <i class="bi bi-download"></i> Tải hóa đơn
                                                     </a>
-
 
                                                 </td>
                                             </tr>
@@ -193,6 +197,7 @@
                                             <p><strong>Họ tên:</strong> <span id="customerName"></span></p>
                                             <p><strong>Email:</strong> <span id="customerEmail"></span></p>
                                             <p><strong>Số điện thoại:</strong> <span id="customerPhone"></span></p>
+                                            <p><strong>Địa chỉ:</strong> <span id="customerAddress"></span></p>
                                         </div>
 
                                         <!-- Thông tin đặt phòng -->
@@ -213,27 +218,56 @@
                                                         <th>Số phòng</th>
                                                         <th>Giá mỗi đêm</th>
                                                         <th>Số đêm</th>
+                                                        <th>Tổng tiền phòng</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
                                                     <tr>
-                                                        <td id="roomNumber">101A</td>
-                                                        <td id="pricePerNight">100000.0</td>
-                                                        <td id="numNights">1</td>
+                                                        <td id="roomNumber"></td>
+                                                        <td id="pricePerNight"></td>
+                                                        <td id="numNights"></td>
+                                                        <td id="totalPricePerNight"></td>
                                                     </tr>
                                                 </tbody>
                                             </table>
-                                            <div class="text-danger"><i class="bi bi-x-circle"></i> Không có dịch vụ nào được sử dụng.</div>
-                                            <div class="text-danger"><i class="bi bi-x-circle"></i> Không có voucher nào được sử dụng.</div>
                                         </div>
+
+                                        <!-- Chi dịch vụ -->
+                                        <div class="mb-4" id="serviceSection">
+                                            <h6><i class="bi bi-house-door-fill me-2"></i>Dịch vụ đã sử dụng</h6>
+                                            <table class="table table-bordered text-center">
+                                                <thead class="table-light">
+                                                    <tr>
+                                                        <th>Tên dịch vụ</th>
+                                                        <th>Price</th>
+                                                        <th>Số lượng</th>
+                                                        <th>Tổng tiền sử dụng</th>
+                                                        <th>Thời gian dùng</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="serviceTableBody"></tbody>
+                                            </table>
+                                        </div>
+                                        <!-- Nếu không có gì -->
+                                        <div class="text-danger" id="noService"><i class="bi bi-x-circle"></i> Không có dịch vụ nào được sử dụng.</div>
+
+                                        <div class="mb-4" id="voucherSection">
+                                            <h6><i class="bi bi-calendar-check-fill me-2"></i>Voucher</h6>
+                                            <p><strong>Mã voucher:</strong> <span id="voucherCode"></span></p>
+                                            <p><strong>Giảm giá:</strong> <span id="discountAmount">%</span></p>
+                                        </div>
+
+                                        <!-- Nếu không có gì -->
+                                        <div class="text-danger" id="noVoucher"><i class="bi bi-x-circle"></i> Không có voucher nào được sử dụng.</div>
 
                                         <!-- Thanh toán -->
                                         <div class="mb-3">
                                             <h6><i class="bi bi-credit-card-fill me-2"></i>Thanh toán</h6>
                                             <p><strong>Phương thức:</strong> <span id="paymentMethod"></span></p>
-                                            <p><strong>Mã giao dịch:</strong> <span id="paymentId"></span></p>
+                                            <p><strong>Mã giao dịch:</strong> <span id="transactionCode"></span></p>
                                             <p><strong>Ngân hàng:</strong> <span id="paymentBank"></span></p>
                                             <p><strong>Tổng thanh toán:</strong> <span id="totalAmount"></span> VND</p>
+                                            <p><strong>Ngày tạo hóa đơn:</strong> <span id="issueDate"></span></p>
                                         </div>
                                     </div>
                                 </div>

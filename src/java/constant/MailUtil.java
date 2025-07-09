@@ -4,8 +4,6 @@
  */
 package constant;
 
-import entity.BookingDetails;
-import entity.BookingServices;
 import entity.Invoice;
 import entity.InvoiceServiceDetail;
 import javax.mail.*;
@@ -170,6 +168,7 @@ public class MailUtil {
                     .append(" ").append(invoice.getLastName()).append("</li>")
                     .append("<li><strong>Email:</strong> ").append(invoice.getEmail()).append("</li>")
                     .append("<li><strong>Số điện thoại:</strong> ").append(invoice.getPhone()).append("</li>")
+                    .append("<li><strong>Địa chỉ:</strong> ").append(invoice.getAddress()).append("</li>")
                     .append("</ul>");
 
             sb.append("<h3>🛏️ Thông tin đặt phòng</h3><ul>")
@@ -225,7 +224,6 @@ public class MailUtil {
 
         if (invoice.getPayment() != null) {
             sb.append("<h3>💳 Thanh toán</h3><ul>")
-                    .append("<li><strong>Phương thức:</strong> ").append(invoice.getPaymentId()).append("</li>")
                     .append("<li><strong>Phương thức:</strong> ").append(invoice.getPayment().getMethod()).append("</li>")
                     .append("<li><strong>Mã giao dịch:</strong> ").append(invoice.getPayment().getTransactionCode()).append("</li>")
                     .append("<li><strong>Ngân hàng:</strong> ").append(invoice.getPayment().getBankCode()).append("</li>")
@@ -235,8 +233,8 @@ public class MailUtil {
             sb.append("<p><strong>❌ Không có thông tin thanh toán.</strong></p>");
         }
 
-        sb.append("<p>Trân trọng,</p>")
-                .append("<p><strong>Palatin Hotel</strong></p>");
+        sb.append("<p>Trân trọng,</p>").append("<p><strong>Palatin Hotel</strong> Ngày tạo hóa đơn")
+                .append(invoice.getIssueDate()).append("</p>");
 
         sb.append("</body></html>");
         return sb.toString();

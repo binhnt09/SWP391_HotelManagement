@@ -108,7 +108,6 @@ public class InvoiceDao extends DBContext {
     }
 
     public int generateInvoice(int bookingId) throws Exception {
-        System.out.println(">>> BẮT ĐẦU generateInvoice cho bookingId: " + bookingId);
         int invoiceId = -1;
         try {
             connection.setAutoCommit(false);
@@ -247,60 +246,11 @@ public class InvoiceDao extends DBContext {
 
             while (rs.next()) {
                 if (invoice == null) {
-                    invoice = new Invoice();
-
-                    // Basic Info
-                    invoice.setInvoiceId(rs.getInt("InvoiceID"));
-                    invoice.setPaymentId(rs.getInt("PaymentId"));
-                    invoice.setBookingId(rs.getInt("BookingId"));
-                    invoice.setFirstName(rs.getString("FirstName"));
-                    invoice.setLastName(rs.getString("LastName"));
-                    invoice.setEmail(rs.getString("Email"));
-                    invoice.setPhone(rs.getString("Phone"));
-                    invoice.setAddress(rs.getString("Address"));
-
-                    invoice.setRoomNumber(rs.getString("RoomNumber"));
-                    invoice.setRoomPrice(rs.getDouble("RoomPrice"));
-                    invoice.setNights(rs.getInt("Nights"));
-                    invoice.setTotalRoomPrice(rs.getBigDecimal("TotalRoomPrice"));
-
-                    invoice.setVoucherCode(rs.getString("VoucherCode"));
-                    invoice.setDiscountAmount(rs.getDouble("DiscountAmount"));
-                    invoice.setIssueDate(rs.getTimestamp("IssueDate"));
-                    invoice.setNote(rs.getString("Note"));
-                    invoice.setStatus(rs.getString("Status"));
-
-                    // Payment
-                    Payment payment = new Payment();
-                    payment.setPaymentId(rs.getInt("PaymentID"));
-                    payment.setAmount(rs.getBigDecimal("Amount"));
-                    payment.setMethod(rs.getString("Method"));
-                    payment.setStatus(rs.getString("PaymentStatus"));
-                    payment.setTransactionCode(rs.getString("TransactionCode"));
-                    payment.setBankCode(rs.getString("BankCode"));
-
-                    // Booking
-                    Booking booking = new Booking();
-                    booking.setBookingId(rs.getInt("BookingID"));
-                    booking.setBookingDate(rs.getTimestamp("BookingDate"));
-                    booking.setCheckInDate(rs.getDate("CheckInDate"));
-                    booking.setCheckOutDate(rs.getDate("CheckOutDate"));
-
-                    payment.setBooking(booking);
-                    invoice.setPayment(payment);
+                    invoice = extractInvoiceFromResultSet(rs);
                 }
 
-                // Nếu có dịch vụ
-                String serviceName = rs.getString("serviceName");
-                if (serviceName != null && !serviceName.isEmpty()) {
-                    InvoiceServiceDetail service = new InvoiceServiceDetail();
-                    service.setId(rs.getInt("ID"));
-                    service.setServiceName(serviceName);
-                    service.setPrice(rs.getBigDecimal("Price"));
-                    service.setQuantity(rs.getInt("Quantity"));
-                    service.setPriceAtUse(rs.getBigDecimal("PriceAtUse"));
-                    service.setUsedAt(rs.getTimestamp("UsedAt"));
-
+                InvoiceServiceDetail service = extractServiceDetailFromResultSet(rs);
+                if (service != null) {
                     bookServices.add(service);
                 }
             }
@@ -312,4 +262,147 @@ public class InvoiceDao extends DBContext {
         }
         return invoice;
     }
+
+    public Invoice getInvoiceByPaymentId(int paymentId) {
+        Invoice invoice = null;
+        List<InvoiceServiceDetail> bookServices = new ArrayList<>();
+
+        String sql = """
+                     SELECT 
+                        i.InvoiceID, i.PaymentId, i.BookingId, i.FirstName, i.LastName, i.Email, i.Phone, i.Address,
+                        i.RoomNumber, i.RoomPrice, i.Nights, i.TotalRoomPrice,
+                        i.VoucherCode, i.DiscountAmount, i.IssueDate, i.Note, i.Status,
+
+                        p.PaymentID, p.Amount, p.Method, p.Status as PaymentStatus, p.TransactionCode, p.BankCode,
+                        b.BookingID, b.BookingDate, b.CheckInDate, b.CheckOutDate,
+
+                        isd.ID, isd.ServiceName, isd.Price, isd.Quantity, isd.PriceAtUse, isd.UsedAt
+                     FROM Invoice i
+                        JOIN Payment p ON i.PaymentID = p.PaymentID
+                        JOIN Booking b ON b.BookingID = p.BookingID
+                        LEFT JOIN InvoiceServiceDetail isd ON isd.InvoiceID = i.InvoiceID
+                     WHERE i.PaymentID = ?""";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, paymentId);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                if (invoice == null) {
+                    invoice = extractInvoiceFromResultSet(rs);
+                }
+
+                InvoiceServiceDetail service = extractServiceDetailFromResultSet(rs);
+                if (service != null) {
+                    bookServices.add(service);
+                }
+            }
+            if (invoice != null) {
+                invoice.setListService(bookServices);
+            }
+        } catch (Exception e) {
+            Logger.getLogger(InvoiceDao.class.getName()).log(Level.SEVERE, null, e);
+        }
+        return invoice;
+    }
+
+    public Integer getInvoiceIdByPaymentId(int paymentId) {
+        String sql = "SELECT InvoiceID FROM Invoice WHERE PaymentID = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, paymentId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("InvoiceID");
+                }
+            }
+        } catch (Exception e) {
+            Logger.getLogger(InvoiceDao.class.getName()).log(Level.SEVERE, null, e);
+        }
+        return null;
+    }
+
+    public List<InvoiceServiceDetail> getByInvoiceId(int invoiceId) {
+        List<InvoiceServiceDetail> list = new ArrayList<>();
+        String sql = "SELECT id, InvoiceId, ServiceName,"
+                + " Price, Quantity, PriceAtUse, UsedAt"
+                + " FROM InvoiceServiceDetail WHERE InvoiceId = ?";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+
+            ps.setInt(1, invoiceId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    InvoiceServiceDetail detail = new InvoiceServiceDetail();
+                    detail.setId(rs.getInt("Id"));
+                    detail.setInvoiceId(rs.getInt("InvoiceId"));
+                    detail.setServiceName(rs.getString("ServiceName"));
+                    detail.setPrice(rs.getBigDecimal("Price"));
+                    detail.setQuantity(rs.getInt("Quantity"));
+                    detail.setPriceAtUse(rs.getBigDecimal("PriceAtUse"));
+                    detail.setUsedAt(rs.getTimestamp("UsedAt"));
+                    list.add(detail);
+                }
+            }
+        } catch (Exception e) {
+            Logger.getLogger(InvoiceDao.class.getName()).log(Level.SEVERE, null, e);
+        }
+
+        return list;
+    }
+
+    public Invoice extractInvoiceFromResultSet(ResultSet rs) throws SQLException {
+        Invoice invoice = new Invoice();
+
+        invoice.setInvoiceId(rs.getInt("InvoiceID"));
+        invoice.setPaymentId(rs.getInt("PaymentId"));
+        invoice.setBookingId(rs.getInt("BookingId"));
+        invoice.setFirstName(rs.getString("FirstName"));
+        invoice.setLastName(rs.getString("LastName"));
+        invoice.setEmail(rs.getString("Email"));
+        invoice.setPhone(rs.getString("Phone"));
+        invoice.setAddress(rs.getString("Address"));
+        invoice.setRoomNumber(rs.getString("RoomNumber"));
+        invoice.setRoomPrice(rs.getDouble("RoomPrice"));
+        invoice.setNights(rs.getInt("Nights"));
+        invoice.setTotalRoomPrice(rs.getBigDecimal("TotalRoomPrice"));
+        invoice.setVoucherCode(rs.getString("VoucherCode"));
+        invoice.setDiscountAmount(rs.getDouble("DiscountAmount"));
+        invoice.setIssueDate(rs.getTimestamp("IssueDate"));
+        invoice.setNote(rs.getString("Note"));
+        invoice.setStatus(rs.getString("Status"));
+
+        Payment payment = new Payment();
+        payment.setPaymentId(rs.getInt("PaymentID"));
+        payment.setAmount(rs.getBigDecimal("Amount"));
+        payment.setMethod(rs.getString("Method"));
+        payment.setStatus(rs.getString("PaymentStatus"));
+        payment.setTransactionCode(rs.getString("TransactionCode"));
+        payment.setBankCode(rs.getString("BankCode"));
+
+        Booking booking = new Booking();
+        booking.setBookingId(rs.getInt("BookingID"));
+        booking.setBookingDate(rs.getTimestamp("BookingDate"));
+        booking.setCheckInDate(rs.getDate("CheckInDate"));
+        booking.setCheckOutDate(rs.getDate("CheckOutDate"));
+
+        payment.setBooking(booking);
+        invoice.setPayment(payment);
+
+        return invoice;
+    }
+
+    public InvoiceServiceDetail extractServiceDetailFromResultSet(ResultSet rs) throws SQLException {
+        String serviceName = rs.getString("serviceName");
+        if (serviceName == null || serviceName.isEmpty()) {
+            return null;
+        }
+
+        InvoiceServiceDetail service = new InvoiceServiceDetail();
+        service.setId(rs.getInt("ID"));
+        service.setServiceName(serviceName);
+        service.setPrice(rs.getBigDecimal("Price"));
+        service.setQuantity(rs.getInt("Quantity"));
+        service.setPriceAtUse(rs.getBigDecimal("PriceAtUse"));
+        service.setUsedAt(rs.getTimestamp("UsedAt"));
+        return service;
+    }
+
 }

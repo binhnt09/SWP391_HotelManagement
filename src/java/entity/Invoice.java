@@ -29,7 +29,7 @@ public class Invoice {
     private String roomNumber;
     private double roomPrice;
     private int nights;
-    private BigDecimal TotalRoomPrice;
+    private BigDecimal totalRoomPrice;
 
     private Timestamp issueDate;
     private String note;
@@ -149,11 +149,11 @@ public class Invoice {
     }
 
     public BigDecimal getTotalRoomPrice() {
-        return TotalRoomPrice;
+        return totalRoomPrice;
     }
 
     public void setTotalRoomPrice(BigDecimal TotalRoomPrice) {
-        this.TotalRoomPrice = TotalRoomPrice;
+        this.totalRoomPrice = TotalRoomPrice;
     }
     
     public void setNights(int nights) {
@@ -251,7 +251,7 @@ public class Invoice {
     @Override
     public String toString() {
         return "Invoice{" + "invoiceId=" + invoiceId + ", paymentId=" + paymentId + ", bookingId=" + bookingId + ", firstName=" + firstName + ", lastName=" + lastName + ", email=" + email + ", phone=" + phone + ", address=" + address
-                + ", voucherCode=" + voucherCode + ", discountAmount=" + discountAmount + ", roomNumber=" + roomNumber + ", roomPrice=" + roomPrice + ", nights=" + nights + ", TotalRoomPice=" + TotalRoomPrice + ", issueDate=" + issueDate + ", note=" + note + ", "
+                + ", voucherCode=" + voucherCode + ", discountAmount=" + discountAmount + ", roomNumber=" + roomNumber + ", roomPrice=" + roomPrice + ", nights=" + nights + ", TotalRoomPice=" + totalRoomPrice + ", issueDate=" + issueDate + ", note=" + note + ", "
                 + "pdfUrl=" + pdfUrl + "," + " status=" + status + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + ", deletedAt=" + deletedAt + ", deletedBy=" + deletedBy + ", isDeleted=" + isDeleted + ", payment=" + payment + ", listService=" + listService + '}';
     }
 

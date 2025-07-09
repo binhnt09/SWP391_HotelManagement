@@ -133,28 +133,94 @@ function filterRowsByDate(from, to) {
 }
 
 
-document.addEventListener('DOMContentLoaded', function () {
-    document.querySelectorAll('.btn-view-invoice').forEach(btn => {
-        btn.addEventListener('click', function () {
-            // Đây là dữ liệu mẫu giả định, bạn nên gọi AJAX theo paymentId
-            document.getElementById('customerName').textContent = "Ngô Thanh Bình";
-            document.getElementById('customerEmail').textContent = "ngobinh0910ntb@gmail.com";
-            document.getElementById('customerPhone').textContent = "0328633491";
-            document.getElementById('bookingId').textContent = "224";
-            document.getElementById('bookingDate').textContent = "2025-07-06 15:01:38";
-            document.getElementById('checkInDate').textContent = "2025-07-07";
-            document.getElementById('checkOutDate').textContent = "2025-07-08";
+$(document).ready(function () {
+    $(".btn-view-invoice").click(function () {
+        const paymentId = $(this).data("paymentid");
+        if (!paymentId) {
+            alert("Không tìm thấy paymentId hợp lệ.");
+            return;
+        }
+        $.ajax({
+            url: "viewinvoicebypayment",
+            method: "GET",
+            data: {paymentId},
+            success: function (invoice) {
+                $("#customerName").text(invoice.firstName + " " + invoice.lastName);
+                $("#customerEmail").text(invoice.email);
+                $("#customerPhone").text(invoice.phone);
+                $("#customerAddress").text(invoice.address);
 
-            document.getElementById('roomNumber').textContent = "101A";
-            document.getElementById('pricePerNight').textContent = "100000.0";
-            document.getElementById('numNights').textContent = "1";
+                const payment = invoice.payment || {};
+                const booking = payment.booking || {};
+                
+                $("#bookingId").text(invoice.bookingId);
+                $("#bookingDate").text(booking.bookingDate ? formatDateTime(booking.bookingDate) : "N/A");
+                $("#checkInDate").text(booking.checkInDate ? formatDateTime(booking.checkInDate) : "N/A");
+                $("#checkOutDate").text(booking.checkOutDate ? formatDateTime(booking.checkOutDate) : "N/A");
 
-            document.getElementById('paymentId').textContent = btn.dataset.paymentid;
-            document.getElementById('paymentMethod').textContent = btn.dataset.method;
-            document.getElementById('paymentBank').textContent = btn.dataset.bank;
-            document.getElementById('totalAmount').textContent = btn.dataset.amount;
+                $("#roomNumber").text(invoice.roomNumber);
+                $("#pricePerNight").text(invoice.roomPrice);
+                $("#numNights").text(invoice.nights);
+                $("#totalPricePerNight").text(invoice.totalRoomPrice);
 
-            new bootstrap.Modal(document.getElementById('invoiceModal')).show();
+                const services = invoice.services || [];
+                const serviceTableBody = $("#serviceTableBody");
+                serviceTableBody.empty();
+                if (services.length > 0) {
+                    $("#serviceSection").show();
+                    $("#noService").hide();
+                    services.forEach(s => {
+                        serviceTableBody.append(`
+                            <tr>
+                                <td>${s.serviceName}</td>
+                                <td>${s.price}</td>
+                                <td>${s.quantity}</td>
+                                <td>${s.priceAtUse}</td>
+                                <td>${s.usedAt}</td>
+                            </tr>
+                        `);
+                    });
+                } else {
+                    $("#serviceSection").hide();
+                }
+
+                // Voucher
+                if (invoice.voucherCode && invoice.discountAmount > 0) {
+                    $("#voucherSection").show();
+                    $("#voucherCode").text(invoice.voucherCode);
+                    $("#discountAmount").text(invoice.discountAmount);
+                    $("#noVoucher").hide();
+                } else {
+                    $("#voucherSection").hide();
+                }
+
+                $("#paymentMethod").text(payment.method || "N/A");
+                $("#transactionCode").text(payment.transactionCode || "N/A");
+                $("#paymentBank").text(payment.bankCode || "N/A");
+                $("#totalAmount").text(payment.amount || "0");
+                
+                $("#issueDate").text(invoice.issueDate ? formatDateTime(invoice.issueDate) : "N/A");
+
+                $("#invoiceModal").modal("show");
+            },
+            error: function (xhr, status, error) {
+                console.error("Lỗi AJAX:", xhr.responseText, error);
+                alert("Không thể tải dữ liệu hóa đơn.");
+            }
         });
     });
 });
+
+// format datetime
+function formatDateTime(dateStr) {
+    const date = new Date(dateStr);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+
+    return `${day}-${month}-${year} ${hours}:${minutes}`;
+}
+

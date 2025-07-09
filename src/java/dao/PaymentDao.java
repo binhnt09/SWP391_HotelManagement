@@ -54,10 +54,10 @@ public class PaymentDao extends DBContext {
 
         String sql = """
                      SELECT p.PaymentID, p.BookingID, p.Method, p.BankCode,
-                     \t   p.TransactionCode, p.Amount, p.Status, p.CreatedAt
-                     \t   p.UpdatedAt, p.DeletedBy, p.IsDeleted
+                        p.TransactionCode, p.Amount, p.Status, p.CreatedAt,
+                        p.UpdatedAt, p.DeletedBy, p.IsDeleted
                      FROM Payment p
-                     \tJOIN Booking b ON p.BookingID = b.BookingID
+                        JOIN Booking b ON p.BookingID = b.BookingID
                      WHERE b.UserID = ? AND p.IsDeleted = 0
                      ORDER BY p.CreatedAt DESC;""";
 
