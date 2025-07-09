@@ -65,7 +65,14 @@
 
                             <!-- Navbar Toggler -->
                             <div class="classy-navbar-toggler">
-                                <span class="navbarToggler"><span></span><span></span><span></span></span>
+                                <span class="navbarToggler">
+                                    <span>
+                                        <a href="#login-modal" class="switch-modal">
+                                            <i class="fa fa-lock"> Login |</i>
+                                            <i class="fa fa-user"> Register</i>
+                                        </a>
+                                    </span>
+                                    <span></span><span></span></span>
                             </div>
 
                             <!-- Menu -->
@@ -175,10 +182,24 @@
                                                                     </div>
 
                                                                     <div class="login-form text-center mb-50">
+                                                                        <%
+                                                                            Cookie[] cookies = request.getCookies();
+                                                                            String rememberedEmail = "";
+                                                                            String rememberedPass = "";
+                                                                            if (cookies != null) {
+                                                                                for (Cookie cookie : cookies) {
+                                                                                    if ("email".equals(cookie.getName())) {
+                                                                                        rememberedEmail = cookie.getValue();
+                                                                                    } else if("password".equals(cookie.getName())){
+                                                                                        rememberedPass = cookie.getValue();
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                        %>
                                                                         <form action="loginaccount" method="post">
                                                                             <input type="hidden" name="action" value="login"/>
                                                                             <div class="form-item">
-                                                                                <input type="email" name="email" value="${param.email}" placeholder="example@gmail.com">
+                                                                                <input type="email" name="email" value="<%= rememberedEmail %>" placeholder="example@gmail.com">
                                                                             </div>
                                                                             <c:if test="${not empty param.loginError}">
                                                                                 <script>
@@ -193,7 +214,7 @@
                                                                                 </div>
                                                                             </c:if>
                                                                             <div class="form-item password-toggle">
-                                                                                <input type="password" name="pass" placeholder="Password" id="passLogin" class="password-check">
+                                                                                <input type="password" name="pass" placeholder="Password" value="<%= rememberedPass %>" id="passLogin" class="password-check">
                                                                                 <i class="material-icons toggle-icon toggle-password" toggle="#passLogin">remove_red_eye</i>
                                                                                 <small class="error-message" style="color: yellow"></small>
                                                                             </div>
@@ -213,25 +234,24 @@
                                                                                 <div class="col-md-6 d-flex justify-content-center">
                                                                                     <!-- Checkbox -->
                                                                                     <div class="form-check mb-3 mb-md-0">
-                                                                                        <input class="form-check-input" type="checkbox" name="remember" value="on" id="loginCheck"
-                                                                                               style="cursor: pointer"
-                                                                                               <c:if test="${param.remember == 'on'}">checked</c:if> />
-                                                                                               <label class="form-check-label" for="loginCheck" style="cursor: pointer; color: white"> Remember me </label>
-                                                                                        </div>
+                                                                                        <input type="hidden" name="remember" value="on"/>
+                                                                                        <!--<input class="form-check-input" type="hidden" name="remember" value="on" id="loginCheck" style="cursor: pointer" checked/>-->
+                                                                                        <!--<label class="form-check-label" for="loginCheck" style="cursor: pointer; color: white"> Remember me </label>-->
                                                                                     </div>
                                                                                 </div>
-                                                                                <button type="submit" class="login-btn">login now</button>
-                                                                            </form>
-                                                                        </div>
-                                                                        <div class="mt-3">
-                                                                            <a href="#forgot-password-modal" class="switch-modal white-color" style="font-size: 14px;">Forgot your password?</a>
-                                                                        </div>
+                                                                            </div>
+                                                                            <button type="submit" class="login-btn">login now</button>
+                                                                        </form>
                                                                     </div>
-                                                                    <!-- rightside-content - end -->
-                                                                    <a class="popup-modal-dismiss" href="#">
-                                                                        <i class="fa fa-times"><button title="Close (Esc)" type="button" class="mfp-close"></button></i>
-                                                                    </a>
+                                                                    <div class="mt-3">
+                                                                        <a href="#forgot-password-modal" class="switch-modal white-color" style="font-size: 14px;">Forgot your password?</a>
+                                                                    </div>
                                                                 </div>
+                                                                <!-- rightside-content - end -->
+                                                                <a class="popup-modal-dismiss" href="#">
+                                                                    <i class="fa fa-times"><button title="Close (Esc)" type="button" class="mfp-close"></button></i>
+                                                                </a>
+                                                            </div>
                                                             <c:if test="${not empty success}">
                                                                 <div class="alert alert-success d-flex align-items-center" style="margin-bottom: 0px">
                                                                     <i class="fa fa-check" aria-hidden="true" style="margin-right: 8px;"></i>

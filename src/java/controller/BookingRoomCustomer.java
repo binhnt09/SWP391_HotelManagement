@@ -7,7 +7,6 @@ package controller;
 import dao.BookingDao;
 import entity.Authentication;
 import entity.Booking;
-import entity.User;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -93,7 +92,7 @@ public class BookingRoomCustomer extends HttpServlet {
             }
         }
 
-        request.getRequestDispatcher("profile/historybooking.jsp").forward(request, response);
+        request.getRequestDispatcher("/views/profile/historybooking.jsp").forward(request, response);
     }
 
     public static void main(String[] args) {

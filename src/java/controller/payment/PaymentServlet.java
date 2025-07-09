@@ -19,7 +19,6 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -39,27 +38,10 @@ import validation.Validation;
 @WebServlet(name = "PaymentServlet", urlPatterns = {"/payment"})
 public class PaymentServlet extends HttpServlet {
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-//        HttpSession session = request.getSession(false);
-//        if (session != null) {
-//            session.removeAttribute("checkin");
-//            session.removeAttribute("checkout");
-//            session.removeAttribute("numberNight");
-//            session.removeAttribute("totalPrice");
-//            session.removeAttribute("room");
-//        }
-        request.getRequestDispatcher("/payment/payment.jsp").forward(request, response);
+        request.getRequestDispatcher("/views/payment/payment.jsp").forward(request, response);
     }
 
     /**
@@ -73,6 +55,95 @@ public class PaymentServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        String method = request.getParameter("method");
+
+        if ("Vnpay".equals(method)) {
+            paymentWithVnpay(request, response);
+        } else if ("vietqr".equals(method)) {
+            paymentWithVietQr(request, response);
+        }
+    }
+
+    public void paymentWithVietQr(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        Authentication userIdStr = (Authentication) request.getSession().getAttribute("authLocal");
+
+        String bookingIdStr = request.getParameter("bookingId");
+        String totalBillStr = request.getParameter("totalbill");
+        String nightsStr = request.getParameter("nights");
+        String voucherIdStr = request.getParameter("voucherId");
+
+        Date checkin = (Date) request.getSession().getAttribute("checkin");
+        Date checkout = (Date) request.getSession().getAttribute("checkout");
+        int roomId = (int) request.getSession().getAttribute("roomIdBooking");
+
+        if (totalBillStr == null || bookingIdStr == null) {
+            throw new IllegalArgumentException("Số tiền không hợp lệ: rỗng");
+        }
+
+        // Làm sạch dữ liệu số tiền
+        totalBillStr = totalBillStr.replaceAll("[^\\d.]", "");
+
+        int userId = userIdStr.getUser().getUserId();
+        int nights = Validation.getInt(nightsStr, 1, 365);
+        int bookingId = Validation.getInt(bookingIdStr, 0, Integer.MAX_VALUE);
+        Integer voucherId = (voucherIdStr != null && !voucherIdStr.isEmpty()) ? Integer.valueOf(voucherIdStr) : null;
+        BigDecimal amountDouble = Validation.validateBigDecimal(totalBillStr, BigDecimal.ONE, new BigDecimal("999999999"));
+
+        // Tạo booking
+        Booking booking = new Booking();
+        booking.setUserId(userId);
+        booking.setVoucherId(voucherId);
+        booking.setTotalAmount(amountDouble);
+        booking.setStatus("PENDING");
+        booking.setCheckInDate(checkin);
+        booking.setCheckOutDate(checkout);
+
+        BookingDao bookingDAO = new BookingDao();
+        bookingId = bookingDAO.insertBooking(booking);
+
+        if (bookingId < 1) {
+            response.sendRedirect("booking.jsp");
+            return;
+        }
+
+        // Chi tiết booking
+        BookingDetails detail = new BookingDetails();
+        detail.setBookingId(bookingId);
+        detail.setRoomId(roomId);
+        detail.setPrice(amountDouble);
+        detail.setNights(nights);
+        bookingDAO.insertBookingDetail(detail);
+
+        // Tạo QR code để hiển thị
+        String bank = "MB";
+        String account = "0328633494";
+        String accountName = "NGO THANH BINH";
+        String template = "compact";
+        String download = "0";
+
+        // Phải để đúng format để webhook tách được
+        String description = "BOOK" + bookingId;
+        String encodedDescription = URLEncoder.encode(description, StandardCharsets.UTF_8);
+
+        String qrUrl = "https://qr.sepay.vn/img?"
+                + "acc=" + account
+                + "&bank=" + bank
+                + "&amount=" + amountDouble
+                + "&des=" + encodedDescription
+                + "&template=" + template
+                + "&download=" + download;
+
+        // Gửi dữ liệu sang JSP để hiển thị mã QR
+        request.getSession().setAttribute("bookingId", bookingId);
+        request.getSession().setAttribute("accountName", accountName);
+        request.getSession().setAttribute("stk", account);
+        request.getSession().setAttribute("amount", amountDouble);
+        request.getSession().setAttribute("description", description);
+        request.getSession().setAttribute("qrUrl", qrUrl);
+        response.sendRedirect(request.getContextPath() + "/views/payment/vietqr.jsp");
+    }
+
+    public void paymentWithVnpay(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Authentication userIdStr = (Authentication) request.getSession().getAttribute("authLocal");
 
         String bankCode = request.getParameter("bankCode");
@@ -88,26 +159,19 @@ public class PaymentServlet extends HttpServlet {
         if (totalBillStr == null || bookingIdStr == null) {
             throw new IllegalArgumentException("Số tiền không hợp lệ: rỗng abax");
         }
-        
+
         totalBillStr = totalBillStr.replaceAll("[^\\d.]", "");
 
         int userId = userIdStr.getUser().getUserId();
-//        int nights = Validation.getInt(nightsStr, 1, 365);
         int nights = Validation.getInt(nightsStr, 1, 365);
 
         int bookingId = Validation.getInt(bookingIdStr, 0, Integer.MAX_VALUE);
         Integer voucherId = (voucherIdStr != null && !voucherIdStr.isEmpty()) ? Integer.valueOf(voucherIdStr) : null;
-//        BigDecimal amountDouble = Validation.validateBigDecimal(totalBillStr, BigDecimal.ONE, new BigDecimal("999999999"));
-        BigDecimal amountDouble;
-        try {
-            amountDouble = new BigDecimal(totalBillStr);
-        } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("Số tiền không hợp lệ", e);
-        }
+        BigDecimal amountDouble = Validation.validateBigDecimal(totalBillStr, BigDecimal.ONE, new BigDecimal("999999999"));
 
         Booking booking = new Booking();
-        booking.setUserID(userId);
-        booking.setVoucherID(voucherId);
+        booking.setUserId(userId);
+        booking.setVoucherId(voucherId);
         booking.setTotalAmount(amountDouble);
         booking.setStatus("PENDING");
         booking.setCheckInDate(checkin);
@@ -121,8 +185,8 @@ public class PaymentServlet extends HttpServlet {
         }
 
         BookingDetails detail = new BookingDetails();
-        detail.setBookingID(bookingId);
-        detail.setRoomID(roomId);
+        detail.setBookingId(bookingId);
+        detail.setRoomId(roomId);
         detail.setPrice(amountDouble);
         detail.setNights(nights);
         bookingDAO.insertBookingDetail(detail);
@@ -204,15 +268,4 @@ public class PaymentServlet extends HttpServlet {
         String paymentUrl = Config.vnp_PayUrl + "?" + queryUrl;
         response.sendRedirect(paymentUrl);
     }
-
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
-
 }

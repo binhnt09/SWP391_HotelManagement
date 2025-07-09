@@ -1,100 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app version="6.0" xmlns="https://jakarta.ee/xml/ns/jakartaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd">
+
     <welcome-file-list>
-        <welcome-file>loadtohome</welcome-file>  
+        <welcome-file>loadtohome</welcome-file>
     </welcome-file-list>
     <servlet-mapping>
         <servlet-name>HotelServlet</servlet-name>
         <url-pattern>/loadtohome</url-pattern>
     </servlet-mapping>
-
-
     <servlet>
         <servlet-name>SearchRoom</servlet-name>
         <servlet-class>controller.SearchRoom</servlet-class>
     </servlet>
-    <servlet>
-        <servlet-name>CustomerListServlet</servlet-name>
-        <servlet-class>controller.CustomerListServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>StaffListSevelet</servlet-name>
-        <servlet-class>controller.StaffListSevelet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>CustomerDeleteServlet</servlet-name>
-        <servlet-class>controller.CustomerDeleteServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>StaffDeleteServlet</servlet-name>
-        <servlet-class>controller.StaffDeleteServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>RoomListServlet</servlet-name>
-        <servlet-class>controller.RoomListServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>RoomDeleteServlet</servlet-name>
-        <servlet-class>controller.RoomDeleteServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>ReportServlet</servlet-name>
-        <servlet-class>controller.ReportServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>CustomerUpdateServlet</servlet-name>
-        <servlet-class>controller.CustomerUpdateServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>StaffUpdateServlet</servlet-name>
-        <servlet-class>controller.StaffUpdateServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>CustomerReportServlet</servlet-name>
-        <servlet-class>controller.CustomerReportServlet</servlet-class>
-    </servlet>
     <servlet-mapping>
         <servlet-name>SearchRoom</servlet-name>
         <url-pattern>/searchroom</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>CustomerListServlet</servlet-name>
-        <url-pattern>/customerList</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>StaffListSevelet</servlet-name>
-        <url-pattern>/staffList</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>CustomerDeleteServlet</servlet-name>
-        <url-pattern>/customerDelete</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>StaffDeleteServlet</servlet-name>
-        <url-pattern>/staffDelete</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>RoomListServlet</servlet-name>
-        <url-pattern>/roomList</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>RoomDeleteServlet</servlet-name>
-        <url-pattern>/roomDelete</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>ReportServlet</servlet-name>
-        <url-pattern>/report</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>CustomerUpdateServlet</servlet-name>
-        <url-pattern>/customerUpdate</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>StaffUpdateServlet</servlet-name>
-        <url-pattern>/staffUpdate</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>CustomerReportServlet</servlet-name>
-        <url-pattern>/customerReport</url-pattern>
     </servlet-mapping>
 </web-app>

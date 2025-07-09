@@ -113,13 +113,14 @@
             <!-- End XP Row -->
 
         </div>
-        <!--        <div class="xp-breadcrumbbar text-center">
-                    <h4 class="page-title">Dashboard</h4>  
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">Dashboard</li>
-                    </ol>                
-                </div>-->
+        <!-- End XP Row -->
+        <div class="xp-breadcrumbbar text-center">
+            <h4 class="page-title">Dashboard</h4>  
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Customer Info</li>
+            </ol>                
+        </div>
 
     </div>
     <!------main-content-start----------->
@@ -268,7 +269,7 @@
             </div>
 
 
-            <!----add-modal start--------->-->
+            <!----add-modal start--------->
             <div class="modal fade" tabindex="-1" id="addEmployeeModal" role="dialog">
                 <div class="modal-dialog" role="document">
                     <form action="customerUpdate" method="POST">

@@ -7,15 +7,12 @@ package dao;
 import dal.DBContext;
 import entity.Booking;
 import entity.BookingDetails;
-import entity.Room;
 import entity.User;
-import java.sql.Timestamp;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.sql.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -26,14 +23,48 @@ import java.util.logging.Logger;
  */
 public class BookingDao extends DBContext {
 
+    public Booking getBookingById(int bookingId) {
+        Booking booking = null;
+
+        String sql = "SELECT bookingID, UserID, VoucherID, BookingDate, CheckInDate, "
+                + " CheckOutDate, TotalAmount, Status, CreatedAt, UpdatedAt, deletedAt, deletedBy, isDeleted"
+                + " FROM Booking WHERE bookingID = ? AND isDeleted = 0";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+
+            ps.setInt(1, bookingId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    booking = new Booking();
+                    booking.setBookingId(rs.getInt("bookingID"));
+                    booking.setUserId(rs.getInt("userID"));
+                    booking.setVoucherId(rs.getObject("voucherID") != null ? rs.getInt("voucherID") : null);
+                    booking.setBookingDate(rs.getTimestamp("bookingDate"));
+                    booking.setCheckInDate(rs.getDate("checkInDate"));
+                    booking.setCheckOutDate(rs.getDate("checkOutDate"));
+                    booking.setTotalAmount(rs.getBigDecimal("totalAmount"));
+                    booking.setStatus(rs.getString("status"));
+                    booking.setCreatedAt(rs.getTimestamp("createdAt"));
+                    booking.setUpdatedAt(rs.getTimestamp("updatedAt"));
+                    booking.setDeletedAt(rs.getTimestamp("deletedAt"));
+                    booking.setDeletedBy(rs.getObject("deletedBy") != null ? rs.getInt("deletedBy") : null);
+                    booking.setIsDeleted(rs.getBoolean("isDeleted"));
+                }
+            }
+        } catch (SQLException e) {
+            Logger.getLogger(BookingDao.class.getName()).log(Level.SEVERE, null, e);
+        }
+        return booking;
+    }
+
     public int insertBooking(Booking booking) {
         String sql = "INSERT INTO Booking (UserID, VoucherID, BookingDate, CheckInDate, "
                 + " CheckOutDate, TotalAmount, Status, CreatedAt, UpdatedAt, IsDeleted) "
                 + " VALUES (?, ?, GETDATE(), ?, ?, ?, ?, GETDATE(), GETDATE(), 0)";
         try (PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            ps.setInt(1, booking.getUserID());
-            if (booking.getVoucherID() != null) {
-                ps.setInt(2, booking.getVoucherID());
+            ps.setInt(1, booking.getUserId());
+            if (booking.getVoucherId() != null) {
+                ps.setInt(2, booking.getVoucherId());
             } else {
                 ps.setNull(2, java.sql.Types.INTEGER);
             }
@@ -70,8 +101,8 @@ public class BookingDao extends DBContext {
         String sql = "INSERT INTO BookingDetail (BookingID, RoomID, Price, Nights, CreatedAt, UpdatedAt, IsDeleted) "
                 + "VALUES (?, ?, ?, ?, GETDATE(), GETDATE(), 0)";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setInt(1, detail.getBookingID());
-            ps.setInt(2, detail.getRoomID());
+            ps.setInt(1, detail.getBookingId());
+            ps.setInt(2, detail.getRoomId());
             ps.setBigDecimal(3, detail.getPrice());
             ps.setInt(4, detail.getNights());
             return ps.executeUpdate() > 0;
@@ -79,6 +110,24 @@ public class BookingDao extends DBContext {
             Logger.getLogger(BookingDao.class.getName()).log(Level.SEVERE, null, e);
         }
         return false;
+    }
+
+    public String getStatusById(int bookingId) {
+        String status = null;
+        String sql = "SELECT Status FROM Booking WHERE bookingID = ? AND isDeleted = 0";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, bookingId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    status = rs.getString("Status");
+                }
+            }
+        } catch (SQLException e) {
+            Logger.getLogger(BookingDao.class.getName()).log(Level.SEVERE, null, e);
+        }
+
+        return status;
     }
 
     public List<Booking> getBookings(
@@ -192,37 +241,6 @@ public class BookingDao extends DBContext {
         return list;
     }
 
-    public Booking getBookingById(int id) {
-        Booking book = null;
-        String sql = "select Bookingid ,UserID, VoucherID, BookingDate, CheckInDate, "
-                + " CheckOutDate, TotalAmount, Status, CreatedAt, UpdatedAt, IsDeleted ,deletedat, deletedby"
-                + " from booking"
-                + " where bookingid = ?";
-        try (PreparedStatement pre = connection.prepareStatement(sql)) {
-            pre.setInt(1, id);
-            try (ResultSet rs = pre.executeQuery()) {
-                if (rs.next()) {
-                    book = new Booking(rs.getInt("bookingid"),
-                            rs.getInt("userId"),
-                            rs.getInt("voucherId"),
-                            rs.getTimestamp("bookingdate"),
-                            rs.getDate("checkindate"),
-                            rs.getDate("checkoutdate"),
-                            rs.getBigDecimal("totalamount"),
-                            rs.getString("status"),
-                            rs.getTimestamp("CreatedAt"),
-                            rs.getTimestamp("UpdatedAt"),
-                            rs.getTimestamp("DeletedAt"),
-                            rs.getInt("DeletedBy"),
-                            rs.getBoolean("IsDeleted"));
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return book;
-    }
-
     public int countBookings(String keyword, String status, int roomId) {
         int total = 0;
         try {
@@ -298,26 +316,6 @@ public class BookingDao extends DBContext {
             e.printStackTrace();
         }
         return user;
-    }
-
-    public static void main(String[] args) {
-        List<Booking> list = new BookingDao().getBookings(
-                0, // userRoleId
-                -1, // currentUserId (nếu không lọc theo user)
-                1,
-                "pending",
-                "b.BookingID", // sortBy
-                "Hưng", // sortBy
-                true, // isAsc
-                1,
-                5,
-                false // isDeleted
-        );
-        for (Booking a : list) {
-            System.out.println(a.getUserID());
-        }
-//        System.out.println(new dao.BookingDao().getBookingById(1).getBookingID());
-//        System.out.println("User: " + new dao.BookingDao().getUserByBookingId(1));
     }
 
 }

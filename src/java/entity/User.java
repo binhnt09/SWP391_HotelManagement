@@ -164,7 +164,13 @@ public class User {
 
 
     public String getRoleName() {
-        return roleName;
+        return switch (this.userRoleId) {
+            case 1 -> "Admin System";
+            case 2 -> "Manager";
+            case 3 -> "Receptionist";
+            case 4 -> "Cleaner";
+            default -> "Customer";
+        };
     }
 
     public void setRoleName(String roleName) {
