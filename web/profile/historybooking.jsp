@@ -233,7 +233,7 @@
                                                             <div class="info-row d-flex align-items-center">
                                                                 <div>
                                                                     <div class="info-label">Mã đặt phòng</div>
-                                                                    <div class="info-value"><i class="fas fa-hashtag"></i>${i.bookingID}</div>
+                                                                    <div class="info-value"><i class="fas fa-hashtag"></i>${i.bookingId}</div>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -260,6 +260,7 @@
                                                                     data-bs-toggle="modal"
                                                                     data-bs-target="#editbooking"
                                                                     data-roomID="${room.roomID}"
+                                                                    data-bookingID="${i.bookingId}"
                                                                     data-roomDetail="${room.roomDetail.roomDetailID}"
                                                                     data-roomNumber="${room.roomNumber}"
                                                                     data-status="${i.status}"
@@ -313,6 +314,7 @@
                 <div class="modal-body">
                     <input type="hidden" name="action" value="editBook">
                     <input type="hidden" id="bookRoomId" name="roomId">
+                    <input type="hidden" id="bookingId" name="bookingId">
                     <input type="hidden" id="bookRoomDetail" name="bookRoomDetail">
                     <input type="hidden" id="bookNumberNight" name="bookNumberNight">
 
@@ -346,22 +348,16 @@
                             <input type="text" id="bookTextNumberNight" class="form-control" readonly="">
                         </div>
                     </div>
-                </div>
-
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Update Room</button>
-                </div>
-            </div>  
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Update Room</button>
+                    </div>
+                </div>  
         </form>
     </div>
 </div>
-
-
-
-
 <!-- Footer -->
-<jsp:include page="/profile/footerprofile.jsp"></jsp:include>
+<jsp:include page="/views/profile/footerprofile.jsp"></jsp:include>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <!-- jQuery (vì Bootstrap 4 phụ thuộc) -->
@@ -381,6 +377,7 @@
     $(document).on('click', '[data-bs-toggle="modal"]', function () {
         const button = $(this);
         $('#bookRoomId').val(button.data('roomid'));
+        $('#bookingId').val(button.data('bookingid'));
         $('#bookRoomDetail').val(button.data('roomdetail'));
         $('#bookRoomNumber').val(button.data('roomnumber'));
 
