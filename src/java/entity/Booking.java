@@ -14,7 +14,7 @@ import java.sql.Date;
  */
 public class Booking {
 
-    private int bookingID;
+    private int bookingId;
     private int userID;
     private Integer voucherID;
     private Timestamp bookingDate;
@@ -34,7 +34,7 @@ public class Booking {
     }
 
     public Booking(int bookingID, int userID, Integer voucherID, Timestamp bookingDate, Date checkInDate, Date checkOutDate, BigDecimal totalAmount, String status, Timestamp createdAt, Timestamp updatedAt, Timestamp deletedAt, Integer deletedBy, boolean isDeleted) {
-        this.bookingID = bookingID;
+        this.bookingId= bookingID;
         this.userID = userID;
         this.voucherID = voucherID;
         this.bookingDate = bookingDate;
@@ -49,7 +49,7 @@ public class Booking {
         this.isDeleted = isDeleted;
     }
     public Booking(int bookingID, Integer voucherID, Timestamp bookingDate, Date checkInDate, Date checkOutDate, BigDecimal totalAmount, String status, Timestamp createdAt, Timestamp updatedAt, Timestamp deletedAt, Integer deletedBy, boolean isDeleted) {
-        this.bookingID = bookingID;
+        this.bookingId = bookingID;
         this.voucherID = voucherID;
         this.bookingDate = bookingDate;
         this.checkInDate = checkInDate;
@@ -66,12 +66,12 @@ public class Booking {
     
 
     
-    public int getBookingID() {
-        return bookingID;
+    public int getBookingId() {
+        return bookingId;
     }
 
-    public void setBookingID(int bookingID) {
-        this.bookingID = bookingID;
+    public void setBookingId(int bookingId) {
+        this.bookingId = bookingId;
     }
 
     public int getUserID() {
@@ -174,7 +174,7 @@ public class Booking {
 
     @Override
     public String toString() {
-        return "Booking{" + "bookingID=" + bookingID + ", userID=" + userID + ", voucherID=" + voucherID + ", bookingDate=" + bookingDate + ", checkInDate=" + checkInDate + ", checkOutDate=" + checkOutDate + ", totalAmount=" + totalAmount + ", status=" + status + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + ", deletedAt=" + deletedAt + ", deletedBy=" + deletedBy + ", isDeleted=" + isDeleted + '}';
+        return "Booking{" + "bookingID=" + bookingId + ", userID=" + userID + ", voucherID=" + voucherID + ", bookingDate=" + bookingDate + ", checkInDate=" + checkInDate + ", checkOutDate=" + checkOutDate + ", totalAmount=" + totalAmount + ", status=" + status + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + ", deletedAt=" + deletedAt + ", deletedBy=" + deletedBy + ", isDeleted=" + isDeleted + '}';
     }
 
 }

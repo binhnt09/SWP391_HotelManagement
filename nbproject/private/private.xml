@@ -3,6 +3,7 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
+<<<<<<< Updated upstream
             <file>file:/D:/kì/ki5/SWP/project/SWP391_HotelManagement/src/java/dao/BookingDetailDAO.java</file>
             <file>file:/D:/kì/ki5/SWP/project/SWP391_HotelManagement/web/profile/historybooking.jsp</file>
             <file>file:/D:/kì/ki5/SWP/project/SWP391_HotelManagement/src/java/controller/RoomCRUD.java</file>
@@ -14,6 +15,12 @@
             <file>file:/D:/kì/ki5/SWP/project/SWP391_HotelManagement/web/bookingmanage.jsp</file>
             <file>file:/D:/kì/ki5/SWP/project/SWP391_HotelManagement/src/java/dal/DBContext.java</file>
             <file>file:/D:/kì/ki5/SWP/project/SWP391_HotelManagement/src/java/controller/BookingCrud.java</file>
+=======
+            <file>file:/D:/kì/ki5/SWP/project/SWP391_HotelManagement/src/java/dao/RoomDetailDAO.java</file>
+            <file>file:/D:/kì/ki5/SWP/project/SWP391_HotelManagement/src/java/controller/BookingRoom.java</file>
+            <file>file:/D:/kì/ki5/SWP/project/SWP391_HotelManagement/src/java/controller/CustomerListServlet.java</file>
+            <file>file:/D:/kì/ki5/SWP/project/SWP391_HotelManagement/src/java/dao/RoomDAO.java</file>
+>>>>>>> Stashed changes
         </group>
     </open-files>
 </project-private>

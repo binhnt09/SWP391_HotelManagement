@@ -226,17 +226,17 @@
                                     <c:forEach var="b" items="${listBooking}" varStatus="status">
                                         <%
                                             entity.Booking booking = (entity.Booking) pageContext.getAttribute("b");
-                                            entity.BookingDetails detail = new dao.BookingDetailDAO().getBookingDetailByBookingId(booking.getBookingID());
+                                            entity.BookingDetails detail = new dao.BookingDetailDAO().getBookingDetailByBookingId(booking.getBookingId());
 
                                             entity.Room room = (entity.Room) detail.getRoom();
-                                            entity.User user = new dao.BookingDao().getUserByBookingId(booking.getBookingID());
+                                            entity.User user = new dao.BookingDao().getUserByBookingId(booking.getBookingId());
                                             pageContext.setAttribute("room", room);
                                             pageContext.setAttribute("detail", detail);
                                             pageContext.setAttribute("userInfo", user);
                                         %>
                                         <tr>
                                             <td>
-                                                <input type="checkbox" name="roomCheckbox" value="${b.bookingID}">
+                                                <input type="checkbox" name="roomCheckbox" value="${b.bookingId}">
                                             </td>
                                             <td>${b.bookingID}</td>
                                             <td>${userInfo.firstName} ${userInfo.lastName}</td>
