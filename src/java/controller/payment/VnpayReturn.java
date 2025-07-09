@@ -5,11 +5,13 @@
 package controller.payment;
 
 import constant.Config;
+import constant.MailUtil;
 import dao.BookingDao;
 import dao.PaymentDao;
+import entity.Authentication;
+import entity.Invoice;
 import entity.Payment;
 import java.io.IOException;
-import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -21,6 +23,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -38,23 +42,32 @@ public class VnpayReturn extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
+    private static final String TRANS_RESULT = "transResult";
+
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
 
-        try (PrintWriter out = response.getWriter()) {
+        Authentication authLocal = (Authentication) request.getSession().getAttribute("authLocal");
+        String email = authLocal.getUser().getEmail();
+
+        try {
             Map<String, String> fields = new HashMap<>();
             for (Enumeration<String> params = request.getParameterNames(); params.hasMoreElements();) {
-                String paramName = params.nextElement();
+                String paramName = params.nextElement(); // KHÔNG encode ở đây
                 String paramValue = request.getParameter(paramName);
-                if (paramValue != null && !paramValue.isEmpty()) {
-                    fields.put(paramName, paramValue);
+                if (paramValue != null && paramValue.length() > 0) {
+                    fields.put(paramName, URLEncoder.encode(paramValue, StandardCharsets.US_ASCII.toString()));
                 }
             }
 
             String vnp_SecureHash = request.getParameter("vnp_SecureHash");
-            fields.remove("vnp_SecureHashType");
-            fields.remove("vnp_SecureHash");
+            if (fields.containsKey("vnp_SecureHashType")) {
+                fields.remove("vnp_SecureHashType");
+            }
+            if (fields.containsKey("vnp_SecureHash")) {
+                fields.remove("vnp_SecureHash");
+            }
 
             String signValue = Config.hashAllFields(fields);
             boolean isValidSignature = signValue.equals(vnp_SecureHash);
@@ -68,6 +81,7 @@ public class VnpayReturn extends HttpServlet {
                 BigDecimal amount = new BigDecimal(request.getParameter("vnp_Amount")).divide(BigDecimal.valueOf(100));
 
                 boolean transSuccess = false;
+                    PaymentDao paymentDao = new PaymentDao();
                 if ("00".equals(request.getParameter("vnp_TransactionStatus"))) {
                     transSuccess = true;
 
@@ -85,22 +99,29 @@ public class VnpayReturn extends HttpServlet {
                     payment.setBankCode(bankCode);
                     payment.setGatewayResponse("Success");
 
-                    PaymentDao paymentDao = new PaymentDao();
                     paymentDao.insertPayment(payment);
-                }
 
-                request.setAttribute("transResult", transSuccess);
-                request.getRequestDispatcher("/payment/paymentResult.jsp").forward(request, response);
+                }
+                    Invoice invoice = paymentDao.getInvoice(bookingId);
+                    MailUtil.sendInvoice(email, invoice);
+
+                request.getSession().setAttribute(TRANS_RESULT, transSuccess);
+                responseToPaymentResult(request, response);
             } else {
                 System.out.println("Giao dịch không hợp lệ (invalid signature)");
-                request.setAttribute("transResult", false);
-                request.getRequestDispatcher("/payment/paymentResult.jsp").forward(request, response);
+                request.getSession().setAttribute(TRANS_RESULT, false);
+                responseToPaymentResult(request, response);
             }
         } catch (Exception e) {
-            e.printStackTrace();
-            request.setAttribute("transResult", false);
-            request.getRequestDispatcher("/payment/paymentResult.jsp").forward(request, response);
+            Logger.getLogger(VnpayReturn.class.getName()).log(Level.SEVERE, null, e);
+            request.getSession().setAttribute(TRANS_RESULT, false);
+            responseToPaymentResult(request, response);
         }
+    }
+
+    private void responseToPaymentResult(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        response.sendRedirect(request.getContextPath() + "/views/payment/paymentResult.jsp");
     }
 
 // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

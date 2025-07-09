@@ -11,6 +11,8 @@ import java.sql.Statement;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -402,4 +404,97 @@ public class AuthenticationDAO extends DBContext {
         }
     }
 
+    public List<Authentication> searchWithPagination(String keyword, int page, int pageSize) {
+        List<Authentication> list = new ArrayList<>();
+        String sql = "SELECT a.*, u.UserID, u.Email "
+                + "FROM Authentication a "
+                + "JOIN [User] u ON a.UserID = u.UserID "
+                + "WHERE a.IsDeleted = 0 or a.IsDeleted = 1 "
+                + "AND (a.UserKey LIKE ? OR a.AuthType LIKE ? OR u.Email LIKE ?) "
+                + "ORDER BY a.CreatedAt DESC "
+                + "OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            String searchTerm = "%" + keyword + "%";
+            ps.setString(1, searchTerm);
+            ps.setString(2, searchTerm);
+            ps.setString(3, searchTerm);
+            ps.setInt(4, (page - 1) * pageSize);
+            ps.setInt(5, pageSize);
+
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Authentication auth = extractAuthentication(rs);
+                // Set thêm email từ user
+                auth.getUser().setEmail(rs.getString("Email"));
+                list.add(auth);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return list;
+    }
+
+    public int countSearch(String keyword) {
+        String sql = "SELECT COUNT(*) "
+                + "FROM Authentication a "
+                + "JOIN [User] u ON a.UserID = u.UserID "
+                + "WHERE a.IsDeleted = 0 "
+                + "AND (a.UserKey LIKE ? OR a.AuthType LIKE ? OR u.Email LIKE ?)";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            String searchTerm = "%" + keyword + "%";
+            ps.setString(1, searchTerm);
+            ps.setString(2, searchTerm);
+            ps.setString(3, searchTerm);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public boolean softDeleteAuth(int authId, int deletedBy) {
+        String sql = "UPDATE Authentication SET IsDeleted = 1, DeletedAt = GETDATE(), DeletedBy = ? WHERE AuthenticationID = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, deletedBy);
+            ps.setInt(2, authId);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+    
+    public boolean restoreAuth(int authId) {
+    String sql = "UPDATE Authentication SET IsDeleted = 0, DeletedAt = NULL, DeletedBy = NULL WHERE AuthenticationID = ?";
+    try (PreparedStatement ps = connection.prepareStatement(sql)) {
+        ps.setInt(1, authId);
+        return ps.executeUpdate() > 0;
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return false;
+}
+
+// Private helper method to map result
+    private Authentication extractAuthentication(ResultSet rs) throws SQLException {
+        Authentication auth = new Authentication();
+        auth.setAuthenticationID(rs.getInt("AuthenticationID"));
+        User user = new User();
+        user.setUserId(rs.getInt("UserID"));
+        auth.setUser(user);
+        auth.setUserKey(rs.getString("UserKey"));
+        auth.setPassword(rs.getString("Password"));
+        auth.setAuthType(rs.getString("AuthType"));
+        auth.setCreatedAt(rs.getTimestamp("CreatedAt"));
+        auth.setUpdatedAt(rs.getTimestamp("UpdatedAt"));
+        auth.setDeletedAt(rs.getTimestamp("DeletedAt"));
+        auth.setDeletedBy(rs.getObject("DeletedBy") != null ? rs.getInt("DeletedBy") : null);
+        auth.setIsDeleted(rs.getBoolean("IsDeleted"));
+        return auth;
+    }
 }

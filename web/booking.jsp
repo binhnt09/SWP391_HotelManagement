@@ -8,7 +8,8 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Traveloka - Đặt Phòng Khách Sạn</title>
+        <title>Palatin - Đặt Phòng Khách Sạn</title>
+        <link rel="icon" href="img/core-img/favicon.ico">
         <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
         <style>
@@ -99,38 +100,38 @@
                                     <div class="col-md-6 mb-3">
                                         <label class="form-label fw-semibold">Số điện thoại</label>
                                         <div class="input-group">
-<!--                                            <select class="form-select" style="max-width: 80px;">
-                                                <option>+84</option>
-                                            </select>-->
+                                            <!--                                            <select class="form-select" style="max-width: 80px;">
+                                                                                            <option>+84</option>
+                                                                                        </select>-->
                                             <input type="tel" value="${sessionScope.authLocal.user.phone}" class="form-control">
                                         </div>
                                     </div>
                                 </div>
 
-                                <p class="form-text">Chúng tôi sẽ gửi e-voucher tới email này. +84 123456789 gồm Mã quốc gia (+84) và Số điện thoại (123456789).</p>
+                                <p class="form-text">Chúng tôi sẽ gửi e-voucher tới email này. ${sessionScope.authLocal.user.email} Số điện thoại (${sessionScope.authLocal.user.phone}).</p>
 
-                                <div class="row mt-3">
-                                    <div class="col-6">
-                                        <div class="card border-primary bg-light">
-                                            <div class="card-body text-center p-3">
-                                                <i class="fas fa-phone me-2"></i>
-                                                <span class="small">Tôi là khách lưu trú</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-6">
-                                        <div class="card">
-                                            <div class="card-body text-center p-3">
-                                                <i class="fas fa-users me-2"></i>
-                                                <span class="small">Tôi đang đặt cho người khác</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                                <!--                                <div class="row mt-3">
+                                                                    <div class="col-6">
+                                                                        <div class="card border-primary bg-light">
+                                                                            <div class="card-body text-center p-3">
+                                                                                <i class="fas fa-phone me-2"></i>
+                                                                                <span class="small">Tôi là khách lưu trú</span>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-6">
+                                                                        <div class="card">
+                                                                            <div class="card-body text-center p-3">
+                                                                                <i class="fas fa-users me-2"></i>
+                                                                                <span class="small">Tôi đang đặt cho người khác</span>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>-->
                             </div>
 
                             <!-- Special Requests -->
-                            <div class="mb-4">
+<!--                            <div class="mb-4">
                                 <h5 class="fw-bold mb-3">Bạn yêu cầu nào không?</h5>
                                 <p class="text-muted small mb-3">Khi nhận phòng, khách sạn sẽ thông báo liệu yêu cầu này có được đáp ứng hay không.</p>
 
@@ -168,7 +169,7 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            </div>-->
 
 
                             <!-- Price Details -->
@@ -182,8 +183,7 @@
                                         </div>
                                         <div class="text-muted small mb-2">${room.getRoomNumber()}-${room.getRoomTypeID().getTypeName()} (${numberNight} đêm)</div>
                                         <div class="d-flex justify-content-between mb-3">
-                                            <span>Thuế và phí</span>
-                                            <span>993.074 VND</span>
+
                                         </div>
                                         <hr>
                                         <div class="d-flex justify-content-between fw-bold fs-5 price-highlight">

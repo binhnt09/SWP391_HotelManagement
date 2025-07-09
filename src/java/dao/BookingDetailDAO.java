@@ -63,10 +63,4 @@ public class BookingDetailDAO extends DBContext {
         return list;
     }
 
-    public static void main(String[] args) {
-        System.out.println(new dao.BookingDetailDAO().getBookingDetailByBookingId(1).getBookId());
-        for (Integer a : new dao.BookingDetailDAO().getAllRoomIdByBookingDetail()) {
-            System.out.println(a);
-        }
-    }
 }

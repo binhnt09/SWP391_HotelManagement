@@ -151,7 +151,7 @@
                             </div>
                         </div>
                     </div>
-                    <table class="table table-striped table-hover">
+                    <table class="table table-striped table-hover table-bordered">
                         <thead>
                             <tr>
                                 <th><input type="checkbox" id="selectAll"></th>

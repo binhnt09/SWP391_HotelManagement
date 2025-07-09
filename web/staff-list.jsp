@@ -119,7 +119,7 @@
             <h4 class="page-title">Dashboard</h4>  
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Dashboard</li>
+                <li class="breadcrumb-item active" aria-current="page">Staff Info</li>
             </ol>                
         </div>
 
@@ -178,7 +178,7 @@
                     </div>
 
                     <!-- Staff Table -->
-                    <table class="table table-striped table-hover">
+                    <table class="table table-striped table-hover table-bordered">
                         <thead>
                             <tr>
                                 <th><span class="custom-checkbox">
