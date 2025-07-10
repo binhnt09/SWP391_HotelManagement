@@ -8,6 +8,7 @@ import constant.MailUtil;
 import dao.BookingDao;
 import dao.InvoiceDao;
 import dao.PaymentDao;
+import dao.VoucherDao;
 import entity.Booking;
 import entity.Invoice;
 import entity.Payment;
@@ -165,7 +166,11 @@ public class VietQrSepaycallback extends HttpServlet {
             InvoiceDao invoiceDao = new InvoiceDao();
 
             paymentDao.insertPayment(payment);
-            
+
+            //update membership
+            VoucherDao voucherDao = new VoucherDao();
+            voucherDao.updateUserMembershipLevel(user.getUserId());
+
             try {
                 int invoiceId = invoiceDao.generateInvoice(bookingId);
                 Invoice invoice = invoiceDao.getInvoice(invoiceId);

@@ -53,6 +53,9 @@
                                 <div class="font-weight-bold text-dark">🥉 Bronze Priority</div>
                                 <div class="text-muted small">0 Điểm</div>
                             </div>
+                            <a class="dropdown-item" href="${pageContext.request.contextPath}/voucherforcustomer">
+                                <i class="fas fa-bed mr-2 text-primary"></i> Điểm
+                            </a>
                             <a class="dropdown-item" href="${pageContext.request.contextPath}/updateprofile">
                                 <i class="fa fa-user mr-2 text-primary"></i> Tài khoản của tôi
                             </a>

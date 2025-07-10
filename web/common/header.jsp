@@ -272,7 +272,7 @@
                                                                 <div class="font-weight-bold text-dark">🥉 Bronze Priority</div>
                                                                 <div class="text-muted small">0 Điểm</div>
                                                             </div>
-                                                            <a class="dropdown-item" href="updateprofile" style="color: black"><i class="fa fa-user mr-2 text-primary"></i> Điểm</a>
+                                                            <a class="dropdown-item" href="${pageContext.request.contextPath}/voucherforcustomer" style="color: black"><i class="fa fa-user mr-2 text-primary"></i> Điểm</a>
                                                             <a class="dropdown-item" href="updateprofile" style="color: black"><i class="fa fa-user mr-2 text-primary"></i> Chỉnh sửa hồ sơ</a>
                                                             <a class="dropdown-item" href="${pageContext.request.contextPath}/paymenthistory" style="color: black"><i class="fas fa-list mr-2 text-primary"></i> Danh sách giao dịch</a>
                                                             <a class="dropdown-item" href="${pageContext.request.contextPath}/bookingroomcustomer" style="color: black"><i class="fas fa-bed mr-2 text-primary"></i> Đặt chỗ của tôi</a>

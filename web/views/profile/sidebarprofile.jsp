@@ -16,6 +16,12 @@
             <div class="profile-status">Bạn là thành viên Bronze Priority</div>
         </div>
         <div class="list-group list-group-flush sidebar-menu">
+            <div class="list-group-item ${pageContext.request.requestURI.endsWith('myvoucher.jsp') ? 'active' : ''}">
+                <a class="dropdown-item" href="${pageContext.request.contextPath}/voucherforcustomer">
+                    <i class="fas fa-bed"></i> Điểm
+                </a>
+            </div>
+                    
             <div class="list-group-item ${pageContext.request.requestURI.endsWith('historybooking.jsp') ? 'active' : ''}">
                 <a class="dropdown-item" href="${pageContext.request.contextPath}/bookingroomcustomer">
                     <i class="fas fa-bed"></i> Đặt chỗ của tôi

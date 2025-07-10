@@ -4,6 +4,7 @@
     Author     : ASUS
 --%>
 
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html lang="vi">
@@ -117,9 +118,11 @@
                                 <input type="text" placeholder="Enter coupon code or select available coupon(s)" id="coupon-input" style="padding: 10px; width: 100%; box-sizing: border-box; border-radius: 6px;">
                                 <div class="voucher-list">
                                     <p>Hoặc chọn một mã từ danh sách:</p>
-                                    <label><input type="radio" name="voucher" value="TRAVEL10"> TRAVEL10 - Giảm 10%</label><br>
-                                    <label><input type="radio" name="voucher" value="WELCOME15"> WELCOME15 - Giảm 15%</label><br>
-                                    <label><input type="radio" name="voucher" value="SUMMER25"> SUMMER25 - Giảm 25%</label>
+                                    <c:forEach var="v" items="${vouchers}">
+                                        <label>
+                                            <input type="radio" name="voucher" value="${v.getCode()}"> ${v.getCode()} - Giảm ${v.getDiscountPercentage()} %
+                                        </label><br>
+                                    </c:forEach>
                                 </div>
                                 <button id="apply-coupon" style="padding: 10px 20px; width: fit-content;">Áp dụng</button><br/>
                             </div>

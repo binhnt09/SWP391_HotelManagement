@@ -9,6 +9,7 @@ import constant.MailUtil;
 import dao.BookingDao;
 import dao.InvoiceDao;
 import dao.PaymentDao;
+import dao.VoucherDao;
 import entity.Authentication;
 import entity.Invoice;
 import entity.Payment;
@@ -102,7 +103,11 @@ public class VnpayReturn extends HttpServlet {
                     payment.setGatewayResponse("Success");
 
                     paymentDao.insertPayment(payment);
-
+                    
+                    //update membership
+                    VoucherDao voucherDao = new VoucherDao();
+                    voucherDao.updateUserMembershipLevel(authLocal.getUser().getUserId());
+                    
                     // send invoice
                     InvoiceDao invoiceDao = new InvoiceDao();
                     int invoiceId = invoiceDao.generateInvoice(bookingId);
