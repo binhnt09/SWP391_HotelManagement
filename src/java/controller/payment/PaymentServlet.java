@@ -48,7 +48,7 @@ public class PaymentServlet extends HttpServlet {
         
         VoucherDao voucherDAO = new VoucherDao();
 
-        List<Voucher> vouchers = voucherDAO.getAvailableVouchersForUser(userId);
+        List<Voucher> vouchers = voucherDAO.getClaimedVouchers(userId);
 
         request.setAttribute("vouchers", vouchers);
         request.getRequestDispatcher("/views/payment/payment.jsp").forward(request, response);

@@ -22,7 +22,7 @@
             <div class="col-md-5">
                 <div class="d-flex align-items-center justify-content-end">
                     <span class="me-3"><img src="${pageContext.request.contextPath}/img/vietnam.svg.webp" alt="Google logo" width="20"> VI | VND</span>
-                    <a class="nav-link" href="#"><i class="fa fa-gift mr-2 text-primary"></i> Khuyến mãi</a>
+                    <a class="nav-link" href="${pageContext.request.contextPath}/voucher"><i class="fa fa-gift mr-2 text-primary"></i> Khuyến mãi</a>
 
                     <div class="nav-item dropdown menu-btn user-info ">
                         <a class="nav-link" style="color: white" href="#" id="userDropdown" role="button"
@@ -68,7 +68,7 @@
                             <a class="dropdown-item" href="${pageContext.request.contextPath}/paymenthistory">
                                 <i class="fas fa-list mr-2 text-primary"></i> Danh sách giao dịch
                             </a>
-                            <a class="dropdown-item" href="${pageContext.request.contextPath}/updateprofile">
+                            <a class="dropdown-item" href="${pageContext.request.contextPath}/voucher">
                                 <i class="fa fa-credit-card mr-2 text-primary"></i> Khuyến mãi
                             </a>
 
