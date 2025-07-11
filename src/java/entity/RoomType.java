@@ -16,7 +16,8 @@ public class RoomType {
     private String typeName;
     private String description;
     private String imageUrl;
-    
+    private int numberPeople;
+    private String amenity;
     private Timestamp createdAt;
     private Timestamp updatedAt;
     private Timestamp deletedAt;
@@ -38,6 +39,45 @@ public class RoomType {
         this.isDeleted = isDeleted;
     }
 
+    public RoomType(int roomTypeID, String typeName, String description, String imageUrl, int numberPeople, String amenity, Timestamp createdAt, Timestamp updatedAt, Timestamp deletedAt, int deletedBy, boolean isDeleted) {
+        this.roomTypeID = roomTypeID;
+        this.typeName = typeName;
+        this.description = description;
+        this.imageUrl = imageUrl;
+        this.numberPeople = numberPeople;
+        this.amenity = amenity;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.deletedAt = deletedAt;
+        this.deletedBy = deletedBy;
+        this.isDeleted = isDeleted;
+    }
+    public RoomType(int roomTypeID, String typeName, String description, String imageUrl, int numberPeople, String amenity) {
+        this.roomTypeID = roomTypeID;
+        this.typeName = typeName;
+        this.description = description;
+        this.imageUrl = imageUrl;
+        this.numberPeople = numberPeople;
+        this.amenity = amenity;
+    }
+
+    public int getNumberPeople() {
+        return numberPeople;
+    }
+
+    public void setNumberPeople(int numberPeople) {
+        this.numberPeople = numberPeople;
+    }
+
+    public String getAmenity() {
+        return amenity;
+    }
+
+    public void setAmenity(String amenity) {
+        this.amenity = amenity;
+    }
+
+    
     public int getRoomTypeID() {
         return roomTypeID;
     }

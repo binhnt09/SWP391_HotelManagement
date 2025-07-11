@@ -119,9 +119,20 @@ public class RoomCRUD extends HttpServlet {
                 case "edit":
                     editRoom(request, response);
                     break;
+                case "addRoomType":
+                    addRoomType(request, response);
+                    break;
+                case "editRoomType":
+                    editRoomType(request, response);
+                    break;
                 default:
                     response.sendError(HttpServletResponse.SC_NOT_FOUND);
             }
+            List<Room> listRoom = new dao.RoomDAO().getListRoom(null, null, 0, 100000, 0, -1, "", "all", "", false, 4, 6, false);
+            request.setAttribute("listRoom", listRoom);
+            request.setAttribute("numberRoom", listRoom.size());
+            request.setAttribute("listRoomType", new dao.RoomTypeDAO().getListRoomType());
+            request.getRequestDispatcher("manageroom.jsp").forward(request, response);
         }
     }
 
@@ -268,18 +279,18 @@ public class RoomCRUD extends HttpServlet {
                             Paths.get(uploadPath, newFileName),
                             StandardCopyOption.REPLACE_EXISTING
                     );
-                    
+
                 } catch (IOException e) {
                     e.printStackTrace(); // kiểm tra lỗi thật sự
                 }
-                
+
                 try (InputStream input = part.getInputStream()) {
                     Files.copy(
                             input,
                             Paths.get(uploadPath1, newFileName),
                             StandardCopyOption.REPLACE_EXISTING
                     );
-                    
+
                 } catch (IOException e) {
                     e.printStackTrace(); // kiểm tra lỗi thật sự
                 }
@@ -370,6 +381,31 @@ public class RoomCRUD extends HttpServlet {
         request.setAttribute("numberRoom", listRoom.size());
         request.setAttribute("listRoomType", new dao.RoomTypeDAO().getListRoomType());
         request.getRequestDispatcher("manageroom.jsp").forward(request, response);
+    }
+
+    private void addRoomType(HttpServletRequest request, HttpServletResponse response) {
+        String typeName = request.getParameter("typeName");
+        String description = request.getParameter("description");
+        String numberPeopleRaw = request.getParameter("numberPeople");
+        String amenity = request.getParameter("amenity");
+
+        int numberPeople = Validation.parseStringToInt(numberPeopleRaw);
+
+        new dao.RoomTypeDAO().addNewRoomType(typeName, numberPeople, amenity, description);
+
+    }
+
+    private void editRoomType(HttpServletRequest request, HttpServletResponse response) {
+        String typeIdRaw = request.getParameter("roomTypeID");
+        String typeName = request.getParameter("typeName");
+        String description = request.getParameter("description");
+        String numberPeopleRaw = request.getParameter("numberPeople");
+        String amenity = request.getParameter("amenity");
+
+        int numberPeople = Validation.parseStringToInt(numberPeopleRaw);
+        int typeId = Validation.parseStringToInt(typeIdRaw);
+
+        new dao.RoomTypeDAO().updateRoomType(new RoomType(typeId, typeName, description, "", numberPeople, amenity));
     }
 
 }

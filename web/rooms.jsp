@@ -25,10 +25,6 @@
 
         <!-- Core Stylesheet -->
         <link rel="stylesheet" href="style.css">
-        <!--        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-                <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-                <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-                <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>-->
 
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -103,12 +99,12 @@
 
                                         <div class="col-4 col-lg-4">
                                             <label style="font-weight: 600;">Nhập check-in:</label>
-                                            <input type="date" value="${checkin}" name="checkin" required=""  placeholder="Chọn ngày đến" class="form-control time-input" />
+                                            <input type="date" id="checkInDate" value="${checkin}" name="checkin" required=""  placeholder="Chọn ngày đến" class="form-control time-input" />
 
                                         </div>
                                         <div class="col-4 col-lg-4">
                                             <label style="font-weight: 600;">Nhập check-out:</label>
-                                            <input type="date" value="${checkout}" name="checkout" required=""  placeholder="Chọn ngày đến" class="form-control time-input"  />
+                                            <input type="date" id="checkOutDate" value="${checkout}" name="checkout" required=""  placeholder="Chọn ngày đến" class="form-control time-input"  />
                                         </div>
                                         <div class="col-3 col-lg-3">
                                             <label style="font-weight: 600;">Giá mỗi đêm:</label>
@@ -182,28 +178,16 @@
                             int roomDetailId = room.getRoomDetail().getRoomDetailID();
                             List<entity.RoomImage> roomImgList = new dao.RoomImageDAO().getListRoomImgByDetailID(roomDetailId);
                             pageContext.setAttribute("roomImgList", roomImgList);
+                            pageContext.setAttribute("roomId", room.getRoomID());
                         %>
                         <div class="col-12 col-md-6 col-lg-4 mb-5 d-flex align-items-stretch room-card"
                              data-roomid="${i.getRoomID()}"
                              data-roomnumber="${i.getRoomNumber()}"
                              data-price="${i.getPrice()}"
-                             data-roomtype="${i.getRoomTypeID().getRoomTypeID()}">
+                             data-roomtype="${i.getRoomType().getRoomTypeID()}">
                             <div class="single-rooms-area card shadow w-100 h-85" style="border: none;">
-                                <a href="#" onclick="showRoomDetail(this)" title="Click để xem chi tiết" 
-                                   data-bs-toggle="modal"
-                                   data-bs-target="#roomDetailModal"
-                                   data-roomID ="${i.getRoomID()}"
-                                   data-roomNumber ="${i.getRoomNumber()}"
-                                   data-roomPrice ="${i.price}"
-                                   data-type ="${i.getRoomTypeID().getTypeName()}"
-                                   data-bedType ="${i.getRoomDetail().getBedType()}"
-                                   data-area ="${i.getRoomDetail().getArea()}"
-                                   data-maxGuest ="${i.getRoomDetail().getMaxGuest()}"
-                                   data-description ="${i.getRoomDetail().getDescription()}"
-                                   data-img="${not empty roomImgList and roomImgList.size() > 0 ? roomImgList[0].imageURL : ''}"
-                                   data-img1="${not empty roomImgList and roomImgList.size() > 1 ? roomImgList[1].imageURL : ''}"
-                                   data-img2="${not empty roomImgList and roomImgList.size() > 2 ? roomImgList[2].imageURL : ''}"
-                                   data-img3="${not empty roomImgList and roomImgList.size() > 3 ? roomImgList[3].imageURL : ''}">
+                                <a href="#" onclick="showRoomDetail(this)" data-roomid="${i.roomID}"
+                                   title="Click để xem chi tiết" >
                                     <img src="${roomImgList[0].imageURL}" class="card-img-top img-fluid"
                                          style="height: 200px; object-fit: cover;" alt="Room Image">
                                 </a>
@@ -211,7 +195,7 @@
                                     <p class="price-from text-end mb-2" style="font-weight: bold; color: white;">
                                         From $${i.getPrice()}/night
                                     </p>
-                                    <h5 class="card-title">${i.getRoomNumber()} - ${i.getRoomTypeID().getTypeName()}</h5>
+                                    <h5 class="card-title">${i.getRoomNumber()} - ${i.getRoomType().getTypeName()}</h5>
                                     <p class="card-text flex-grow-1">${i.getRoomDetail().getDescription()}</p>
                                     <a href="bookingroom?roomID=${i.getRoomID()}&checkin=${checkin}&checkout=${checkout}" class="btn palatin-btn mt-auto">Book Room</a>
                                 </div>
@@ -312,8 +296,205 @@
         </footer>
 
         <style>
+
+            * {
+                font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            }
+            .modal-dialog {
+                max-width: 1200px;
+                height: 90vh;
+            }
+            .modal-content {
+                height: 100%;
+            }
+            .modal-header {
+                border-bottom: none;
+                padding: 1.5rem 1.5rem 0;
+                flex-shrink: 0;
+            }
+            .modal-title {
+                font-size: 1.5rem;
+                font-weight: 600;
+                color: #1a1a1a;
+            }
+            .btn-close {
+                font-size: 1.2rem;
+                opacity: 0.7;
+            }
+            .modal-body {
+                flex: 1;
+                overflow: hidden;
+            }
+
+            .carousel-item img {
+                width: 100%;              /* Chiếm toàn bộ chiều ngang */
+                height: 400px;            /* Cố định chiều cao bạn muốn */
+                object-fit: cover;        /* Cắt ảnh để vừa khung mà không bị méo */
+                border-radius: 8px;       /* Tuỳ chọn: bo góc đẹp hơn */
+            }
+
+            .carousel-inner {
+                height: 100%;
+            }
+            .carousel {
+                height: 100%;
+            }
+            .carousel-control-prev,
+            .carousel-control-next {
+                width: 50px;
+                height: 50px;
+                background-color: rgba(255, 255, 255, 0.9);
+                border-radius: 50%;
+                top: 50%;
+                transform: translateY(-50%);
+            }
+            .carousel-control-prev {
+                left: 20px;
+            }
+            .carousel-control-next {
+                right: 20px;
+            }
+            .carousel-control-prev-icon,
+            .carousel-control-next-icon {
+                filter: invert(1);
+            }
+            .carousel-indicators {
+                position: absolute;
+                bottom: 20px;
+                left: 20px;
+                right: auto;
+                margin: 0;
+                justify-content: flex-start;
+            }
+            .carousel-indicators [data-bs-target] {
+                width: 80px;
+                height: 60px;
+                border-radius: 8px;
+                margin: 0 5px;
+                background-size: cover;
+                background-position: center;
+                opacity: 0.6;
+            }
+            .carousel-indicators .active {
+                opacity: 1;
+                border: 2px solid white;
+            }
+
+            .room-features {
+                padding-right: 1.5rem;
+                height: 100%;
+                overflow-y: auto;
+                max-height: calc(90vh - 120px);
+            }
+            .room-features::-webkit-scrollbar {
+                width: 6px;
+            }
+            .room-features::-webkit-scrollbar-track {
+                background: #f1f1f1;
+                border-radius: 10px;
+            }
+            .room-features::-webkit-scrollbar-thumb {
+                background: #c1c1c1;
+                border-radius: 10px;
+            }
+            .room-features::-webkit-scrollbar-thumb:hover {
+                background: #a8a8a8;
+            }
+            .feature-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 1rem;
+                margin-bottom: 2rem;
+            }
+            .feature-section h6 {
+                font-weight: 600;
+                color: #1a1a1a;
+                margin-bottom: 0.75rem;
+                font-size: 1rem;
+            }
+            .feature-list {
+                list-style: none;
+                padding: 0;
+                margin: 0;
+            }
+            .feature-list li {
+                padding: 0.25rem 0;
+                color: #4a4a4a;
+                font-size: 0.95rem;
+                position: relative;
+                padding-left: 1.5rem;
+            }
+            .feature-list li:before {
+                content: "•";
+                position: absolute;
+                left: 0;
+                color: #666;
+            }
+            .room-info {
+                border-top: 1px solid #e0e0e0;
+                padding-top: 1.5rem;
+            }
+            .room-title {
+                font-size: 1.1rem;
+                font-weight: 600;
+                color: #1a1a1a;
+                margin-bottom: 1rem;
+            }
+            .price-section {
+                margin-top: 1.5rem;
+            }
+            .price-label {
+                font-size: 0.9rem;
+                color: #666;
+                margin-bottom: 0.5rem;
+            }
+            .price {
+                font-size: 1.5rem;
+                font-weight: 700;
+                color: #ff6b35;
+                margin-bottom: 0.25rem;
+            }
+            .price-unit {
+                font-size: 0.9rem;
+                color: #666;
+            }
+            .btn-book {
+                background-color: #0ea5e9;
+                border: none;
+                padding: 0.75rem 2rem;
+                font-size: 1rem;
+                font-weight: 600;
+                border-radius: 8px;
+                width: 100%;
+                margin-top: 1rem;
+            }
+            .btn-book:hover {
+                background-color: #0284c7;
+            }
+            .show-more {
+                color: #0ea5e9;
+                text-decoration: none;
+                font-size: 0.9rem;
+                font-weight: 500;
+            }
+            .show-more:hover {
+                color: #0284c7;
+            }
+            .carousel-caption {
+                position: absolute;
+                bottom: 20px;
+                left: 20px;
+                right: auto;
+                text-align: left;
+                background-color: rgba(0, 0, 0, 0.7);
+                padding: 0.5rem 1rem;
+                border-radius: 8px;
+                color: white;
+                font-size: 0.9rem;
+            }
             .custom-modal-width {
-                max-width: 75%; /* hoặc 1200px */
+                max-width: 70%;
+                min-height: 90%;
             }
 
         </style>
@@ -322,68 +503,128 @@
             <div class="modal-dialog modal-lg custom-modal-width">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="roomNumber"></h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <h5 class="modal-title" id="roomModalLabel"></h5>
+                        <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <div class="row modal-body mainbody">
-                        <!-- Hình ảnh phòng -->
-                        <div class="col-6 ">
-                            <div id="roomCarousel" class="carousel slide mb-3">
-                                <div class="carousel-inner rounded">
-                                    <div class="carousel-item active">
-                                        <img id="imgDetail"
-                                             class="d-block w-100 rounded" style="height: 400px; object-fit: cover;" alt="Bedroom">
+                    <div class="modal-body p-0">
+                        <div class="row g-0">
+                            <!-- Image Carousel -->
+                            <div class="col-md-8">
+                                <div id="roomCarousel" class="carousel slide" data-bs-ride="carousel">
+                                    <div class="carousel-inner">
+                                        <div class="carousel-item active">
+                                            <img src="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" class="d-block w-100" alt="Bathroom">
+                                        </div>
+                                        <div class="carousel-item">
+                                            <img src="https://images.unsplash.com/photo-1631049307264-da0ec9d70304?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" class="d-block w-100" alt="Bedroom">
+                                        </div>
+                                        <div class="carousel-item">
+                                            <img src="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2058&q=80" class="d-block w-100" alt="Living Area">
+                                        </div>
+                                        <div class="carousel-item">
+                                            <img src="https://images.unsplash.com/photo-1590490360182-c33d57733427?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2074&q=80" class="d-block w-100" alt="Room View">
+                                        </div>
                                     </div>
-                                    <div class="carousel-item">
-                                        <img id="imgDetail1"
-                                             class="d-block w-100 rounded" style="height: 400px; object-fit: cover;" alt="Bathroom">
-                                    </div>
-                                    <div class="carousel-item">
-                                        <img id="imgDetail2"
-                                             class="d-block w-100 rounded" style="height: 400px; object-fit: cover;" alt="Living Area">
-                                    </div>
-                                    <div class="carousel-item">
-                                        <img id="imgDetail3" 
-                                             class="d-block w-100 rounded" style="height: 400px; object-fit: cover;" alt="City View">
+
+                                    <!-- Navigation arrows -->
+                                    <button class="carousel-control-prev" type="button" data-bs-target="#roomCarousel" data-bs-slide="prev">
+                                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                        <span class="visually-hidden">Previous</span>
+                                    </button>
+                                    <button class="carousel-control-next" type="button" data-bs-target="#roomCarousel" data-bs-slide="next">
+                                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                        <span class="visually-hidden">Next</span>
+                                    </button>
+
+                                    <!-- Indicators with thumbnails -->
+
+
+                                    <!-- Caption -->
+                                    <div class="carousel-caption">
+                                        <span>Bathroom</span>
+                                        <span class="ms-2">3/4</span>
                                     </div>
                                 </div>
-                                <button class="carousel-control-prev" type="button" data-bs-target="#roomCarousel" data-bs-slide="prev">
-                                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                                    <span class="visually-hidden">Previous</span>
-                                </button>
-                                <button class="carousel-control-next" type="button" data-bs-target="#roomCarousel" data-bs-slide="next">
-                                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                                    <span class="visually-hidden">Next</span>
-                                </button>
+                                <div class="carousel-indicators">
+                                    <button type="button" data-bs-target="#roomCarousel" data-bs-slide-to="0" class="active" 
+                                            style="background-image: url('https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80')"></button>
+                                    <button type="button" data-bs-target="#roomCarousel" data-bs-slide-to="1"
+                                            style="background-image: url('https://images.unsplash.com/photo-1631049307264-da0ec9d70304?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80')"></button>
+                                    <button type="button" data-bs-target="#roomCarousel" data-bs-slide-to="2"
+                                            style="background-image: url('https://images.unsplash.com/photo-1586023492125-27b2c045efd7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80')"></button>
+                                    <button type="button" data-bs-target="#roomCarousel" data-bs-slide-to="3"
+                                            style="background-image: url('https://images.unsplash.com/photo-1590490360182-c33d57733427?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80')"></button>
+                                </div>
+                            </div>
+
+                            <!-- Room Information -->
+                            <div class="col-md-4">
+                                <div class="room-features">
+                                    <div class="feature-grid">
+                                        <div class="feature-section">
+                                            <input type="hidden" id="selectedRoomId" >
+                                            <h6 id="area">Diện tích: </h6>
+                                            <h6 id="numberPeople">Số thành viên: </h6>
+                                        </div>
+                                        <div class="feature-section">
+                                            <ul class="feature-list">
+                                                <li>WiFi miễn phí</li>
+                                                <li>Dịch vụ phòng</li>
+                                            </ul>
+                                        </div>
+                                        <div class="feature-section">
+                                            <ul class="feature-list">
+                                                <li>Dọn phòng</li>
+                                                <li>Điện thoại</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <hr>
+                                    <div class="feature-section">
+                                        <h6>Tiện nghi phòng</h6>
+                                        <div class="feature-grid">
+                                            <div>
+                                                <ul id="amenity-left" class="feature-list"></ul>
+                                            </div>
+                                            <div>
+                                                <ul id="amenity-right" class="feature-list"></ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="feature-section mt-4">
+                                        <h6>Tiện nghi phòng tắm</h6>
+                                        <div class="feature-grid">
+                                            <div>
+                                                <ul class="feature-list">
+                                                    <li>Phòng tắm mở bàn phần</li>
+                                                    <li>Khăn tắm</li>
+                                                    <li>Áo choàng tắm</li>
+                                                </ul>
+                                            </div>
+                                            <div>
+                                                <ul class="feature-list">
+                                                    <li>Bộ vệ sinh cá nhân</li>
+                                                    <li>Máy sấy tóc</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="room-info">
+                                        <div class="room-title">Về phòng này</div>
+                                        <div class="mb-3" id="roomDetailDescription"></div>
+
+                                        <div class="price-section">
+                                            <div class="price-label">Khởi điểm từ:</div>
+                                            <div class="price" id="detailPrice"></div>
+                                            <a href="bookingroom?roomID=${i.getRoomID()}&checkin=${checkin}&checkout=${checkout}" class="btn btn-primary btn-book">
+                                                Booking now
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-
-                        <!-- Thông tin chi tiết -->
-                        <div class="mainInfo col-6">
-                            <h3>Room Information</h3>
-                            <input type="hidden" id="typeID">
-                            <input type="hidden" id="roomID">
-
-                            <span>
-                                <i style="font-size: 28px;" class="fa-duotone fa-solid fa-chart-area"></i>
-                            </span> 
-                            <p id="area" style="margin-left: 10px;display: inline;"></p>
-                            <br>
-                            <i style="font-size: 25px;margin-top :8px;" class="fa-duotone fa-solid fa-people-group"></i>
-                            <p id="maxGuest" style="margin-left: 8px;display: inline;"></p>
-                            <hr style="width: 330px">
-
-                            <h3>Customer Benefits</h3>
-
-                            <div class="text-muted  lh-base fw-light" id="description" ></div>
-                            <div class="text-muted  lh-base fw-light" id="price" style="margin-top: 10px;"></div>
-                            <div class="text-muted  lh-base fw-light" id="bedType" style="margin-top: 10px"></div>
-
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-                        <a id="bookNowBtn" href="#" style="border-radius: 10px; background-color: #80bdff" class="btn theme_btn button_hover">Book Now</a>
                     </div>
                 </div>
             </div>
@@ -408,53 +649,71 @@
 
 
         <script>
-                                $(document).ready(function () {
-                                    $('.single-rooms-area').hover(
-                                            function () {
-                                                $(this).css({
-                                                    'transform': 'scale(1.04)',
-                                                    'transition': 'transform 0.4s ease'
-                                                });
-                                            },
-                                            function () {
-                                                $(this).css('transform', 'scale(1)');
-                                            }
-                                    );
-                                });
-                                function showRoomDetail(info) {
-                                    let roomID = info.getAttribute("data-roomID");
-                                    let roomNumber = info.getAttribute("data-roomNumber");
-                                    let roomPrice = info.getAttribute("data-roomPrice");
-                                    let bedType = info.getAttribute("data-bedType");
-                                    let area = info.getAttribute("data-area");
-                                    let maxGuest = info.getAttribute("data-maxGuest");
-                                    let description = info.getAttribute("data-description");
-                                    let type = info.getAttribute("data-type");
 
-                                    let imgSrc = info.getAttribute("data-img");
-                                    let imgSrc1 = info.getAttribute("data-img1");
-                                    let imgSrc2 = info.getAttribute("data-img2");
-                                    let imgSrc3 = info.getAttribute("data-img3");
+                                                    function showRoomDetail(element) {
+                                                        const baseUrl = '${pageContext.request.contextPath}';
+                                                        const roomId = element.dataset.roomid;
+                                                        currentId = roomId;
+                                                        fetch(baseUrl + "/showroomdetail?roomId=" + roomId)
+                                                                .then(data => data.json())
+                                                                .then(data => {
+                                                                    const room = data.room;
+                                                                    const detail = data.roomdetail;
+                                                                    const type = data.roomtype;
 
-                                    let bookNowBtn = document.getElementById("bookNowBtn");
-                                    bookNowBtn.href = "bookingroom?roomID=" + roomID + "&checkin=${checkin}&checkout=${checkout}";
 
-                                    document.getElementById("roomNumber").innerHTML = roomNumber + "-" + type;
+                                                                    console.log(room);
+                                                                    console.log(detail);
+                                                                    console.log(type);
+                                                                    document.getElementById("selectedRoomId").value = roomId;
+                                                                    document.getElementById("area").innerText = "Diện tích: " + detail.area;
+                                                                    document.getElementById("numberPeople").innerText = "Số thành viên: " + detail.maxGuest;
+                                                                    document.getElementById("roomDetailDescription").innerText = detail.description;
+                                                                    document.getElementById("detailPrice").innerText = room.price +"VNĐ/Giờ/Ngày    ";
+                                                                    document.getElementById("roomModalLabel").innerText = room.roomNumber + "-" + type.typeName;
 
-                                    //IMG
-                                    document.getElementById("imgDetail").src = imgSrc;
-                                    document.getElementById("imgDetail").style.width = "400px";// Đổi chiều cao thành 200px
 
-                                    document.getElementById("imgDetail1").src = imgSrc1;
-                                    document.getElementById("imgDetail2").src = imgSrc2;
-                                    document.getElementById("imgDetail3").src = imgSrc3;
+                                                                    const amenities = type.amenity.split(",").map(a => a.trim());
+                                                                    const half = Math.ceil(amenities.length / 2);
+                                                                    const left = amenities.slice(0, half);
+                                                                    const right = amenities.slice(half);
 
-                                    //Room Info
-                                    document.getElementById("area").innerHTML = area + "m²";
-                                    document.getElementById("maxGuest").innerHTML = maxGuest + " People";
-                                    document.getElementById("description").innerHTML = "Description: " + description;
-                                    document.getElementById("bedType").innerHTML = "Bed type: " + bedType;
-                                    document.getElementById("price").innerHTML = "Giá mỗi đêm: $" + roomPrice + "/night";
-                                }
+                                                                    const leftList = document.getElementById("amenity-left");
+                                                                    const rightList = document.getElementById("amenity-right");
+
+                                                                    leftList.innerHTML = "";
+                                                                    rightList.innerHTML = "";
+
+                                                                    left.forEach(item => {
+                                                                        const li = document.createElement("li");
+                                                                        li.textContent = item;
+                                                                        leftList.appendChild(li);
+                                                                    });
+
+                                                                    right.forEach(item => {
+                                                                        const li = document.createElement("li");
+                                                                        li.textContent = item;
+                                                                        rightList.appendChild(li);
+                                                                    });
+                                                                });
+                                                        const modal = new bootstrap.Modal(document.getElementById('roomDetailModal'));
+                                                        modal.show();
+                                                    }
+
+
+                                                    $(document).ready(function () {
+                                                        $('.single-rooms-area').hover(
+                                                                function () {
+                                                                    $(this).css({
+                                                                        'transform': 'scale(1.04)',
+                                                                        'transition': 'transform 0.4s ease'
+                                                                    });
+                                                                },
+                                                                function () {
+                                                                    $(this).css('transform', 'scale(1)');
+                                                                }
+                                                        );
+                                                    });
         </script>
+    </body>
 </html>
