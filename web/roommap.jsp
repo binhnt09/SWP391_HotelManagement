@@ -611,7 +611,35 @@
                             modal.show();
                         }
 
+                        function confirmCheckOut(roomId, bookingId) {
+                            document.getElementById('checkoutRoomId').value = roomId;
+                            document.getElementById('checkoutBookingId').value = bookingId;
 
+                            const modal = new bootstrap.Modal(document.getElementById('confirmCheckoutModal'));
+                            modal.show();
+                        }
+
+                        function openCheckInModal(roomId, bookingId, guestName, guestPhone, roomNumber, checkInDate, checkOutDate, totalAmount) {
+                            console.log('Opening check-in modal with data:', {roomId, bookingId, guestName});
+                            document.getElementById('checkInRoomId').value = roomId;
+                            document.getElementById('checkInBookingId').value = bookingId;
+                            document.getElementById('guestName').textContent = guestName;
+                            document.getElementById('guestPhone').textContent = guestPhone;
+                            document.getElementById('roomNumber').textContent = roomNumber;
+                            document.getElementById('checkInDate').textContent = checkInDate;
+                            document.getElementById('checkOutDate').textContent = checkOutDate;
+                            document.getElementById('totalAmount').textContent = totalAmount;
+
+                            const modal = new bootstrap.Modal(document.getElementById('confirmCheckInModal'));
+                            modal.show();
+                        }
+
+                        function confirmCancel(roomId, bookingId) {
+                            document.getElementById('cancelRoomId').value = roomId;
+                            document.getElementById('cancelBookingId').value = bookingId;
+                            const modal = new bootstrap.Modal(document.getElementById('confirmCancelModal'));
+                            modal.show();
+                        }
 
                         function openChat() {
                             alert('Chức năng chat đang được phát triển');
@@ -645,6 +673,8 @@
                                 return new bootstrap.Tooltip(tooltipTriggerEl);
                             });
                         });
+
+
                     </script>
 
                 </div>

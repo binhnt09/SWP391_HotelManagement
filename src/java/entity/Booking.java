@@ -28,6 +28,9 @@ public class Booking {
     private Integer deletedBy;
     private boolean isDeleted;
     
+    private Timestamp actualCheckIn;
+    private Timestamp actualCheckOut;
+    
     private Voucher voucher;
     
 
@@ -176,6 +179,24 @@ public class Booking {
         this.voucher = voucher;
     }
 
+    public Timestamp getActualCheckIn() {
+        return actualCheckIn;
+    }
+
+    public void setActualCheckIn(Timestamp actualCheckIn) {
+        this.actualCheckIn = actualCheckIn;
+    }
+
+    public Timestamp getActualCheckOut() {
+        return actualCheckOut;
+    }
+
+    public void setActualCheckOut(Timestamp actualCheckOut) {
+        this.actualCheckOut = actualCheckOut;
+    }
+
+    
+    
     @Override
     public String toString() {
         return "Booking{" + "bookingID=" + bookingId + ", userID=" + userId + ", voucherID=" + voucherId + ", bookingDate=" + bookingDate + ", checkInDate=" + checkInDate + ", checkOutDate=" + checkOutDate + ", totalAmount=" + totalAmount + ", status=" + status + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + ", deletedAt=" + deletedAt + ", deletedBy=" + deletedBy + ", isDeleted=" + isDeleted + ", voucher=" + voucher + '}';

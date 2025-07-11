@@ -45,6 +45,22 @@
                                 <i class="fas fa-user me-1 text-primary"></i> Khách đang ở
                             </h6>
                             <p><strong>Họ tên:</strong> ${currentStay.guestName}</p>
+                            <p><strong>SĐT:</strong> ${currentStay.phone}</p>
+                            <p><strong>Check-in:</strong> 
+                                <fmt:formatDate value="${currentStay.checkInDate}" pattern="dd/MM/yyyy" />
+                            </p>
+                            <p><strong>Check-out:</strong> 
+                                <fmt:formatDate value="${currentStay.checkOutDate}" pattern="dd/MM/yyyy" />
+                            </p>
+                        </div>
+                    </c:if>
+                    <c:if test="${room.status eq 'Reserved' && not empty currentStay}">
+                        <div class="border rounded bg-white p-3 shadow-sm h-100">
+                            <h6 class="mb-3">
+                                <i class="fas fa-user me-1 text-primary"></i> Khách sắp ở
+                            </h6>
+                            <p><strong>Họ tên:</strong> ${currentStay.guestName}</p>
+                            <p><strong>SĐT:</strong> ${currentStay.phone}</p>
                             <p><strong>Check-in:</strong> 
                                 <fmt:formatDate value="${currentStay.checkInDate}" pattern="dd/MM/yyyy" />
                             </p>
@@ -72,7 +88,7 @@
                     </c:when>
 
                     <c:when test="${room.status eq 'Occupied'}">
-                        <button class="btn btn-warning" onclick="checkOut(${room.roomID})">
+                        <button class="btn btn-warning" onclick="confirmCheckOut(${room.roomID}, ${currentStay.bookingID})">
                             <i class="fas fa-sign-out-alt me-1"></i> Check-out
                         </button>
                         <button class="btn btn-primary" onclick="printInvoice(${room.roomID})">
@@ -87,10 +103,13 @@
                     </c:when>
 
                     <c:when test="${room.status eq 'Reserved'}">
-                        <button class="btn btn-success" onclick="checkIn(${room.roomID})">
+                        <button class="btn btn-success" 
+                                onclick="openCheckInModal('${room.roomID}', '${currentStay.bookingID}', '${currentStay.guestName}', '${currentStay.phone}', '${room.roomNumber}', '${currentStay.checkInDate}', '${currentStay.checkOutDate}', '${currentStay.totalAmount}')"
+                                type="button">
                             <i class="fas fa-sign-in-alt me-1"></i> Nhận phòng
                         </button>
-                        <button class="btn btn-danger" onclick="cancelBooking(${room.roomID})">
+
+                        <button class="btn btn-danger" onclick="confirmCancel(${room.roomID},${currentStay.bookingID})">
                             <i class="fas fa-times me-1"></i> Hủy đặt
                         </button>
                         <button class="btn btn-secondary" onclick="editBooking(${room.roomID})">
@@ -141,6 +160,7 @@
                         <thead class="table-light">
                             <tr>
                                 <th>Khách hàng</th>
+                                <th>SĐT</th>
                                 <th>Check-in</th>
                                 <th>Check-out</th>
                                 <th>Trạng thái</th>
@@ -150,6 +170,7 @@
                             <c:forEach var="b" items="${futureBookings}">
                                 <tr>
                                     <td>${b.guestName}</td>
+                                    <td>${b.phone}</td>
                                     <td><fmt:formatDate value="${b.checkInDate}" pattern="dd/MM/yyyy" /></td>
                                     <td><fmt:formatDate value="${b.checkOutDate}" pattern="dd/MM/yyyy" /></td>
                                     <td>
@@ -171,7 +192,7 @@
     </div>
 </div>
 
-<!-- Modal Check-in -->
+<!-- Modal Walk-in Check-in -->
 <div class="modal fade" id="quickCheckInModal" tabindex="-1">
     <div class="modal-dialog modal-lg">
         <form action="quickCheckIn" method="post" class="modal-content">
@@ -193,7 +214,7 @@
                     <input type="text" class="form-control" name="lastName" required>
                 </div>
                 <div class="mb-3">
-                    <label for="phone" class="form-label">Số điện thoại (nếu có)</label>
+                    <label for="phone" class="form-label">Số điện thoại</label>
                     <input type="text" class="form-control" name="phone">
                 </div>
                 <div class="mb-3">
@@ -202,10 +223,90 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="s ubmit" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
                 <button type="submit" class="btn btn-primary">Xác nhận Check-in</button>
             </div>
         </form>
     </div>
 </div>
 
+<!-- Modal Check-out -->
+<div class="modal fade" id="confirmCheckoutModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <form method="post" action="checkout" id="checkoutForm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Xác nhận Check-out</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Đóng">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Bạn có chắc chắn muốn Check-out phòng này không?
+                    <!-- Hidden fields -->
+                    <input type="hidden" name="roomId" id="checkoutRoomId">
+                    <input type="hidden" name="bookingId" id="checkoutBookingId">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-warning">Check-out</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Modal: Xác nhận nhận phòng -->
+<div class="modal fade" id="confirmCheckInModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <form method="post" action="checkIn" id="checkInForm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Xác nhận nhận phòng</h5>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <p><strong>Khách:</strong> <span id="guestName"></span></p>
+                    <p><strong>SĐT:</strong> <span id="guestPhone"></span></p>
+                    <p><strong>Phòng:</strong> <span id="roomNumber"></span></p>
+                    <p><strong>Thời gian:</strong>
+                        <span id="checkInDate"></span> - <span id="checkOutDate"></span>
+                    </p>
+                    <p><strong>Tổng tiền:</strong> <span id="totalAmount"></span></p>
+
+                    <!-- Hidden inputs -->
+                    <input type="hidden" name="roomId" id="checkInRoomId">
+                    <input type="hidden" name="bookingId" id="checkInBookingId">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-success">Xác nhận nhận phòng</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<!-- Modal xác nhận Hủy đặt -->
+<div class="modal fade" id="confirmCancelModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <form method="post" action="cancelBooking" id="cancelForm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Xác nhận Hủy đặt</h5>
+                    <button type="button" class="close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    Bạn có chắc chắn muốn hủy đặt phòng này không?
+                    <input type="hidden" name="roomId" id="cancelRoomId">
+                    <input type="hidden" name="bookingId" id="cancelBookingId">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Không</button>
+                    <button type="submit" class="btn btn-danger">Có</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

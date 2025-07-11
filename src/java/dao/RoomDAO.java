@@ -543,6 +543,7 @@ public class RoomDAO extends DBContext {
                                WHEN b.Status = 'Checked-in' THEN 1
                                WHEN b.Status = 'Confirmed' THEN 2
                                WHEN b.Status = 'Pending' THEN 3
+                               WHEN b.Status = 'Checked-out' THEN 4
                                ELSE 99 -- các trạng thái khác ưu tiên thấp
                            END,
                            b.CheckInDate DESC
@@ -550,7 +551,7 @@ public class RoomDAO extends DBContext {
             FROM BookingDetail bd
             JOIN Booking b ON bd.BookingID = b.BookingID AND b.IsDeleted = 0
             LEFT JOIN [User] u ON b.UserID = u.UserID
-            WHERE bd.IsDeleted = 0 AND CAST(b.CheckOutDate AS DATE) >= CAST(GETDATE() AS DATE)
+            WHERE bd.IsDeleted = 0 AND CAST(b.CheckOutDate AS DATE) >= CAST(GETDATE() AS DATE) AND b.status != 'Cancelled'
         )
 
         SELECT r.RoomID, r.RoomNumber, r.Status AS RoomStatus, r.Price,

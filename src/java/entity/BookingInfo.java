@@ -15,6 +15,7 @@ public class BookingInfo {
 
     private int bookingID;
     private String guestName;
+    private String phone;
     private Timestamp checkInDate;
     private Timestamp checkOutDate;
     private BigDecimal totalAmount;
@@ -69,6 +70,14 @@ public class BookingInfo {
 
     public void setTotalAmount(BigDecimal totalAmount) {
         this.totalAmount = totalAmount;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
     
     

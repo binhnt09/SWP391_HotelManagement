@@ -5,9 +5,6 @@
 package controller;
 
 import dao.BookingDao;
-import dao.RoomDAO;
-import entity.BookingInfo;
-import entity.RoomInfo;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -15,17 +12,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.List;
 
 /**
  *
  * @author viet7
  */
-@WebServlet(name = "RoomDetailServlet", urlPatterns = {"/roomDetail"})
-public class RoomDetailServlet extends HttpServlet {
-
-    RoomDAO roomDAO = new RoomDAO();
-    BookingDao bookingDAO = new BookingDao();
+@WebServlet(name = "CheckoutServlet", urlPatterns = {"/checkout"})
+public class CheckoutServlet extends HttpServlet {
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -35,10 +28,10 @@ public class RoomDetailServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet RoomDetailServlet</title>");
+            out.println("<title>Servlet CheckoutServlet</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet RoomDetailServlet at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet CheckoutServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -47,25 +40,25 @@ public class RoomDetailServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        int roomId = Integer.parseInt(request.getParameter("roomId"));
-
-        RoomInfo room = roomDAO.getRoomInfo(roomId);
-        BookingInfo currentStay = bookingDAO.getCurrentStay(roomId);
-        if (currentStay == null) {
-            currentStay = bookingDAO.getClosestReservedBooking(roomId);
-        }
-        List<BookingInfo> futureBookings = bookingDAO.getFutureBookings(roomId);
-
-        request.setAttribute("room", room);
-        request.setAttribute("currentStay", currentStay);
-        request.setAttribute("futureBookings", futureBookings);
-        request.getRequestDispatcher("room-detail-fragment.jsp").forward(request, response);
+        processRequest(request, response);
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        int roomId = Integer.parseInt(request.getParameter("roomId"));
+        int bookingId = Integer.parseInt(request.getParameter("bookingId"));
+
+        BookingDao dao = new BookingDao();
+        boolean success = dao.checkoutBooking(bookingId, roomId, 1);
+
+        if (success) {
+            request.getSession().setAttribute("successMessage", "Check-out thành công!");
+            response.sendRedirect("receptionistPage");
+        } else {
+            request.getSession().setAttribute("errorMessage", "Check-out thất bại!");
+            response.sendRedirect("receptionistPage");
+        }
     }
 
     @Override
