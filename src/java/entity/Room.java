@@ -14,7 +14,6 @@ public class Room {
     private int roomID;
     private String roomNumber ; // Tên phòng: VD 101 ,...
     private RoomDetail roomDetail;
-    private RoomType roomTypeID;
     private String status;
     private double price;
     
@@ -39,21 +38,21 @@ public class Room {
     public Room() {
     }
 
-    public Room(String roomNumber, RoomDetail roomDetail, RoomType roomTypeID, String status, double price, Hotel hotel) {
+    public Room(String roomNumber, RoomDetail roomDetail, RoomType roomType, String status, double price, Hotel hotel) {
         this.roomNumber = roomNumber;
         this.roomDetail = roomDetail;
-        this.roomTypeID = roomTypeID;
+        this.roomType = roomType;
         this.status = status;
         this.price = price;
         this.hotel = hotel;
     }
     
 
-    public Room(int roomID, String roomNumber, RoomDetail roomDetail, RoomType roomTypeID, String status, double price) {
+    public Room(int roomID, String roomNumber, RoomDetail roomDetail, RoomType roomType, String status, double price) {
         this.roomID = roomID;
         this.roomNumber = roomNumber;
         this.roomDetail = roomDetail;
-        this.roomTypeID = roomTypeID;
+        this.roomType = roomType;
         this.status = status;
         this.price = price;
     }
@@ -73,11 +72,11 @@ public class Room {
         this.isDeleted = isDeleted;
     }
 
-    public Room(int roomID, String roomNumber, RoomDetail roomDetail, RoomType roomTypeID, String status, double price, Hotel hotel, Timestamp createdAt, Timestamp updatedAt, Timestamp deletedAt, int deletedBy, boolean isDeleted) {
+    public Room(int roomID, String roomNumber, RoomDetail roomDetail, RoomType roomType, String status, double price, Hotel hotel, Timestamp createdAt, Timestamp updatedAt, Timestamp deletedAt, int deletedBy, boolean isDeleted) {
         this.roomID = roomID;
         this.roomNumber = roomNumber;
         this.roomDetail = roomDetail;
-        this.roomTypeID = roomTypeID;
+        this.roomType = roomType;
         this.status = status;
         this.price = price;
         this.hotel = hotel;
@@ -88,13 +87,7 @@ public class Room {
         this.isDeleted = isDeleted;
     }
 
-    public RoomType getRoomTypeID() {
-        return roomTypeID;
-    }
-
-    public void setRoomTypeID(RoomType roomTypeID) {
-        this.roomTypeID = roomTypeID;
-    }
+     
 
     public int getRoomID() {
         return roomID;
