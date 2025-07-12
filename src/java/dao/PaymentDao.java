@@ -7,6 +7,7 @@ package dao;
 import dal.DBContext;
 import entity.BookingServices;
 import entity.Payment;
+import java.math.BigDecimal;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -162,6 +163,38 @@ public class PaymentDao extends DBContext {
             Logger.getLogger(PaymentDao.class.getName()).log(Level.SEVERE, null, e);
         }
         return list;
+    }
+    
+    public BigDecimal calculateDiscountedTotal(BigDecimal baseAmount, Integer voucherId) {
+        BigDecimal autoDiscount = BigDecimal.ZERO;
+        BigDecimal voucherDiscount = BigDecimal.ZERO;
+
+        // Auto discount
+//        if (baseAmount.compareTo(new BigDecimal("500000")) >= 0) {
+//            autoDiscount = baseAmount.multiply(new BigDecimal("0.10"));
+//        }
+
+        // Voucher discount nếu có
+        if (voucherId != null) {
+            String sql = """
+                SELECT DiscountPercentage FROM Voucher
+                WHERE VoucherID = ? AND IsDeleted = 0
+                  AND (ValidFrom IS NULL OR ValidFrom <= GETDATE())
+                  AND (ValidTo IS NULL OR ValidTo >= GETDATE())
+            """;
+            try (PreparedStatement ps = connection.prepareStatement(sql)) {
+                ps.setInt(1, voucherId);
+                ResultSet rs = ps.executeQuery();
+                if (rs.next()) {
+                    BigDecimal percent = rs.getBigDecimal("DiscountPercentage");
+                    voucherDiscount = baseAmount.multiply(percent).divide(new BigDecimal("100"));
+
+                }
+            } catch (SQLException e) {
+                Logger.getLogger(PaymentDao.class.getName()).log(Level.SEVERE, null, e);
+            }
+        }
+        return baseAmount.subtract(autoDiscount).subtract(voucherDiscount);
     }
 
     private Payment extractPayment(ResultSet rs) throws SQLException {

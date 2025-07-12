@@ -161,12 +161,10 @@
                                                         <i class="bi bi-eye"></i> Xem
                                                     </a>
 
-
                                                     <!--<a href="download-invoice?paymentId=${p.paymentId}" class="btn btn-sm btn-outline-success">Tải</a>-->
                                                     <a href="downloadinvoice?paymentId=${p.paymentId}" class="btn btn-outline-success">
                                                         <i class="bi bi-download"></i> Tải hóa đơn
                                                     </a>
-
                                                 </td>
                                             </tr>
                                         </c:forEach>
@@ -218,6 +216,7 @@
                                                         <th>Số phòng</th>
                                                         <th>Giá mỗi đêm</th>
                                                         <th>Số đêm</th>
+                                                        <th>Voucher giảm giá</th>
                                                         <th>Tổng tiền phòng</th>
                                                     </tr>
                                                 </thead>
@@ -226,6 +225,7 @@
                                                         <td id="roomNumber"></td>
                                                         <td id="pricePerNight"></td>
                                                         <td id="numNights"></td>
+                                                        <td id="discountAmountR"></td>
                                                         <td id="totalPricePerNight"></td>
                                                     </tr>
                                                 </tbody>
@@ -254,7 +254,7 @@
                                         <div class="mb-4" id="voucherSection">
                                             <h6><i class="bi bi-calendar-check-fill me-2"></i>Voucher</h6>
                                             <p><strong>Mã voucher:</strong> <span id="voucherCode"></span></p>
-                                            <p><strong>Giảm giá:</strong> <span id="discountAmount">%</span></p>
+                                            <p><strong>Giảm giá:</strong> <span id="discountAmount"></span>%</p>
                                         </div>
 
                                         <!-- Nếu không có gì -->

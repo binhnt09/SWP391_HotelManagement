@@ -11,8 +11,10 @@ import dao.InvoiceDao;
 import dao.PaymentDao;
 import dao.VoucherDao;
 import entity.Authentication;
+import entity.Booking;
 import entity.Invoice;
 import entity.Payment;
+import entity.Voucher;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -83,7 +85,6 @@ public class VnpayReturn extends HttpServlet {
                 if ("00".equals(request.getParameter("vnp_TransactionStatus"))) {
                     Authentication authLocal = (Authentication) request.getSession().getAttribute("authLocal");
                     String email = authLocal.getUser().getEmail();
-                    System.out.println("auth: " + authLocal);
 
                     transSuccess = true;
 
@@ -102,23 +103,29 @@ public class VnpayReturn extends HttpServlet {
                     payment.setBankCode(bankCode);
                     payment.setGatewayResponse("Success");
 
-                    paymentDao.insertPayment(payment);
-                    
-                    //update membership
                     VoucherDao voucherDao = new VoucherDao();
-                    voucherDao.updateUserMembershipLevel(authLocal.getUser().getUserId());
-                    
+
+                    //update voucher status
+                    Booking booking = bookingDao.getBookingById(bookingId);
+                    if (booking.getVoucherId() != null) {
+                        voucherDao.updateIsused(authLocal.getUser().getUserId(), booking.getVoucherId());
+                    }
+
+                    paymentDao.insertPayment(payment);
                     // send invoice
                     InvoiceDao invoiceDao = new InvoiceDao();
                     int invoiceId = invoiceDao.generateInvoice(bookingId);
                     Invoice invoice = invoiceDao.getInvoice(invoiceId);
                     MailUtil.sendInvoice(email, invoice);
+
+                    //update membership
+                    voucherDao.updateUserMembershipLevel(authLocal.getUser().getUserId());
                 }
 
                 request.getSession().setAttribute(TRANS_RESULT, transSuccess);
                 responseToPaymentResult(request, response);
             } else {
-                System.out.println("Giao dịch không hợp lệ (invalid signature)");
+                Logger.getLogger(VnpayReturn.class.getName()).info("Giao dịch không hợp lệ (invalid signature)");
                 request.getSession().setAttribute(TRANS_RESULT, false);
                 responseToPaymentResult(request, response);
             }

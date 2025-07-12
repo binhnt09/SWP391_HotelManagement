@@ -61,11 +61,15 @@ public class VoucherServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         Authentication auth = (Authentication) request.getSession().getAttribute("authLocal");
-        int userId = auth.getUser().getUserId();
 
         VoucherDao voucherDAO = new VoucherDao();
-
-        List<Voucher> vouchers = voucherDAO.getAvailableVouchersForUser(userId);
+        List<Voucher> vouchers;
+        if (auth != null) {
+            int userId = auth.getUser().getUserId();
+            vouchers = voucherDAO.getAvailableVouchersForUser(userId);
+        } else {
+            vouchers = null;
+        }
 
         request.setAttribute("vouchers", vouchers);
         request.getRequestDispatcher("/views/voucher/voucher.jsp").forward(request, response);
@@ -91,9 +95,9 @@ public class VoucherServlet extends HttpServlet {
         int voucherId = validation.Validation.parseStringToInt(voucherIdStr);
         if (!voucherDAO.hasClaimed(userId, voucherId)) {
             voucherDAO.insert(userId, voucherId);
-            request.setAttribute("success", "Bạn đã nhận voucher thành công!");
+            request.getSession().setAttribute("success", "Bạn đã nhận voucher thành công!");
         } else {
-            request.setAttribute("info", "Bạn đã nhận voucher này rồi.");
+            request.getSession().setAttribute("info", "Bạn đã nhận voucher này rồi.");
         }
         response.sendRedirect(request.getContextPath() + "/voucher");
     }

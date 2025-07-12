@@ -105,7 +105,7 @@
                                                 <li><a href="${pageContext.request.contextPath}/payment">Payment</a></li>
                                             </ul>
                                         </li>
-                                        <li class="${pageContext.request.requestURI.endsWith('about-us.jsp') ? 'active' : ''}"><a href="${pageContext.request.contextPath}/voucher">Voucher</a></li>
+                                        <li class="${pageContext.request.requestURI.endsWith('voucher.jsp') ? 'active' : ''}"><a href="${pageContext.request.contextPath}/voucher">Voucher</a></li>
                                         <!--                                        <li><a href="#">Mega Menu</a>
                                                                                     <div class="megamenu">
                                                                                         <ul class="single-mega cn-col-4">

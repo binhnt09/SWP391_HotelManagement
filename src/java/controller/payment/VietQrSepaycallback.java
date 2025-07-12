@@ -145,11 +145,11 @@ public class VietQrSepaycallback extends HttpServlet {
         // So khớp với booking
         BigDecimal amount = new BigDecimal(amountStr);
         BookingDao dao = new BookingDao();
-        Booking booking = dao.findUserByBookingId(bookingId);
+        Booking bookingUser = dao.findUserByBookingId(bookingId);
 
-        if (booking != null) {
+        if (bookingUser != null) {
             dao.updateStatus(bookingId, "PAID");
-            User user = booking.getUser();
+            User user = bookingUser.getUser();
             String email = user.getEmail();
 
             // Ghi log hoặc insert vào bảng Payment nếu cần
@@ -165,11 +165,15 @@ public class VietQrSepaycallback extends HttpServlet {
             PaymentDao paymentDao = new PaymentDao();
             InvoiceDao invoiceDao = new InvoiceDao();
 
-            paymentDao.insertPayment(payment);
-
-            //update membership
             VoucherDao voucherDao = new VoucherDao();
-            voucherDao.updateUserMembershipLevel(user.getUserId());
+
+            //update voucher status
+            Booking booking = dao.getBookingById(bookingId);
+            if (booking.getVoucherId() != null) {
+                voucherDao.updateIsused(user.getUserId(), booking.getVoucherId());
+            }
+
+            paymentDao.insertPayment(payment);
 
             try {
                 int invoiceId = invoiceDao.generateInvoice(bookingId);
@@ -178,6 +182,8 @@ public class VietQrSepaycallback extends HttpServlet {
             } catch (Exception ex) {
                 Logger.getLogger(VietQrSepaycallback.class.getName()).log(Level.SEVERE, null, ex);
             }
+            //update membership
+            voucherDao.updateUserMembershipLevel(user.getUserId());
 
             Booking updateBooking = dao.getBookingById(bookingId);
             if (updateBooking != null && "PAID".equalsIgnoreCase(updateBooking.getStatus())) {

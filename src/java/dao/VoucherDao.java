@@ -5,7 +5,9 @@
 package dao;
 
 import dal.DBContext;
+import entity.MembershipLevel;
 import entity.Voucher;
+import java.math.BigDecimal;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -33,7 +35,7 @@ public class VoucherDao extends DBContext {
                 return extractVoucher(rs);
             }
         } catch (SQLException e) {
-            Logger.getLogger(PaymentDao.class.getName()).log(Level.SEVERE, null, e);
+            Logger.getLogger(VoucherDao.class.getName()).log(Level.SEVERE, null, e);
         }
         return null;
     }
@@ -69,7 +71,7 @@ public class VoucherDao extends DBContext {
                 list.add(extractVoucher(rs));
             }
         } catch (SQLException e) {
-            Logger.getLogger(PaymentDao.class.getName()).log(Level.SEVERE, null, e);
+            Logger.getLogger(VoucherDao.class.getName()).log(Level.SEVERE, null, e);
         }
         return list;
     }
@@ -79,7 +81,7 @@ public class VoucherDao extends DBContext {
         String sql = """
                         SELECT v.* FROM Voucher v
                         	JOIN GetVoucher gv ON gv.VoucherID = v.VoucherID
-                        WHERE gv.UserID = ?
+                        WHERE gv.UserID = ? AND gv.IsUsed = 0 
                             AND (v.ValidFrom IS NULL OR v.ValidFrom <= GETDATE())
                             AND (v.ValidTo IS NULL OR v.ValidTo >= GETDATE())
                             AND v.IsDeleted = 0
@@ -91,7 +93,49 @@ public class VoucherDao extends DBContext {
                 list.add(extractVoucher(rs));
             }
         } catch (SQLException e) {
-            Logger.getLogger(PaymentDao.class.getName()).log(Level.SEVERE, null, e);
+            Logger.getLogger(VoucherDao.class.getName()).log(Level.SEVERE, null, e);
+        }
+        return list;
+    }
+
+    public List<Voucher> getClaimedVouchersIsUsed(int userId) {
+        List<Voucher> list = new ArrayList<>();
+        String sql = """
+                        SELECT v.* FROM Voucher v
+                            JOIN GetVoucher gv ON gv.VoucherID = v.VoucherID
+                        WHERE gv.UserID = ?
+                            AND gv.IsUsed = 1 AND v.IsDeleted = 0
+                    """;
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, userId);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                list.add(extractVoucher(rs));
+            }
+        } catch (SQLException e) {
+            Logger.getLogger(VoucherDao.class.getName()).log(Level.SEVERE, null, e);
+        }
+        return list;
+    }
+
+    public List<Voucher> getClaimedVouchersExpired(int userId) {
+        List<Voucher> list = new ArrayList<>();
+        String sql = """
+                        SELECT v.* FROM Voucher v
+                            	JOIN GetVoucher gv ON gv.VoucherID = v.VoucherID
+                            WHERE gv.UserID = ?
+                              AND gv.IsUsed = 0 AND v.IsDeleted = 0
+                              AND v.ValidTo IS NOT NULL 
+                              AND v.ValidTo < GETDATE()
+                    """;
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, userId);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                list.add(extractVoucher(rs));
+            }
+        } catch (SQLException e) {
+            Logger.getLogger(VoucherDao.class.getName()).log(Level.SEVERE, null, e);
         }
         return list;
     }
@@ -110,7 +154,7 @@ public class VoucherDao extends DBContext {
                 return rs.getDouble(1);
             }
         } catch (SQLException e) {
-            Logger.getLogger(PaymentDao.class.getName()).log(Level.SEVERE, null, e);
+            Logger.getLogger(VoucherDao.class.getName()).log(Level.SEVERE, null, e);
         }
         return 0;
     }
@@ -136,30 +180,42 @@ public class VoucherDao extends DBContext {
             ps.setInt(2, userId);
             ps.executeUpdate();
         } catch (SQLException e) {
-            Logger.getLogger(PaymentDao.class.getName()).log(Level.SEVERE, null, e);
+            Logger.getLogger(VoucherDao.class.getName()).log(Level.SEVERE, null, e);
         }
     }
 
     public void insert(int userId, int voucherId) {
-        String sql = "INSERT INTO GetVoucher (VoucherID, UserID, ClaimedAt) VALUES (?, ?, GETDATE())";
+        String sql = "INSERT INTO GetVoucher (VoucherID, UserID, ClaimedAt, IsUsed) VALUES (?, ?, GETDATE(), 0)";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, voucherId);
             ps.setInt(2, userId);
             ps.executeUpdate();
         } catch (SQLException e) {
-            Logger.getLogger(PaymentDao.class.getName()).log(Level.SEVERE, null, e);
+            Logger.getLogger(VoucherDao.class.getName()).log(Level.SEVERE, null, e);
+        }
+    }
+
+    public void updateIsused(int userId, int voucherId) {
+        String sql = "UPDATE GetVoucher SET IsUsed = 1 WHERE UserID = ? AND VoucherID = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, userId);
+            ps.setInt(2, voucherId);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            Logger.getLogger(VoucherDao.class.getName()).log(Level.SEVERE, null, e);
         }
     }
 
     public boolean hasClaimed(int userId, int voucherId) {
-        String sql = "SELECT 1 FROM GetVoucher WHERE UserID = ? AND VoucherID = ?";
+        String sql = "SELECT 1 FROM GetVoucher WHERE UserID = ? AND VoucherID = ? AND IsUsed = 1";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, userId);
             ps.setInt(2, voucherId);
             ResultSet rs = ps.executeQuery();
             return rs.next();
+
         } catch (SQLException e) {
-            Logger.getLogger(PaymentDao.class.getName()).log(Level.SEVERE, null, e);
+            Logger.getLogger(VoucherDao.class.getName()).log(Level.SEVERE, null, e);
             return false;
         }
     }
@@ -176,6 +232,41 @@ public class VoucherDao extends DBContext {
         voucher.setDeletedBy(rs.getInt("DeletedBy"));
         voucher.setIsDeleted(rs.getBoolean("IsDeleted"));
         return voucher;
+    }
+
+    //membership
+    public MembershipLevel getMembershipByUserId(int userId) {
+        MembershipLevel membership = null;
+        String sql = """
+                        SELECT ml.LevelID, ml.LevelName, ml.MinTotal, ml.CreatedAt, ml.UpdatedAt,
+                               ml.DeletedAt, ml.DeletedBy, ml.IsDeleted
+                        FROM [User] u
+                        JOIN MembershipLevel ml ON u.LevelID = ml.LevelID
+                        WHERE u.UserID = ? AND u.IsDeleted = 0 AND ml.IsDeleted = 0
+                    """;
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+
+            ps.setInt(1, userId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    membership = new MembershipLevel();
+                    membership.setLevelId(rs.getInt("LevelID"));
+                    membership.setLevelName(rs.getString("LevelName"));
+                    membership.setMinTotal(rs.getBigDecimal("MinTotal"));
+                    membership.setCreatedAt(rs.getTimestamp("CreatedAt"));
+                    membership.setUpdatedAt(rs.getTimestamp("UpdatedAt"));
+                    membership.setDeletedAt(rs.getTimestamp("DeletedAt"));
+                    membership.setDeletedBy(rs.getObject("DeletedBy") != null ? rs.getInt("DeletedBy") : null);
+                    membership.setIsDeleted(rs.getBoolean("IsDeleted"));
+                }
+            }
+
+        } catch (SQLException e) {
+            Logger.getLogger(VoucherDao.class.getName()).log(Level.SEVERE, null, e);
+        }
+
+        return membership;
     }
 
 }

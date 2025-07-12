@@ -84,6 +84,7 @@ public class PdfGenerator {
             document.add(new Paragraph("Phòng: " + invoice.getRoomNumber(), normalFont));
             document.add(new Paragraph("Giá phòng: " + invoice.getRoomPrice() + " VND", normalFont));
             document.add(new Paragraph("Số đêm: " + invoice.getNights(), normalFont));
+            document.add(new Paragraph("Voucher giảm giá: " + invoice.getDiscountAmount() + "%", normalFont));
             document.add(new Paragraph("Tổng tiền phòng: " + invoice.getTotalRoomPrice() + " VND", normalFont));
             document.add(new Paragraph(" "));
 
@@ -113,7 +114,7 @@ public class PdfGenerator {
             // === VOUCHER ===
             if (invoice.getVoucherCode() != null && !invoice.getVoucherCode().isEmpty()) {
                 document.add(new Paragraph("Voucher áp dụng: " + invoice.getVoucherCode(), normalFont));
-                document.add(new Paragraph("Giảm giá: " + invoice.getDiscountAmount() + " VND", normalFont));
+                document.add(new Paragraph("Giảm giá: " + invoice.getDiscountAmount() + "%", normalFont));
                 document.add(new Paragraph(" "));
             }
 

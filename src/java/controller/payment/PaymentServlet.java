@@ -6,6 +6,7 @@ package controller.payment;
 
 import constant.Config;
 import dao.BookingDao;
+import dao.PaymentDao;
 import dao.VoucherDao;
 import entity.Authentication;
 import entity.Booking;
@@ -99,11 +100,14 @@ public class PaymentServlet extends HttpServlet {
         Integer voucherId = (voucherIdStr != null && !voucherIdStr.isEmpty()) ? Integer.valueOf(voucherIdStr) : null;
         BigDecimal amountDouble = Validation.validateBigDecimal(totalBillStr, BigDecimal.ONE, new BigDecimal("999999999"));
 
+        PaymentDao PaymentDao = new PaymentDao();
+        BigDecimal discountedTotal = PaymentDao.calculateDiscountedTotal(amountDouble, voucherId);
+        
         // Tạo booking
         Booking booking = new Booking();
         booking.setUserId(userId);
         booking.setVoucherId(voucherId);
-        booking.setTotalAmount(amountDouble);
+        booking.setTotalAmount(discountedTotal);
         booking.setStatus("PENDING");
         booking.setCheckInDate(checkin);
         booking.setCheckOutDate(checkout);
@@ -179,10 +183,13 @@ public class PaymentServlet extends HttpServlet {
         Integer voucherId = (voucherIdStr != null && !voucherIdStr.isEmpty()) ? Integer.valueOf(voucherIdStr) : null;
         BigDecimal amountDouble = Validation.validateBigDecimal(totalBillStr, BigDecimal.ONE, new BigDecimal("999999999"));
 
+        PaymentDao PaymentDao = new PaymentDao();
+        BigDecimal discountedTotal = PaymentDao.calculateDiscountedTotal(amountDouble, voucherId);
+        
         Booking booking = new Booking();
         booking.setUserId(userId);
         booking.setVoucherId(voucherId);
-        booking.setTotalAmount(amountDouble);
+        booking.setTotalAmount(discountedTotal);
         booking.setStatus("PENDING");
         booking.setCheckInDate(checkin);
         booking.setCheckOutDate(checkout);

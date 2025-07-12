@@ -3,6 +3,8 @@
     Created on : Jun 15, 2025, 11:03:35 AM
     Author     : ASUS
 --%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html> 
@@ -50,8 +52,18 @@
                         </a>
                         <div class="dropdown-menu dropdown-menu-right shadow border-0" aria-labelledby="userDropdown" style="min-width: 250px; margin-top: 18px">
                             <div class="px-3 py-2 border-bottom">
-                                <div class="font-weight-bold text-dark">🥉 Bronze Priority</div>
-                                <div class="text-muted small">0 Điểm</div>
+                                <c:if test="${sessionScope.levelUser.levelId == 1}">
+                                    <div class="font-weight-bold text-dark">🥉 Bronze Priority</div>
+                                </c:if>
+                                <c:if test="${sessionScope.levelUser.levelId == 2}">
+                                    <div class="font-weight-bold text-dark">🥈 Silver Priority</div>
+                                </c:if>
+                                <c:if test="${sessionScope.levelUser.levelId == 3}">
+                                    <div class="font-weight-bold text-dark">🥇 Gold Priority</div>
+                                </c:if>
+                                <div class="text-muted small">
+                                    <fmt:formatNumber value="${sessionScope.totalPaidAmount / 1000}" type="number" maxFractionDigits="0" /> điểm
+                                </div>
                             </div>
                             <a class="dropdown-item" href="${pageContext.request.contextPath}/voucherforcustomer">
                                 <i class="fas fa-bed mr-2 text-primary"></i> Điểm

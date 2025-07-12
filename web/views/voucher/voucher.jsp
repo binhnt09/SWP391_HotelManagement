@@ -86,41 +86,68 @@
 
             <!-- Hotels Section -->
             <section class="container my-5">
+            <c:if test="${sessionScope.authLocal != null}">
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h2 class="section-title">🏨 Voucher</h2>
                 </div>
                 <div>
                     <div class="tour-container">
-                    <c:forEach var="v" items="${vouchers}">
-                        <div class="tour-card">
-                            <div class="tour-content">
-                                <!--<img src="" alt="Hotel Hanoi" class="tour-image">-->
-                                <h3 class="tour-title">${v.getCode()} - Giảm ${v.getDiscountPercentage()}%</h3>
-                                <div class="voucher-date">
-                                    Áp dụng:
-                                    <c:choose>
-                                        <c:when test="${v.validFrom != null}">
-                                            <fmt:formatDate value="${v.validFrom}" pattern="dd-MM-yyyy" />
-                                        </c:when>
-                                        <c:otherwise>Không giới hạn</c:otherwise>
-                                    </c:choose>
-                                    →
-                                    <c:choose>
-                                        <c:when test="${v.validTo != null}">
-                                            <fmt:formatDate value="${v.validTo}" pattern="dd-MM-yyyy" />
-                                        </c:when>
-                                        <c:otherwise>Không giới hạn</c:otherwise>
-                                    </c:choose>
+                        <c:forEach var="v" items="${vouchers}">
+                            <div class="tour-card">
+                                <div class="tour-content">
+                                    <!--<img src="" alt="Hotel Hanoi" class="tour-image">-->
+                                    <h3 class="tour-title">${v.getCode()} - Giảm ${v.getDiscountPercentage()}%</h3>
+                                    <div class="voucher-date">
+                                        Áp dụng:
+                                        <c:choose>
+                                            <c:when test="${v.validFrom != null}">
+                                                <fmt:formatDate value="${v.validFrom}" pattern="dd-MM-yyyy" />
+                                            </c:when>
+                                            <c:otherwise>Không giới hạn</c:otherwise>
+                                        </c:choose>
+                                        →
+                                        <c:choose>
+                                            <c:when test="${v.validTo != null}">
+                                                <fmt:formatDate value="${v.validTo}" pattern="dd-MM-yyyy" />
+                                            </c:when>
+                                            <c:otherwise>Không giới hạn</c:otherwise>
+                                        </c:choose>
+                                    </div>
+                                    <form action="${pageContext.request.contextPath}/voucher" method="post">
+                                        <input type="hidden" name="voucherId" value="${v.voucherId}" />
+                                        <button type="submit" class="btn-book">Nhận Voucher</button>
+                                    </form>
+                                    <c:if test="${not empty success}">
+                                        <script>
+                                            Swal.fire({
+                                                icon: 'success',
+                                                title: 'Thành công',
+                                                text: 'Bạn đã nhận voucher thành công!',
+                                                confirmButtonText: 'Đóng'
+                                            });
+                                        </script>
+                                    </c:if>
+                                    <c:if test="${not empty info}">
+                                        <script>
+                                            Swal.fire({
+                                                icon: 'error',
+                                                title: 'Lỗi',
+                                                text: '${info}',
+                                                confirmButtonText: 'Đóng'
+                                            });
+                                        </script>
+                                    </c:if>
                                 </div>
-                                <form action="${pageContext.request.contextPath}/voucher" method="post">
-                                    <input type="hidden" name="voucherId" value="${v.voucherId}" />
-                                    <button type="submit" class="btn-book">Nhận Voucher</button>
-                                </form>
                             </div>
-                        </div>
-                    </c:forEach>
+                        </c:forEach>
+                    </div>
                 </div>
-            </div>
+            </c:if>
+            <c:if test="${sessionScope.authLocal == null}">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2 class="section-title">🏨 Login để nhận nhiều voucher hấp dẫn</h2>
+                </div>
+            </c:if>
         </section>
 
         <!-- Why Choose Us -->
@@ -166,6 +193,8 @@
 
         <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
         <script src="${pageContext.request.contextPath}/js/jquery/jquery-2.2.4.min.js"></script>
+
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
         <!-- Popper + Bootstrap + Plugin + Active -->
         <script src="${pageContext.request.contextPath}/js/bootstrap/popper.min.js"></script>

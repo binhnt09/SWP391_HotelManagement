@@ -8,6 +8,7 @@ package controller.voucher;
 import dao.BookingDao;
 import dao.VoucherDao;
 import entity.Authentication;
+import entity.MembershipLevel;
 import entity.Voucher;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -62,13 +63,21 @@ public class VoucherForCustomer extends HttpServlet {
         Authentication auth = (Authentication) request.getSession().getAttribute("authLocal");
         int userId = auth.getUser().getUserId();
         
-        VoucherDao voucherDAO = new VoucherDao();
+        VoucherDao voucherDao = new VoucherDao();
 
-        double totalPaid = voucherDAO.getTotalPaidByUser(userId);
-        List<Voucher> vouchers = voucherDAO.getClaimedVouchers(userId);
+        double totalPaid = voucherDao.getTotalPaidByUser(userId);
+        MembershipLevel level = voucherDao.getMembershipByUserId(userId);
+        
+        List<Voucher> vouchers = voucherDao.getClaimedVouchers(userId);
+        List<Voucher> vouchersIused = voucherDao.getClaimedVouchersIsUsed(userId);
+        List<Voucher> vouchersExpired = voucherDao.getClaimedVouchersExpired(userId);
 
-        request.setAttribute("totalPaidAmount", totalPaid);
+        request.getSession().setAttribute("totalPaidAmount", totalPaid);
+        request.getSession().setAttribute("levelUser", level);
+        
         request.setAttribute("vouchers", vouchers);
+        request.setAttribute("vouchersIused", vouchersIused);
+        request.setAttribute("vouchersExpired", vouchersExpired);
         request.getRequestDispatcher("/views/voucher/myvoucher.jsp").forward(request, response);
     } 
 

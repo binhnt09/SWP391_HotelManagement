@@ -179,11 +179,12 @@ public class MailUtil {
 
             sb.append("<h3>🏨 Chi tiết phòng</h3>")
                     .append("<table><thead><tr>")
-                    .append("<th>Số phòng</th><th>Giá mỗi đêm</th><th>Số đêm</th><th>Tổng tiền</th>")
+                    .append("<th>Số phòng</th><th>Giá mỗi đêm</th><th>Số đêm</th><th>Voucher giảm giá</th><th>Tổng tiền</th>")
                     .append("</tr></thead><tbody><tr>")
                     .append("<td>").append(invoice.getRoomNumber()).append("</td>")
                     .append("<td>").append(invoice.getRoomPrice()).append("</td>")
                     .append("<td>").append(invoice.getNights()).append("</td>")
+                    .append("<td>").append(invoice.getDiscountAmount()).append("%</td>")
                     .append("<td>").append(invoice.getTotalRoomPrice()).append("</td>")
                     .append("</tr></tbody></table>");
         } else {
@@ -211,13 +212,12 @@ public class MailUtil {
             sb.append("<p><strong>❌ Không có dịch vụ nào được sử dụng.</strong></p>");
         }
 
-        if(invoice.getVoucherCode() != null && !invoice.getVoucherCode().isEmpty()){
-            
-        sb.append("<h3>🎟️ Voucher áp dụng</h3><ul>")
-                .append("<li><strong>Mã voucher:</strong> ").append(invoice.getVoucherCode()).append("</li>")
-                .append("<li><strong>Giảm giá:</strong> ").append(invoice.getDiscountAmount()).append("%</li>")
-                .append("</ul>");
-        }else{
+        if (invoice.getVoucherCode() != null && !invoice.getVoucherCode().isEmpty()) {
+            sb.append("<h3>🎟️ Voucher áp dụng</h3><ul>")
+                    .append("<li><strong>Mã voucher:</strong> ").append(invoice.getVoucherCode()).append("</li>")
+                    .append("<li><strong>Giảm giá:</strong> ").append(invoice.getDiscountAmount()).append("%</li>")
+                    .append("</ul>");
+        } else {
             sb.append("<p><strong>❌ Không có voucher nào được sử dụng.</strong></p>");
         }
 
@@ -232,7 +232,7 @@ public class MailUtil {
             sb.append("<p><strong>❌ Không có thông tin thanh toán.</strong></p>");
         }
 
-        sb.append("<p>Trân trọng,</p>").append("<p><strong>Palatin Hotel</strong> Ngày tạo hóa đơn")
+        sb.append("<p>Trân trọng,</p>").append("<p><strong>Palatin Hotel</strong> Ngày tạo hóa đơn: ")
                 .append(invoice.getIssueDate()).append("</p>");
 
         sb.append("</body></html>");

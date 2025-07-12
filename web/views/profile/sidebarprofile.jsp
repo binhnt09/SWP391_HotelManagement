@@ -3,6 +3,7 @@
     Created on : Jun 15, 2025, 5:03:19 PM
     Author     : ASUS
 --%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
@@ -13,7 +14,15 @@
                 <div class="profile-avatar">${fn:substring(sessionScope.authLocal.user.email, 0, 1)}</div>
                 <h6 class="mb-2">${sessionScope.authLocal.user.lastName}</h6>
             </c:if>
-            <div class="profile-status">Bạn là thành viên Bronze Priority</div>
+            <c:if test="${sessionScope.levelUser.levelId == 1}">
+                <div class="profile-status profile-bronze">Bạn là thành viên Bronze Priority 🥉</div>
+            </c:if>
+            <c:if test="${sessionScope.levelUser.levelId == 2}">
+                <div class="profile-status profile-silver">Bạn là thành viên Silver Priority 🥈</div>
+            </c:if>
+            <c:if test="${sessionScope.levelUser.levelId == 3}">
+                <div class="profile-status profile-gold">Bạn là thành viên Gold Priority 🥇</div>
+            </c:if>
         </div>
         <div class="list-group list-group-flush sidebar-menu">
             <div class="list-group-item ${pageContext.request.requestURI.endsWith('myvoucher.jsp') ? 'active' : ''}">
@@ -21,7 +30,7 @@
                     <i class="fas fa-bed"></i> Điểm
                 </a>
             </div>
-                    
+
             <div class="list-group-item ${pageContext.request.requestURI.endsWith('historybooking.jsp') ? 'active' : ''}">
                 <a class="dropdown-item" href="${pageContext.request.contextPath}/bookingroomcustomer">
                     <i class="fas fa-bed"></i> Đặt chỗ của tôi

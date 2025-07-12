@@ -161,6 +161,7 @@ $(document).ready(function () {
                 $("#roomNumber").text(invoice.roomNumber);
                 $("#pricePerNight").text(invoice.roomPrice);
                 $("#numNights").text(invoice.nights);
+                $("#discountAmountR").text(invoice.discountAmount + '%');
                 $("#totalPricePerNight").text(invoice.totalRoomPrice);
 
                 const services = invoice.services || [];
