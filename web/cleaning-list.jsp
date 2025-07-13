@@ -231,6 +231,80 @@
                         </div>
                     </div>
 
+                    <!-- ========== YÊU CẦU DỌN PHÒNG TỪ KHÁCH ========== -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="mb-0">Yêu cầu dọn phòng từ khách</h5>
+                        </div>
+                        <div class="card-body">
+                            <table class="table table-bordered text-center align-middle" style="vertical-align: middle;">
+                                <thead class="thead-light">
+                                    <tr>
+                                        <th>Phòng</th>
+                                        <th>Loại</th>
+                                        <th>Yêu cầu lúc</th>
+                                        <th>Ghi chú</th>
+                                        <th>Trạng thái</th>
+                                        <th>Thao tác</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <c:choose>
+                                        <c:when test="${not empty cleaningRequests}">
+                                            <c:forEach var="req" items="${cleaningRequests}">
+                                                <tr>
+                                                    <td class="align-middle">${req.roomNumber}</td>
+                                                    <td class="align-middle">${req.roomTypeName}</td>
+                                                    <td class="align-middle">
+                                                        <fmt:formatDate value="${req.requestedAt}" pattern="HH:mm dd/MM/yyyy" />
+                                                    </td>
+                                                    <td class="align-middle">${req.note}</td>
+                                                    <td class="align-middle">
+                                                        <c:choose>
+                                                            <c:when test="${req.status == 'Pending'}">
+                                                                <span class="badge badge-warning" style="font-size: 14px; padding: 6px 12px">
+                                                                    Cần dọn dẹp
+                                                                </span>
+                                                            </c:when>
+                                                            <c:when test="${req.status == 'InProgress'}">
+                                                                <span class="badge badge-info" style="font-size: 14px; padding: 6px 12px">
+                                                                    Đang dọn dẹp
+                                                                </span>
+                                                            </c:when>
+                                                            <c:when test="${req.status == 'Completed'}">
+                                                                <span class="badge badge-success" style="font-size: 14px; padding: 6px 12px">
+                                                                    Đã dọn xong
+                                                                </span>
+                                                            </c:when>
+                                                            <c:otherwise>
+                                                                <span class="badge badge-secondary" style="font-size: 14px; padding: 6px 12px">
+                                                                    ${req.status}
+                                                                </span>
+                                                            </c:otherwise>
+                                                        </c:choose>
+                                                    </td>
+                                                    <td class="align-middle">
+                                                        <c:if test="${req.status == 'Pending'}">
+                                                            <form method="post" action="startCleaningRequest">
+                                                                <input type="hidden" name="roomId" value="${req.roomID}" />
+                                                                <input type="hidden" name="requestId" value="${req.requestID}" />
+                                                                <button class="btn btn-sm btn-primary">Bắt đầu dọn</button>
+                                                            </form>
+                                                        </c:if>
+                                                    </td>
+                                                </tr>
+                                            </c:forEach>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <tr>
+                                                <td colspan="6" class="text-center">Không có yêu cầu nào.</td>
+                                            </tr>
+                                        </c:otherwise>
+                                    </c:choose>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                     <!-- ========== DANH SÁCH PHÒNG ĐANG DỌN ========== -->
                     <div class="card">
                         <div class="card-header">
@@ -261,6 +335,7 @@
                                                         <form method="post" action="finishCleaning">
                                                             <input type="hidden" name="cleaningId" value="${task.cleaningID}" />
                                                             <input type="hidden" name="roomId" value="${task.room.roomID}" />
+                                                            <input type="hidden" name="requestId" value="${task.requestID}" />
                                                             <textarea name="note" class="form-control form-control-sm" placeholder="Ghi chú nếu có"></textarea>
                                                     </td>
                                                     <td>

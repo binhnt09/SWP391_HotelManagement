@@ -551,7 +551,7 @@ public class RoomDAO extends DBContext {
             FROM BookingDetail bd
             JOIN Booking b ON bd.BookingID = b.BookingID AND b.IsDeleted = 0
             LEFT JOIN [User] u ON b.UserID = u.UserID
-            WHERE bd.IsDeleted = 0 AND CAST(b.CheckOutDate AS DATE) >= CAST(GETDATE() AS DATE) AND b.status != 'Cancelled'
+            WHERE bd.IsDeleted = 0 AND CAST(b.CheckOutDate AS DATE) >= CAST(GETDATE() AS DATE) AND  b.Status IN ('Checked-in', 'Confirmed')
         )
 
         SELECT r.RoomID, r.RoomNumber, r.Status AS RoomStatus, r.Price,

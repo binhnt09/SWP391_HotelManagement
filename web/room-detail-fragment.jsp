@@ -82,13 +82,13 @@
                         <button class="btn btn-info" onclick="bookRoom(${room.roomID})">
                             <i class="fas fa-calendar-plus me-1"></i> Đặt phòng
                         </button>
-                        <button class="btn btn-secondary" onclick="editRoom(${room.roomID})">
+                        <button class="btn btn-secondary" onclick="confirmSetMaintenance(${room.roomID})">
                             <i class="fas fa-edit me-1"></i> Sửa phòng
                         </button>
                     </c:when>
 
                     <c:when test="${room.status eq 'Occupied'}">
-                        <button class="btn btn-warning" onclick="confirmCheckOut(${room.roomID}, ${currentStay.bookingID})">
+                        <button class="btn btn-warning" onclick="confirmCheckOut(${room.roomID}, ${currentStay.bookingID}, '${currentStay.checkOutDate}')">
                             <i class="fas fa-sign-out-alt me-1"></i> Check-out
                         </button>
                         <button class="btn btn-primary" onclick="printInvoice(${room.roomID})">
@@ -97,7 +97,7 @@
                         <button class="btn btn-secondary" onclick="editBooking(${room.roomID})">
                             <i class="fas fa-user-edit me-1"></i> Cập nhật thông tin khách
                         </button>
-                        <button class="btn btn-danger" onclick="callCleaning(${room.roomID})">
+                        <button class="btn btn-danger" onclick="openRequestCleaningModal(${room.roomID}, ${currentStay.bookingID})">
                             <i class="fas fa-broom me-1"></i> Gọi dọn phòng
                         </button>
                     </c:when>
@@ -112,9 +112,6 @@
                         <button class="btn btn-danger" onclick="confirmCancel(${room.roomID},${currentStay.bookingID})">
                             <i class="fas fa-times me-1"></i> Hủy đặt
                         </button>
-                        <button class="btn btn-secondary" onclick="editBooking(${room.roomID})">
-                            <i class="fas fa-edit me-1"></i> Cập nhật đặt phòng
-                        </button>
                     </c:when>
 
                     <c:when test="${room.status eq 'Cleaning'}">
@@ -127,7 +124,7 @@
                     </c:when>
 
                     <c:when test="${room.status eq 'Non-available'}">
-                        <button class="btn btn-success" onclick="endMaintenance(${room.roomID})">
+                        <button class="btn btn-success" onclick="confirmFinishMaintenance(${room.roomID})">
                             <i class="fas fa-tools me-1"></i> Kết thúc bảo trì
                         </button>
                         <button class="btn btn-secondary" onclick="updateMaintenanceReason(${room.roomID})">
@@ -305,6 +302,81 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Không</button>
                     <button type="submit" class="btn btn-danger">Có</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Modal xác nhận sửa phòng -->
+<div class="modal fade" id="confirmMaintenanceModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <form method="post" action="setMaintenance">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Xác nhận Sửa phòng</h5>
+                    <button type="button" class="close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    Bạn có chắc chắn muốn chuyển phòng này sang trạng thái <strong>Sửa chữa</strong> không?
+                    <input type="hidden" name="roomId" id="maintenanceRoomId">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-dark">Xác nhận</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<!-- Modal xác nhận hoàn tất sửa chữa -->
+<div class="modal fade" id="confirmFinishMaintenanceModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <form method="post" action="finishMaintenance">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Xác nhận hoàn tất sửa chữa</h5>
+                    <button type="button" class="close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    Bạn có chắc chắn muốn chuyển phòng này về trạng thái <strong>Available</strong> không?
+                    <input type="hidden" name="roomId" id="finishMaintenanceRoomId">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-success">Xác nhận</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Modal yêu cầu dọn phòng -->
+<div class="modal fade" id="requestCleaningModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <form method="post" action="requestCleaning">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Yêu cầu dọn phòng</h5>
+                    <button type="button" class="close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Bạn có chắc chắn muốn gửi yêu cầu dọn phòng?</p>
+
+                    <div class="mb-3">
+                        <label for="cleaningNote" class="form-label">Ghi chú (nếu có):</label>
+                        <textarea name="note" class="form-control" id="cleaningNote" rows="3" placeholder="Ví dụ: Vui lòng dọn sau 14h..."></textarea>
+                    </div>
+
+                    <!-- Hidden inputs -->
+                    <input type="hidden" name="roomId" id="cleaningRoomId">
+                    <input type="hidden" name="bookingId" id="cleaningBookingId">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-primary">Gửi yêu cầu</button>
                 </div>
             </div>
         </form>

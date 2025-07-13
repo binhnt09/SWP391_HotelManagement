@@ -5,6 +5,7 @@
 package controller;
 
 import dao.CleaningHistoryDAO;
+import dao.CleaningRequestDAO;
 import entity.Authentication;
 import entity.User;
 import jakarta.servlet.ServletException;
@@ -50,7 +51,8 @@ public class FinishCleaningServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
-            int roomId = Integer.parseInt(request.getParameter("roomId"));
+            int roomId = request.getParameter("roomId") != null ? Integer.parseInt(request.getParameter("roomId")) : 0;
+            int requestId = request.getParameter("requestId") != null ? Integer.parseInt(request.getParameter("requestId")) : 0;
             int cleaningId = Integer.parseInt(request.getParameter("cleaningId"));
             String note = request.getParameter("note");
 
@@ -65,10 +67,18 @@ public class FinishCleaningServlet extends HttpServlet {
             User cleaner = auth.getUser();
 
             CleaningHistoryDAO cleaningDAO = new CleaningHistoryDAO();
-            boolean success = cleaningDAO.finishCleaning(roomId, cleaningId, note);
+            CleaningRequestDAO requestDAO = new CleaningRequestDAO();
+
+            boolean success = false;
+            
+
+            if (requestId != 0) {
+                success = requestDAO.finishCleaning(requestId, cleaningId, note);
+            } else {
+                success = cleaningDAO.finishCleaning(roomId, cleaningId, note);
+            }
 
             if (success) {
-                cleaningDAO.updateRoomStatus(roomId, "Available");
                 session.setAttribute("successMessage", "Đã hoàn tất dọn phòng.");
             } else {
                 session.setAttribute("errorMessage", "Không thể hoàn tất. Vui lòng thử lại.");

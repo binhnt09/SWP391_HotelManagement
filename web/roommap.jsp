@@ -611,10 +611,23 @@
                             modal.show();
                         }
 
-                        function confirmCheckOut(roomId, bookingId) {
+                        function confirmCheckOut(roomId, bookingId, checkOutDateStr) {
+                            const checkOutDate = new Date(checkOutDateStr);
+                            const today = new Date();
+
+                            checkOutDate.setHours(0, 0, 0, 0);
+                            today.setHours(0, 0, 0, 0);
+
+                            if (today < checkOutDate) {
+                                const confirmEarly = confirm(
+                                        "Khách vẫn còn thời gian lưu trú đến " + checkOutDateStr + ".\nBạn có chắc chắn muốn check-out sớm không?"
+                                        );
+                                if (!confirmEarly)
+                                    return;
+                            }
+
                             document.getElementById('checkoutRoomId').value = roomId;
                             document.getElementById('checkoutBookingId').value = bookingId;
-
                             const modal = new bootstrap.Modal(document.getElementById('confirmCheckoutModal'));
                             modal.show();
                         }
@@ -638,6 +651,26 @@
                             document.getElementById('cancelRoomId').value = roomId;
                             document.getElementById('cancelBookingId').value = bookingId;
                             const modal = new bootstrap.Modal(document.getElementById('confirmCancelModal'));
+                            modal.show();
+                        }
+
+                        function confirmSetMaintenance(roomId) {
+                            document.getElementById('maintenanceRoomId').value = roomId;
+                            const modal = new bootstrap.Modal(document.getElementById('confirmMaintenanceModal'));
+                            modal.show();
+                        }
+
+                        function confirmFinishMaintenance(roomId) {
+                            document.getElementById('finishMaintenanceRoomId').value = roomId;
+                            const modal = new bootstrap.Modal(document.getElementById('confirmFinishMaintenanceModal'));
+                            modal.show();
+                        }
+
+                        function openRequestCleaningModal(roomId, bookingId) {
+                            document.getElementById('cleaningRoomId').value = roomId;
+                            document.getElementById('cleaningBookingId').value = bookingId;
+
+                            const modal = new bootstrap.Modal(document.getElementById('requestCleaningModal'));
                             modal.show();
                         }
 

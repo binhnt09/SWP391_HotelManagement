@@ -5,8 +5,10 @@
 package controller;
 
 import dao.CleaningHistoryDAO;
+import dao.CleaningRequestDAO;
 import entity.Authentication;
 import entity.CleaningHistory;
+import entity.CleaningRequest;
 import entity.Room;
 import entity.User;
 import jakarta.servlet.ServletException;
@@ -58,12 +60,15 @@ public class CleaningListServlet extends HttpServlet {
         User cleaner = auth.getUser();
 
         try {
-            CleaningHistoryDAO dao = new CleaningHistoryDAO();
+            CleaningHistoryDAO chDAO = new CleaningHistoryDAO();
+            CleaningRequestDAO crDAO = new CleaningRequestDAO();
 
-            List<Room> pendingRooms = dao.getListRoomForCleaner();
-            List<CleaningHistory> inProgressTasks = dao.getCleaningHistoryByCleanerInProgress(cleaner.getUserId());
-
+            List<Room> pendingRooms = chDAO.getListRoomForCleaner();
+            List<CleaningRequest> cleaningRequests = crDAO.getAllRequestsForCleaner();
+            List<CleaningHistory> inProgressTasks = chDAO.getCleaningHistoryByCleanerInProgress(cleaner.getUserId());
+            
             request.setAttribute("pendingRooms", pendingRooms);
+            request.setAttribute("cleaningRequests", cleaningRequests);
             request.setAttribute("inProgressTasks", inProgressTasks);
 
         } catch (Exception e) {

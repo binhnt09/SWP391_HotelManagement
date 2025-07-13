@@ -102,7 +102,14 @@
                             <i class="material-icons">rate_review</i>Review
                         </a>
                     </li>
-                    
+
+                    <!-- Receptionist page -->
+                    <li>
+                        <a href="receptionistPage">
+                            <i class="material-icons">square</i>Room Map
+                        </a>
+                    </li>
+
                     <!-- Cleaning List -->
                     <li>
                         <a href="cleaningList">

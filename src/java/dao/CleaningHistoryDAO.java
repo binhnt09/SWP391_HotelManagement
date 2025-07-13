@@ -43,30 +43,64 @@ public class CleaningHistoryDAO extends DBContext {
         return false;
     }
 
-    public boolean finishCleaning(int roomId, int cleaneingId, String note) {
-        String sql = "UPDATE CleaningHistory SET EndTime = GETDATE(), Note = ?, Status = 'Completed', UpdatedAt = GETDATE() "
-                + "WHERE CleaningID = ?";
-        String updateRoom = "UPDATE Room SET Status = 'Available', UpdatedAt = GETDATE() WHERE RoomID = ?";
+    public boolean finishCleaning(int roomId, int cleaningId, String note) {
+        String updateCleaning = "UPDATE CleaningHistory SET EndTime = GETDATE(), Note = ?, Status = 'Completed', UpdatedAt = GETDATE() WHERE CleaningID = ?";
+
+        // Query kiểm tra trạng thái mới sau khi dọn
+        String checkRoomStatus = """
+        SELECT 
+            CASE 
+                WHEN EXISTS (
+                    SELECT 1 FROM BookingDetail bd
+                    JOIN Booking b ON bd.BookingID = b.BookingID
+                    WHERE bd.RoomID = ? AND b.IsDeleted = 0
+                    AND b.Status = 'Confirmed'
+                    AND b.CheckInDate > GETDATE()
+                ) THEN 'Reserved'
+                WHEN EXISTS (
+                    SELECT 1 FROM BookingDetail bd
+                    JOIN Booking b ON bd.BookingID = b.BookingID
+                    WHERE bd.RoomID = ? AND b.IsDeleted = 0
+                    AND b.Status = 'Checked-in'
+                    AND GETDATE() BETWEEN b.CheckInDate AND b.CheckOutDate
+                ) THEN 'Occupied'
+                ELSE 'Available'
+            END AS NewStatus
+    """;
+
+        String updateRoom = "UPDATE Room SET Status = ?, UpdatedAt = GETDATE() WHERE RoomID = ?";
 
         try {
             connection.setAutoCommit(false);
 
-            try (PreparedStatement ps1 = connection.prepareStatement(sql)) {
+            // Cập nhật CleaningHistory
+            try (PreparedStatement ps1 = connection.prepareStatement(updateCleaning)) {
                 ps1.setString(1, note);
-                ps1.setInt(2, cleaneingId);
-                int updatedHistory = ps1.executeUpdate();
-
-                if (updatedHistory == 0) {
+                ps1.setInt(2, cleaningId);
+                int rows = ps1.executeUpdate();
+                if (rows == 0) {
                     connection.rollback();
                     return false;
                 }
             }
 
-            try (PreparedStatement ps2 = connection.prepareStatement(updateRoom)) {
+            // Xác định trạng thái mới của phòng
+            String newStatus = "Available";
+            try (PreparedStatement ps2 = connection.prepareStatement(checkRoomStatus)) {
                 ps2.setInt(1, roomId);
-                int updatedRoom = ps2.executeUpdate();
+                ps2.setInt(2, roomId);
+                ResultSet rs = ps2.executeQuery();
+                if (rs.next()) {
+                    newStatus = rs.getString("NewStatus");
+                }
+            }
 
-                if (updatedRoom == 0) {
+            // Cập nhật trạng thái phòng
+            try (PreparedStatement ps3 = connection.prepareStatement(updateRoom)) {
+                ps3.setString(1, newStatus);
+                ps3.setInt(2, roomId);
+                int rows = ps3.executeUpdate();
+                if (rows == 0) {
                     connection.rollback();
                     return false;
                 }
@@ -156,6 +190,7 @@ public class CleaningHistoryDAO extends DBContext {
                 ch.setStatus(rs.getString("Status"));
                 ch.setCreatedAt(rs.getTimestamp("CreatedAt"));
                 ch.setUpdatedAt(rs.getTimestamp("UpdatedAt"));
+                ch.setRequestID(rs.getInt("RequestID"));
                 list.add(ch);
             }
         } catch (SQLException e) {

@@ -22,6 +22,7 @@ public class CleaningHistory {
     private Timestamp createdAt;
     private Timestamp updatedAt;
     private Room room;
+    private int requestID;
 
     public Room getRoom() {
         return room;
@@ -106,6 +107,14 @@ public class CleaningHistory {
         this.updatedAt = updatedAt;
     }
 
+    public int getRequestID() {
+        return requestID;
+    }
+
+    public void setRequestID(int requestID) {
+        this.requestID = requestID;
+    }
+    
     @Override
     public String toString() {
         return "CleaningHistory{" + "cleaningID=" + cleaningID + ", roomID=" + roomID + ", cleanerID=" + cleanerID + ", startTime=" + startTime + ", endTime=" + endTime + ", note=" + note + ", status=" + status + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + '}';

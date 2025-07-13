@@ -340,14 +340,13 @@ public class BookingDao extends DBContext {
         FROM BookingDetail bd
         JOIN Booking b ON bd.BookingID = b.BookingID AND b.IsDeleted = 0
         JOIN [User] u ON b.UserID = u.UserID AND u.IsDeleted = 0
-        WHERE bd.RoomID = ? AND bd.IsDeleted = 0 and CheckOutDate >= getdate()
+        WHERE bd.RoomID = ? AND bd.IsDeleted = 0 and CAST(b.CheckOutDate AS DATE) >= CAST(GETDATE() AS DATE) and b.Status IN ('Checked-in','Confirmed')
         ORDER BY b.CheckInDate ASC
     """;
 
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, roomId);
             ResultSet rs = ps.executeQuery();
-
             while (rs.next()) {
                 BookingInfo booking = new BookingInfo();
                 booking.setBookingID(rs.getInt("BookingID"));
@@ -419,7 +418,7 @@ public class BookingDao extends DBContext {
         JOIN [User] u ON b.UserID = u.UserID
         WHERE bd.RoomID = ?
           AND b.IsDeleted = 0
-          AND b.Status = 'Confirmed'
+          AND b.Status IN ('Confirmed') 
           AND CAST(b.CheckOutDate AS DATE) >= CAST(GETDATE() AS DATE) 
         ORDER BY b.CheckInDate ASC
     """;
