@@ -1,0 +1,137 @@
+/*
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css to edit this template
+*/
+/* 
+    Created on : Jul 10, 2025, 11:15:53 PM
+    Author     : ASUS
+*/
+.reward-wrapper {
+    font-family: Arial, sans-serif;
+    max-width: 1000px;
+    margin: auto;
+}
+
+.content-point{
+    display: flex;
+    gap: 20px;
+}
+
+.point-summary {
+    background-color: #0099ff;
+    color: white;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+    text-align: left;
+    flex: 1;
+    position: relative;
+}
+
+.point-title {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.point-value {
+    font-size: 32px;
+    margin-top: 10px;
+}
+
+.btn-info {
+    background-color: white;
+    color: #0099ff;
+    padding: 6px 12px;
+    text-decoration: none;
+    border-radius: 6px;
+    position: absolute;
+    right: 20px;
+    top: 75px;
+    font-weight: bold;
+}
+
+.learn-more-box {
+    background-color: #0099ff;
+    color: white;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+    flex: 1;
+}
+
+.btn-learn {
+    background-color: white;
+    color: #0099ff;
+    padding: 6px 12px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.tabs ul {
+    display: flex;
+    list-style: none;
+    padding: 0;
+    margin: 20px 0 10px;
+    border-bottom: 2px solid #eee;
+}
+
+.tabs ul li {
+    margin-right: 20px;
+    padding: 10px;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+}
+
+.tabs .nav-tabs .nav-link.active {
+    background-color: transparent !important;
+    border-color: transparent !important;
+    border-bottom: 3px solid #28a745 !important;
+    color: #28a745 !important;
+    font-weight: bold;
+}
+
+.voucher-container.tab-pane.show {
+    display: flex !important;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.voucher-card {
+    background-color: #0099ff;
+    color: white;
+    border-radius: 10px;
+    padding: 20px;
+    width: 300px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.voucher-title {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.voucher-date {
+    font-size: 13px;
+    margin-bottom: 15px;
+}
+
+.voucher-footer {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.apply-btn {
+    background-color: white;
+    color: #0099ff;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+}
+

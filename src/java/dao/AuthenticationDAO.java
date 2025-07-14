@@ -313,7 +313,8 @@ public class AuthenticationDAO extends DBContext {
 
     public User findUserById(int userId) {
         User user = null;
-        String sql = "SELECT UserID, FirstName, LastName, Email, Phone, Sex, BirthDay, Address, UserRoleID, CreatedAt, UpdatedAt, DeletedAt, DeletedBy, IsDeleted, IsVerifiedEmail FROM [User] WHERE UserID = ?";
+        String sql = "SELECT UserID, FirstName, LastName, Email, Phone, Sex, BirthDay, Address, UserRoleID, "
+                + " CreatedAt, UpdatedAt, DeletedAt, DeletedBy, IsDeleted, IsVerifiedEmail FROM [User] WHERE UserID = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, userId);
             ResultSet rs = ps.executeQuery();
@@ -430,7 +431,7 @@ public class AuthenticationDAO extends DBContext {
                 list.add(auth);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            Logger.getLogger(AuthenticationDAO.class.getName()).log(Level.SEVERE, null, e);
         }
 
         return list;
@@ -452,7 +453,7 @@ public class AuthenticationDAO extends DBContext {
                 return rs.getInt(1);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            Logger.getLogger(AuthenticationDAO.class.getName()).log(Level.SEVERE, null, e);
         }
         return 0;
     }
@@ -464,21 +465,21 @@ public class AuthenticationDAO extends DBContext {
             ps.setInt(2, authId);
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
-            e.printStackTrace();
+            Logger.getLogger(AuthenticationDAO.class.getName()).log(Level.SEVERE, null, e);
         }
         return false;
     }
-    
+
     public boolean restoreAuth(int authId) {
-    String sql = "UPDATE Authentication SET IsDeleted = 0, DeletedAt = NULL, DeletedBy = NULL WHERE AuthenticationID = ?";
-    try (PreparedStatement ps = connection.prepareStatement(sql)) {
-        ps.setInt(1, authId);
-        return ps.executeUpdate() > 0;
-    } catch (SQLException e) {
-        e.printStackTrace();
+        String sql = "UPDATE Authentication SET IsDeleted = 0, DeletedAt = NULL, DeletedBy = NULL WHERE AuthenticationID = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, authId);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            Logger.getLogger(AuthenticationDAO.class.getName()).log(Level.SEVERE, null, e);
+        }
+        return false;
     }
-    return false;
-}
 
 // Private helper method to map result
     private Authentication extractAuthentication(ResultSet rs) throws SQLException {

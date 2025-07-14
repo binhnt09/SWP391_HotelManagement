@@ -242,5 +242,4 @@ public class Validation {
             throw new IllegalArgumentException("Invalid number format: " + value);
         }
     }
-
 }

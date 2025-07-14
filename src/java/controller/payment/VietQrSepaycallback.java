@@ -4,10 +4,15 @@
  */
 package controller.payment;
 
+import constant.MailUtil;
 import dao.BookingDao;
+import dao.InvoiceDao;
 import dao.PaymentDao;
+import dao.VoucherDao;
 import entity.Booking;
+import entity.Invoice;
 import entity.Payment;
+import entity.User;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -17,6 +22,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.math.BigDecimal;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -85,7 +92,7 @@ public class VietQrSepaycallback extends HttpServlet {
         PrintWriter out = response.getWriter();
 
         String contentType = request.getContentType();
-        System.out.println("Webhook Content-Type: " + contentType);
+//        System.out.println("Webhook Content-Type: " + contentType);
 
         String content = null;
         String amountStr = null;
@@ -109,12 +116,11 @@ public class VietQrSepaycallback extends HttpServlet {
                 }
                 transactionCode = json.optString("referenceCode");
             } else {
-                System.out.println("Webhook Form Data: content=" + request.getParameter("content") + ", amount=" + request.getParameter("transferAmount"));
+//                System.out.println("Webhook Form Data: content=" + request.getParameter("content") + ", amount=" + request.getParameter("transferAmount"));
                 content = request.getParameter("content");
                 amountStr = request.getParameter("transferAmount");
             }
         } catch (IOException | JSONException e) {
-            System.err.println("Error parsing JSON: " + e.getMessage());
             out.write("{\"success\": false, \"error\": \"Error parsing webhook JSON: " + e.getMessage() + "\"}");
             return;
         }
@@ -139,17 +145,16 @@ public class VietQrSepaycallback extends HttpServlet {
         // So khớp với booking
         BigDecimal amount = new BigDecimal(amountStr);
         BookingDao dao = new BookingDao();
-        Booking booking = dao.getBookingById(bookingId);
-        System.out.println("✔️ content = " + content);
-        System.out.println("✔️ amount = " + amountStr);
-        System.out.println("✔️ bookingId = " + bookingId);
+        Booking bookingUser = dao.findUserByBookingId(bookingId);
 
-        if (booking != null) {
+        if (bookingUser != null) {
             dao.updateStatus(bookingId, "PAID");
+            User user = bookingUser.getUser();
+            String email = user.getEmail();
 
-            // ✅ Ghi log hoặc insert vào bảng Payment nếu cần
+            // Ghi log hoặc insert vào bảng Payment nếu cần
             Payment payment = new Payment();
-            payment.setBookingID(bookingId);
+            payment.setBookingId(bookingId);
             payment.setAmount(amount);
             payment.setMethod("VietQR");
             payment.setStatus("Paid");
@@ -158,10 +163,30 @@ public class VietQrSepaycallback extends HttpServlet {
             payment.setGatewayResponse("Sepay Confirmed");
 
             PaymentDao paymentDao = new PaymentDao();
+            InvoiceDao invoiceDao = new InvoiceDao();
+
+            VoucherDao voucherDao = new VoucherDao();
+
+            //update voucher status
+            Booking booking = dao.getBookingById(bookingId);
+            if (booking.getVoucherId() != null) {
+                voucherDao.updateIsused(user.getUserId(), booking.getVoucherId());
+            }
+
             paymentDao.insertPayment(payment);
-            
+
+            try {
+                int invoiceId = invoiceDao.generateInvoice(bookingId);
+                Invoice invoice = invoiceDao.getInvoice(invoiceId);
+                MailUtil.sendInvoice(email, invoice);
+            } catch (Exception ex) {
+                Logger.getLogger(VietQrSepaycallback.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            //update membership
+            voucherDao.updateUserMembershipLevel(user.getUserId());
+
             Booking updateBooking = dao.getBookingById(bookingId);
-            if(updateBooking != null && "PAID".equalsIgnoreCase(updateBooking.getStatus())){
+            if (updateBooking != null && "PAID".equalsIgnoreCase(updateBooking.getStatus())) {
                 HttpSession session = request.getSession();
                 session.removeAttribute("bookingId");
                 session.removeAttribute("accountName");
@@ -170,7 +195,6 @@ public class VietQrSepaycallback extends HttpServlet {
                 session.removeAttribute("description");
                 session.removeAttribute("qrUrl");
             }
-            System.out.println("✅ bookingId after clear: " + request.getSession().getAttribute("bookingId")); // Should be null
             out.write("{\"success\": true, \"message\": \"Booking updated to PAID\"}");
         } else {
             out.write("{\"success\": false, \"message\": \"Booking not matched or already PAID\"}");

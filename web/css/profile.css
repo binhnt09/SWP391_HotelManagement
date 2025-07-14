@@ -93,12 +93,30 @@ body {
 }
 
 .profile-status {
-    background: #D4AC0D;
-    color: white;
-    padding: 4px 12px;
+    padding: 4px 14px;
     border-radius: 20px;
-    font-size: 12px;
+    font-size: 13px;
     display: inline-block;
+    font-weight: 600;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* 🥉 Đồng */
+.profile-bronze {
+    background: linear-gradient(145deg, #cd7f32, #b87333);
+    color: #fff;
+}
+
+/* 🥈 Bạc */
+.profile-silver {
+    background: linear-gradient(145deg, #e0e0e0, #c0c0c0);
+    color: #333;
+}
+
+/* 🥇 Vàng */
+.profile-gold {
+    background: linear-gradient(145deg, #ffeb3b, #ffd700);
+    color: #444;
 }
 
 .sidebar-menu {

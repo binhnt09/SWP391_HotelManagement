@@ -6,7 +6,6 @@ package entity;
 
 import java.sql.Timestamp;
 
-
 public class User {
 
     private int userId;
@@ -14,7 +13,6 @@ public class User {
     private String lastName;
     private String email;
     private String phone;
-  
     private String sex;
     private Timestamp birthDay;
     private String address;
@@ -23,10 +21,11 @@ public class User {
     private Timestamp deletedAt;
     private Integer deletedBy;
     private boolean isDeleted;
-    
+
     private String roleName;
     private boolean isVerifiedEmail;
     private int userRoleId;
+    private int levelId;
 
     public User() {
     }
@@ -48,7 +47,7 @@ public class User {
         this.isVerifiedEmail = isVerifiedEmail;
         this.userRoleId = userRoleId;
     }
-  
+
     public int getUserId() {
         return userId;
     }
@@ -89,13 +88,6 @@ public class User {
         this.phone = phone;
     }
 
-    public int getUserRoleId() {
-        return userRoleId;
-    }
-
-    public void setUserRoleId(int userRuleId) {
-        this.userRoleId = userRuleId;
-    }
     public String getSex() {
         return sex;
     }
@@ -118,7 +110,6 @@ public class User {
 
     public void setAddress(String address) {
         this.address = address;
-
     }
 
     public Timestamp getCreatedAt() {
@@ -136,7 +127,6 @@ public class User {
     public void setUpdatedAt(Timestamp updatedAt) {
         this.updatedAt = updatedAt;
     }
-
 
     public Timestamp getDeletedAt() {
         return deletedAt;
@@ -162,21 +152,6 @@ public class User {
         this.isDeleted = isDeleted;
     }
 
-
-    public String getRoleName() {
-        return switch (this.userRoleId) {
-            case 1 -> "Admin System";
-            case 2 -> "Manager";
-            case 3 -> "Receptionist";
-            case 4 -> "Cleaner";
-            default -> "Customer";
-        };
-    }
-
-    public void setRoleName(String roleName) {
-        this.roleName = roleName;
-    }
-   
     public boolean isIsVerifiedEmail() {
         return isVerifiedEmail;
     }
@@ -185,9 +160,46 @@ public class User {
         this.isVerifiedEmail = isVerifiedEmail;
     }
 
+    public int getUserRoleId() {
+        return userRoleId;
+    }
+
+    public void setUserRoleId(int userRoleId) {
+        this.userRoleId = userRoleId;
+    }
+
+    public int getLevelId() {
+        return levelId;
+    }
+
+    public void setLevelId(int levelId) {
+        this.levelId = levelId;
+    }
+
+    public String getRoleName() {
+        return switch (this.userRoleId) {
+            case 1 ->
+                "Admin System";
+            case 2 ->
+                "Manager";
+            case 3 ->
+                "Receptionist";
+            case 4 ->
+                "Cleaner";
+            default ->
+                "Customer";
+        };
+    }
+
+    public void setRoleName(String roleName) {
+        this.roleName = roleName;
+    }
+
     @Override
     public String toString() {
-        return "User{" + "userID=" + userId + ", firstName=" + firstName + ", lastName=" + lastName + ", email=" + email + ", phone=" + phone + ", sex=" + sex + ", birthDay=" + birthDay + ", address=" + address + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + ", deletedAt=" + deletedAt + ", deletedBy=" + deletedBy + ", isDeleted=" + isDeleted + ", isVerifiedEmail=" + isVerifiedEmail + ", userRoleId=" + userRoleId + '}';
+        return "User{" + "userId=" + userId + ", firstName=" + firstName + ", lastName=" + lastName + ", email=" + email + ", phone=" + phone + ", sex=" + sex + ", birthDay=" + birthDay + ", address=" + address + ","
+                + " createdAt=" + createdAt + ", updatedAt=" + updatedAt + ", deletedAt=" + deletedAt + ", deletedBy=" + deletedBy + ", isDeleted=" + isDeleted + ", roleName=" + roleName + ", isVerifiedEmail=" + isVerifiedEmail + ","
+                + " userRoleId=" + userRoleId + ", levelId=" + levelId + '}';
     }
 
 }

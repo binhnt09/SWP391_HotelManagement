@@ -7,8 +7,11 @@ package controller.payment;
 import constant.Config;
 import constant.MailUtil;
 import dao.BookingDao;
+import dao.InvoiceDao;
 import dao.PaymentDao;
+import dao.VoucherDao;
 import entity.Authentication;
+import entity.Booking;
 import entity.Invoice;
 import entity.Payment;
 import java.io.IOException;
@@ -48,9 +51,6 @@ public class VnpayReturn extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
 
-        Authentication authLocal = (Authentication) request.getSession().getAttribute("authLocal");
-        String email = authLocal.getUser().getEmail();
-
         try {
             Map<String, String> fields = new HashMap<>();
             for (Enumeration<String> params = request.getParameterNames(); params.hasMoreElements();) {
@@ -81,17 +81,20 @@ public class VnpayReturn extends HttpServlet {
                 BigDecimal amount = new BigDecimal(request.getParameter("vnp_Amount")).divide(BigDecimal.valueOf(100));
 
                 boolean transSuccess = false;
-                    PaymentDao paymentDao = new PaymentDao();
                 if ("00".equals(request.getParameter("vnp_TransactionStatus"))) {
+                    Authentication authLocal = (Authentication) request.getSession().getAttribute("authLocal");
+                    String email = authLocal.getUser().getEmail();
+
                     transSuccess = true;
 
                     // Update booking status
                     BookingDao bookingDao = new BookingDao();
                     bookingDao.updateStatus(bookingId, "PAID");
 
+                    PaymentDao paymentDao = new PaymentDao();
                     // Insert payment
                     Payment payment = new Payment();
-                    payment.setBookingID(bookingId);
+                    payment.setBookingId(bookingId);
                     payment.setAmount(amount);
                     payment.setMethod("VNPay");
                     payment.setStatus("Paid");
@@ -99,16 +102,29 @@ public class VnpayReturn extends HttpServlet {
                     payment.setBankCode(bankCode);
                     payment.setGatewayResponse("Success");
 
-                    paymentDao.insertPayment(payment);
+                    VoucherDao voucherDao = new VoucherDao();
 
-                }
-                    Invoice invoice = paymentDao.getInvoice(bookingId);
+                    //update voucher status
+                    Booking booking = bookingDao.getBookingById(bookingId);
+                    if (booking.getVoucherId() != null) {
+                        voucherDao.updateIsused(authLocal.getUser().getUserId(), booking.getVoucherId());
+                    }
+
+                    paymentDao.insertPayment(payment);
+                    // send invoice
+                    InvoiceDao invoiceDao = new InvoiceDao();
+                    int invoiceId = invoiceDao.generateInvoice(bookingId);
+                    Invoice invoice = invoiceDao.getInvoice(invoiceId);
                     MailUtil.sendInvoice(email, invoice);
+
+                    //update membership
+                    voucherDao.updateUserMembershipLevel(authLocal.getUser().getUserId());
+                }
 
                 request.getSession().setAttribute(TRANS_RESULT, transSuccess);
                 responseToPaymentResult(request, response);
             } else {
-                System.out.println("Giao dịch không hợp lệ (invalid signature)");
+                Logger.getLogger(VnpayReturn.class.getName()).info("Giao dịch không hợp lệ (invalid signature)");
                 request.getSession().setAttribute(TRANS_RESULT, false);
                 responseToPaymentResult(request, response);
             }

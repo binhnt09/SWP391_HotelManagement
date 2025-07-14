@@ -67,6 +67,10 @@ public class ManageRoom extends HttpServlet {
         request.setAttribute("listRoomType", listRoomType);
         request.setAttribute("numberRoom", listRoom.size());
 
+
+        request.setAttribute("listRoom", listRoom);
+        request.setAttribute("listRoomType", listRoomType);
+        request.setAttribute("numberRoom", listRoom.size());
         request.getRequestDispatcher("manageroom.jsp").forward(request, response);
     }
 
