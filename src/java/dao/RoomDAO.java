@@ -332,8 +332,7 @@ public class RoomDAO extends DBContext {
                 + "Description = ?, "
                 + "UpdatedAt = GETDATE() "
                 + "WHERE RoomDetailID = ( SELECT RoomDetailID FROM Room WHERE RoomID = ?);";
-        String deleteImageSql = "DELETE FROM RoomImage WHERE RoomDetailID = ?";
-        String insertImageSql = "INSERT INTO RoomImage (RoomDetailID, ImageURL, Caption, CreatedAt) "
+        String insertImageSql = "INSERT INTO RoomImage (RoomDetailID, ImageURL, Caption, updatedat) "
                 + "VALUES (?, ?, ?, GETDATE())";
 
         try {
@@ -356,11 +355,6 @@ public class RoomDAO extends DBContext {
                 roomDetailPre.setString(4, detail.getDescription());
                 roomDetailPre.setInt(5, room.getRoomID());
                 roomDetailPre.executeUpdate();
-            }
-            // Xóa ảnh cũ
-            try (PreparedStatement delImgPre = connection.prepareStatement(deleteImageSql)) {
-                delImgPre.setInt(1, room.getRoomDetail().getRoomDetailID());
-                delImgPre.executeUpdate();
             }
 
             // 3. Insert RoomImage (nếu có)

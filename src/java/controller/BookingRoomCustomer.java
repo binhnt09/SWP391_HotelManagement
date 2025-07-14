@@ -80,6 +80,10 @@ public class BookingRoomCustomer extends HttpServlet {
                 0,
                 false // isDeleted
         );
+        for(Booking b : list){
+            int roomId = new dao.BookingDetailDAO().getBookingDetailByBookingId(b.getBookingId()).getRoom().getRoomID();
+            request.setAttribute("rating_"+b.getBookingId(), new dao.RoomReviewDAO().getRatingByRoomId(roomId, b.getUserId()));
+        }
         request.setAttribute("listBooking", list);
         
         if (action != null) {

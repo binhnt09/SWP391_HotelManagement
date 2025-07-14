@@ -212,18 +212,16 @@
                                         <td>${i.roomDetail.description} </td>                                            
                                         <td>
                                             <a href="#editroom"
+                                               onclick="openEditRoomModal(this)"
                                                data-bs-toggle="modal"
-                                               data-roomID="${i.roomID}"
-                                               data-roomDetail="${i.roomDetail.roomDetailID}"
-                                               data-name="${i.roomNumber}"
-                                               data-status="${i.status}"
-                                               data-roomType="${i.roomType.roomTypeID}"
-                                               data-bedType="${i.roomDetail.bedType}"
-                                               data-description="${i.roomDetail.description}"
-                                               data-pricePerNight="${i.price}"
-                                               data-capacity="${i.roomDetail.maxGuest}"
-                                               data-area="${i.roomDetail.area}"
-                                               style="color: blue;" title="Edit Room"><i class="fa-solid fa-pen-to-square"></i></a>
+                                               data-bs-target="#editroom"
+                                               data-roomid="${i.roomID}"
+                                               style="color: blue;" 
+                                               title="Edit Room">
+                                                <i class="fa-solid fa-pen-to-square"></i>
+                                            </a>
+
+
                                             <a href="#" onclick="doDelete('${i.roomID}', '${i.roomNumber}');return false;" 
                                                class="delete" 
                                                style="color: red;margin-left: 5px" 
@@ -326,6 +324,19 @@
                                 <label for="photos">Select Img:</label>
                                 <input type="file" name="photos" class="form-control" multiple accept="image/*">
                             </div>
+                            <div class="mb-3">
+                                <label>Current Images:</label>
+                                <div id="edit-room-images" style="display: flex; flex-wrap: wrap; gap: 10px;">
+                                    <c:forEach var="img" items="${editRoomImages}">
+                                        <div style="position: relative;">
+                                            <img src="${img.imageURL}" style="width: 100px; height: 70px; object-fit: cover;">
+                                            <input type="checkbox" name="imagesToDelete" value="${img.imageID}" style="position: absolute; top: 0; right: 0;">
+                                        </div>
+                                    </c:forEach>
+                                </div>
+                                <small class="text-muted">Chọn ảnh để xóa</small>
+                            </div>
+
                             <div class="mb-3">
                                 <label>Description</label>
                                 <textarea id="edit-description" name="description" class="form-control"></textarea>
@@ -484,21 +495,72 @@
                     window.location = "roomcrud?action=delete&roomId=" + id;//deletelesson là tên của link servlet để nó nhận doGet
                 }
             }
-            $(document).on('click', '[data-bs-toggle="modal"]', function () {
-                console.log($(this).data());
 
-                $('#edit-roomID').val($(this).data('roomid'));
-                $('#edit-roomDetail').val($(this).data('roomdetail'));
-                $('#edit-roomNumber').val($(this).data('name'));
-                $('#edit-status').val($(this).data('status'));
-                $('#edit-roomType').val($(this).data('roomtype'));
-                $('#edit-bedType').val($(this).data('bedtype'));
-                $('#edit-description').val($(this).data('description'));
-                $('#edit-price').val($(this).data('pricepernight'));
-                $('#edit-maxGuest').val($(this).data('capacity'));
-                $('#edit-area').val($(this).data('area'));
-            });
+            function openEditRoomModal(element) {
+                const baseUrl = '${pageContext.request.contextPath}';
+                const roomId = element.dataset.roomid;
+                fetch(baseUrl + "/showroomdetail?roomId=" + roomId)
+                        .then(res => res.json())
+                        .then(data => {
+                            const room = data.room;
+                            const detail = data.roomdetail;
+                            const type = data.roomtype;
 
+                            console.log(room);
+                            console.log(detail);
+                            console.log(type);
+
+
+                            document.getElementById('edit-roomID').value = room.roomID;
+                            document.getElementById('edit-roomDetail').value = detail.roomDetailID;
+                            document.getElementById('edit-roomNumber').value = room.roomNumber;
+                            document.getElementById('edit-roomType').value = type.roomTypeID;
+                            document.getElementById('edit-status').value = room.status;
+                            document.getElementById('edit-bedType').value = detail.bedType;
+                            document.getElementById('edit-description').value = detail.description;
+                            document.getElementById('edit-price').value = room.price;
+                            document.getElementById('edit-maxGuest').value = detail.maxGuest;
+                            document.getElementById('edit-area').value = detail.area;
+
+                            return fetch(baseUrl +"/roomcrud?action=getImages&roomId="+roomId);
+                        })
+                        .then(res => res.json())
+                        .then(images => {
+                            const container = document.getElementById('edit-room-images');
+                            container.innerHTML = '';
+                            if (images.length === 0) {
+                                container.innerHTML = "<p class='text-muted'>Không có ảnh nào.</p>";
+                                return;
+                            }
+
+                            images.forEach(img => {
+                                const div = document.createElement('div');
+                                div.style.position = 'relative';
+
+                                const image = document.createElement('img');
+                                image.src = img.imageURL;
+                                image.style.width = '100px';
+                                image.style.height = '70px';
+                                image.style.objectFit = 'cover';
+
+                                const checkbox = document.createElement('input');
+                                checkbox.type = 'checkbox';
+                                checkbox.name = 'imagesToDelete';
+                                checkbox.value = img.imageID;
+                                checkbox.style.position = 'absolute';
+                                checkbox.style.top = '0';
+                                checkbox.style.right = '0';
+
+                                div.appendChild(image);
+                                div.appendChild(checkbox);
+                                container.appendChild(div);
+                            });
+                        })
+                        .catch(err => {
+                            console.error("Lỗi khi tải dữ liệu phòng:", err);
+                            document.getElementById('edit-room-images').innerHTML = "<p class='text-danger'>Lỗi khi tải ảnh.</p>";
+                        });
+            }
             function confirmDeleteSelected() {
                 const selected = document.querySelectorAll('.room-checkbox:checked');
                 if (selected.length === 0) {
@@ -568,6 +630,7 @@
                     $('#modalSubmitBtn').text('Update');
             }
             }
+
 
         </script>
     </body>

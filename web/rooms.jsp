@@ -29,6 +29,8 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
 
         <script src="${pageContext.request.contextPath}/assets/js/jquery.magnific-popup.min.js"></script>
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/magnific-popup.css">
@@ -66,6 +68,10 @@
                     padding: 30px;
                     width: 100%;
                     max-width: 1000px;
+                }
+                #avgRatingStars i {
+                    font-size: 1.2rem;
+                    color: gold;
                 }
             </style>
             <div class="book-now-area">
@@ -195,7 +201,7 @@
                                     <p class="price-from text-end mb-2" style="font-weight: bold; color: white;">
                                         From $${i.getPrice()}/night
                                     </p>
-                                    <h5 class="card-title">${i.getRoomNumber()} - ${i.getRoomType().getTypeName()}</h5>
+                                    <h5 class="card-title">${i.getRoomNumber()} - ${i.getRoomType().getTypeName()}<div id="avgRatingStars_${i.getRoomID()}" class="mb-2 text-warning d-inline-block"></div></h5>
                                     <p class="card-text flex-grow-1">${i.getRoomDetail().getDescription()}</p>
                                     <a href="bookingroom?roomID=${i.getRoomID()}&checkin=${checkin}&checkout=${checkout}" class="btn palatin-btn mt-auto">Book Room</a>
                                 </div>
@@ -296,49 +302,43 @@
         </footer>
 
         <style>
-
             * {
-                font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                font-family: 'Inter', sans-serif;
             }
+
             .modal-dialog {
                 max-width: 1200px;
                 height: 90vh;
             }
+
             .modal-content {
                 height: 100%;
             }
+
             .modal-header {
                 border-bottom: none;
                 padding: 1.5rem 1.5rem 0;
-                flex-shrink: 0;
             }
+
             .modal-title {
                 font-size: 1.5rem;
                 font-weight: 600;
                 color: #1a1a1a;
             }
-            .btn-close {
-                font-size: 1.2rem;
-                opacity: 0.7;
-            }
+
             .modal-body {
-                flex: 1;
                 overflow: hidden;
+                padding: 0;
             }
 
             .carousel-item img {
-                width: 100%;              /* Chiếm toàn bộ chiều ngang */
-                height: 400px;            /* Cố định chiều cao bạn muốn */
-                object-fit: cover;        /* Cắt ảnh để vừa khung mà không bị méo */
-                border-radius: 8px;       /* Tuỳ chọn: bo góc đẹp hơn */
+                width: 100%;
+                height: 400px;
+                object-fit: cover;
+                border-radius: 8px;
+                display: block;
             }
 
-            .carousel-inner {
-                height: 100%;
-            }
-            .carousel {
-                height: 100%;
-            }
             .carousel-control-prev,
             .carousel-control-next {
                 width: 50px;
@@ -348,116 +348,106 @@
                 top: 50%;
                 transform: translateY(-50%);
             }
-            .carousel-control-prev {
-                left: 20px;
-            }
-            .carousel-control-next {
-                right: 20px;
-            }
+
             .carousel-control-prev-icon,
             .carousel-control-next-icon {
                 filter: invert(1);
             }
-            .carousel-indicators {
-                position: absolute;
-                bottom: 20px;
-                left: 20px;
-                right: auto;
-                margin: 0;
-                justify-content: flex-start;
+
+            .room-thumbnails {
+                display: flex;
+                overflow-x: auto;
+                scroll-behavior: smooth;
+                gap: 8px;
             }
-            .carousel-indicators [data-bs-target] {
+
+            .room-thumbnails::-webkit-scrollbar {
+                display: none;
+            }
+
+            .room-thumbnails img {
                 width: 80px;
                 height: 60px;
-                border-radius: 8px;
-                margin: 0 5px;
-                background-size: cover;
-                background-position: center;
-                opacity: 0.6;
+                object-fit: cover;
+                border: 2px solid transparent;
+                cursor: pointer;
+                border-radius: 4px;
+                flex-shrink: 0;
             }
-            .carousel-indicators .active {
-                opacity: 1;
-                border: 2px solid white;
+
+            .room-thumbnails img.active {
+                border: 2px solid #007bff;
+            }
+
+            .thumb-nav {
+                background-color: rgba(0, 0, 0, 0.3);
+                border: none;
+                color: white;
+                font-size: 20px;
+                padding: 4px 10px;
+                cursor: pointer;
+                position: absolute;
+                top: 50%;
+                transform: translateY(-50%);
+                z-index: 10;
+            }
+
+            .thumb-nav.left {
+                left: -10px;
+            }
+
+            .thumb-nav.right {
+                right: -10px;
             }
 
             .room-features {
-                padding-right: 1.5rem;
-                height: 100%;
+                max-height: 350px; /* hoặc 100% nếu bạn muốn nó co theo modal */
                 overflow-y: auto;
-                max-height: calc(90vh - 120px);
+                padding-right: 10px; /* tránh tràn chữ che thanh cuộn */
             }
-            .room-features::-webkit-scrollbar {
-                width: 6px;
-            }
-            .room-features::-webkit-scrollbar-track {
-                background: #f1f1f1;
-                border-radius: 10px;
-            }
-            .room-features::-webkit-scrollbar-thumb {
-                background: #c1c1c1;
-                border-radius: 10px;
-            }
-            .room-features::-webkit-scrollbar-thumb:hover {
-                background: #a8a8a8;
-            }
+
             .feature-grid {
                 display: grid;
                 grid-template-columns: 1fr 1fr;
                 gap: 1rem;
                 margin-bottom: 2rem;
             }
-            .feature-section h6 {
-                font-weight: 600;
-                color: #1a1a1a;
-                margin-bottom: 0.75rem;
-                font-size: 1rem;
-            }
+
             .feature-list {
                 list-style: none;
-                padding: 0;
+                padding-left: 0;
                 margin: 0;
             }
+
             .feature-list li {
-                padding: 0.25rem 0;
-                color: #4a4a4a;
                 font-size: 0.95rem;
+                color: #4a4a4a;
+                padding-left: 1.25rem;
                 position: relative;
-                padding-left: 1.5rem;
+                margin-bottom: 0.3rem;
             }
-            .feature-list li:before {
+
+            .feature-list li::before {
                 content: "•";
                 position: absolute;
                 left: 0;
                 color: #666;
             }
-            .room-info {
-                border-top: 1px solid #e0e0e0;
-                padding-top: 1.5rem;
-            }
+
             .room-title {
                 font-size: 1.1rem;
                 font-weight: 600;
                 color: #1a1a1a;
                 margin-bottom: 1rem;
             }
-            .price-section {
-                margin-top: 1.5rem;
-            }
-            .price-label {
-                font-size: 0.9rem;
-                color: #666;
-                margin-bottom: 0.5rem;
-            }
+
             .price {
                 font-size: 1.5rem;
                 font-weight: 700;
                 color: #ff6b35;
                 margin-bottom: 0.25rem;
             }
-            .price-unit {
-                font-size: 0.9rem;
-                color: #666;
-            }
+
             .btn-book {
                 background-color: #0ea5e9;
                 border: none;
@@ -468,65 +458,69 @@
                 width: 100%;
                 margin-top: 1rem;
             }
+
             .btn-book:hover {
                 background-color: #0284c7;
             }
-            .show-more {
-                color: #0ea5e9;
-                text-decoration: none;
-                font-size: 0.9rem;
-                font-weight: 500;
-            }
-            .show-more:hover {
-                color: #0284c7;
-            }
-            .carousel-caption {
-                position: absolute;
-                bottom: 20px;
-                left: 20px;
-                right: auto;
-                text-align: left;
-                background-color: rgba(0, 0, 0, 0.7);
-                padding: 0.5rem 1rem;
-                border-radius: 8px;
-                color: white;
-                font-size: 0.9rem;
-            }
             .custom-modal-width {
                 max-width: 70%;
-                min-height: 90%;
+                height: 95vh; /* Tăng từ 90% lên 95% chiều cao màn hình */
+            }
+
+            .thumbnail-wrapper {
+                overflow: hidden;
+                width: 100%;
+            }
+
+            .room-thumbnails {
+                display: flex;
+                transition: transform 0.3s ease;
+                gap: 8px;
+            }
+
+            .room-thumbnails img {
+                height: 60px;
+                width: 18%;
+                cursor: pointer;
+                border: 2px solid transparent;
+                border-radius: 4px;
+                flex-shrink: 0;
+            }
+
+            .room-thumbnails img.active {
+                border-color: #007bff;
+            }
+            .modal-footer {
+                padding: 0.5rem 1rem;
+                min-height: 100px;
+                max-height: 180px;
+                overflow-y: auto;
+                background-color: #fff;
+                border-top: 1px solid #dee2e6;
             }
 
         </style>
+
         <!--CHI TIẾT PHÒNG-->
         <div class="modal fade" id="roomDetailModal" tabindex="-1" aria-labelledby="roomDetailLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg custom-modal-width">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="roomModalLabel"></h5>
+                        <div class="d-flex align-items-center gap-2">
+                            <h5 class="modal-title mb-0" id="roomModalLabel"></h5>
+                            <div id="avgRatingStars" class="text-warning mb-0"></div>
+                        </div>
                         <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body p-0">
                         <div class="row g-0">
                             <!-- Image Carousel -->
                             <div class="col-md-8">
-                                <div id="roomCarousel" class="carousel slide" data-bs-ride="carousel">
+                                <!-- Carousel chính -->
+                                <div id="roomCarousel" class="carousel slide mb-3" data-bs-ride="carousel">
                                     <div class="carousel-inner">
-                                        <div class="carousel-item active">
-                                            <img src="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" class="d-block w-100" alt="Bathroom">
-                                        </div>
-                                        <div class="carousel-item">
-                                            <img src="https://images.unsplash.com/photo-1631049307264-da0ec9d70304?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" class="d-block w-100" alt="Bedroom">
-                                        </div>
-                                        <div class="carousel-item">
-                                            <img src="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2058&q=80" class="d-block w-100" alt="Living Area">
-                                        </div>
-                                        <div class="carousel-item">
-                                            <img src="https://images.unsplash.com/photo-1590490360182-c33d57733427?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2074&q=80" class="d-block w-100" alt="Room View">
-                                        </div>
+                                        <!-- JS sẽ đẩy ảnh chính vào đây -->
                                     </div>
-
-                                    <!-- Navigation arrows -->
                                     <button class="carousel-control-prev" type="button" data-bs-target="#roomCarousel" data-bs-slide="prev">
                                         <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                                         <span class="visually-hidden">Previous</span>
@@ -535,48 +529,16 @@
                                         <span class="carousel-control-next-icon" aria-hidden="true"></span>
                                         <span class="visually-hidden">Next</span>
                                     </button>
-
-                                    <!-- Indicators with thumbnails -->
-
-
-                                    <!-- Caption -->
-                                    <div class="carousel-caption">
-                                        <span>Bathroom</span>
-                                        <span class="ms-2">3/4</span>
-                                    </div>
-                                </div>
-                                <div class="carousel-indicators">
-                                    <button type="button" data-bs-target="#roomCarousel" data-bs-slide-to="0" class="active" 
-                                            style="background-image: url('https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80')"></button>
-                                    <button type="button" data-bs-target="#roomCarousel" data-bs-slide-to="1"
-                                            style="background-image: url('https://images.unsplash.com/photo-1631049307264-da0ec9d70304?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80')"></button>
-                                    <button type="button" data-bs-target="#roomCarousel" data-bs-slide-to="2"
-                                            style="background-image: url('https://images.unsplash.com/photo-1586023492125-27b2c045efd7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80')"></button>
-                                    <button type="button" data-bs-target="#roomCarousel" data-bs-slide-to="3"
-                                            style="background-image: url('https://images.unsplash.com/photo-1590490360182-c33d57733427?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80')"></button>
                                 </div>
                             </div>
-
                             <!-- Room Information -->
                             <div class="col-md-4">
                                 <div class="room-features">
-                                    <div class="feature-grid">
+                                    <div class="">
                                         <div class="feature-section">
                                             <input type="hidden" id="selectedRoomId" >
-                                            <h6 id="area">Diện tích: </h6>
-                                            <h6 id="numberPeople">Số thành viên: </h6>
-                                        </div>
-                                        <div class="feature-section">
-                                            <ul class="feature-list">
-                                                <li>WiFi miễn phí</li>
-                                                <li>Dịch vụ phòng</li>
-                                            </ul>
-                                        </div>
-                                        <div class="feature-section">
-                                            <ul class="feature-list">
-                                                <li>Dọn phòng</li>
-                                                <li>Điện thoại</li>
-                                            </ul>
+                                            <h6 id="area"></h6>
+                                            <h6 id="numberPeople"></h6>
                                         </div>
                                     </div>
                                     <hr>
@@ -591,37 +553,32 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="feature-section mt-4">
-                                        <h6>Tiện nghi phòng tắm</h6>
-                                        <div class="feature-grid">
-                                            <div>
-                                                <ul class="feature-list">
-                                                    <li>Phòng tắm mở bàn phần</li>
-                                                    <li>Khăn tắm</li>
-                                                    <li>Áo choàng tắm</li>
-                                                </ul>
-                                            </div>
-                                            <div>
-                                                <ul class="feature-list">
-                                                    <li>Bộ vệ sinh cá nhân</li>
-                                                    <li>Máy sấy tóc</li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-
                                     <div class="room-info">
                                         <div class="room-title">Về phòng này</div>
                                         <div class="mb-3" id="roomDetailDescription"></div>
-
-                                        <div class="price-section">
-                                            <div class="price-label">Khởi điểm từ:</div>
-                                            <div class="price" id="detailPrice"></div>
-                                            <a href="bookingroom?roomID=${i.getRoomID()}&checkin=${checkin}&checkout=${checkout}" class="btn btn-primary btn-book">
-                                                Booking now
-                                            </a>
-                                        </div>
+                                        <div id="avgRatingStars" class="text-warning"></div>
                                     </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer justify-content-center p-2">
+                        <div class="row w-100">
+                            <div class="col-md-8 d-flex align-items-center">
+                                <button class="thumb-nav left btn btn-outline-secondary me-2">&lt;</button>
+                                <div class="thumbnail-wrapper flex-grow-1">
+                                    <div class="room-thumbnails" id="roomThumbnails">
+                                    </div>
+                                </div>
+                                <button class="thumb-nav right btn btn-outline-secondary ms-2">&gt;</button>
+                            </div>
+                            <div class="col-md-4 text-center mt-2 mt-md-0">
+                                <div class="price-section">
+                                    <div class="price-label">Khởi điểm từ:</div>
+                                    <div class="" style="color: red" id="detailPrice"></div>
+                                    <a href="bookingroom?roomID=${roomId}&checkin=${checkin}&checkout=${checkout}" class="btn btn-primary btn-book">
+                                        Booking now
+                                    </a>
                                 </div>
                             </div>
                         </div>
@@ -650,70 +607,203 @@
 
         <script>
 
-                                                    function showRoomDetail(element) {
-                                                        const baseUrl = '${pageContext.request.contextPath}';
-                                                        const roomId = element.dataset.roomid;
-                                                        currentId = roomId;
-                                                        fetch(baseUrl + "/showroomdetail?roomId=" + roomId)
-                                                                .then(data => data.json())
-                                                                .then(data => {
-                                                                    const room = data.room;
-                                                                    const detail = data.roomdetail;
-                                                                    const type = data.roomtype;
+//                                        document.querySelector('.thumb-nav.left').onclick = () => {
+//                                            document.getElementById('roomThumbnails').scrollBy({left: -100, behavior: 'smooth'});
+//                                        };
+//
+//                                        document.querySelector('.thumb-nav.right').onclick = () => {
+//                                            document.getElementById('roomThumbnails').scrollBy({left: 100, behavior: 'smooth'});
+//                                        };
+
+                                        let currentIndex = 0;
+                                        const visibleCount = 5;
+                                        const thumbWidth = 70;
+                                        let totalThumbs = 0;
+
+                                        document.querySelector('.thumb-nav.left').onclick = () => {
+                                            if (currentIndex > 0) {
+                                                currentIndex--;
+                                                updateThumbnailScroll();
+                                            }
+                                        };
+
+                                        document.querySelector('.thumb-nav.right').onclick = () => {
+                                            if (currentIndex < totalThumbs - visibleCount) {
+                                                currentIndex++;
+                                                updateThumbnailScroll();
+                                            }
+                                        };
+
+                                        function updateThumbnailScroll() {
+                                            const scrollDistance = currentIndex * thumbWidth;
+                                            document.getElementById('roomThumbnails').style.transform = `translateX(-${scrollDistance}px)`;
+                                        }
+
+                                        function showRoomDetail(element) {
+                                            const baseUrl = '${pageContext.request.contextPath}';
+                                            const roomId = element.dataset.roomid;
+                                            fetch(baseUrl + "/showroomdetail?roomId=" + roomId)
+                                                    .then(data => data.json())
+                                                    .then(data => {
+                                                        const room = data.room;
+                                                        const detail = data.roomdetail;
+                                                        const type = data.roomtype;
+                                                        const img = data.roomimg;
+                                                        const star = data.roomstar || 0;
+                                                        totalThumbs = img.length;
 
 
-                                                                    console.log(room);
-                                                                    console.log(detail);
-                                                                    console.log(type);
-                                                                    document.getElementById("selectedRoomId").value = roomId;
-                                                                    document.getElementById("area").innerText = "Diện tích: " + detail.area;
-                                                                    document.getElementById("numberPeople").innerText = "Số thành viên: " + detail.maxGuest;
-                                                                    document.getElementById("roomDetailDescription").innerText = detail.description;
-                                                                    document.getElementById("detailPrice").innerText = room.price +"VNĐ/Giờ/Ngày    ";
-                                                                    document.getElementById("roomModalLabel").innerText = room.roomNumber + "-" + type.typeName;
+                                                        console.log(room);
+                                                        console.log(detail);
+                                                        console.log(type);
+                                                        console.log(img);
+                                                        console.log(star);
+                                                        document.getElementById("selectedRoomId").value = roomId;
+                                                        document.getElementById("area").innerText = "Diện tích: " + detail.area;
+                                                        document.getElementById("numberPeople").innerText = "Số thành viên: " + detail.maxGuest;
+                                                        document.getElementById("roomDetailDescription").innerText = detail.description;
+                                                        document.getElementById("detailPrice").innerText = room.price + "VNĐ/Giờ/Ngày    ";
+                                                        document.getElementById("roomModalLabel").innerText = room.roomNumber + "-" + type.typeName;
 
+                                                        renderStars("avgRatingStars", star);
 
-                                                                    const amenities = type.amenity.split(",").map(a => a.trim());
-                                                                    const half = Math.ceil(amenities.length / 2);
-                                                                    const left = amenities.slice(0, half);
-                                                                    const right = amenities.slice(half);
+                                                        const amenities = type.amenity.split(",").map(a => a.trim());
+                                                        const half = Math.ceil(amenities.length / 2);
+                                                        const left = amenities.slice(0, half);
+                                                        const right = amenities.slice(half);
 
-                                                                    const leftList = document.getElementById("amenity-left");
-                                                                    const rightList = document.getElementById("amenity-right");
+                                                        const leftList = document.getElementById("amenity-left");
+                                                        const rightList = document.getElementById("amenity-right");
 
-                                                                    leftList.innerHTML = "";
-                                                                    rightList.innerHTML = "";
+                                                        leftList.innerHTML = "";
+                                                        rightList.innerHTML = "";
 
-                                                                    left.forEach(item => {
-                                                                        const li = document.createElement("li");
-                                                                        li.textContent = item;
-                                                                        leftList.appendChild(li);
-                                                                    });
+                                                        left.forEach(item => {
+                                                            const li = document.createElement("li");
+                                                            li.textContent = item;
+                                                            leftList.appendChild(li);
+                                                        });
 
-                                                                    right.forEach(item => {
-                                                                        const li = document.createElement("li");
-                                                                        li.textContent = item;
-                                                                        rightList.appendChild(li);
-                                                                    });
+                                                        right.forEach(item => {
+                                                            const li = document.createElement("li");
+                                                            li.textContent = item;
+                                                            rightList.appendChild(li);
+                                                        });
+
+                                                        const carouselInner = document.querySelector('#roomCarousel .carousel-inner');
+                                                        const thumbnailContainer = document.getElementById('roomThumbnails');
+                                                        carouselInner.innerHTML = '';
+                                                        thumbnailContainer.innerHTML = '';
+
+                                                        if (img.length > 0) {
+                                                            img.forEach((image, index) => {
+                                                                // Carousel item
+                                                                const itemDiv = document.createElement('div');
+                                                                itemDiv.className = 'carousel-item' + (index === 0 ? ' active' : '');
+
+                                                                const imgTag = document.createElement('img');
+                                                                imgTag.src = image.imageURL;
+                                                                imgTag.className = 'd-block w-100';
+                                                                imgTag.alt = `Room Image ${index + 1}`;
+                                                                itemDiv.appendChild(imgTag);
+                                                                carouselInner.appendChild(itemDiv);
+
+                                                                // Thumbnail
+                                                                const thumbImg = document.createElement('img');
+                                                                thumbImg.src = image.imageURL;
+                                                                thumbImg.alt = `Thumbnail ${index + 1}`;
+                                                                if (index === 0)
+                                                                    thumbImg.classList.add('active');
+                                                                thumbImg.addEventListener('click', () => {
+                                                                    const carousel = bootstrap.Carousel.getOrCreateInstance(document.getElementById('roomCarousel'));
+                                                                    carousel.to(index);
+
+                                                                    // Highlight thumbnail
+                                                                    document.querySelectorAll('#roomThumbnails img').forEach(img => img.classList.remove('active'));
+                                                                    thumbImg.classList.add('active');
+
+                                                                    // Nếu thumbnail này ngoài tầm nhìn thì tự cuộn đến
+                                                                    if (index < currentIndex) {
+                                                                        currentIndex = index;
+                                                                        updateThumbnailScroll();
+                                                                    } else if (index >= currentIndex + visibleCount) {
+                                                                        currentIndex = index - visibleCount + 1;
+                                                                        updateThumbnailScroll();
+                                                                    }
                                                                 });
-                                                        const modal = new bootstrap.Modal(document.getElementById('roomDetailModal'));
-                                                        modal.show();
-                                                    }
+
+                                                                thumbnailContainer.appendChild(thumbImg);
+                                                            });
+                                                        }
 
 
-                                                    $(document).ready(function () {
-                                                        $('.single-rooms-area').hover(
-                                                                function () {
-                                                                    $(this).css({
-                                                                        'transform': 'scale(1.04)',
-                                                                        'transition': 'transform 0.4s ease'
-                                                                    });
-                                                                },
-                                                                function () {
-                                                                    $(this).css('transform', 'scale(1)');
-                                                                }
-                                                        );
                                                     });
+                                            const modal = new bootstrap.Modal(document.getElementById('roomDetailModal'));
+                                            modal.show();
+                                        }
+
+
+                                        $(document).ready(function () {
+                                            $('.single-rooms-area').hover(
+                                                    function () {
+                                                        $(this).css({
+                                                            'transform': 'scale(1.04)',
+                                                            'transition': 'transform 0.4s ease'
+                                                        });
+                                                    },
+                                                    function () {
+                                                        $(this).css('transform', 'scale(1)');
+                                                    }
+                                            );
+                                        });
+
+                                        $(document).ready(function () {
+                                            document.querySelectorAll(".room-card").forEach(card => {
+                                                const roomId = card.dataset.roomid;
+                                                const baseUrl = '${pageContext.request.contextPath}';
+                                                fetch(baseUrl + "/showroomdetail?roomId=" + roomId)
+                                                        .then(response => response.json())
+                                                        .then(data => {
+                                                            const rating = data.roomstar || 0;
+                                                            renderStars("avgRatingStars_" + roomId, rating);
+                                                        });
+                                            });
+                                        });
+                                        function renderStars(containerId, star) {
+                                            const starContainer = document.getElementById(containerId);
+                                            if (!starContainer)
+                                                return;
+
+                                            starContainer.innerHTML = ""; // Xóa cũ
+
+                                            const fullStars = Math.floor(star);
+                                            const halfStar = (star - fullStars >= 0.5);
+                                            const emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
+
+                                            for (let i = 0; i < fullStars; i++) {
+                                                const starIcon = document.createElement("i");
+                                                starIcon.className = "bi bi-star-fill"; // Sao đầy
+                                                starContainer.appendChild(starIcon);
+                                            }
+
+                                            if (halfStar) {
+                                                const starIcon = document.createElement("i");
+                                                starIcon.className = "bi bi-star-half"; // Sao nửa
+                                                starContainer.appendChild(starIcon);
+                                            }
+
+                                            for (let i = 0; i < emptyStars; i++) {
+                                                const starIcon = document.createElement("i");
+                                                starIcon.className = "bi bi-star"; // Sao rỗng
+                                                starContainer.appendChild(starIcon);
+                                            }
+
+                                            const scoreText = document.createElement("span");
+                                            scoreText.className = "ms-2 text-dark";
+                                            scoreText.innerText = "(" + star.toFixed(1) + "/5)";
+                                            starContainer.appendChild(scoreText);
+                                        }
+
         </script>
     </body>
 </html>
