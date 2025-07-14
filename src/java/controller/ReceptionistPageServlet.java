@@ -6,6 +6,7 @@ package controller;
 
 import dao.RoomDAO;
 import entity.RoomInfo;
+import entity.RoomStats;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -45,8 +46,12 @@ public class ReceptionistPageServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        RoomStats stats = roomDAO.getRoomStats();
+        request.setAttribute("roomStats", stats);
+        
         Map<Integer, List<RoomInfo>> roomsByFloor = roomDAO.getRoomsGroupedByFloor();
         request.setAttribute("roomsByFloor", roomsByFloor);
+        
         request.getRequestDispatcher("roommap.jsp").forward(request, response);
     }
 

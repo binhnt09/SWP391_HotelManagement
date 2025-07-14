@@ -5,12 +5,16 @@
 package entity;
 
 import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
 
 /**
  *
  * @author viet7
  */
 public class RoomInfo {
+
     private int roomID;
     private String roomNumber;
     private String status;
@@ -106,12 +110,25 @@ public class RoomInfo {
         this.bookingStatus = bookingStatus;
     }
 
+    public String getDisplayStatus() {
+        if ("Occupied".equals(this.status)
+                && "Checked-in".equalsIgnoreCase(this.bookingStatus)
+                && this.checkOutDate != null) {
+
+            // Chuyển checkOutDate và currentDate thành LocalDate để bỏ phần giờ
+            LocalDate checkout = this.checkOutDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            LocalDate today = LocalDate.now();
+
+            if (checkout.isBefore(today)) {
+                return "Overdue";
+            }
+        }
+        return this.status;
+    }
+
     @Override
     public String toString() {
         return "RoomInfo{" + "roomID=" + roomID + ", roomNumber=" + roomNumber + ", status=" + status + ", price=" + price + ", roomType=" + roomType + ", floorNumber=" + floorNumber + ", guestName=" + guestName + ", checkInDate=" + checkInDate + ", checkOutDate=" + checkOutDate + ", bookingStatus=" + bookingStatus + '}';
     }
 
-    
-    
-    
 }

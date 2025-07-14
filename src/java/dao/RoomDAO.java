@@ -16,6 +16,7 @@ import entity.Room;
 import entity.RoomDetail;
 import entity.RoomImage;
 import entity.RoomInfo;
+import entity.RoomStats;
 import entity.RoomType;
 import java.math.BigDecimal;
 import java.sql.Statement;
@@ -682,7 +683,7 @@ public class RoomDAO extends DBContext {
 
     public BigDecimal getRoomPrice(int roomId) {
         String sql = "select Price from Room\n"
-                   + "where RoomID = ?";
+                + "where RoomID = ?";
 
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, roomId);
@@ -694,5 +695,84 @@ public class RoomDAO extends DBContext {
             e.printStackTrace();
         }
         return BigDecimal.ZERO;  // hoặc null hoặc tùy xử lý khi không có phòng
+    }
+
+    public RoomStats getRoomStats() {
+        RoomStats stats = new RoomStats();
+        String sql = """
+        -- Subquery 1: Room cơ bản
+        WITH RoomBase AS (
+            SELECT RoomID, Status
+            FROM Room
+            WHERE IsDeleted = 0
+        ),
+        
+        -- Subquery 2: Các phòng đang ở (Occupied)
+        OccupiedBookings AS (
+            SELECT DISTINCT r.RoomID,
+                b.CheckOutDate
+            FROM Room r
+            INNER JOIN BookingDetail bd ON r.RoomID = bd.RoomID
+            INNER JOIN Booking b ON bd.BookingID = b.BookingID
+            WHERE r.Status = 'Occupied'
+                AND b.IsDeleted = 0
+        		and b.Status = 'Checked-in'
+        ),
+        
+        -- Subquery 3: Các phòng Reserved (đặt chờ check-in)
+        ReservedBookings AS (
+            SELECT DISTINCT r.RoomID,
+                b.CheckInDate
+            FROM Room r
+            INNER JOIN BookingDetail bd ON r.RoomID = bd.RoomID
+            INNER JOIN Booking b ON bd.BookingID = b.BookingID
+            WHERE r.Status = 'Reserved'
+                AND b.IsDeleted = 0
+                AND b.Status = 'Confirmed'
+        )
+        
+        SELECT 
+            -- Tổng số phòng
+            (SELECT COUNT(*) FROM RoomBase) AS total,
+        
+            -- Đếm theo trạng thái
+            (SELECT COUNT(*) FROM RoomBase WHERE Status = 'Available') AS availableCount,
+            (SELECT COUNT(*) FROM RoomBase WHERE Status = 'Occupied') AS occupiedCount,
+            (SELECT COUNT(*) FROM RoomBase WHERE Status = 'Reserved') AS reservedCount,
+            (SELECT COUNT(*) FROM RoomBase WHERE Status = 'Checkout') AS checkoutCount,
+            (SELECT COUNT(*) FROM RoomBase WHERE Status = 'Cleaning') AS cleaningCount,
+            (SELECT COUNT(*) FROM RoomBase WHERE Status = 'Non-available') AS nonAvailableCount,
+        
+            -- Phòng đang ở, hôm nay là ngày checkout → cần checkout hôm nay
+            (SELECT COUNT(*) FROM OccupiedBookings 
+             WHERE CAST(CheckOutDate AS DATE) = CAST(GETDATE() AS DATE)) AS dueTodayCount,
+        
+            -- Phòng đang ở, quá hạn trả phòng
+            (SELECT COUNT(*) FROM OccupiedBookings 
+             WHERE CAST(CheckOutDate AS DATE) < CAST(GETDATE() AS DATE)) AS overdueCount,
+        
+            -- Phòng đặt trước, check-in hôm nay → chờ khách đến
+            (SELECT COUNT(*) FROM ReservedBookings 
+             WHERE CAST(CheckInDate AS DATE) = CAST(GETDATE() AS DATE)) AS waitingGuestCount
+    """;
+
+        try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                stats.setTotal(rs.getInt("total"));
+                stats.setAvailableCount(rs.getInt("availableCount"));
+                stats.setOccupiedCount(rs.getInt("occupiedCount"));
+                stats.setReservedCount(rs.getInt("reservedCount"));
+                stats.setCheckoutCount(rs.getInt("checkoutCount"));
+                stats.setCleaningCount(rs.getInt("cleaningCount"));
+                stats.setNonAvailableCount(rs.getInt("nonAvailableCount"));
+                stats.setDueTodayCount(rs.getInt("dueTodayCount"));
+                stats.setOverdueCount(rs.getInt("overdueCount"));
+                stats.setWaitingGuestCount(rs.getInt("waitingGuestCount"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return stats;
     }
 }

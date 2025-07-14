@@ -74,26 +74,43 @@
     }
 
     .stat-item.tong {
-        background-color: #28a745;
+        background-color: #4caf50; /* Xanh lá - giống room-card.available */
+        color: white;
     }
+
     .stat-item.dang-o {
-        background-color: #dc3545;
+        background-color: #e53935; /* Đỏ đậm - giống room-card.occupied */
+        color: white;
     }
+
     .stat-item.kich-hoat {
-        background-color: #6f42c1;
+        background-color: #42a5f5; /* Xanh dương sáng - giống room-card.reserved */
+        color: white;
     }
+
     .stat-item.den-han {
-        background-color: #20c997;
+        background-color: #ffc107; /* 🟡 Vàng - Đến hạn trả phòng */
+        color: #000; /* Chữ đen dễ đọc trên nền vàng */
     }
+
     .stat-item.qua-han {
-        background-color: #fd7e14;
+        background-color: #8e24aa; /* 🟣 Tím đậm - Quá hạn chưa trả phòng */
+        color: white;
     }
+
     .stat-item.cho-khach {
-        background-color: #ffc107;
-        color: #000;
+        background-color: #0d47a1; /* Xanh dương sáng - giống room-card.reserved */
+        color: white;
     }
+
     .stat-item.chua-don {
-        background-color: #6c757d;
+        background-color: #fb8c00; /* Cam đậm - giống room-card.cleaning */
+        color: white;
+    }
+
+    .stat-item.khong-kha-dung {
+        background-color: #616161; /* Xám đen - giống room-card.non-available */
+        color: white;
     }
 
     .action-bar {
@@ -183,6 +200,11 @@
 
     .room-card.checkout {
         background-color: #ba68c8; /* Tím nhạt - Trả phòng hôm nay */
+        color: white;
+    }
+
+    .room-card.overdue {
+        background-color:  #8e24aa; /* Tím - Quá hạn */
         color: white;
     }
 
@@ -442,59 +464,49 @@
             <div class="col-md-12">
                 <div class="table-wrapper">                    
                     <!-- Stats Bar -->
+                    <c:set var="stats" value="${roomStats}" />
+
                     <div class="stats-bar">
                         <div class="stat-item tong">
                             <i class="fas fa-door-open"></i>
-                            <span>9 Trống</span>
+                            <span>${stats.availableCount} Trống</span>
                         </div>
                         <div class="stat-item dang-o">
                             <i class="fas fa-user"></i>
-                            <span>9 Đang ở</span>
+                            <span>${stats.occupiedCount} Đang ở</span>
                         </div>
                         <div class="stat-item kich-hoat">
                             <i class="fas fa-check"></i>
-                            <span>13 Kích hoạt 0</span>
+                            <span>${stats.reservedCount} Đặt trước</span>
                         </div>
                         <div class="stat-item den-han">
                             <i class="fas fa-clock"></i>
-                            <span>0 Đến hạn O/O</span>
+                            <span>${stats.dueTodayCount} Đến hạn trả phòng</span>
                         </div>
                         <div class="stat-item qua-han">
                             <i class="fas fa-exclamation-triangle"></i>
-                            <span>5 Quá hạn O/O</span>
+                            <span>${stats.overdueCount} Quá hạn trả phòng</span>
                         </div>
                         <div class="stat-item cho-khach">
                             <i class="fas fa-hourglass-half"></i>
-                            <span>0 Chờ khách</span>
+                            <span>${stats.waitingGuestCount} Chờ khách đến</span>
                         </div>
                         <div class="stat-item chua-don">
                             <i class="fas fa-broom"></i>
-                            <span>7 Chưa dọn</span>
+                            <span>${stats.checkoutCount} Chưa dọn</span>
+                        </div>
+                        <div class="stat-item khong-kha-dung">
+                            <i class="fas fa-tools"></i>
+                            <span>${stats.nonAvailableCount} Đang sửa</span>
                         </div>
                         <div class="stat-item">
-                            <i class="fas fa-users"></i>
-                            <span>0 Đang sửa</span>
-                        </div>
-                        <div class="stat-item">
-                            <i class="fas fa-bed"></i>
-                            <span>12 Phòng Đôi</span>
-                        </div>
-                        <div class="stat-item">
-                            <i class="fas fa-user-single"></i>
-                            <span>1 Phòng Đơn</span>
+                            <i class="fas fa-home"></i>
+                            <span>${stats.total} Tổng </span>
                         </div>
                     </div>
 
                     <!-- Action Bar -->
                     <div class="action-bar">
-                        <button class="btn btn-info">
-                            <i class="fas fa-users"></i>
-                            Khách đoàn / CTY
-                        </button>
-                        <button class="btn btn-danger">
-                            <i class="fas fa-calendar-alt"></i>
-                            Hiển thị & Đặt Phòng
-                        </button>
                         <button class="btn btn-secondary">
                             <i class="fas fa-sign-in-alt"></i>
                             DS CheckIn
@@ -506,10 +518,6 @@
                         <button class="btn btn-primary">
                             <i class="fas fa-list"></i>
                             DS Khách hàng
-                        </button>
-                        <button class="btn btn-success">
-                            <i class="fas fa-receipt"></i>
-                            Tạo HD / Phiếu
                         </button>
                         <select class="form-select" style="width: auto;">
                             <option>Sắp xếp theo tầng</option>
@@ -525,7 +533,7 @@
                                 <div class="floor-label">Lầu ${entry.key}</div>
                                 <div class="rooms-row">
                                     <c:forEach var="room" items="${entry.value}">
-                                        <div class="room-card ${room.status.toLowerCase()}" onclick="showRoomDetails(${room.roomID})">
+                                        <div class="room-card ${room.displayStatus.toLowerCase()}" onclick="showRoomDetails(${room.roomID})">
                                             <c:choose>
                                                 <c:when test="${not empty room.guestName}">
                                                     <div class="room-date">
