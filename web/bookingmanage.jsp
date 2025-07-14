@@ -193,7 +193,7 @@
                                     "&checkin=" + encodeURIComponent(checkin);
 
                             // Chuyển hướng tới URL có chứa tham số
-                            window.location.href = "bookingcrud?"+query;
+                            window.location.href = "bookingcrud?" + query;
 
                         }
                     </script>
@@ -404,4 +404,3 @@
         </div>
     </div>
     <%@ include file="/dashboard-layout/footer.jsp" %>
-

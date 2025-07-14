@@ -30,7 +30,7 @@
         <link rel="icon" href="img/core-img/favicon.ico">
 
         <!--Core Stylesheet--> 
-        <link rel="stylesheet" href="style.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/style.css">
 
         <script src="https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit" async defer></script>
 
@@ -61,7 +61,7 @@
                         <nav class="classy-navbar justify-content-between" id="palatinNav">
 
                             <!-- Nav brand -->
-                            <a href="loadtohome" class="nav-brand"><img src="img/core-img/logo.png" alt=""></a>
+                            <a href="${pageContext.request.contextPath}/loadtohome" class="nav-brand"><img src="${pageContext.request.contextPath}/img/core-img/logo.png" alt=""></a>
 
                             <!-- Navbar Toggler -->
                             <div class="classy-navbar-toggler">
@@ -86,26 +86,26 @@
                                 <!-- Nav Start -->
                                 <div class="classynav">
                                     <ul>
-                                        <li class="${pageContext.request.requestURI.endsWith('home.jsp') ? 'active' : ''}"><a href="loadtohome">Home</a></li>
-                                        <li class="${pageContext.request.requestURI.endsWith('rooms.jsp') ? 'active' : ''}"><a href="searchroom">Room</a></li>
+                                        <li class="${pageContext.request.requestURI.endsWith('home.jsp') ? 'active' : ''}"><a href="${pageContext.request.contextPath}/loadtohome">Home</a></li>
+                                        <li class="${pageContext.request.requestURI.endsWith('rooms.jsp') ? 'active' : ''}"><a href="${pageContext.request.contextPath}/searchroom">Room</a></li>
                                         <li><a href="#">More</a>
                                             <ul class="dropdown">
-                                                <li><a href="loadtohome">Home</a></li>
-                                                <li><a href="about-us.jsp">About Us</a></li>
-                                                <li class="${pageContext.request.requestURI.endsWith('manageroom.jsp') ? 'active' : ''}"><a href="manageroom">Manage Room</a></li>
-                                                <li class="${pageContext.request.requestURI.endsWith('managerDashboard.jsp') ? 'active' : ''}"><a href="managerDashboard.jsp">Manage</a></li>
+                                                <li><a href="${pageContext.request.contextPath}/loadtohome">Home</a></li>
+                                                <li><a href="${pageContext.request.contextPath}/about-us.jsp">About Us</a></li>
+                                                <li class="${pageContext.request.requestURI.endsWith('manageroom.jsp') ? 'active' : ''}"><a href="${pageContext.request.contextPath}/manageroom">Manage Room</a></li>
+                                                <li class="${pageContext.request.requestURI.endsWith('managerDashboard.jsp') ? 'active' : ''}"><a href="${pageContext.request.contextPath}/managerDashboard.jsp">Manage</a></li>
                                                 <li><a href="services.jsp">Services</a></li>
                                                 <li><a class="dropdown-item" href="${pageContext.request.contextPath}/bookingcrud">
                                                          Đặt chỗ của tôi
                                                     </a></li>
-                                                <li><a href="searchroom">Rooms</a></li>
-                                                <li><a href="blog.jsp">News</a></li>
-                                                <li><a href="contact.jsp">Contact</a></li>
-                                                <li><a href="elements.jsp">Elements</a></li>
-                                                <li><a href="payment">Payment</a></li>
+                                                <li><a href="${pageContext.request.contextPath}/searchroom">Rooms</a></li>
+                                                <li><a href="${pageContext.request.contextPath}/blog.jsp">News</a></li>
+                                                <li><a href="${pageContext.request.contextPath}/contact.jsp">Contact</a></li>
+                                                <li><a href="${pageContext.request.contextPath}/elements.jsp">Elements</a></li>
+                                                <li><a href="${pageContext.request.contextPath}/payment">Payment</a></li>
                                             </ul>
                                         </li>
-                                        <li class="${pageContext.request.requestURI.endsWith('about-us.jsp') ? 'active' : ''}"><a href="about-us.jsp">About Us</a></li>
+                                        <li class="${pageContext.request.requestURI.endsWith('voucher.jsp') ? 'active' : ''}"><a href="${pageContext.request.contextPath}/voucher">Voucher</a></li>
                                         <!--                                        <li><a href="#">Mega Menu</a>
                                                                                     <div class="megamenu">
                                                                                         <ul class="single-mega cn-col-4">
@@ -119,8 +119,8 @@
                                                                                         </ul>
                                                                                     </div>
                                                                                 </li>-->
-                                        <li class="${pageContext.request.requestURI.endsWith('services.jsp') ? 'active' : ''}"><a href="services.jsp">Services</a></li>
-                                        <li class="${pageContext.request.requestURI.endsWith('contact.jsp') ? 'active' : ''}"><a href="contact.jsp">Contact</a></li>
+                                        <li class="${pageContext.request.requestURI.endsWith('services.jsp') ? 'active' : ''}"><a href="${pageContext.request.contextPath}/services.jsp">Services</a></li>
+                                        <li class="${pageContext.request.requestURI.endsWith('contact.jsp') ? 'active' : ''}"><a href="${pageContext.request.contextPath}/contact.jsp">Contact</a></li>
                                     </ul>
 
                                     <!-- Button -->
@@ -272,9 +272,11 @@
                                                                 <div class="font-weight-bold text-dark">🥉 Bronze Priority</div>
                                                                 <div class="text-muted small">0 Điểm</div>
                                                             </div>
-                                                            <a class="dropdown-item" href="updateprofile" style="color: black"><i class="fa fa-user mr-2 text-primary"></i> Tài khoản của tôi</a>
-                                                            <a class="dropdown-item" href="updateprofile" style="color: black"><i class="fa fa-user mr-2 text-primary"></i> Cập nhật hồ sơ</a>
-                                                            <a class="dropdown-item" href="payment" style="color: black"><i class="fa fa-credit-card mr-2 text-primary"></i> Payment</a>
+                                                            <a class="dropdown-item" href="${pageContext.request.contextPath}/voucherforcustomer" style="color: black"><i class="fa fa-user mr-2 text-primary"></i> Điểm</a>
+                                                            <a class="dropdown-item" href="${pageContext.request.contextPath}/updateprofile" style="color: black"><i class="fa fa-user mr-2 text-primary"></i> Chỉnh sửa hồ sơ</a>
+                                                            <a class="dropdown-item" href="${pageContext.request.contextPath}/paymenthistory" style="color: black"><i class="fas fa-list mr-2 text-primary"></i> Danh sách giao dịch</a>
+                                                            <a class="dropdown-item" href="${pageContext.request.contextPath}/bookingroomcustomer" style="color: black"><i class="fas fa-bed mr-2 text-primary"></i> Đặt chỗ của tôi</a>
+                                                            <a class="dropdown-item" href="${pageContext.request.contextPath}/voucher" style="color: black"><i class="fa fa-credit-card mr-2 text-primary"></i> Khuyến mãi</a>
                                                             <!--<a href="#verifyEmailChange-modal" class="dropdown-item switch-modal" style="font-size: 14px; color: black">Change your password </a>-->
                                                             <c:if test="${sessionScope.authLocal.authType eq 'local'}">
                                                                 <a href="#changePassword-modal" class="dropdown-item switch-modal" style="font-size: 14px; color: black">
@@ -826,17 +828,17 @@
 
         <!-- ##### All Javascript Script ##### -->
         <!--jQuery-2.2.4 js--> 
-        <script src="js/jquery/jquery-2.2.4.min.js"></script>
+        <script src="${pageContext.request.contextPath}/js/jquery/jquery-2.2.4.min.js"></script>
         <!--Popper js--> 
-        <script src="js/bootstrap/popper.min.js"></script>
+        <script src="${pageContext.request.contextPath}/js/bootstrap/popper.min.js"></script>
         <!--Bootstrap js--> 
-        <script src="js/bootstrap/bootstrap.min.js"></script>
+        <script src="${pageContext.request.contextPath}/js/bootstrap/bootstrap.min.js"></script>
         <!--All Plugins js--> 
-        <script src="js/plugins/plugins.js"></script>
+        <script src="${pageContext.request.contextPath}/js/plugins/plugins.js"></script>
         <!--Active js--> 
-        <script src="js/active.js"></script>
+        <script src="${pageContext.request.contextPath}/js/active.js"></script>
         <!----login js---->
-        <script src="js/authentication.js">
+        <script src="${pageContext.request.contextPath}/js/authentication.js">
         </script>
     </body>
 

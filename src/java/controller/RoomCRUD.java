@@ -184,6 +184,8 @@ public class RoomCRUD extends HttpServlet {
                 String extension = originalFileName.substring(originalFileName.lastIndexOf('.')); // lấy đuôi .jpg, .png, ...
 
                 // ➕ Đổi tên file theo timestamp + roomNumber
+                // BUILD
+//                String uploadPath = getServletContext().getRealPath("/") + "img";
                 String uniqueId = UUID.randomUUID().toString();
                 String newFileName = "room_" + roomNumber + "_" + uniqueId + extension;
 
@@ -215,6 +217,13 @@ public class RoomCRUD extends HttpServlet {
         }
         boolean checkUpdate = new dao.RoomDAO().updateRoom(room, listImg);
         List<Room> listRoom = new dao.RoomDAO().getListRoom(null, null, 0, 100000, 0, -1, "", "all", "", false, 4, 6, false);
+        request.setAttribute("listRoom", listRoom);
+        request.setAttribute("numberRoom", listRoom.size());
+        request.setAttribute("listRoomType", new dao.RoomTypeDAO().getListRoomType());
+        //CẦN SỬA KHI KHÔNG UPDATE ĐƯỢC
+        if (checkUpdate) {
+            request.getRequestDispatcher("manageroom.jsp").forward(request, response);
+        }
 
         String[] imageIdRaw = request.getParameterValues("imagesToDelete");
         List<RoomImage> imgsToDelete = new ArrayList<>();
@@ -245,7 +254,6 @@ public class RoomCRUD extends HttpServlet {
             // Xóa bản ghi DB
             new dao.RoomImageDAO().deleteRoomImages(imageIds);
         }
-
     }
 
     private void addRoom(HttpServletRequest request, HttpServletResponse response)
@@ -300,25 +308,12 @@ public class RoomCRUD extends HttpServlet {
 
                 String uploadPath1 = targetImgDir.getAbsolutePath();
 
-                // Ghi file mới vào thư mục
-                try (InputStream input = part.getInputStream()) {
-                    Files.copy(
-                            input,
-                            Paths.get(uploadPath, newFileName),
-                            StandardCopyOption.REPLACE_EXISTING
-                    );
-
-                } catch (IOException e) {
-                    e.printStackTrace(); // kiểm tra lỗi thật sự
-                }
-
                 try (InputStream input = part.getInputStream()) {
                     Files.copy(
                             input,
                             Paths.get(uploadPath1, newFileName),
                             StandardCopyOption.REPLACE_EXISTING
                     );
-
                 } catch (IOException e) {
                     e.printStackTrace(); // kiểm tra lỗi thật sự
                 }
@@ -449,5 +444,4 @@ public class RoomCRUD extends HttpServlet {
             e.printStackTrace();
         }
     }
-
 }

@@ -62,6 +62,11 @@ public class ManageRoom extends HttpServlet {
             throws ServletException, IOException {
         List<Room> listRoom = new dao.RoomDAO().getListRoom(null, null, 0, 100000, 0, -1, "", "all", "", false, 4, 6, false);
         List<RoomType> listRoomType = new dao.RoomTypeDAO().getListRoomType();
+                
+        request.setAttribute("listRoom", listRoom);
+        request.setAttribute("listRoomType", listRoomType);
+        request.setAttribute("numberRoom", listRoom.size());
+
 
         request.setAttribute("listRoom", listRoom);
         request.setAttribute("listRoomType", listRoomType);

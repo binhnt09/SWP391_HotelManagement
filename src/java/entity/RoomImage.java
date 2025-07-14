@@ -33,6 +33,7 @@ public class RoomImage {
         this.caption = caption;
         this.createdAt = createdAt;
     }
+    
     public RoomImage(int imageID, String imageURL, String caption) {
         this.imageID = imageID;
         this.imageURL = imageURL;

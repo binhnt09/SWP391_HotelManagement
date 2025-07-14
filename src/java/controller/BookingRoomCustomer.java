@@ -66,7 +66,6 @@ public class BookingRoomCustomer extends HttpServlet {
         String action = request.getParameter("action");
         String roomIdRaw = request.getParameter("roomId");
         String roomDetailId = request.getParameter("bookRoomDetail");
-
         Authentication auth = (Authentication) request.getSession().getAttribute("authLocal");
         List<Booking> list = new BookingDao().getBookings(
                 5, // userRoleId
@@ -80,12 +79,14 @@ public class BookingRoomCustomer extends HttpServlet {
                 0,
                 false // isDeleted
         );
-        for(Booking b : list){
+        request.setAttribute("listBooking", list);
+
+        for (Booking b : list) {
             int roomId = new dao.BookingDetailDAO().getBookingDetailByBookingId(b.getBookingId()).getRoom().getRoomID();
-            request.setAttribute("rating_"+b.getBookingId(), new dao.RoomReviewDAO().getRatingByRoomId(roomId, b.getUserId()));
+            request.setAttribute("rating_" + b.getBookingId(), new dao.RoomReviewDAO().getRatingByRoomId(roomId, b.getUserId()));
         }
         request.setAttribute("listBooking", list);
-        
+
         if (action != null) {
             switch (action.toLowerCase()) {
                 case "editbooking":
@@ -95,7 +96,6 @@ public class BookingRoomCustomer extends HttpServlet {
                     response.sendError(HttpServletResponse.SC_NOT_FOUND);
             }
         }
-
         request.getRequestDispatcher("/views/profile/historybooking.jsp").forward(request, response);
     }
 
@@ -148,11 +148,10 @@ public class BookingRoomCustomer extends HttpServlet {
 
         String checkInraw = request.getParameter("bookCheckin");
         String checkOutRaw = request.getParameter("bookCheckout");
-    
+
         Date checkInDate = validation.Validation.parseStringToSqlDate(checkInraw, "yyyy-MM-dd");
         Date checkOutDate = validation.Validation.parseStringToSqlDate(checkOutRaw, "yyyy-MM-dd");
-    
-        
+
     }
 
 }

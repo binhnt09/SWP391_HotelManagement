@@ -62,7 +62,7 @@ public class VietQrReturn extends HttpServlet {
             bookingDao.updateStatus(bookingId, "PAID");
 
             Payment payment = new Payment();
-            payment.setBookingID(bookingId);
+            payment.setBookingId(bookingId);
             payment.setAmount(amount);
             payment.setMethod("VietQR");
             payment.setStatus("Paid");

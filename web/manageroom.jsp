@@ -630,8 +630,6 @@
                     $('#modalSubmitBtn').text('Update');
             }
             }
-
-
         </script>
     </body>
 </html>

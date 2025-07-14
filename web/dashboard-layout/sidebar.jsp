@@ -81,7 +81,7 @@
 
         <!-- Promotion Management -->
         <li>
-            <a href="promotionmanager">
+            <a href="${pageContext.request.contextPath}/vouchermanage">
                 <i class="material-icons">local_offer</i>Promotion
             </a>
         </li>

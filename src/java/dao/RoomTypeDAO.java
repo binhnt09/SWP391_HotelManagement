@@ -105,12 +105,4 @@ public class RoomTypeDAO extends DBContext {
         return false;
     }
 
-    public static void main(String[] args) {
-        List<RoomType> list = new dao.RoomTypeDAO().getListRoomType();
-        System.out.println(new dao.RoomTypeDAO().getRoomTypeById(1).getDescription());
-        for (RoomType roomType : list) {
-            System.out.println(roomType.getAmenity());
-        }
-        System.out.println(new dao.RoomTypeDAO().updateRoomType(new RoomType(15, "hieu dep trai", "jlsaf shf ", "", 4, "anh , hiue có,wifi ,free , khogn the")));
-    }
 }

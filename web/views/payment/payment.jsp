@@ -4,6 +4,8 @@
     Author     : ASUS
 --%>
 
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html lang="vi">
@@ -108,26 +110,29 @@
                         <!--<input type="hidden" class="coupon-input">-->
                         <div class="coupon-section">
                             <div class="coupon-header" id="toggle-coupon" style="gap: 10px;">
-                                <input type="hidden" name="voucherId" id="coupon-checkbox">
+                                <input type="hidden" id="coupon-checkbox">
                                 <span style="color: #0770CD; font-size: 18px;">🎫</span>
                                 <label for="coupon-checkbox" class="coupon-label">Thêm mã giảm</label>
                                 <span class="toggle-button">Thêm mã</span>
                             </div>
                             <div class="coupon-input-container" id="coupon-container" style="display: none;flex-direction: column; gap: 16px; margin-top: 12px;">
                                 <input type="text" placeholder="Enter coupon code or select available coupon(s)" id="coupon-input" style="padding: 10px; width: 100%; box-sizing: border-box; border-radius: 6px;">
+                                <input type="hidden" id="total-price-data" value="${sessionScope.totalPrice}" />
                                 <div class="voucher-list">
                                     <p>Hoặc chọn một mã từ danh sách:</p>
-                                    <label><input type="radio" name="voucher" value="TRAVEL10"> TRAVEL10 - Giảm 10%</label><br>
-                                    <label><input type="radio" name="voucher" value="WELCOME15"> WELCOME15 - Giảm 15%</label><br>
-                                    <label><input type="radio" name="voucher" value="SUMMER25"> SUMMER25 - Giảm 25%</label>
+                                    <c:forEach var="v" items="${vouchers}">
+                                        <label>
+                                            <input type="radio" name="voucherId" value="${v.voucherId}" data-discount="${v.discountPercentage}" data-code="${v.code}" />
+                                            ${v.code} - Giảm ${v.discountPercentage} %
+                                        </label><br>
+                                    </c:forEach>
                                 </div>
-                                <button id="apply-coupon" style="padding: 10px 20px; width: fit-content;">Áp dụng</button><br/>
                             </div>
                         </div>
 
                         <div class="price-summary">
-                            <input type="hidden" name="totalbill" value="${sessionScope.totalPrice}" />
-                            <div class="total-price">${totalPrice} VND</div>
+                            <input type="hidden" name="totalbill" value="${sessionScope.totalPrice}" id="totalbill-hidden" />
+                            <div class="total-price" id="total-price-text">${sessionScope.totalPrice} VND</div>
                         </div>
 
                         <button class="payment-btn" onclick="processPayment(event)">
@@ -198,7 +203,7 @@
         <script>
             const contextPath = "<%= request.getContextPath() %>";
         </script>
-        <script src="${pageContext.request.contextPath}/js/payment.js"></script>
+        <script src="${pageContext.request.contextPath}/js/payment/payment.js"></script>
         <!-- SweetAlert2 -->
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     </body>

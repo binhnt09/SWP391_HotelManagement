@@ -410,22 +410,23 @@
         <script src="js/plugins/plugins.js"></script>
         <script src="js/active.js"></script>
 
+        <script>
+        </script>
         <!-- Script khởi tạo -->
         <script>
-
-                                        $(document).ready(function () {
-                                            $('.single-rooms-area').hover(
-                                                    function () {
-                                                        $(this).css({
-                                                            'transform': 'scale(1.03)',
-                                                            'transition': 'transform 0.3s ease'
-                                                        });
-                                                    },
-                                                    function () {
-                                                        $(this).css('transform', 'scale(1)');
-                                                    }
-                                            );
-                                        });
+            $(document).ready(function () {
+                $('.single-rooms-area').hover(
+                        function () {
+                            $(this).css({
+                                'transform': 'scale(1.03)',
+                                'transition': 'transform 0.3s ease'
+                            });
+                        },
+                        function () {
+                            $(this).css('transform', 'scale(1)');
+                        }
+                );
+            });
         </script>
     </body>
 </html>
