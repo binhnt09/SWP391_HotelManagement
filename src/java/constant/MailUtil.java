@@ -238,5 +238,4 @@ public class MailUtil {
         sb.append("</body></html>");
         return sb.toString();
     }
-
 }

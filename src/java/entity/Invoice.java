@@ -148,16 +148,16 @@ public class Invoice {
         return nights;
     }
 
+    public void setNights(int nights) {
+        this.nights = nights;
+    }
+
     public BigDecimal getTotalRoomPrice() {
         return totalRoomPrice;
     }
 
-    public void setTotalRoomPrice(BigDecimal TotalRoomPrice) {
-        this.totalRoomPrice = TotalRoomPrice;
-    }
-    
-    public void setNights(int nights) {
-        this.nights = nights;
+    public void setTotalRoomPrice(BigDecimal totalRoomPrice) {
+        this.totalRoomPrice = totalRoomPrice;
     }
 
     public Timestamp getIssueDate() {
@@ -250,9 +250,9 @@ public class Invoice {
 
     @Override
     public String toString() {
-        return "Invoice{" + "invoiceId=" + invoiceId + ", paymentId=" + paymentId + ", bookingId=" + bookingId + ", firstName=" + firstName + ", lastName=" + lastName + ", email=" + email + ", phone=" + phone + ", address=" + address
-                + ", voucherCode=" + voucherCode + ", discountAmount=" + discountAmount + ", roomNumber=" + roomNumber + ", roomPrice=" + roomPrice + ", nights=" + nights + ", TotalRoomPice=" + totalRoomPrice + ", issueDate=" + issueDate + ", note=" + note + ", "
-                + "pdfUrl=" + pdfUrl + "," + " status=" + status + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + ", deletedAt=" + deletedAt + ", deletedBy=" + deletedBy + ", isDeleted=" + isDeleted + ", payment=" + payment + ", listService=" + listService + '}';
+        return "Invoice{" + "invoiceId=" + invoiceId + ", paymentId=" + paymentId + ", bookingId=" + bookingId + ", firstName=" + firstName + ", lastName=" + lastName + ", email=" + email + ", phone=" + phone + ", address=" + address + ","
+                + " voucherCode=" + voucherCode + ", discountAmount=" + discountAmount + ", roomNumber=" + roomNumber + ", roomPrice=" + roomPrice + ", nights=" + nights + ", totalRoomPrice=" + totalRoomPrice + ", issueDate=" + issueDate + ", "
+                + "note=" + note + ", pdfUrl=" + pdfUrl + ", status=" + status + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + ", deletedAt=" + deletedAt + ", deletedBy=" + deletedBy + ", isDeleted=" + isDeleted + ", payment=" + payment + ", listService=" + listService + '}';
     }
 
 }

@@ -394,21 +394,6 @@
         </footer>
         <!-- ##### Footer Area End ##### -->
 
-        <script>
-            $(document).ready(function () {
-                $('.single-rooms-area').hover(
-                        function () {
-                            $(this).css({
-                                'transform': 'scale(1.03)',
-                                'transition': 'transform 0.3s ease'
-                            });
-                        },
-                        function () {
-                            $(this).css('transform', 'scale(1)');
-                        }
-                );
-            });
-        </script>
         <!-- ##### All Javascript Script ##### -->
         <!-- jQuery-2.2.4 js -->
         <!-- jQuery của bạn -->
@@ -425,6 +410,23 @@
         <script src="js/plugins/plugins.js"></script>
         <script src="js/active.js"></script>
 
+        <script>
+        </script>
         <!-- Script khởi tạo -->
+        <script>
+            $(document).ready(function () {
+                $('.single-rooms-area').hover(
+                        function () {
+                            $(this).css({
+                                'transform': 'scale(1.03)',
+                                'transition': 'transform 0.3s ease'
+                            });
+                        },
+                        function () {
+                            $(this).css('transform', 'scale(1)');
+                        }
+                );
+            });
+        </script>
     </body>
 </html>

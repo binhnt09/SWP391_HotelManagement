@@ -30,7 +30,6 @@ public class Booking {
     
     private Voucher voucher;
     private User user;
-    
 
     public Booking() {
     }
@@ -50,6 +49,7 @@ public class Booking {
         this.deletedBy = deletedBy;
         this.isDeleted = isDeleted;
     }
+
     public Booking(int bookingId, Integer voucherId, Timestamp bookingDate, Date checkInDate, Date checkOutDate, BigDecimal totalAmount, String status, Timestamp createdAt, Timestamp updatedAt, Timestamp deletedAt, Integer deletedBy, boolean isDeleted) {
         this.bookingId = bookingId;
         this.voucherId = voucherId;
@@ -189,5 +189,4 @@ public class Booking {
     public String toString() {
         return "Booking{" + "bookingId=" + bookingId + ", userId=" + userId + ", voucherId=" + voucherId + ", bookingDate=" + bookingDate + ", checkInDate=" + checkInDate + ", checkOutDate=" + checkOutDate + ", totalAmount=" + totalAmount + ", status=" + status + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + ", deletedAt=" + deletedAt + ", deletedBy=" + deletedBy + ", isDeleted=" + isDeleted + ", voucher=" + voucher + ", user=" + user + '}';
     }
-
 }

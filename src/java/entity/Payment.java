@@ -29,7 +29,7 @@ public class Payment {
     private boolean isDeleted;
 
     private Booking booking;
-    
+
     public Payment() {
     }
 
@@ -155,7 +155,9 @@ public class Payment {
 
     @Override
     public String toString() {
-        return "Payment{" + "paymentId=" + paymentId + ", bookingId=" + bookingId + ", amount=" + amount + ", method=" + method + ", status=" + status + ", transactionCode=" + transactionCode + ", bankCode=" + bankCode + ", gatewayResponse=" + gatewayResponse + ", qrRef=" + qrRef + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + ", deletedAt=" + deletedAt + ", deletedBy=" + deletedBy + ", isDeleted=" + isDeleted + ", booking=" + booking + '}';
+        return "Payment{" + "paymentId=" + paymentId + ", bookingId=" + bookingId + ", amount=" + amount + ", method=" + method + ", status=" + status
+                + ", transactionCode=" + transactionCode + ", bankCode=" + bankCode + ", gatewayResponse=" + gatewayResponse + ", qrRef=" + qrRef + ", createdAt="
+                + createdAt + ", updatedAt=" + updatedAt + ", deletedAt=" + deletedAt + ", deletedBy=" + deletedBy + ", isDeleted=" + isDeleted + ", booking=" + booking + '}';
     }
 
 }

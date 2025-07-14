@@ -172,19 +172,19 @@ public class RoomDAO extends DBContext {
             stmt.setInt(2, pageSize);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
-                Room r = new Room();
-                r.setRoomID(rs.getInt("RoomID"));
-                r.setRoomNumber(rs.getString("RoomNumber"));
-                r.setStatus(rs.getString("Status"));
-                r.setPrice(rs.getDouble("Price"));
-                r.setCreatedAt(rs.getTimestamp("CreatedAt"));
-                r.setRoomTypeID(new RoomType());
-                r.getRoomTypeID().setTypeName(rs.getString("TypeName"));
-                r.setRoomDetail(new RoomDetail());
-                r.getRoomDetail().setBedType(rs.getString("BedType"));
-                r.getRoomDetail().setArea(rs.getFloat("Area"));
-                r.getRoomDetail().setMaxGuest(rs.getInt("MaxGuest"));
-                list.add(r);
+                Hotel hotel = new dao.HotelDAO().getHotelByID(rs.getInt("HotelID"));
+                RoomDetail roomDetail = new dao.RoomDetailDAO().getRoomDetailByID(rs.getInt("RoomDetailID"));
+                RoomType roomType = new dao.RoomTypeDAO().getRoomTypeById(rs.getInt("RoomTypeID "));
+                list.add(new Room(rs.getInt("roomID"),
+                        rs.getString("roomNumber"),
+                        roomDetail, roomType,
+                        rs.getString("status"),
+                        rs.getDouble("price"), hotel,
+                        rs.getTimestamp("CreatedAt"),
+                        rs.getTimestamp("UpdatedAt"),
+                        rs.getTimestamp("DeletedAt"),
+                        rs.getInt("DeletedBy"),
+                        rs.getBoolean("IsDeleted")));
             }
         } catch (Exception e) {
             Logger.getLogger(RoomDAO.class.getName()).log(Level.SEVERE, null, e);
@@ -223,19 +223,19 @@ public class RoomDAO extends DBContext {
             stmt.setInt(5, pageSize);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
-                Room r = new Room();
-                r.setRoomID(rs.getInt("RoomID"));
-                r.setRoomNumber(rs.getString("RoomNumber"));
-                r.setStatus(rs.getString("Status"));
-                r.setPrice(rs.getDouble("Price"));
-                r.setCreatedAt(rs.getTimestamp("CreatedAt"));
-                r.setRoomTypeID(new RoomType());
-                r.getRoomTypeID().setTypeName(rs.getString("TypeName"));
-                r.setRoomDetail(new RoomDetail());
-                r.getRoomDetail().setBedType(rs.getString("BedType"));
-                r.getRoomDetail().setArea(rs.getFloat("Area"));
-                r.getRoomDetail().setMaxGuest(rs.getInt("MaxGuest"));
-                list.add(r);
+                Hotel hotel = new dao.HotelDAO().getHotelByID(rs.getInt("HotelID"));
+                RoomDetail roomDetail = new dao.RoomDetailDAO().getRoomDetailByID(rs.getInt("RoomDetailID"));
+                RoomType roomType = new dao.RoomTypeDAO().getRoomTypeById(rs.getInt("RoomTypeID "));
+                list.add(new Room(rs.getInt("roomID"),
+                        rs.getString("roomNumber"),
+                        roomDetail, roomType,
+                        rs.getString("status"),
+                        rs.getDouble("price"), hotel,
+                        rs.getTimestamp("CreatedAt"),
+                        rs.getTimestamp("UpdatedAt"),
+                        rs.getTimestamp("DeletedAt"),
+                        rs.getInt("DeletedBy"),
+                        rs.getBoolean("IsDeleted")));
             }
         } catch (Exception e) {
             Logger.getLogger(RoomDAO.class.getName()).log(Level.SEVERE, null, e);
@@ -257,6 +257,7 @@ public class RoomDAO extends DBContext {
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 return rs.getInt(1);
+
             }
         } catch (Exception e) {
             Logger.getLogger(RoomDAO.class.getName()).log(Level.SEVERE, null, e);
@@ -270,6 +271,7 @@ public class RoomDAO extends DBContext {
             stmt.setInt(1, deletedBy);
             stmt.setInt(2, id);
             stmt.executeUpdate();
+
         } catch (Exception e) {
             Logger.getLogger(RoomDAO.class.getName()).log(Level.SEVERE, null, e);
         }
@@ -295,6 +297,7 @@ public class RoomDAO extends DBContext {
                         rs.getTimestamp("DeletedAt"),
                         rs.getInt("DeletedBy"),
                         rs.getBoolean("IsDeleted"));
+
             }
         } catch (SQLException e) {
             Logger.getLogger(RoomDAO.class.getName()).log(Level.SEVERE, null, e);
@@ -309,9 +312,11 @@ public class RoomDAO extends DBContext {
             ResultSet rs = pre.executeQuery();
             if (rs.next()) {
                 return extractRoom(rs);
+
             }
         } catch (SQLException e) {
-            Logger.getLogger(RoomDAO.class.getName()).log(Level.SEVERE, null, e);
+            Logger.getLogger(RoomDAO.class
+                    .getName()).log(Level.SEVERE, null, e);
         }
         return null;
     }
@@ -336,6 +341,7 @@ public class RoomDAO extends DBContext {
                         rs.getTimestamp("DeletedAt"),
                         rs.getInt("DeletedBy"),
                         rs.getBoolean("IsDeleted")));
+
             }
         } catch (SQLException e) {
             Logger.getLogger(RoomDAO.class.getName()).log(Level.SEVERE, null, e);
@@ -350,6 +356,7 @@ public class RoomDAO extends DBContext {
             try (ResultSet rs = pre.executeQuery()) {
                 if (rs.next()) {
                     count = rs.getInt(1);
+
                 }
             }
         } catch (SQLException ex) {
@@ -374,8 +381,7 @@ public class RoomDAO extends DBContext {
                 + "Description = ?, "
                 + "UpdatedAt = GETDATE() "
                 + "WHERE RoomDetailID = ( SELECT RoomDetailID FROM Room WHERE RoomID = ?);";
-        String deleteImageSql = "DELETE FROM RoomImage WHERE RoomDetailID = ?";
-        String insertImageSql = "INSERT INTO RoomImage (RoomDetailID, ImageURL, Caption, CreatedAt) "
+        String insertImageSql = "INSERT INTO RoomImage (RoomDetailID, ImageURL, Caption, updatedat) "
                 + "VALUES (?, ?, ?, GETDATE())";
 
         try {
@@ -385,7 +391,7 @@ public class RoomDAO extends DBContext {
             try (PreparedStatement roomPre = connection.prepareStatement(roomSql)) {
                 roomPre.setString(1, room.getRoomNumber());
                 roomPre.setString(2, room.getStatus());
-                roomPre.setInt(3, room.getRoomTypeID().getRoomTypeID());
+                roomPre.setInt(3, room.getRoomType().getRoomTypeID());
                 roomPre.setDouble(4, room.getPrice());
                 roomPre.setDouble(5, room.getRoomID());
                 roomPre.executeUpdate();
@@ -398,11 +404,6 @@ public class RoomDAO extends DBContext {
                 roomDetailPre.setString(4, detail.getDescription());
                 roomDetailPre.setInt(5, room.getRoomID());
                 roomDetailPre.executeUpdate();
-            }
-            // Xóa ảnh cũ
-            try (PreparedStatement delImgPre = connection.prepareStatement(deleteImageSql)) {
-                delImgPre.setInt(1, room.getRoomDetail().getRoomDetailID());
-                delImgPre.executeUpdate();
             }
 
             // 3. Insert RoomImage (nếu có)
@@ -420,21 +421,23 @@ public class RoomDAO extends DBContext {
 
             connection.commit();
             return true;
+
         } catch (SQLException ex) {
             Logger.getLogger(RoomDAO.class.getName()).log(Level.SEVERE, null, ex);
             try {
                 connection.rollback();
             } catch (SQLException e) {
                 Logger.getLogger(RoomDAO.class.getName()).log(Level.SEVERE, null, e);
+            } finally {
+                try {
+                    connection.setAutoCommit(true);
+
+                } catch (SQLException e) {
+                    Logger.getLogger(RoomDAO.class.getName()).log(Level.SEVERE, null, e);
+                }
             }
-        } finally {
-            try {
-                connection.setAutoCommit(true);
-            } catch (SQLException e) {
-                Logger.getLogger(RoomDAO.class.getName()).log(Level.SEVERE, null, e);
-            }
+            return false;
         }
-        return false;
     }
 
     public boolean updateDeleteRoom(int roomid, int deleteBy, boolean isDeleted) {
@@ -525,17 +528,18 @@ public class RoomDAO extends DBContext {
             Logger.getLogger(RoomDAO.class.getName()).log(Level.SEVERE, null, e);
             try {
                 connection.rollback();
+
             } catch (SQLException ex) {
                 Logger.getLogger(RoomDAO.class.getName()).log(Level.SEVERE, null, ex);
+            } finally {
+                try {
+                    connection.setAutoCommit(true);
+                } catch (SQLException ex) {
+                    Logger.getLogger(RoomDAO.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
-        } finally {
-            try {
-                connection.setAutoCommit(true);
-            } catch (SQLException ex) {
-                Logger.getLogger(RoomDAO.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            return false;
         }
-        return false;
     }
 
     private Room extractRoom(ResultSet rs) throws SQLException {
@@ -558,5 +562,4 @@ public class RoomDAO extends DBContext {
         r.setIsDeleted(rs.getBoolean("IsDeleted"));
         return r;
     }
-
 }

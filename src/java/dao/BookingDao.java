@@ -89,7 +89,7 @@ public class BookingDao extends DBContext {
                     User user = new User();
                     user.setUserId(rs.getInt("userId"));
                     user.setEmail(rs.getString("email"));
-                    booking.setUser(user); 
+                    booking.setUser(user);
                 }
             }
         } catch (SQLException e) {

@@ -3,6 +3,7 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
+<<<<<<< HEAD
             <file>file:/D:/FU%20Learning/Summer%202025/SWP391/SWP_HotelManagement_V1_1/SWP391_HotelManagement_V1/src/java/controller/payment/PaymentServlet.java</file>
             <file>file:/D:/FU%20Learning/Summer%202025/SWP391/SWP_HotelManagement_V1_1/SWP391_HotelManagement_V1/web/views/voucher/myvoucher.jsp</file>
             <file>file:/D:/FU%20Learning/Summer%202025/SWP391/SWP_HotelManagement_V1_1/SWP391_HotelManagement_V1/src/java/constant/MailUtil.java</file>
@@ -14,6 +15,22 @@
             <file>file:/D:/FU%20Learning/Summer%202025/SWP391/SWP_HotelManagement_V1_1/SWP391_HotelManagement_V1/web/views/voucher/voucher.jsp</file>
             <file>file:/D:/FU%20Learning/Summer%202025/SWP391/SWP_HotelManagement_V1_1/SWP391_HotelManagement_V1/web/views/payment/payment.jsp</file>
             <file>file:/D:/FU%20Learning/Summer%202025/SWP391/SWP_HotelManagement_V1_1/SWP391_HotelManagement_V1/src/java/controller/voucher/VoucherServlet.java</file>
+=======
+            <file>file:/D:/kì/ki5/SWP/project/SWP391_HotelManagement/src/java/entity/Booking.java</file>
+            <file>file:/D:/kì/ki5/SWP/project/SWP391_HotelManagement/src/java/controller/RoomCRUD.java</file>
+            <file>file:/D:/kì/ki5/SWP/project/SWP391_HotelManagement/web/views/profile/historybooking.jsp</file>
+            <file>file:/D:/kì/ki5/SWP/project/SWP391_HotelManagement/src/java/dao/RoomImageDAO.java</file>
+            <file>file:/D:/kì/ki5/SWP/project/SWP391_HotelManagement/src/java/controller/RoomListServlet.java</file>
+            <file>file:/D:/kì/ki5/SWP/project/SWP391_HotelManagement/web/rooms.jsp</file>
+            <file>file:/D:/kì/ki5/SWP/project/SWP391_HotelManagement/nbproject/build-impl.xml</file>
+            <file>file:/D:/kì/ki5/SWP/project/SWP391_HotelManagement/src/java/controller/RoomReview.java</file>
+            <file>file:/D:/kì/ki5/SWP/project/SWP391_HotelManagement/src/java/controller/BookingCrud.java</file>
+            <file>file:/D:/kì/ki5/SWP/project/SWP391_HotelManagement/src/java/controller/ShowRoomDetail.java</file>
+            <file>file:/D:/kì/ki5/SWP/project/SWP391_HotelManagement/src/java/controller/BookingRoom.java</file>
+            <file>file:/D:/kì/ki5/SWP/project/SWP391_HotelManagement/src/java/dao/RoomDAO.java</file>
+            <file>file:/D:/kì/ki5/SWP/project/SWP391_HotelManagement/web/manageroom.jsp</file>
+            <file>file:/D:/kì/ki5/SWP/project/SWP391_HotelManagement/src/java/dao/RoomReviewDAO.java</file>
+>>>>>>> 7a36b322d0847c3818c8bfe3a630a3bc8a44ef81
         </group>
     </open-files>
 </project-private>

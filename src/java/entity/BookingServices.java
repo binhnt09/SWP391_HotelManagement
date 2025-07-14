@@ -8,12 +8,11 @@ package entity;
  *
  * @author ASUS
  */
-
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 
 public class BookingServices {
-    
+
     private int bookingServiceId;
     private int BookingId;
     private int ServiceId;
@@ -26,7 +25,7 @@ public class BookingServices {
     private Timestamp deletedAt;
     private Integer deletedBy;
     private boolean isDeleted;
-    
+
     private Service service;
 
     public BookingServices() {

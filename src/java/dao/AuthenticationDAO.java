@@ -469,17 +469,17 @@ public class AuthenticationDAO extends DBContext {
         }
         return false;
     }
-    
+
     public boolean restoreAuth(int authId) {
-    String sql = "UPDATE Authentication SET IsDeleted = 0, DeletedAt = NULL, DeletedBy = NULL WHERE AuthenticationID = ?";
-    try (PreparedStatement ps = connection.prepareStatement(sql)) {
-        ps.setInt(1, authId);
-        return ps.executeUpdate() > 0;
-    } catch (SQLException e) {
-        Logger.getLogger(AuthenticationDAO.class.getName()).log(Level.SEVERE, null, e);
+        String sql = "UPDATE Authentication SET IsDeleted = 0, DeletedAt = NULL, DeletedBy = NULL WHERE AuthenticationID = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, authId);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            Logger.getLogger(AuthenticationDAO.class.getName()).log(Level.SEVERE, null, e);
+        }
+        return false;
     }
-    return false;
-}
 
 // Private helper method to map result
     private Authentication extractAuthentication(ResultSet rs) throws SQLException {

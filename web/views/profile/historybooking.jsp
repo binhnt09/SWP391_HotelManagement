@@ -26,11 +26,35 @@
 
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>        
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+
 
         <style>
+            .star-rating {
+                direction: rtl;
+                display: inline-block;
+                cursor: pointer;
+            }
 
+            .star-rating input {
+                display: none;
+            }
+
+            .star-rating label {
+                color: #ddd;
+                font-size: 24px;
+                padding: 0 2px;
+                cursor: pointer;
+                transition: all 0.2s ease;
+            }
+
+            .star-rating label:hover,
+            .star-rating label:hover~label,
+            .star-rating input:checked~label {
+                color: #ffc107;
+            }
             .booking-card {
                 border-radius: 15px;
                 box-shadow: 0 4px 15px rgba(0,0,0,0.1);
@@ -125,6 +149,7 @@
                             long diffInMillies = checkout.getTime() - checkin.getTime();
                             long diffDays = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
                             
+                            int rate = (request.getAttribute("rating_"+booking.getBookingId()) != null) ? (int) request.getAttribute("rating_" + booking.getBookingId()) : 0;
                             pageContext.setAttribute("room", room);
                             pageContext.setAttribute("numberNight", diffDays);
                             pageContext.setAttribute("bookingDetail", bookingDetail);
@@ -144,13 +169,34 @@
                                                 <div class="card-header w-100 d-flex flex-column justify-content-center text-white font-price"
                                                      style="background: linear-gradient(to bottom right, #5B69E2, #D45CFF); border-top-left-radius: .5rem; border-bottom-left-radius: .5rem;">
                                                     <h5 class="mb-2">Phòng ${room.roomNumber}</h5>
+
+                                                    <!-- Tổng chi phí + vote sao -->
+                                                    <!-- Tổng chi phí -->
                                                     <div class="price-highlight mt-3 bg-danger text-white p-3 rounded text-center">
                                                         <div class="info-label text-white-50 mb-1">Tổng chi phí</div>
                                                         <h5 class="mb-0">${i.totalAmount} VNĐ</h5>
+                                                        <div class="rating-card p-4" data-roomid="${room.roomID}" data-userid="${sessionScope.authLocal.user.userId}">
+                                                            <div class="star-rating animated-stars">
+                                                                <input type="radio" id="star5_${i.bookingId}" name="rating_${i.bookingId}" value="5" <%= (rate == 5) ? "checked" : "" %>>
+                                                                <label for="star5_${i.bookingId}" class="bi bi-star-fill"></label>
+
+                                                                <input type="radio" id="star4_${i.bookingId}" name="rating_${i.bookingId}" value="4" <%= (rate == 4) ? "checked" : "" %>>
+                                                                <label for="star4_${i.bookingId}" class="bi bi-star-fill"></label>
+
+                                                                <input type="radio" id="star3_${i.bookingId}" name="rating_${i.bookingId}" value="3" <%= (rate == 3) ? "checked" : "" %>>
+                                                                <label for="star3_${i.bookingId}" class="bi bi-star-fill"></label>
+
+                                                                <input type="radio" id="star2_${i.bookingId}" name="rating_${i.bookingId}" value="2" <%= (rate == 2) ? "checked" : "" %>>
+                                                                <label for="star2_${i.bookingId}" class="bi bi-star-fill"></label>
+
+                                                                <input type="radio" id="star1_${i.bookingId}" name="rating_${i.bookingId}" value="1" <%= (rate == 1) ? "checked" : "" %>>
+                                                                <label for="star1_${i.bookingId}" class="bi bi-star-fill"></label>
+                                                            </div>
+                                                        </div>
+
                                                     </div>
                                                 </div>
                                             </div>
-
                                             <!-- Right Column - Booking Details -->
                                             <div class="col-md-8">
                                                 <div class="card-body h-100 d-flex flex-column justify-content-between">
@@ -179,7 +225,6 @@
                                                             </div>
                                                         </div>
                                                     </div>
-
                                                     <!-- Check-in & Check-out -->
                                                     <div class="row">
                                                         <div class="col-md-6 mb-3">
@@ -233,7 +278,7 @@
                                                             <div class="info-row d-flex align-items-center">
                                                                 <div>
                                                                     <div class="info-label">Mã đặt phòng</div>
-                                                                    <div class="info-value"><i class="fas fa-hashtag"></i>${i.bookingID}</div>
+                                                                    <div class="info-value"><i class="fas fa-hashtag"></i>${i.bookingId}</div>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -260,6 +305,7 @@
                                                                     data-bs-toggle="modal"
                                                                     data-bs-target="#editbooking"
                                                                     data-roomID="${room.roomID}"
+                                                                    data-bookingID="${i.bookingId}"
                                                                     data-roomDetail="${room.roomDetail.roomDetailID}"
                                                                     data-roomNumber="${room.roomNumber}"
                                                                     data-status="${i.status}"
@@ -287,18 +333,16 @@
                                 </div>
                             </div>
                         </div>
-
                     </c:forEach>   
                 </div>
             </div>
         </div>
 
-
-
         <style>
             .custom-modal-width {
                 max-width: 75%; /* hoặc 1200px */
             }
+
         </style>
         <div class="modal fade" id="editbooking" tabindex="-1">
             <div class="modal-dialog custom-modal-width">
@@ -312,6 +356,7 @@
                         <div class="modal-body">
                             <input type="hidden" name="action" value="editBook">
                             <input type="hidden" id="bookRoomId" name="roomId">
+                            <input type="hidden" id="bookingId" name="bookingId">
                             <input type="hidden" id="bookRoomDetail" name="bookRoomDetail">
                             <input type="hidden" id="bookNumberNight" name="bookNumberNight">
 
@@ -345,19 +390,16 @@
                                     <input type="text" id="bookTextNumberNight" class="form-control" readonly="">
                                 </div>
                             </div>
-                        </div>
-
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                            <button type="submit" class="btn btn-primary">Update Room</button>
-                        </div>
-                    </div>  
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                <button type="submit" class="btn btn-primary">Update Room</button>
+                            </div>
+                        </div>  
                 </form>
             </div>
         </div>
-
         <!-- Footer -->
-        <jsp:include page="/profile/footerprofile.jsp"></jsp:include>
+        <jsp:include page="/views/profile/footerprofile.jsp"></jsp:include>
 
             <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
             <!-- jQuery (vì Bootstrap 4 phụ thuộc) -->
@@ -377,9 +419,9 @@
             $(document).on('click', '[data-bs-toggle="modal"]', function () {
                 const button = $(this);
                 $('#bookRoomId').val(button.data('roomid'));
+                $('#bookingId').val(button.data('bookingid'));
                 $('#bookRoomDetail').val(button.data('roomdetail'));
                 $('#bookRoomNumber').val(button.data('roomnumber'));
-
                 $('#bookStatus').val(button.data('status'));
                 $('#bookPricePerNight').val(button.data('pricepernight'));
                 $('#bookMaxGuest').val(button.data('maxguest'));
@@ -388,7 +430,42 @@
                 $('#bookNumberNight').val(button.data('numbernight'));
                 $('#bookTextNumberNight').val(button.data('textnumbernight'));
             });
+            document.querySelectorAll('.star-rating:not(.readonly) label').forEach(star => {
+                star.addEventListener('click', function () {
+                    this.style.transform = 'scale(1.2)';
+                    setTimeout(() => {
+                        this.style.transform = 'scale(1)';
+                    }, 200);
+                });
+            });
+            document.addEventListener("DOMContentLoaded", () => {
+                document.querySelectorAll(".star-rating input[type='radio']").forEach(input => {
+                    input.addEventListener("change", function () {
+                        const rating = this.value;
+                        const bookingId = this.name.split("_")[1];
+                        const roomId = this.closest(".rating-card").dataset.roomid;
+                        const userId = this.closest(".rating-card").dataset.userid;
+                        console.log(rating);
+                        console.log(bookingId);
+                        console.log(roomId);
+                        console.log(userId);
+                        const baseUrl = '${pageContext.request.contextPath}';
+                        fetch(baseUrl + "/roomreview?roomId=" + roomId + "&userId=" + userId + "&rating=" + rating + "&bookingId=" + bookingId, {
+                            method: "POST"
+                        })
+                                .then(res => res.json())
+                                .then(data => {
+                                    if (data.success) {
+                                        alert("Cảm ơn bạn đã đánh giá!");
+                                    } else {
+                                        alert("Không thể gửi đánh giá: " + data.message);
+                                    }
+                                });
+                    });
+                });
+            });
+
         </script>
+
     </body>
 </html>
-
