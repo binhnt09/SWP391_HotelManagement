@@ -17,15 +17,15 @@ public class Room {
     private RoomType roomTypeID;
     private String status;
     private double price;
-    
+
     private Hotel hotel;
-    
+
     private Timestamp createdAt;
     private Timestamp updatedAt;
     private Timestamp deletedAt;
     private int deletedBy;
     private boolean isDeleted;
-    
+
     private RoomType roomType;
 
     public Room() {
@@ -39,7 +39,7 @@ public class Room {
         this.price = price;
         this.hotel = hotel;
     }
-    
+
 
     public Room(int roomID, String roomNumber, RoomDetail roomDetail, RoomType roomType, String status, double price) {
         this.roomID = roomID;
@@ -49,7 +49,7 @@ public class Room {
         this.status = status;
         this.price = price;
     }
-    
+
 
     public Room(int roomID, String roomNumber, RoomDetail roomDetail, String status, double price, Hotel hotel, Timestamp createdAt, Timestamp updatedAt, Timestamp deletedAt, int deletedBy, boolean isDeleted) {
         this.roomID = roomID;

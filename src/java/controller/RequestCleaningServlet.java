@@ -4,16 +4,12 @@
  */
 package controller;
 
-import dao.CleaningHistoryDAO;
-import dao.RoomDAO;
-import entity.Authentication;
-import entity.User;
+import dao.CleaningRequestDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.PrintWriter;
 
@@ -21,8 +17,8 @@ import java.io.PrintWriter;
  *
  * @author viet7
  */
-@WebServlet(name = "StartCleaningServlet", urlPatterns = {"/startCleaning"})
-public class StartCleaningServlet extends HttpServlet {
+@WebServlet(name = "RequestCleaningServlet", urlPatterns = {"/requestCleaning"})
+public class RequestCleaningServlet extends HttpServlet {
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -32,10 +28,10 @@ public class StartCleaningServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet StartCleaningServlet</title>");
+            out.println("<title>Servlet RequestCleaningServlet</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet StartCleaningServlet at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet RequestCleaningServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -52,31 +48,25 @@ public class StartCleaningServlet extends HttpServlet {
             throws ServletException, IOException {
         try {
             int roomId = Integer.parseInt(request.getParameter("roomId"));
+            int bookingId = Integer.parseInt(request.getParameter("bookingId"));
+            String note = request.getParameter("note");
 
-            HttpSession session = request.getSession();
-            Authentication auth = (Authentication) session.getAttribute("authLocal");
-            User cleaner = auth.getUser();
-
-            if (cleaner == null || cleaner.getUserId() == 0) {
-                response.sendRedirect("loadtohome#login-modal");
-                return;
-            }
-
-            CleaningHistoryDAO cleaningDAO = new CleaningHistoryDAO();
-            boolean success = cleaningDAO.startCleaning(roomId, cleaner.getUserId());
+            CleaningRequestDAO dao = new CleaningRequestDAO();
+            boolean success = dao.createRequest(bookingId, roomId, note);
 
             if (success) {
-                cleaningDAO.updateRoomStatus(roomId, "Cleaning");
-                session.setAttribute("successMessage", "Bắt đầu dọn phòng thành công.");
+                request.getSession().setAttribute("successMessage", "Yêu cầu dọn phòng thành công!");
+                response.sendRedirect("receptionistPage");
             } else {
-                session.setAttribute("errorMessage", "Không thể bắt đầu dọn phòng. Vui lòng thử lại.");
+                request.getSession().setAttribute("errorMessage", "Yêu cầu dọn phòng thất bại!");
+                response.sendRedirect("receptionistPage");
             }
+
         } catch (Exception e) {
             e.printStackTrace();
-            request.getSession().setAttribute("errorMessage", "Đã có lỗi xảy ra: " + e.getMessage());
+            request.getSession().setAttribute("errorMessage", "lỗi!");
+                response.sendRedirect("receptionistPage");
         }
-
-        response.sendRedirect("cleaningList");
     }
 
     @Override

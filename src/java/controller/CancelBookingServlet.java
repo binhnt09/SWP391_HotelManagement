@@ -4,16 +4,12 @@
  */
 package controller;
 
-import dao.CleaningHistoryDAO;
-import dao.RoomDAO;
-import entity.Authentication;
-import entity.User;
+import dao.BookingDao;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.PrintWriter;
 
@@ -21,9 +17,18 @@ import java.io.PrintWriter;
  *
  * @author viet7
  */
-@WebServlet(name = "StartCleaningServlet", urlPatterns = {"/startCleaning"})
-public class StartCleaningServlet extends HttpServlet {
+@WebServlet(name = "CancelBookingServlet", urlPatterns = {"/cancelBooking"})
+public class CancelBookingServlet extends HttpServlet {
 
+    /**
+     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
+     * methods.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
@@ -32,15 +37,24 @@ public class StartCleaningServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet StartCleaningServlet</title>");
+            out.println("<title>Servlet CancelBookingServlet</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet StartCleaningServlet at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet CancelBookingServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
     }
 
+    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
+    /**
+     * Handles the HTTP <code>GET</code> method.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -52,31 +66,23 @@ public class StartCleaningServlet extends HttpServlet {
             throws ServletException, IOException {
         try {
             int roomId = Integer.parseInt(request.getParameter("roomId"));
+            int bookingId = Integer.parseInt(request.getParameter("bookingId"));
 
-            HttpSession session = request.getSession();
-            Authentication auth = (Authentication) session.getAttribute("authLocal");
-            User cleaner = auth.getUser();
-
-            if (cleaner == null || cleaner.getUserId() == 0) {
-                response.sendRedirect("loadtohome#login-modal");
-                return;
-            }
-
-            CleaningHistoryDAO cleaningDAO = new CleaningHistoryDAO();
-            boolean success = cleaningDAO.startCleaning(roomId, cleaner.getUserId());
+            BookingDao dao = new BookingDao();
+            boolean success = dao.cancelBooking(bookingId, roomId);
 
             if (success) {
-                cleaningDAO.updateRoomStatus(roomId, "Cleaning");
-                session.setAttribute("successMessage", "Bắt đầu dọn phòng thành công.");
+                request.getSession().setAttribute("successMessage", "Cancel-Booking thành công!");
+                response.sendRedirect("receptionistPage");
             } else {
-                session.setAttribute("errorMessage", "Không thể bắt đầu dọn phòng. Vui lòng thử lại.");
+                request.getSession().setAttribute("errorMessage", "Cancel-Booking thất bại!");
+                response.sendRedirect("receptionistPage");
             }
         } catch (Exception e) {
             e.printStackTrace();
-            request.getSession().setAttribute("errorMessage", "Đã có lỗi xảy ra: " + e.getMessage());
+            request.getSession().setAttribute("errorMessage", "Cancel-Booking thất bại!");
+            response.sendRedirect("receptionistPage");
         }
-
-        response.sendRedirect("cleaningList");
     }
 
     @Override

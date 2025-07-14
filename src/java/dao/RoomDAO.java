@@ -5,6 +5,7 @@
 package dao;
 
 import dal.DBContext;
+import entity.BookingInfo;
 import entity.Hotel;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -14,9 +15,14 @@ import java.util.List;
 import entity.Room;
 import entity.RoomDetail;
 import entity.RoomImage;
+import entity.RoomInfo;
+import entity.RoomStats;
 import entity.RoomType;
+import java.math.BigDecimal;
 import java.sql.Statement;
 import java.sql.Date;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -542,6 +548,253 @@ public class RoomDAO extends DBContext {
         }
     }
 
+
+    public Map<Integer, List<RoomInfo>> getRoomsGroupedByFloor() {
+        Map<Integer, List<RoomInfo>> map = new LinkedHashMap<>();
+
+        String sql = """
+        WITH BookingCTE AS (
+            SELECT bd.RoomID, b.BookingID, b.CheckInDate, b.CheckOutDate, b.Status AS BookingStatus,
+                   u.FirstName, u.LastName,
+                   ROW_NUMBER() OVER (
+                       PARTITION BY bd.RoomID 
+                       ORDER BY 
+                           CASE     
+                               WHEN b.Status = 'Checked-in' THEN 1
+                               WHEN b.Status = 'Confirmed' THEN 2
+                               WHEN b.Status = 'Pending' THEN 3
+                               WHEN b.Status = 'Checked-out' THEN 4
+                               ELSE 99 -- các trạng thái khác ưu tiên thấp
+                           END,
+                           b.CheckInDate DESC
+                   ) AS rn
+            FROM BookingDetail bd
+            JOIN Booking b ON bd.BookingID = b.BookingID AND b.IsDeleted = 0
+            LEFT JOIN [User] u ON b.UserID = u.UserID
+            WHERE bd.IsDeleted = 0 AND CAST(b.CheckOutDate AS DATE) >= CAST(GETDATE() AS DATE) AND  b.Status IN ('Checked-in', 'Confirmed')
+        )
+
+        SELECT r.RoomID, r.RoomNumber, r.Status AS RoomStatus, r.Price,
+               rt.TypeName AS RoomType,
+               f.FloorNumber,
+               bc.BookingID, bc.CheckInDate, bc.CheckOutDate,
+               bc.BookingStatus,
+               bc.FirstName, bc.LastName
+        FROM Room r
+        JOIN Floor f ON r.FloorID = f.FloorID
+        JOIN RoomType rt ON r.RoomTypeID = rt.RoomTypeID
+        LEFT JOIN BookingCTE bc ON bc.RoomID = r.RoomID AND bc.rn = 1
+        WHERE r.IsDeleted = 0
+        ORDER BY f.FloorNumber, r.RoomNumber
+    """;
+
+        try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                RoomInfo room = new RoomInfo();
+                room.setRoomID(rs.getInt("RoomID"));
+                room.setRoomNumber(rs.getString("RoomNumber"));
+                room.setStatus(rs.getString("RoomStatus"));
+                room.setPrice(rs.getDouble("Price"));
+                room.setRoomType(rs.getString("RoomType"));
+                room.setFloorNumber(rs.getInt("FloorNumber"));
+
+                // Thông tin khách nếu có
+                String guestName = ((rs.getString("FirstName") != null ? rs.getString("FirstName") : "") + " "
+                        + (rs.getString("LastName") != null ? rs.getString("LastName") : "")).trim();
+                room.setGuestName(guestName.isBlank() ? null : guestName);
+                room.setCheckInDate(rs.getTimestamp("CheckInDate"));
+                room.setCheckOutDate(rs.getTimestamp("CheckOutDate"));
+                room.setBookingStatus(rs.getString("BookingStatus"));
+
+                int floor = rs.getInt("FloorNumber");
+                map.computeIfAbsent(floor, k -> new ArrayList<>()).add(room);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return map;
+    }
+
+    public List<BookingInfo> getAllBookingsByRoomId(int roomId) {
+        List<BookingInfo> list = new ArrayList<>();
+
+        String sql = """
+        SELECT b.BookingID, b.CheckInDate, b.CheckOutDate, b.Status,
+               u.FirstName, u.LastName
+        FROM BookingDetail bd
+        JOIN Booking b ON bd.BookingID = b.BookingID AND b.IsDeleted = 0
+        JOIN [User] u ON b.UserID = u.UserID AND u.IsDeleted = 0
+        WHERE bd.RoomID = ? AND bd.IsDeleted = 0 and CheckOutDate >= getdate()
+        ORDER BY b.CheckInDate DESC
+    """;
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, roomId);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                BookingInfo booking = new BookingInfo();
+                booking.setBookingID(rs.getInt("BookingID"));
+                booking.setCheckInDate(rs.getTimestamp("CheckInDate"));
+                booking.setCheckOutDate(rs.getTimestamp("CheckOutDate"));
+                booking.setStatus(rs.getString("Status"));
+
+                String fullName = ((rs.getString("FirstName") != null ? rs.getString("FirstName") : "") + " "
+                        + (rs.getString("LastName") != null ? rs.getString("LastName") : "")).trim();
+                booking.setGuestName(fullName);
+
+                list.add(booking);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return list;
+    }
+
+    public RoomInfo getRoomInfo(int roomId) {
+        String sql = """
+        SELECT r.RoomID, r.RoomNumber, r.Status, r.Price,
+               rt.TypeName AS RoomType,
+               f.FloorNumber
+        FROM Room r
+        JOIN RoomType rt ON r.RoomTypeID = rt.RoomTypeID
+        JOIN Floor f ON r.FloorID = f.FloorID
+        WHERE r.RoomID = ? AND r.IsDeleted = 0
+    """;
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, roomId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                RoomInfo room = new RoomInfo();
+                room.setRoomID(rs.getInt("RoomID"));
+                room.setRoomNumber(rs.getString("RoomNumber"));
+                room.setStatus(rs.getString("Status"));
+                room.setPrice(rs.getDouble("Price"));
+                room.setRoomType(rs.getString("RoomType"));
+                room.setFloorNumber(rs.getInt("FloorNumber"));
+                return room;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public boolean updateRoomStatus(int roomid, String status) {
+        String sql = "update room\n"
+                + "set status = ? \n"
+                + "where RoomID=?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, status);
+            ps.setInt(2, roomid);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            Logger.getLogger(CleaningHistoryDAO.class.getName()).log(Level.SEVERE, null, e);
+        }
+        return false;
+    }
+
+    public BigDecimal getRoomPrice(int roomId) {
+        String sql = "select Price from Room\n"
+                + "where RoomID = ?";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, roomId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getBigDecimal("Price");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return BigDecimal.ZERO;  // hoặc null hoặc tùy xử lý khi không có phòng
+    }
+
+    public RoomStats getRoomStats() {
+        RoomStats stats = new RoomStats();
+        String sql = """
+        -- Subquery 1: Room cơ bản
+        WITH RoomBase AS (
+            SELECT RoomID, Status
+            FROM Room
+            WHERE IsDeleted = 0
+        ),
+        
+        -- Subquery 2: Các phòng đang ở (Occupied)
+        OccupiedBookings AS (
+            SELECT DISTINCT r.RoomID,
+                b.CheckOutDate
+            FROM Room r
+            INNER JOIN BookingDetail bd ON r.RoomID = bd.RoomID
+            INNER JOIN Booking b ON bd.BookingID = b.BookingID
+            WHERE r.Status = 'Occupied'
+                AND b.IsDeleted = 0
+        		and b.Status = 'Checked-in'
+        ),
+        
+        -- Subquery 3: Các phòng Reserved (đặt chờ check-in)
+        ReservedBookings AS (
+            SELECT DISTINCT r.RoomID,
+                b.CheckInDate
+            FROM Room r
+            INNER JOIN BookingDetail bd ON r.RoomID = bd.RoomID
+            INNER JOIN Booking b ON bd.BookingID = b.BookingID
+            WHERE r.Status = 'Reserved'
+                AND b.IsDeleted = 0
+                AND b.Status = 'Confirmed'
+        )
+        
+        SELECT 
+            -- Tổng số phòng
+            (SELECT COUNT(*) FROM RoomBase) AS total,
+        
+            -- Đếm theo trạng thái
+            (SELECT COUNT(*) FROM RoomBase WHERE Status = 'Available') AS availableCount,
+            (SELECT COUNT(*) FROM RoomBase WHERE Status = 'Occupied') AS occupiedCount,
+            (SELECT COUNT(*) FROM RoomBase WHERE Status = 'Reserved') AS reservedCount,
+            (SELECT COUNT(*) FROM RoomBase WHERE Status = 'Checkout') AS checkoutCount,
+            (SELECT COUNT(*) FROM RoomBase WHERE Status = 'Cleaning') AS cleaningCount,
+            (SELECT COUNT(*) FROM RoomBase WHERE Status = 'Non-available') AS nonAvailableCount,
+        
+            -- Phòng đang ở, hôm nay là ngày checkout → cần checkout hôm nay
+            (SELECT COUNT(*) FROM OccupiedBookings 
+             WHERE CAST(CheckOutDate AS DATE) = CAST(GETDATE() AS DATE)) AS dueTodayCount,
+        
+            -- Phòng đang ở, quá hạn trả phòng
+            (SELECT COUNT(*) FROM OccupiedBookings 
+             WHERE CAST(CheckOutDate AS DATE) < CAST(GETDATE() AS DATE)) AS overdueCount,
+        
+            -- Phòng đặt trước, check-in hôm nay → chờ khách đến
+            (SELECT COUNT(*) FROM ReservedBookings 
+             WHERE CAST(CheckInDate AS DATE) = CAST(GETDATE() AS DATE)) AS waitingGuestCount
+    """;
+
+        try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                stats.setTotal(rs.getInt("total"));
+                stats.setAvailableCount(rs.getInt("availableCount"));
+                stats.setOccupiedCount(rs.getInt("occupiedCount"));
+                stats.setReservedCount(rs.getInt("reservedCount"));
+                stats.setCheckoutCount(rs.getInt("checkoutCount"));
+                stats.setCleaningCount(rs.getInt("cleaningCount"));
+                stats.setNonAvailableCount(rs.getInt("nonAvailableCount"));
+                stats.setDueTodayCount(rs.getInt("dueTodayCount"));
+                stats.setOverdueCount(rs.getInt("overdueCount"));
+                stats.setWaitingGuestCount(rs.getInt("waitingGuestCount"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return stats;
+    }
+
     private Room extractRoom(ResultSet rs) throws SQLException {
         Hotel hotel = new dao.HotelDAO().getHotelByID(rs.getInt("HotelID"));
         RoomDetail roomDetail = new dao.RoomDetailDAO().getRoomDetailByID(rs.getInt("RoomDetailID"));
@@ -561,5 +814,6 @@ public class RoomDAO extends DBContext {
         r.setDeletedBy(rs.getInt("DeletedBy"));
         r.setIsDeleted(rs.getBoolean("IsDeleted"));
         return r;
+
     }
 }

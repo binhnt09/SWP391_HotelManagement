@@ -5,7 +5,7 @@
 package controller;
 
 import dao.CleaningHistoryDAO;
-import dao.RoomDAO;
+import dao.CleaningRequestDAO;
 import entity.Authentication;
 import entity.User;
 import jakarta.servlet.ServletException;
@@ -21,8 +21,8 @@ import java.io.PrintWriter;
  *
  * @author viet7
  */
-@WebServlet(name = "StartCleaningServlet", urlPatterns = {"/startCleaning"})
-public class StartCleaningServlet extends HttpServlet {
+@WebServlet(name = "FinishCleaningServlet", urlPatterns = {"/finishCleaning"})
+public class FinishCleaningServlet extends HttpServlet {
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -32,10 +32,10 @@ public class StartCleaningServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet StartCleaningServlet</title>");
+            out.println("<title>Servlet FinishCleaningServlet</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet StartCleaningServlet at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet FinishCleaningServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -51,37 +51,51 @@ public class StartCleaningServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
-            int roomId = Integer.parseInt(request.getParameter("roomId"));
+            int roomId = request.getParameter("roomId") != null ? Integer.parseInt(request.getParameter("roomId")) : 0;
+            int requestId = request.getParameter("requestId") != null ? Integer.parseInt(request.getParameter("requestId")) : 0;
+            int cleaningId = Integer.parseInt(request.getParameter("cleaningId"));
+            String note = request.getParameter("note");
 
-            HttpSession session = request.getSession();
-            Authentication auth = (Authentication) session.getAttribute("authLocal");
-            User cleaner = auth.getUser();
+            HttpSession session = request.getSession(false);
+            Authentication auth = (session != null) ? (Authentication) session.getAttribute("authLocal") : null;
 
-            if (cleaner == null || cleaner.getUserId() == 0) {
+            if (auth == null) {
                 response.sendRedirect("loadtohome#login-modal");
                 return;
             }
 
+            User cleaner = auth.getUser();
+
             CleaningHistoryDAO cleaningDAO = new CleaningHistoryDAO();
-            boolean success = cleaningDAO.startCleaning(roomId, cleaner.getUserId());
+            CleaningRequestDAO requestDAO = new CleaningRequestDAO();
+
+            boolean success = false;
+            
+
+            if (requestId != 0) {
+                success = requestDAO.finishCleaning(requestId, cleaningId, note);
+            } else {
+                success = cleaningDAO.finishCleaning(roomId, cleaningId, note);
+            }
 
             if (success) {
-                cleaningDAO.updateRoomStatus(roomId, "Cleaning");
-                session.setAttribute("successMessage", "Bắt đầu dọn phòng thành công.");
+                session.setAttribute("successMessage", "Đã hoàn tất dọn phòng.");
             } else {
-                session.setAttribute("errorMessage", "Không thể bắt đầu dọn phòng. Vui lòng thử lại.");
+                session.setAttribute("errorMessage", "Không thể hoàn tất. Vui lòng thử lại.");
             }
+
         } catch (Exception e) {
             e.printStackTrace();
-            request.getSession().setAttribute("errorMessage", "Đã có lỗi xảy ra: " + e.getMessage());
+            request.getSession().setAttribute("errorMessage", "Lỗi: " + e.getMessage());
         }
 
         response.sendRedirect("cleaningList");
+
     }
 
     @Override
     public String getServletInfo() {
         return "Short description";
-    }// </editor-fold>
+    }
 
 }
