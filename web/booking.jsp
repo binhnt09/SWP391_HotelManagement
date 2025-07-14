@@ -181,7 +181,7 @@
                                             <span>Giá phòng</span>
                                             <span>${totalPrice} VND</span>
                                         </div>
-                                        <div class="text-muted small mb-2">${room.getRoomNumber()}-${room.getRoomTypeID().getTypeName()} (${numberNight} đêm)</div>
+                                        <div class="text-muted small mb-2">${room.getRoomNumber()}-${room.getRoomType().getTypeName()} (${numberNight} đêm)</div>
                                         <div class="d-flex justify-content-between mb-3">
 
                                         </div>
@@ -247,7 +247,7 @@
                                 </div>
                             </div>
 
-                            <div class="fw-bold mb-1">${room.getRoomNumber()}-${room.getRoomTypeID().getTypeName()}</div>
+                            <div class="fw-bold mb-1">${room.getRoomNumber()}-${room.getRoomType().getTypeName()}</div>
 
                             <div class="row small text-muted mb-3">
                                 <div class="col-6"><i class="fas fa-users"></i> ${room.roomDetail.maxGuest} khách</div>

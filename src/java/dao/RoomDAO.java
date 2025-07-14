@@ -172,19 +172,19 @@ public class RoomDAO extends DBContext {
             stmt.setInt(2, pageSize);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
-                Room r = new Room();
-                r.setRoomID(rs.getInt("RoomID"));
-                r.setRoomNumber(rs.getString("RoomNumber"));
-                r.setStatus(rs.getString("Status"));
-                r.setPrice(rs.getDouble("Price"));
-                r.setCreatedAt(rs.getTimestamp("CreatedAt"));
-                r.setRoomTypeID(new RoomType());
-                r.getRoomTypeID().setTypeName(rs.getString("TypeName"));
-                r.setRoomDetail(new RoomDetail());
-                r.getRoomDetail().setBedType(rs.getString("BedType"));
-                r.getRoomDetail().setArea(rs.getFloat("Area"));
-                r.getRoomDetail().setMaxGuest(rs.getInt("MaxGuest"));
-                list.add(r);
+                Hotel hotel = new dao.HotelDAO().getHotelByID(rs.getInt("HotelID"));
+                RoomDetail roomDetail = new dao.RoomDetailDAO().getRoomDetailByID(rs.getInt("RoomDetailID"));
+                RoomType roomType = new dao.RoomTypeDAO().getRoomTypeById(rs.getInt("RoomTypeID "));
+                list.add(new Room(rs.getInt("roomID"),
+                        rs.getString("roomNumber"),
+                        roomDetail, roomType,
+                        rs.getString("status"),
+                        rs.getDouble("price"), hotel,
+                        rs.getTimestamp("CreatedAt"),
+                        rs.getTimestamp("UpdatedAt"),
+                        rs.getTimestamp("DeletedAt"),
+                        rs.getInt("DeletedBy"),
+                        rs.getBoolean("IsDeleted")));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -223,19 +223,19 @@ public class RoomDAO extends DBContext {
             stmt.setInt(5, pageSize);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
-                Room r = new Room();
-                r.setRoomID(rs.getInt("RoomID"));
-                r.setRoomNumber(rs.getString("RoomNumber"));
-                r.setStatus(rs.getString("Status"));
-                r.setPrice(rs.getDouble("Price"));
-                r.setCreatedAt(rs.getTimestamp("CreatedAt"));
-                r.setRoomTypeID(new RoomType());
-                r.getRoomTypeID().setTypeName(rs.getString("TypeName"));
-                r.setRoomDetail(new RoomDetail());
-                r.getRoomDetail().setBedType(rs.getString("BedType"));
-                r.getRoomDetail().setArea(rs.getFloat("Area"));
-                r.getRoomDetail().setMaxGuest(rs.getInt("MaxGuest"));
-                list.add(r);
+                Hotel hotel = new dao.HotelDAO().getHotelByID(rs.getInt("HotelID"));
+                RoomDetail roomDetail = new dao.RoomDetailDAO().getRoomDetailByID(rs.getInt("RoomDetailID"));
+                RoomType roomType = new dao.RoomTypeDAO().getRoomTypeById(rs.getInt("RoomTypeID "));
+                list.add(new Room(rs.getInt("roomID"),
+                        rs.getString("roomNumber"),
+                        roomDetail, roomType,
+                        rs.getString("status"),
+                        rs.getDouble("price"), hotel,
+                        rs.getTimestamp("CreatedAt"),
+                        rs.getTimestamp("UpdatedAt"),
+                        rs.getTimestamp("DeletedAt"),
+                        rs.getInt("DeletedBy"),
+                        rs.getBoolean("IsDeleted")));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -272,33 +272,6 @@ public class RoomDAO extends DBContext {
             stmt.executeUpdate();
         } catch (Exception e) {
         }
-    }
-
-    public Room getRoomByRoomID(int id) {
-        String sql = "select * from Room where RoomID =?";
-        try {
-            PreparedStatement pre = connection.prepareStatement(sql);
-            pre.setInt(1, id);
-            ResultSet rs = pre.executeQuery();
-            if (rs.next()) {
-                Hotel hotel = new dao.HotelDAO().getHotelByID(rs.getInt("HotelID"));
-                RoomDetail roomDetail = new dao.RoomDetailDAO().getRoomDetailByID(rs.getInt("RoomDetailID"));
-                RoomType roomType = new dao.RoomTypeDAO().getRoomTypeById(rs.getInt("roomtypeid"));
-                return new Room(rs.getInt("roomID"),
-                        rs.getString("roomNumber"),
-                        roomDetail, roomType,
-                        rs.getString("status"),
-                        rs.getDouble("price"), hotel,
-                        rs.getTimestamp("CreatedAt"),
-                        rs.getTimestamp("UpdatedAt"),
-                        rs.getTimestamp("DeletedAt"),
-                        rs.getInt("DeletedBy"),
-                        rs.getBoolean("IsDeleted"));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return null;
     }
 
     public List<Room> getAllRoom() {
@@ -359,8 +332,7 @@ public class RoomDAO extends DBContext {
                 + "Description = ?, "
                 + "UpdatedAt = GETDATE() "
                 + "WHERE RoomDetailID = ( SELECT RoomDetailID FROM Room WHERE RoomID = ?);";
-        String deleteImageSql = "DELETE FROM RoomImage WHERE RoomDetailID = ?";
-        String insertImageSql = "INSERT INTO RoomImage (RoomDetailID, ImageURL, Caption, CreatedAt) "
+        String insertImageSql = "INSERT INTO RoomImage (RoomDetailID, ImageURL, Caption, updatedat) "
                 + "VALUES (?, ?, ?, GETDATE())";
 
         try {
@@ -370,7 +342,7 @@ public class RoomDAO extends DBContext {
             try (PreparedStatement roomPre = connection.prepareStatement(roomSql)) {
                 roomPre.setString(1, room.getRoomNumber());
                 roomPre.setString(2, room.getStatus());
-                roomPre.setInt(3, room.getRoomTypeID().getRoomTypeID());
+                roomPre.setInt(3, room.getRoomType().getRoomTypeID());
                 roomPre.setDouble(4, room.getPrice());
                 roomPre.setDouble(5, room.getRoomID());
                 roomPre.executeUpdate();
@@ -384,12 +356,7 @@ public class RoomDAO extends DBContext {
                 roomDetailPre.setInt(5, room.getRoomID());
                 roomDetailPre.executeUpdate();
             }
-            // Xóa ảnh cũ
-            try (PreparedStatement delImgPre = connection.prepareStatement(deleteImageSql)) {
-                delImgPre.setInt(1, room.getRoomDetail().getRoomDetailID());
-                delImgPre.executeUpdate();
-            }
-            
+
             // 3. Insert RoomImage (nếu có)
             if (listImgs != null && !listImgs.isEmpty()) {
                 try (PreparedStatement ps3 = connection.prepareStatement(insertImageSql)) {
@@ -402,7 +369,7 @@ public class RoomDAO extends DBContext {
                     ps3.executeBatch();
                 }
             }
-            
+
             connection.commit();
             return true;
         } catch (SQLException ex) {
@@ -482,7 +449,7 @@ public class RoomDAO extends DBContext {
             try (PreparedStatement ps2 = connection.prepareStatement(insertRoomSQL)) {
                 ps2.setString(1, room.getRoomNumber());
                 ps2.setInt(2, roomDetailID);
-                ps2.setInt(3, room.getRoomTypeID().getRoomTypeID());
+                ps2.setInt(3, room.getRoomType().getRoomTypeID());
                 ps2.setString(4, room.getStatus());
                 ps2.setDouble(5, room.getPrice());
                 ps2.setInt(6, room.getHotel().getHotelID());
@@ -524,5 +491,37 @@ public class RoomDAO extends DBContext {
         return false;
     }
 
+    public Room getRoomByRoomID(int id) {
+        String sql = "select * from Room where RoomID =?";
+        try {
+            PreparedStatement pre = connection.prepareStatement(sql);
+            pre.setInt(1, id);
+            ResultSet rs = pre.executeQuery();
+            if (rs.next()) {
+                Hotel hotel = new dao.HotelDAO().getHotelByID(rs.getInt("HotelID"));
+                RoomDetail roomDetail = new dao.RoomDetailDAO().getRoomDetailByID(rs.getInt("RoomDetailID"));
+                RoomType roomType = new dao.RoomTypeDAO().getRoomTypeById(rs.getInt("RoomTypeId"));
+                return new Room(rs.getInt("roomID"),
+                        rs.getString("roomNumber"),
+                        roomDetail, roomType,
+                        rs.getString("status"),
+                        rs.getDouble("price"), hotel,
+                        rs.getTimestamp("CreatedAt"),
+                        rs.getTimestamp("UpdatedAt"),
+                        rs.getTimestamp("DeletedAt"),
+                        rs.getInt("DeletedBy"),
+                        rs.getBoolean("IsDeleted"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static void main(String[] args) {
+        System.out.println(new dao.RoomTypeDAO().getRoomTypeById(1).getAmenity());
+        Room room = new dao.RoomDAO().getRoomByRoomID(1);
+        System.out.println(room.getRoomType().getAmenity());
+    }
 
 }

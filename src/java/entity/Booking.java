@@ -49,6 +49,7 @@ public class Booking {
         this.deletedBy = deletedBy;
         this.isDeleted = isDeleted;
     }
+
     public Booking(int bookingId, Integer voucherId, Timestamp bookingDate, Date checkInDate, Date checkOutDate, BigDecimal totalAmount, String status, Timestamp createdAt, Timestamp updatedAt, Timestamp deletedAt, Integer deletedBy, boolean isDeleted) {
         this.bookingId = bookingId;
         this.voucherId = voucherId;
@@ -63,6 +64,7 @@ public class Booking {
         this.deletedBy = deletedBy;
         this.isDeleted = isDeleted;
     }
+
 
     public int getBookingId() {
         return bookingId;

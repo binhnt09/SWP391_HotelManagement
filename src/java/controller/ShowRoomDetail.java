@@ -4,7 +4,9 @@
  */
 package controller;
 
+import com.google.gson.Gson;
 import entity.Room;
+import entity.RoomImage;
 import entity.RoomType;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -13,14 +15,17 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import validation.Validation;
 
 /**
  *
  * @author Admin
  */
-@WebServlet(name = "ManageRoom", urlPatterns = {"/manageroom"})
-public class ManageRoom extends HttpServlet {
+@WebServlet(name = "ShowRoomDetail", urlPatterns = {"/showroomdetail"})
+public class ShowRoomDetail extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -39,10 +44,10 @@ public class ManageRoom extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet ManageRoom</title>");
+            out.println("<title>Servlet ShowRoomDetail</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet ManageRoom at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet ShowRoomDetail at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -60,13 +65,27 @@ public class ManageRoom extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        List<Room> listRoom = new dao.RoomDAO().getListRoom(null, null, 0, 100000, 0, -1, "", "all", "", false, 4, 6, false);
-        List<RoomType> listRoomType = new dao.RoomTypeDAO().getListRoomType();
+        String roomId = request.getParameter("roomId");
+        int id = Validation.parseStringToInt(roomId);
 
-        request.setAttribute("listRoom", listRoom);
-        request.setAttribute("listRoomType", listRoomType);
-        request.setAttribute("numberRoom", listRoom.size());
-        request.getRequestDispatcher("manageroom.jsp").forward(request, response);
+        Room room = new dao.RoomDAO().getRoomByRoomID(id);
+        Map<String, Object> map = new HashMap<>();
+        map.put("room", room);
+        map.put("roomdetail", room.getRoomDetail());
+        List<RoomImage> tmp = new dao.RoomImageDAO().getListRoomImgByDetailID(room.getRoomDetail().getRoomDetailID());
+        if (tmp != null) {
+            map.put("roomimg", new dao.RoomImageDAO().getListRoomImgByDetailID(room.getRoomDetail().getRoomDetailID()));
+        }
+        map.put("roomtype", room.getRoomType());
+        map.put("roomstar", new dao.RoomReviewDAO().getAverageRatingByRoomId(id));
+
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        response.getWriter().write(new Gson().toJson(map));
+    }
+
+    public static void main(String[] args) {
+        System.out.println(new dao.RoomDAO().getRoomByRoomID(1).getRoomType().getDeletedAt());
     }
 
     /**

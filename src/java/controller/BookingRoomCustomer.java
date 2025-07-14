@@ -14,6 +14,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.sql.Date;
 import java.util.List;
 
 /**
@@ -65,8 +66,7 @@ public class BookingRoomCustomer extends HttpServlet {
         String action = request.getParameter("action");
         String roomIdRaw = request.getParameter("roomId");
         String roomDetailId = request.getParameter("bookRoomDetail");
-        
-        
+
         Authentication auth = (Authentication) request.getSession().getAttribute("authLocal");
         List<Booking> list = new BookingDao().getBookings(
                 5, // userRoleId
@@ -80,8 +80,21 @@ public class BookingRoomCustomer extends HttpServlet {
                 0,
                 false // isDeleted
         );
+        for(Booking b : list){
+            int roomId = new dao.BookingDetailDAO().getBookingDetailByBookingId(b.getBookingId()).getRoom().getRoomID();
+            request.setAttribute("rating_"+b.getBookingId(), new dao.RoomReviewDAO().getRatingByRoomId(roomId, b.getUserId()));
+        }
         request.setAttribute("listBooking", list);
         
+        if (action != null) {
+            switch (action.toLowerCase()) {
+                case "editbooking":
+                    editBooking(request, response);
+                    break;
+                default:
+                    response.sendError(HttpServletResponse.SC_NOT_FOUND);
+            }
+        }
 
         request.getRequestDispatcher("/views/profile/historybooking.jsp").forward(request, response);
     }
@@ -127,5 +140,19 @@ public class BookingRoomCustomer extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
+
+    private void editBooking(HttpServletRequest request, HttpServletResponse response) {
+        String bookingIdRaw = request.getParameter("roomId");
+        String roomIdRaw = request.getParameter("bookingId");
+        String bookRoomDetail = request.getParameter("bookRoomDetail");
+
+        String checkInraw = request.getParameter("bookCheckin");
+        String checkOutRaw = request.getParameter("bookCheckout");
+    
+        Date checkInDate = validation.Validation.parseStringToSqlDate(checkInraw, "yyyy-MM-dd");
+        Date checkOutDate = validation.Validation.parseStringToSqlDate(checkOutRaw, "yyyy-MM-dd");
+    
+        
+    }
 
 }

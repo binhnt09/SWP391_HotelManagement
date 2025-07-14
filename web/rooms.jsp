@@ -25,14 +25,12 @@
 
         <!-- Core Stylesheet -->
         <link rel="stylesheet" href="style.css">
-        <!--        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-                <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-                <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-                <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>-->
 
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
 
         <script src="${pageContext.request.contextPath}/assets/js/jquery.magnific-popup.min.js"></script>
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/magnific-popup.css">
@@ -71,6 +69,10 @@
                     width: 100%;
                     max-width: 1000px;
                 }
+                #avgRatingStars i {
+                    font-size: 1.2rem;
+                    color: gold;
+                }
             </style>
             <div class="book-now-area">
                 <div class="container">
@@ -103,12 +105,12 @@
 
                                         <div class="col-4 col-lg-4">
                                             <label style="font-weight: 600;">Nhập check-in:</label>
-                                            <input type="date" value="${checkin}" name="checkin" required=""  placeholder="Chọn ngày đến" class="form-control time-input" />
+                                            <input type="date" id="checkInDate" value="${checkin}" name="checkin" required=""  placeholder="Chọn ngày đến" class="form-control time-input" />
 
                                         </div>
                                         <div class="col-4 col-lg-4">
                                             <label style="font-weight: 600;">Nhập check-out:</label>
-                                            <input type="date" value="${checkout}" name="checkout" required=""  placeholder="Chọn ngày đến" class="form-control time-input"  />
+                                            <input type="date" id="checkOutDate" value="${checkout}" name="checkout" required=""  placeholder="Chọn ngày đến" class="form-control time-input"  />
                                         </div>
                                         <div class="col-3 col-lg-3">
                                             <label style="font-weight: 600;">Giá mỗi đêm:</label>
@@ -182,28 +184,16 @@
                             int roomDetailId = room.getRoomDetail().getRoomDetailID();
                             List<entity.RoomImage> roomImgList = new dao.RoomImageDAO().getListRoomImgByDetailID(roomDetailId);
                             pageContext.setAttribute("roomImgList", roomImgList);
+                            pageContext.setAttribute("roomId", room.getRoomID());
                         %>
                         <div class="col-12 col-md-6 col-lg-4 mb-5 d-flex align-items-stretch room-card"
                              data-roomid="${i.getRoomID()}"
                              data-roomnumber="${i.getRoomNumber()}"
                              data-price="${i.getPrice()}"
-                             data-roomtype="${i.getRoomTypeID().getRoomTypeID()}">
+                             data-roomtype="${i.getRoomType().getRoomTypeID()}">
                             <div class="single-rooms-area card shadow w-100 h-85" style="border: none;">
-                                <a href="#" onclick="showRoomDetail(this)" title="Click để xem chi tiết" 
-                                   data-bs-toggle="modal"
-                                   data-bs-target="#roomDetailModal"
-                                   data-roomID ="${i.getRoomID()}"
-                                   data-roomNumber ="${i.getRoomNumber()}"
-                                   data-roomPrice ="${i.price}"
-                                   data-type ="${i.getRoomTypeID().getTypeName()}"
-                                   data-bedType ="${i.getRoomDetail().getBedType()}"
-                                   data-area ="${i.getRoomDetail().getArea()}"
-                                   data-maxGuest ="${i.getRoomDetail().getMaxGuest()}"
-                                   data-description ="${i.getRoomDetail().getDescription()}"
-                                   data-img="${not empty roomImgList and roomImgList.size() > 0 ? roomImgList[0].imageURL : ''}"
-                                   data-img1="${not empty roomImgList and roomImgList.size() > 1 ? roomImgList[1].imageURL : ''}"
-                                   data-img2="${not empty roomImgList and roomImgList.size() > 2 ? roomImgList[2].imageURL : ''}"
-                                   data-img3="${not empty roomImgList and roomImgList.size() > 3 ? roomImgList[3].imageURL : ''}">
+                                <a href="#" onclick="showRoomDetail(this)" data-roomid="${i.roomID}"
+                                   title="Click để xem chi tiết" >
                                     <img src="${roomImgList[0].imageURL}" class="card-img-top img-fluid"
                                          style="height: 200px; object-fit: cover;" alt="Room Image">
                                 </a>
@@ -211,7 +201,7 @@
                                     <p class="price-from text-end mb-2" style="font-weight: bold; color: white;">
                                         From $${i.getPrice()}/night
                                     </p>
-                                    <h5 class="card-title">${i.getRoomNumber()} - ${i.getRoomTypeID().getTypeName()}</h5>
+                                    <h5 class="card-title">${i.getRoomNumber()} - ${i.getRoomType().getTypeName()}<div id="avgRatingStars_${i.getRoomID()}" class="mb-2 text-warning d-inline-block"></div></h5>
                                     <p class="card-text flex-grow-1">${i.getRoomDetail().getDescription()}</p>
                                     <a href="bookingroom?roomID=${i.getRoomID()}&checkin=${checkin}&checkout=${checkout}" class="btn palatin-btn mt-auto">Book Room</a>
                                 </div>
@@ -312,78 +302,286 @@
         </footer>
 
         <style>
+            * {
+                font-family: 'Inter', sans-serif;
+            }
+
+            .modal-dialog {
+                max-width: 1200px;
+                height: 90vh;
+            }
+
+            .modal-content {
+                height: 100%;
+            }
+
+            .modal-header {
+                border-bottom: none;
+                padding: 1.5rem 1.5rem 0;
+            }
+
+            .modal-title {
+                font-size: 1.5rem;
+                font-weight: 600;
+                color: #1a1a1a;
+            }
+
+            .modal-body {
+                overflow: hidden;
+                padding: 0;
+            }
+
+            .carousel-item img {
+                width: 100%;
+                height: 400px;
+                object-fit: cover;
+                border-radius: 8px;
+                display: block;
+            }
+
+            .carousel-control-prev,
+            .carousel-control-next {
+                width: 50px;
+                height: 50px;
+                background-color: rgba(255, 255, 255, 0.9);
+                border-radius: 50%;
+                top: 50%;
+                transform: translateY(-50%);
+            }
+
+            .carousel-control-prev-icon,
+            .carousel-control-next-icon {
+                filter: invert(1);
+            }
+
+            .room-thumbnails {
+                display: flex;
+                overflow-x: auto;
+                scroll-behavior: smooth;
+                gap: 8px;
+            }
+
+            .room-thumbnails::-webkit-scrollbar {
+                display: none;
+            }
+
+            .room-thumbnails img {
+                width: 80px;
+                height: 60px;
+                object-fit: cover;
+                border: 2px solid transparent;
+                cursor: pointer;
+                border-radius: 4px;
+                flex-shrink: 0;
+            }
+
+            .room-thumbnails img.active {
+                border: 2px solid #007bff;
+            }
+
+            .thumb-nav {
+                background-color: rgba(0, 0, 0, 0.3);
+                border: none;
+                color: white;
+                font-size: 20px;
+                padding: 4px 10px;
+                cursor: pointer;
+                position: absolute;
+                top: 50%;
+                transform: translateY(-50%);
+                z-index: 10;
+            }
+
+            .thumb-nav.left {
+                left: -10px;
+            }
+
+            .thumb-nav.right {
+                right: -10px;
+            }
+
+            .room-features {
+                max-height: 350px; /* hoặc 100% nếu bạn muốn nó co theo modal */
+                overflow-y: auto;
+                padding-right: 10px; /* tránh tràn chữ che thanh cuộn */
+            }
+
+            .feature-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 1rem;
+                margin-bottom: 2rem;
+            }
+
+            .feature-list {
+                list-style: none;
+                padding-left: 0;
+                margin: 0;
+            }
+
+            .feature-list li {
+                font-size: 0.95rem;
+                color: #4a4a4a;
+                padding-left: 1.25rem;
+                position: relative;
+                margin-bottom: 0.3rem;
+            }
+
+            .feature-list li::before {
+                content: "•";
+                position: absolute;
+                left: 0;
+                color: #666;
+            }
+
+            .room-title {
+                font-size: 1.1rem;
+                font-weight: 600;
+                color: #1a1a1a;
+                margin-bottom: 1rem;
+            }
+
+            .price {
+                font-size: 1.5rem;
+                font-weight: 700;
+                color: #ff6b35;
+                margin-bottom: 0.25rem;
+            }
+
+            .btn-book {
+                background-color: #0ea5e9;
+                border: none;
+                padding: 0.75rem 2rem;
+                font-size: 1rem;
+                font-weight: 600;
+                border-radius: 8px;
+                width: 100%;
+                margin-top: 1rem;
+            }
+
+            .btn-book:hover {
+                background-color: #0284c7;
+            }
             .custom-modal-width {
-                max-width: 75%; /* hoặc 1200px */
+                max-width: 70%;
+                height: 95vh; /* Tăng từ 90% lên 95% chiều cao màn hình */
+            }
+
+            .thumbnail-wrapper {
+                overflow: hidden;
+                width: 100%;
+            }
+
+            .room-thumbnails {
+                display: flex;
+                transition: transform 0.3s ease;
+                gap: 8px;
+            }
+
+            .room-thumbnails img {
+                height: 60px;
+                width: 18%;
+                cursor: pointer;
+                border: 2px solid transparent;
+                border-radius: 4px;
+                flex-shrink: 0;
+            }
+
+            .room-thumbnails img.active {
+                border-color: #007bff;
+            }
+            .modal-footer {
+                padding: 0.5rem 1rem;
+                min-height: 100px;
+                max-height: 180px;
+                overflow-y: auto;
+                background-color: #fff;
+                border-top: 1px solid #dee2e6;
             }
 
         </style>
+
         <!--CHI TIẾT PHÒNG-->
         <div class="modal fade" id="roomDetailModal" tabindex="-1" aria-labelledby="roomDetailLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg custom-modal-width">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="roomNumber"></h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <div class="d-flex align-items-center gap-2">
+                            <h5 class="modal-title mb-0" id="roomModalLabel"></h5>
+                            <div id="avgRatingStars" class="text-warning mb-0"></div>
+                        </div>
+                        <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <div class="row modal-body mainbody">
-                        <!-- Hình ảnh phòng -->
-                        <div class="col-6 ">
-                            <div id="roomCarousel" class="carousel slide mb-3">
-                                <div class="carousel-inner rounded">
-                                    <div class="carousel-item active">
-                                        <img id="imgDetail"
-                                             class="d-block w-100 rounded" style="height: 400px; object-fit: cover;" alt="Bedroom">
+                    <div class="modal-body p-0">
+                        <div class="row g-0">
+                            <!-- Image Carousel -->
+                            <div class="col-md-8">
+                                <!-- Carousel chính -->
+                                <div id="roomCarousel" class="carousel slide mb-3" data-bs-ride="carousel">
+                                    <div class="carousel-inner">
+                                        <!-- JS sẽ đẩy ảnh chính vào đây -->
                                     </div>
-                                    <div class="carousel-item">
-                                        <img id="imgDetail1"
-                                             class="d-block w-100 rounded" style="height: 400px; object-fit: cover;" alt="Bathroom">
+                                    <button class="carousel-control-prev" type="button" data-bs-target="#roomCarousel" data-bs-slide="prev">
+                                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                        <span class="visually-hidden">Previous</span>
+                                    </button>
+                                    <button class="carousel-control-next" type="button" data-bs-target="#roomCarousel" data-bs-slide="next">
+                                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                        <span class="visually-hidden">Next</span>
+                                    </button>
+                                </div>
+                            </div>
+                            <!-- Room Information -->
+                            <div class="col-md-4">
+                                <div class="room-features">
+                                    <div class="">
+                                        <div class="feature-section">
+                                            <input type="hidden" id="selectedRoomId" >
+                                            <h6 id="area"></h6>
+                                            <h6 id="numberPeople"></h6>
+                                        </div>
                                     </div>
-                                    <div class="carousel-item">
-                                        <img id="imgDetail2"
-                                             class="d-block w-100 rounded" style="height: 400px; object-fit: cover;" alt="Living Area">
+                                    <hr>
+                                    <div class="feature-section">
+                                        <h6>Tiện nghi phòng</h6>
+                                        <div class="feature-grid">
+                                            <div>
+                                                <ul id="amenity-left" class="feature-list"></ul>
+                                            </div>
+                                            <div>
+                                                <ul id="amenity-right" class="feature-list"></ul>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div class="carousel-item">
-                                        <img id="imgDetail3" 
-                                             class="d-block w-100 rounded" style="height: 400px; object-fit: cover;" alt="City View">
+                                    <div class="room-info">
+                                        <div class="room-title">Về phòng này</div>
+                                        <div class="mb-3" id="roomDetailDescription"></div>
+                                        <div id="avgRatingStars" class="text-warning"></div>
                                     </div>
                                 </div>
-                                <button class="carousel-control-prev" type="button" data-bs-target="#roomCarousel" data-bs-slide="prev">
-                                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                                    <span class="visually-hidden">Previous</span>
-                                </button>
-                                <button class="carousel-control-next" type="button" data-bs-target="#roomCarousel" data-bs-slide="next">
-                                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                                    <span class="visually-hidden">Next</span>
-                                </button>
                             </div>
                         </div>
-
-                        <!-- Thông tin chi tiết -->
-                        <div class="mainInfo col-6">
-                            <h3>Room Information</h3>
-                            <input type="hidden" id="typeID">
-                            <input type="hidden" id="roomID">
-
-                            <span>
-                                <i style="font-size: 28px;" class="fa-duotone fa-solid fa-chart-area"></i>
-                            </span> 
-                            <p id="area" style="margin-left: 10px;display: inline;"></p>
-                            <br>
-                            <i style="font-size: 25px;margin-top :8px;" class="fa-duotone fa-solid fa-people-group"></i>
-                            <p id="maxGuest" style="margin-left: 8px;display: inline;"></p>
-                            <hr style="width: 330px">
-
-                            <h3>Customer Benefits</h3>
-
-                            <div class="text-muted  lh-base fw-light" id="description" ></div>
-                            <div class="text-muted  lh-base fw-light" id="price" style="margin-top: 10px;"></div>
-                            <div class="text-muted  lh-base fw-light" id="bedType" style="margin-top: 10px"></div>
-
-                        </div>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-                        <a id="bookNowBtn" href="#" style="border-radius: 10px; background-color: #80bdff" class="btn theme_btn button_hover">Book Now</a>
+                    <div class="modal-footer justify-content-center p-2">
+                        <div class="row w-100">
+                            <div class="col-md-8 d-flex align-items-center">
+                                <button class="thumb-nav left btn btn-outline-secondary me-2">&lt;</button>
+                                <div class="thumbnail-wrapper flex-grow-1">
+                                    <div class="room-thumbnails" id="roomThumbnails">
+                                    </div>
+                                </div>
+                                <button class="thumb-nav right btn btn-outline-secondary ms-2">&gt;</button>
+                            </div>
+                            <div class="col-md-4 text-center mt-2 mt-md-0">
+                                <div class="price-section">
+                                    <div class="price-label">Khởi điểm từ:</div>
+                                    <div class="" style="color: red" id="detailPrice"></div>
+                                    <a href="bookingroom?roomID=${roomId}&checkin=${checkin}&checkout=${checkout}" class="btn btn-primary btn-book">
+                                        Booking now
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -408,53 +606,204 @@
 
 
         <script>
-                                $(document).ready(function () {
-                                    $('.single-rooms-area').hover(
-                                            function () {
-                                                $(this).css({
-                                                    'transform': 'scale(1.04)',
-                                                    'transition': 'transform 0.4s ease'
-                                                });
-                                            },
-                                            function () {
-                                                $(this).css('transform', 'scale(1)');
+
+//                                        document.querySelector('.thumb-nav.left').onclick = () => {
+//                                            document.getElementById('roomThumbnails').scrollBy({left: -100, behavior: 'smooth'});
+//                                        };
+//
+//                                        document.querySelector('.thumb-nav.right').onclick = () => {
+//                                            document.getElementById('roomThumbnails').scrollBy({left: 100, behavior: 'smooth'});
+//                                        };
+
+                                        let currentIndex = 0;
+                                        const visibleCount = 5;
+                                        const thumbWidth = 70;
+                                        let totalThumbs = 0;
+
+                                        document.querySelector('.thumb-nav.left').onclick = () => {
+                                            if (currentIndex > 0) {
+                                                currentIndex--;
+                                                updateThumbnailScroll();
                                             }
-                                    );
-                                });
-                                function showRoomDetail(info) {
-                                    let roomID = info.getAttribute("data-roomID");
-                                    let roomNumber = info.getAttribute("data-roomNumber");
-                                    let roomPrice = info.getAttribute("data-roomPrice");
-                                    let bedType = info.getAttribute("data-bedType");
-                                    let area = info.getAttribute("data-area");
-                                    let maxGuest = info.getAttribute("data-maxGuest");
-                                    let description = info.getAttribute("data-description");
-                                    let type = info.getAttribute("data-type");
+                                        };
 
-                                    let imgSrc = info.getAttribute("data-img");
-                                    let imgSrc1 = info.getAttribute("data-img1");
-                                    let imgSrc2 = info.getAttribute("data-img2");
-                                    let imgSrc3 = info.getAttribute("data-img3");
+                                        document.querySelector('.thumb-nav.right').onclick = () => {
+                                            if (currentIndex < totalThumbs - visibleCount) {
+                                                currentIndex++;
+                                                updateThumbnailScroll();
+                                            }
+                                        };
 
-                                    let bookNowBtn = document.getElementById("bookNowBtn");
-                                    bookNowBtn.href = "bookingroom?roomID=" + roomID + "&checkin=${checkin}&checkout=${checkout}";
+                                        function updateThumbnailScroll() {
+                                            const scrollDistance = currentIndex * thumbWidth;
+                                            document.getElementById('roomThumbnails').style.transform = `translateX(-${scrollDistance}px)`;
+                                        }
 
-                                    document.getElementById("roomNumber").innerHTML = roomNumber + "-" + type;
+                                        function showRoomDetail(element) {
+                                            const baseUrl = '${pageContext.request.contextPath}';
+                                            const roomId = element.dataset.roomid;
+                                            fetch(baseUrl + "/showroomdetail?roomId=" + roomId)
+                                                    .then(data => data.json())
+                                                    .then(data => {
+                                                        const room = data.room;
+                                                        const detail = data.roomdetail;
+                                                        const type = data.roomtype;
+                                                        const img = data.roomimg;
+                                                        const star = data.roomstar || 0;
+                                                        totalThumbs = img.length;
 
-                                    //IMG
-                                    document.getElementById("imgDetail").src = imgSrc;
-                                    document.getElementById("imgDetail").style.width = "400px";// Đổi chiều cao thành 200px
 
-                                    document.getElementById("imgDetail1").src = imgSrc1;
-                                    document.getElementById("imgDetail2").src = imgSrc2;
-                                    document.getElementById("imgDetail3").src = imgSrc3;
+                                                        console.log(room);
+                                                        console.log(detail);
+                                                        console.log(type);
+                                                        console.log(img);
+                                                        console.log(star);
+                                                        document.getElementById("selectedRoomId").value = roomId;
+                                                        document.getElementById("area").innerText = "Diện tích: " + detail.area;
+                                                        document.getElementById("numberPeople").innerText = "Số thành viên: " + detail.maxGuest;
+                                                        document.getElementById("roomDetailDescription").innerText = detail.description;
+                                                        document.getElementById("detailPrice").innerText = room.price + "VNĐ/Giờ/Ngày    ";
+                                                        document.getElementById("roomModalLabel").innerText = room.roomNumber + "-" + type.typeName;
 
-                                    //Room Info
-                                    document.getElementById("area").innerHTML = area + "m²";
-                                    document.getElementById("maxGuest").innerHTML = maxGuest + " People";
-                                    document.getElementById("description").innerHTML = "Description: " + description;
-                                    document.getElementById("bedType").innerHTML = "Bed type: " + bedType;
-                                    document.getElementById("price").innerHTML = "Giá mỗi đêm: $" + roomPrice + "/night";
-                                }
+                                                        renderStars("avgRatingStars", star);
+
+                                                        const amenities = type.amenity.split(",").map(a => a.trim());
+                                                        const half = Math.ceil(amenities.length / 2);
+                                                        const left = amenities.slice(0, half);
+                                                        const right = amenities.slice(half);
+
+                                                        const leftList = document.getElementById("amenity-left");
+                                                        const rightList = document.getElementById("amenity-right");
+
+                                                        leftList.innerHTML = "";
+                                                        rightList.innerHTML = "";
+
+                                                        left.forEach(item => {
+                                                            const li = document.createElement("li");
+                                                            li.textContent = item;
+                                                            leftList.appendChild(li);
+                                                        });
+
+                                                        right.forEach(item => {
+                                                            const li = document.createElement("li");
+                                                            li.textContent = item;
+                                                            rightList.appendChild(li);
+                                                        });
+
+                                                        const carouselInner = document.querySelector('#roomCarousel .carousel-inner');
+                                                        const thumbnailContainer = document.getElementById('roomThumbnails');
+                                                        carouselInner.innerHTML = '';
+                                                        thumbnailContainer.innerHTML = '';
+
+                                                        if (img.length > 0) {
+                                                            img.forEach((image, index) => {
+                                                                // Carousel item
+                                                                const itemDiv = document.createElement('div');
+                                                                itemDiv.className = 'carousel-item' + (index === 0 ? ' active' : '');
+
+                                                                const imgTag = document.createElement('img');
+                                                                imgTag.src = image.imageURL;
+                                                                imgTag.className = 'd-block w-100';
+                                                                imgTag.alt = `Room Image ${index + 1}`;
+                                                                itemDiv.appendChild(imgTag);
+                                                                carouselInner.appendChild(itemDiv);
+
+                                                                // Thumbnail
+                                                                const thumbImg = document.createElement('img');
+                                                                thumbImg.src = image.imageURL;
+                                                                thumbImg.alt = `Thumbnail ${index + 1}`;
+                                                                if (index === 0)
+                                                                    thumbImg.classList.add('active');
+                                                                thumbImg.addEventListener('click', () => {
+                                                                    const carousel = bootstrap.Carousel.getOrCreateInstance(document.getElementById('roomCarousel'));
+                                                                    carousel.to(index);
+
+                                                                    // Highlight thumbnail
+                                                                    document.querySelectorAll('#roomThumbnails img').forEach(img => img.classList.remove('active'));
+                                                                    thumbImg.classList.add('active');
+
+                                                                    // Nếu thumbnail này ngoài tầm nhìn thì tự cuộn đến
+                                                                    if (index < currentIndex) {
+                                                                        currentIndex = index;
+                                                                        updateThumbnailScroll();
+                                                                    } else if (index >= currentIndex + visibleCount) {
+                                                                        currentIndex = index - visibleCount + 1;
+                                                                        updateThumbnailScroll();
+                                                                    }
+                                                                });
+
+                                                                thumbnailContainer.appendChild(thumbImg);
+                                                            });
+                                                        }
+
+
+                                                    });
+                                            const modal = new bootstrap.Modal(document.getElementById('roomDetailModal'));
+                                            modal.show();
+                                        }
+
+
+                                        $(document).ready(function () {
+                                            $('.single-rooms-area').hover(
+                                                    function () {
+                                                        $(this).css({
+                                                            'transform': 'scale(1.04)',
+                                                            'transition': 'transform 0.4s ease'
+                                                        });
+                                                    },
+                                                    function () {
+                                                        $(this).css('transform', 'scale(1)');
+                                                    }
+                                            );
+                                        });
+
+                                        $(document).ready(function () {
+                                            document.querySelectorAll(".room-card").forEach(card => {
+                                                const roomId = card.dataset.roomid;
+                                                const baseUrl = '${pageContext.request.contextPath}';
+                                                fetch(baseUrl + "/showroomdetail?roomId=" + roomId)
+                                                        .then(response => response.json())
+                                                        .then(data => {
+                                                            const rating = data.roomstar || 0;
+                                                            renderStars("avgRatingStars_" + roomId, rating);
+                                                        });
+                                            });
+                                        });
+                                        function renderStars(containerId, star) {
+                                            const starContainer = document.getElementById(containerId);
+                                            if (!starContainer)
+                                                return;
+
+                                            starContainer.innerHTML = ""; // Xóa cũ
+
+                                            const fullStars = Math.floor(star);
+                                            const halfStar = (star - fullStars >= 0.5);
+                                            const emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
+
+                                            for (let i = 0; i < fullStars; i++) {
+                                                const starIcon = document.createElement("i");
+                                                starIcon.className = "bi bi-star-fill"; // Sao đầy
+                                                starContainer.appendChild(starIcon);
+                                            }
+
+                                            if (halfStar) {
+                                                const starIcon = document.createElement("i");
+                                                starIcon.className = "bi bi-star-half"; // Sao nửa
+                                                starContainer.appendChild(starIcon);
+                                            }
+
+                                            for (let i = 0; i < emptyStars; i++) {
+                                                const starIcon = document.createElement("i");
+                                                starIcon.className = "bi bi-star"; // Sao rỗng
+                                                starContainer.appendChild(starIcon);
+                                            }
+
+                                            const scoreText = document.createElement("span");
+                                            scoreText.className = "ms-2 text-dark";
+                                            scoreText.innerText = "(" + star.toFixed(1) + "/5)";
+                                            starContainer.appendChild(scoreText);
+                                        }
+
         </script>
+    </body>
 </html>
