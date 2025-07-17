@@ -5,6 +5,7 @@
 package controller;
 
 import com.google.gson.Gson;
+import entity.Amenity;
 import entity.Room;
 import entity.RoomImage;
 import entity.RoomType;
@@ -74,11 +75,14 @@ public class ShowRoomDetail extends HttpServlet {
         map.put("roomdetail", room.getRoomDetail());
         List<RoomImage> tmp = new dao.RoomImageDAO().getListRoomImgByDetailID(room.getRoomDetail().getRoomDetailID());
         if (tmp != null) {
-            map.put("roomimg", new dao.RoomImageDAO().getListRoomImgByDetailID(room.getRoomDetail().getRoomDetailID()));
+            map.put("roomimg", tmp);
         }
         map.put("roomtype", room.getRoomType());
         map.put("roomstar", new dao.RoomReviewDAO().getAverageRatingByRoomId(id));
-
+        Map<String, List<Amenity>> groupedAmenities = new dao.RoomTypeDAO().getAmenitiesGroupedByCategoryByRoomType(room.getRoomType().getRoomTypeID());
+        map.put("roomamenities", groupedAmenities);
+        
+        
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
         response.getWriter().write(new Gson().toJson(map));

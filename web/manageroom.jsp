@@ -41,7 +41,33 @@
         <script src="${pageContext.request.contextPath}/assets/js/jquery.magnific-popup.min.js"></script>
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/magnific-popup.css">
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/style.css">
+        <style>
+            * {
+                font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            }
 
+            body {
+                font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+                color: #1a1a1a;
+                -webkit-font-smoothing: antialiased;
+                -moz-osx-font-smoothing: grayscale;
+            }
+            /* Áp dụng font và màu cho toàn bộ modal content */
+            .modal-content {
+                font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif !important;
+                font-size: 14px !important;
+                color: #1a1a1a !important;
+            }
+
+
+            /* Áp dụng cho button trong modal nếu cần */
+            .modal-footer .btn {
+                font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif !important;
+            }
+
+        </style>
     </head>
     <body>
         <jsp:include page="common/header.jsp"></jsp:include>
@@ -222,7 +248,7 @@
                                             </a>
 
 
-                                            <a href="#" onclick="doDelete('${i.roomID}', '${i.roomNumber}');return false;" 
+                                            <a href="#" onclick="doDelete('${i.roomID}', '${i.roomNumber}'); return false;" 
                                                class="delete" 
                                                style="color: red;margin-left: 5px" 
                                                title="Delete Room" 
@@ -293,8 +319,8 @@
         </div>
 
         <div class="modal fade" id="editroom" tabindex="-1">
-            <div class="modal-dialog">
-                <form id="editRoomForm" method="post" action="roomcrud"  enctype="multipart/form-data">
+            <div class="modal-dialog custom-modal-width"> <!-- rộng hơn -->
+                <form id="editRoomForm" method="post" action="roomcrud" enctype="multipart/form-data">
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title">Edit Room</h5>
@@ -304,57 +330,67 @@
                             <input type="hidden" name="action" value="edit">
                             <input type="hidden" id="edit-roomID" name="roomID">
                             <input type="hidden" id="edit-roomDetail" name="roomDetail">
-                            <div class="mb-3">
-                                <label>Room Number</label>
-                                <input type="text" id="edit-roomNumber" name="roomNumber" class="form-control">
-                            </div>
-                            <div class="mb-3">
-                                <label>Room Type</label>
-                                <input type="text" id="edit-roomType" name="roomTypeID" class="form-control">
-                            </div>
-                            <div class="mb-3">
-                                <label>Bed Type</label>
-                                <input type="text" id="edit-bedType" name="bedType" class="form-control">
-                            </div>
-                            <div class="mb-3">
-                                <label>Status</label>
-                                <input type="text" id="edit-status" name="status" class="form-control">
-                            </div>
-                            <div class="mb-3">
-                                <label for="photos">Select Img:</label>
-                                <input type="file" name="photos" class="form-control" multiple accept="image/*">
-                            </div>
-                            <div class="mb-3">
-                                <label>Current Images:</label>
-                                <div id="edit-room-images" style="display: flex; flex-wrap: wrap; gap: 10px;">
-                                    <c:forEach var="img" items="${editRoomImages}">
-                                        <div style="position: relative;">
-                                            <img src="${img.imageURL}" style="width: 100px; height: 70px; object-fit: cover;">
-                                            <input type="checkbox" name="imagesToDelete" value="${img.imageID}" style="position: absolute; top: 0; right: 0;">
+                            <div class="row g-3">
+                                <!-- Cột trái -->
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label>Room Number</label>
+                                        <input type="text" id="edit-roomNumber" name="roomNumber" class="form-control">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label>Room Type</label>
+                                        <select id="edit-roomType" name="roomTypeID" class="form-control">
+                                            <c:forEach items="${listRoomType}" var="type">
+                                                <option value="${type.roomTypeID}">${type.typeName}</option>
+                                            </c:forEach>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label>Bed Type</label>
+                                        <input type="text" id="edit-bedType" name="bedType" class="form-control">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label>Status</label>
+                                        <input type="text" id="edit-status" readonly name="status" class="form-control">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label>Current Images:</label>
+                                        <div id="edit-room-images" style="display: flex; flex-wrap: wrap; gap: 10px;">
+                                            <c:forEach var="img" items="${editRoomImages}">
+                                                <div style="position: relative;">
+                                                    <img src="${img.imageURL}" style="width: 100px; height: 70px; object-fit: cover;">
+                                                    <input type="checkbox" name="imagesToDelete" value="${img.imageID}" style="position: absolute; top: 0; right: 0;">
+                                                </div>
+                                            </c:forEach>
                                         </div>
-                                    </c:forEach>
+                                        <small class="text-muted">Chọn ảnh để xóa</small>
+                                    </div>
                                 </div>
-                                <small class="text-muted">Chọn ảnh để xóa</small>
-                            </div>
 
-                            <div class="mb-3">
-                                <label>Description</label>
-                                <textarea id="edit-description" name="description" class="form-control"></textarea>
+                                <!-- Cột phải -->
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="photos">Select Img:</label>
+                                        <input type="file" name="photos" class="form-control" multiple accept="image/*">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label>Description</label>
+                                        <textarea id="edit-description" readonly name="description" class="form-control"></textarea>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label>Price</label>
+                                        <input type="number" id="edit-price" readonly name="price" class="form-control">
+                                    </div>
+                                    <!--                                    <div class="mb-3">
+                                                                            <label>Number Guest</label>
+                                                                            <input type="number" id="edit-maxGuest" readonly name="maxGuest" class="form-control">
+                                                                        </div>-->
+                                    <div class="mb-3">
+                                        <label>Area</label>
+                                        <input type="number" step="any" id="edit-area" readonly name="area" class="form-control">
+                                    </div>
+                                </div>
                             </div>
-                            <div class="mb-3">
-                                <label>Price</label>
-                                <input type="number" id="edit-price" name="price" class="form-control">
-                            </div>
-                            <div class="mb-3">
-                                <label>Number Guest</label>
-                                <input type="number" id="edit-maxGuest" name="maxGuest" class="form-control">
-                            </div>
-                            <div class="mb-3">
-                                <label>Area</label>
-                                <input type="number" step="any" id="edit-area" name="area" class="form-control">
-                            </div>
-
-
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -366,9 +402,15 @@
         </div>
 
 
+        <style>
+            .custom-modal-width {
+                max-width: 75%; /* hoặc 1200px */
+            }
+
+        </style>
         <!--Modal add room-->
         <div class="modal fade" id="addroom" tabindex="-1">
-            <div class="modal-dialog">
+            <div class="modal-dialog custom-modal-width">
                 <form id="addRoomForm" method="post" action="roomcrud" enctype="multipart/form-data">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -377,61 +419,69 @@
                         </div>
                         <div class="modal-body">
                             <input type="hidden" name="action" value="add">
-                            <div class="mb-3">
-                                <label>Room Number</label>
-                                <input type="text" id="edit-roomNumber" name="roomNumber" class="form-control">
-                            </div>
-                            <div class="mb-3">
-                                <label>Room Type</label>
-                                <select name="roomTypeID" class="form-select"   >
-                                    <option value="-1" >Select room type </option>
-                                    <c:forEach items="${listRoomType}" var="tmp">
-                                        <option value="${tmp.roomTypeID}">${tmp.typeName}</option>
-                                    </c:forEach>
-                                </select>
-                            </div>
-                            <div class="mb-3">
-                                <label>Bed Type</label>
-                                <input type="text" id="edit-bedType" name="bedType" class="form-control">
-                            </div>
-                            <div class="mb-3">
-                                <label>Status</label>
-                                <select name="status" class="form-select"   >
-                                    <option value="-1" >Select room status </option>
-                                    <option value="Available">Available</option>
-                                    <option value="Occupied">Occupied</option>
-                                    <option value="Reserved">Reserved</option>
-                                    <option value="Cleaning">Cleaning</option>
-                                    <option value="Non-available">Non-available</option>
-                                </select>
-                            </div>
-                            <div class="mb-3">
-                                <label>Hotel</label>
-                                <input type="text" id="edit-status" name="hotel" class="form-control">
-                            </div>
-                            <div class="mb-3">
-                                <label for="photos">Select Img:</label>
-                                <input type="file" name="photos" class="form-control" multiple accept="image/*">
-                            </div>
-                            <div class="mb-3">
-                                <label>Description</label>
-                                <textarea id="edit-description" name="description" class="form-control"></textarea>
-                            </div>
-                            <div class="mb-3">
-                                <label>Price</label>
-                                <input type="number" id="edit-price" name="price" class="form-control">
-                            </div>
-                            <div class="mb-3">
-                                <label>Number Guest</label>
-                                <input type="number" id="edit-maxGuest" name="maxGuest" class="form-control">
-                            </div>
-                            <div class="mb-3">
-                                <label>Area</label>
-                                <input type="number" step="any" id="edit-area" name="area" class="form-control">
-                            </div>
+                            <div class="row">
+                                <!-- Cột bên trái -->
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label>Room Number</label>
+                                        <input type="text" id="add-roomNumber" name="roomNumber" onblur="checkRoomNumber()" class="form-control">
+                                        <small id="roomNumberError" class="text-danger d-none">Room number already exists.</small>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label>Room Type</label>
+                                        <select name="roomTypeID" class="form-select">
+                                            <option value="-1">Select room type</option>
+                                            <c:forEach items="${listRoomType}" var="tmp">
+                                                <option value="${tmp.roomTypeID}">${tmp.typeName}</option>
+                                            </c:forEach>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label>Bed Type</label>
+                                        <input type="text" id="edit-bedType" name="bedType" class="form-control">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label>Status</label>
+                                        <select name="status" class="form-select">
+                                            <option value="-1">Select room status</option>
+                                            <option value="Available">Available</option>
+                                            <option value="Occupied">Occupied</option>
+                                            <option value="Reserved">Reserved</option>
+                                            <option value="Cleaning">Cleaning</option>
+                                            <option value="Non-available">Non-available</option>
+                                        </select>
+                                    </div>
+                                    <!--                                    <div class="mb-3">
+                                                                            <label>Hotel</label>
+                                                                            <input type="text" id="edit-status" name="hotel" class="form-control">
+                                                                        </div>-->
+                                </div>
 
-
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="photos">Select Img:</label>
+                                        <input type="file" name="photos" class="form-control" multiple accept="image/*">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label>Price</label>
+                                        <input type="number" id="edit-price" name="price" class="form-control">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label>Number Guest</label>
+                                        <input type="number" id="edit-maxGuest" name="maxGuest" class="form-control">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label>Area</label>
+                                        <input type="number" step="any" id="edit-area" name="area" class="form-control">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label>Description</label>
+                                        <textarea id="edit-description" name="description" class="form-control"></textarea>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
+
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                             <button type="submit" class="btn btn-primary">Add Room</button>
@@ -466,8 +516,9 @@
                                 <input type="number" name="numberPeople" id="numberPeople" class="form-control" required>
                             </div>
                             <div class="mb-3">
-                                <label>Amenity</label>
-                                <input type="text" name="amenity" id="amenity" class="form-control">
+                                <label>Amenities</label>
+                                <div id="amenity-container" class="border p-2 rounded" style="max-height: 200px; overflow-y: auto;"></div>
+                                <input type="hidden" name="amenityIds" id="amenityIds">
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -477,6 +528,93 @@
                     </div>
                 </form>
             </div>
+        </div>
+
+
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                const container = document.getElementById("amenity-container");
+                container.innerHTML = "";
+                const baseUrl = '${pageContext.request.contextPath}';
+
+                fetch(baseUrl + "/roomcrud?action=getAllAmenity")
+                        .then(response => response.json())
+                        .then(data => {
+                            for (const category in data) {
+                                const groupDiv = document.createElement("div");
+                                groupDiv.classList.add("mb-3");
+
+                                const title = document.createElement("strong");
+                                title.textContent = category;
+                                groupDiv.appendChild(title);
+
+                                const rowDiv = document.createElement("div");
+                                rowDiv.classList.add("row", "mt-2");
+
+                                data[category].forEach((item, index) => {
+                                    const colDiv = document.createElement("div");
+                                    colDiv.classList.add("col-md-6");
+
+                                    const checkboxDiv = document.createElement("div");
+                                    checkboxDiv.classList.add("form-check");
+
+                                    const checkbox = document.createElement("input");
+                                    checkbox.type = "checkbox";
+                                    checkbox.className = "form-check-input amenity-checkbox";
+                                    checkbox.id = "amenity-" + item.amenityId;
+                                    checkbox.value = item.amenityId;
+                                    checkbox.dataset.name = item.name;
+
+                                    const label = document.createElement("label");
+                                    label.className = "form-check-label";
+                                    label.htmlFor = checkbox.id;
+                                    label.textContent = item.name;
+
+                                    checkboxDiv.appendChild(checkbox);
+                                    checkboxDiv.appendChild(label);
+                                    colDiv.appendChild(checkboxDiv);
+                                    rowDiv.appendChild(colDiv);
+                                });
+
+                                groupDiv.appendChild(rowDiv);
+                                container.appendChild(groupDiv);
+                            }
+                            container.addEventListener("change", () => {
+                                const checkedBoxes = container.querySelectorAll(".amenity-checkbox:checked");
+                                const selectedIds = Array.from(checkedBoxes).map(cb => cb.value);
+                                document.getElementById("amenityIds").value = selectedIds.join(",");
+                            });
+                        });
+            });
+        </script>
+
+
+
+
+        <div id="imageModal" style="
+             display: none;
+             position: fixed;
+             z-index: 9999;
+             left: 0;
+             top: 0;
+             width: 100%;
+             height: 100%;
+             overflow: auto;
+             background-color: rgba(0,0,0,0.8);
+             align-items: center;
+             justify-content: center;
+             ">
+            <span id="closeModal" style="
+                  position: absolute;
+                  top: 20px;
+                  right: 30px;
+                  color: white;
+                  font-size: 30px;
+                  font-weight: bold;
+                  cursor: pointer;
+                  ">&times;</span>
+
+            <img id="modalImage" class="img-fluid" style="max-width: 100%; max-height: 90vh; object-fit: contain; margin: auto; display: block;">
         </div>
 
         <c:if test="${not empty openTab}">
@@ -489,12 +627,36 @@
             </script>
         </c:if>
 
+
         <script>
             function doDelete(id, name) {
                 if (confirm("Are you sure to delete roomName :" + name)) {
-                    window.location = "roomcrud?action=delete&roomId=" + id;//deletelesson là tên của link servlet để nó nhận doGet
+                    window.location = "roomcrud?action=delete&roomId=" + id; //deletelesson là tên của link servlet để nó nhận doGet
                 }
             }
+
+
+            function checkRoomNumber() {
+                const roomNumber = document.getElementById("add-roomNumber").value.trim();
+                if (!roomNumber)
+                    return;
+                const baseUrl = '${pageContext.request.contextPath}';
+                fetch(baseUrl + "/roomcrud?action=checkRoomNumber&roomNumber=" + roomNumber)
+                        .then(response => response.json())
+                        .then(data => {
+                            console.log(data.exists);
+                            const errorEl = document.getElementById("roomNumberError");
+                            if (data.exists) {
+                                errorEl.classList.remove("d-none");
+                                document.getElementById("add-roomNumber").classList.add("is-invalid");
+                            } else {
+                                errorEl.classList.add("d-none");
+                                document.getElementById("add-roomNumber").classList.remove("is-invalid");
+                            }
+                        })
+                        .catch(error => console.error("Error:", error));
+            }
+
 
             function openEditRoomModal(element) {
                 const baseUrl = '${pageContext.request.contextPath}';
@@ -519,10 +681,10 @@
                             document.getElementById('edit-bedType').value = detail.bedType;
                             document.getElementById('edit-description').value = detail.description;
                             document.getElementById('edit-price').value = room.price;
-                            document.getElementById('edit-maxGuest').value = detail.maxGuest;
+                            document.getElementById('edit-maxGuest').value = type.numberPeople;
                             document.getElementById('edit-area').value = detail.area;
 
-                            return fetch(baseUrl +"/roomcrud?action=getImages&roomId="+roomId);
+                            return fetch(baseUrl + "/roomcrud?action=getImages&roomId=" + roomId);
                         })
                         .then(res => res.json())
                         .then(images => {
@@ -542,6 +704,13 @@
                                 image.style.width = '100px';
                                 image.style.height = '70px';
                                 image.style.objectFit = 'cover';
+
+                                image.addEventListener("click", () => {
+                                    const modal = document.getElementById("imageModal");
+                                    const modalImg = document.getElementById("modalImage");
+                                    modalImg.src = image.src;
+                                    modal.style.display = "flex";
+                                });
 
                                 const checkbox = document.createElement('input');
                                 checkbox.type = 'checkbox';
@@ -586,7 +755,6 @@
                 window.location = "roomcrud?action=deleteMultiple&" + queryString;
             }
 
-            // Select all functionality
             document.querySelector('thead input[type="checkbox"]').addEventListener('change', function () {
                 const checkboxes = document.querySelectorAll('tbody input[type="checkbox"]');
                 checkboxes.forEach(checkbox => {
@@ -599,7 +767,6 @@
                 });
             });
 
-            // Individual checkbox functionality
             document.querySelectorAll('tbody input[type="checkbox"]').forEach(checkbox => {
                 checkbox.addEventListener('change', function () {
                     if (this.checked) {
@@ -630,6 +797,18 @@
                     $('#modalSubmitBtn').text('Update');
             }
             }
+            document.getElementById("closeModal").addEventListener("click", () => {
+                document.getElementById("imageModal").style.display = "none";
+            });
+
+            document.getElementById("imageModal").addEventListener("click", (e) => {
+                const modalImage = document.getElementById("modalImage");
+                if (!modalImage.contains(e.target)) {
+                    document.getElementById("imageModal").style.display = "none";
+                }
+            });
+
+
         </script>
     </body>
 </html>

@@ -83,7 +83,7 @@ public class SearchRoom extends HttpServlet {
         
         List<Room> listRoom = new dao.RoomDAO().getListRoom(checkin, checkout, 
                 priceFrom, priceTo, numberPeople, 
-                roomType, "", "Available", "", 
+                roomType, "", "all", "", 
                 false, 4, 6, false);
         request.setAttribute("listRoom", listRoom);
         request.setAttribute("listRoomType", new dao.RoomTypeDAO().getListRoomType());

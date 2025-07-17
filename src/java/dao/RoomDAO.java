@@ -5,6 +5,8 @@
 package dao;
 
 import dal.DBContext;
+import entity.Amenity;
+import entity.AmenityCategory;
 import entity.BookingInfo;
 import entity.Hotel;
 import java.sql.PreparedStatement;
@@ -31,6 +33,21 @@ import java.util.logging.Logger;
  * @author Admin
  */
 public class RoomDAO extends DBContext {
+    
+    public boolean checkRoomNumberIsExist(String roomNumber){
+        String sql = "SELECT COUNT(*) FROM Room WHERE roomNumber = ?";
+        try(PreparedStatement ps = connection.prepareStatement(sql)){
+             ps.setString(1, roomNumber);
+        ResultSet rs = ps.executeQuery();
+        if (rs.next()) {
+            return rs.getInt(1) > 0;
+        }
+        }catch(SQLException e){
+            e.printStackTrace();
+        }
+        return false;
+    }
+    
 
     public List<Room> getListRoom(Date checkin, Date checkout,
             double from, double to,
@@ -290,26 +307,28 @@ public class RoomDAO extends DBContext {
             pre.setInt(1, id);
             ResultSet rs = pre.executeQuery();
             if (rs.next()) {
+                Room room = new Room();
                 Hotel hotel = new dao.HotelDAO().getHotelByID(rs.getInt("HotelID"));
                 RoomDetail roomDetail = new dao.RoomDetailDAO().getRoomDetailByID(rs.getInt("RoomDetailID"));
                 RoomType roomType = new dao.RoomTypeDAO().getRoomTypeById(rs.getInt("roomtypeid"));
-                return new Room(rs.getInt("roomID"),
-                        rs.getString("roomNumber"),
-                        roomDetail, roomType,
-                        rs.getString("status"),
-                        rs.getDouble("price"), hotel,
-                        rs.getTimestamp("CreatedAt"),
-                        rs.getTimestamp("UpdatedAt"),
-                        rs.getTimestamp("DeletedAt"),
-                        rs.getInt("DeletedBy"),
-                        rs.getBoolean("IsDeleted"));
+                room.setRoomID(rs.getInt("roomID"));
+                room.setRoomNumber(rs.getString("roomNumber"));
+                room.setRoomDetail(roomDetail);
+                room.setRoomType(roomType);
+                room.setStatus(rs.getString("status"));
+                room.setPrice(rs.getDouble("price"));
+                room.setHotel(hotel);
 
+                
+                return room;
             }
         } catch (SQLException e) {
             Logger.getLogger(RoomDAO.class.getName()).log(Level.SEVERE, null, e);
         }
         return null;
     }
+
+    
 
     public Room getRoomByIdDetail(int id) {
         String sql = "SELECT r.*, bd.RoomID FROM Room r JOIN BookingDetail bd ON r.RoomID = bd.RoomID WHERE r.RoomID = ?";
@@ -506,7 +525,7 @@ public class RoomDAO extends DBContext {
             try (PreparedStatement ps2 = connection.prepareStatement(insertRoomSQL)) {
                 ps2.setString(1, room.getRoomNumber());
                 ps2.setInt(2, roomDetailID);
-                ps2.setInt(3, room.getRoomTypeID().getRoomTypeID());
+                ps2.setInt(3, room.getRoomType().getRoomTypeID());
                 ps2.setString(4, room.getStatus());
                 ps2.setDouble(5, room.getPrice());
                 ps2.setInt(6, room.getHotel().getHotelID());
@@ -547,7 +566,6 @@ public class RoomDAO extends DBContext {
             return false;
         }
     }
-
 
     public Map<Integer, List<RoomInfo>> getRoomsGroupedByFloor() {
         Map<Integer, List<RoomInfo>> map = new LinkedHashMap<>();

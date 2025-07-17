@@ -5,12 +5,16 @@
 package dao;
 
 import dal.DBContext;
+import entity.Amenity;
+import entity.AmenityCategory;
 import entity.RoomType;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -75,7 +79,7 @@ public class RoomTypeDAO extends DBContext {
 
     public boolean updateRoomType(RoomType type) {
         String sql = "UPDATE RoomType SET TypeName = ?, description = ?, imageurl = ?, numberPeople = ?, amenity = ?, UpdatedAt = GETDATE() WHERE RoomTypeID = ?";
-        try (PreparedStatement ps = connection.prepareStatement(sql);){
+        try (PreparedStatement ps = connection.prepareStatement(sql);) {
             ps.setString(1, type.getTypeName());
             ps.setString(2, type.getDescription());
             ps.setString(3, type.getImageUrl());
@@ -87,6 +91,50 @@ public class RoomTypeDAO extends DBContext {
             e.printStackTrace();
         }
         return false;
+    }
+
+    public List<Amenity> getAmenitiesByRoomTypeId(int roomTypeId) {
+        List<Amenity> list = new ArrayList<>();
+        String sql = "SELECT a.AmenityID, a.Name, c.CategoryID, c.CategoryName "
+                + "FROM RoomTypeAmenity rta "
+                + "JOIN Amenity a ON rta.AmenityID = a.AmenityID "
+                + "JOIN AmenityCategory c ON a.CategoryID = c.CategoryID "
+                + "WHERE rta.RoomTypeID = ?";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, roomTypeId);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                AmenityCategory category = new AmenityCategory();
+                category.setCategoryId(rs.getInt("CategoryID"));
+                category.setCategoryName(rs.getString("CategoryName"));
+
+                Amenity a = new Amenity();
+                a.setAmenityId(rs.getInt("AmenityID"));
+                a.setName(rs.getString("Name"));
+                a.setCategory(category);
+
+                list.add(a);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return list;
+    }
+
+    public void addAmenitiesToRoomType(int roomTypeId, List<Integer> amenityIds) {
+        String sql = "INSERT INTO RoomTypeAmenity (RoomTypeID, AmenityID) VALUES (?, ?)";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            for (int amenityId : amenityIds) {
+                ps.setInt(1, roomTypeId);
+                ps.setInt(2, amenityId);
+                ps.addBatch();  // dùng batch để tối ưu
+            }
+            ps.executeBatch();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     public boolean addNewRoomType(String typeName, int numberPeople, String amenity, String description) {
@@ -103,6 +151,90 @@ public class RoomTypeDAO extends DBContext {
             e.printStackTrace();
         }
         return false;
+    }
+
+    public int getLatestRoomTypeId() {
+        String sql = "SELECT MAX(RoomTypeID) AS MaxID FROM RoomType";
+        try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                return rs.getInt("MaxID");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return -1;
+    }
+
+    
+    public void deleteAmenitiesByRoomType(int roomTypeId) {
+        String sql = "DELETE FROM RoomTypeAmenity WHERE RoomTypeID = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, roomTypeId);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public Map<String, List<Amenity>> getAmenitiesGroupedByCategoryByRoomType(int roomTypeId) {
+        String sql = "SELECT ac.CategoryID, ac.CategoryName, a.AmenityID, a.Name "
+                + "FROM RoomTypeAmenity rta "
+                + "JOIN Amenity a ON rta.AmenityID = a.AmenityID "
+                + "JOIN AmenityCategory ac ON a.CategoryID = ac.CategoryID "
+                + "WHERE rta.RoomTypeID = ? "
+                + "ORDER BY ac.CategoryID, a.Name";
+
+        Map<String, List<Amenity>> grouped = new LinkedHashMap<>();
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, roomTypeId);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                String categoryName = rs.getString("CategoryName");
+
+                Amenity a = new Amenity();
+                a.setAmenityId(rs.getInt("AmenityID"));
+                a.setName(rs.getString("Name"));
+
+                AmenityCategory category = new AmenityCategory();
+                category.setCategoryId(rs.getInt("CategoryID"));
+                category.setCategoryName(categoryName);
+                a.setCategory(category);
+
+                grouped.computeIfAbsent(categoryName, k -> new ArrayList<>()).add(a);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return grouped;
+    }
+
+    public Map<String, List<Amenity>> getAmenitiesGroupedByCategory() {
+        Map<String, List<Amenity>> result = new LinkedHashMap<>();
+        String sql = "SELECT a.AmenityID, a.Name, ac.CategoryName "
+                + "FROM Amenity a JOIN AmenityCategory ac ON a.CategoryID = ac.CategoryID "
+                + "ORDER BY ac.CategoryName, a.Name";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                int id = rs.getInt("AmenityID");
+                String name = rs.getString("Name");
+                String categoryName = rs.getString("CategoryName");
+
+                Amenity amenity = new Amenity();
+                amenity.setAmenityId(id);
+                amenity.setName(name);
+
+                // Nhóm theo CategoryName
+                result.computeIfAbsent(categoryName, k -> new ArrayList<>()).add(amenity);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return result;
     }
 
 }
