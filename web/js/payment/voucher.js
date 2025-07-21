@@ -71,3 +71,73 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 });
 
+//memeber ship check box
+document.addEventListener("DOMContentLoaded", function () {
+    const dropdownButton = document.getElementById('memberDropdown');
+    const checkboxes = document.querySelectorAll('.member-checkbox');
+
+    function updateSelectedLevels() {
+        const selectedValues = [];
+        const selectedLabels = [];
+
+        checkboxes.forEach(checkbox => {
+            if (checkbox.checked) {
+                selectedValues.push(checkbox.value);
+                selectedLabels.push(checkbox.getAttribute('data-name'));
+            }
+        });
+        dropdownButton.innerText = selectedValues.length > 0
+                ? selectedLabels.join(", ") : "Select Level";
+        document.getElementById('memberShipId').value = selectedValues.join(", ");
+    }
+
+    checkboxes.forEach(cb => {
+        cb.addEventListener('change', updateSelectedLevels);
+    });
+
+    updateSelectedLevels();
+});
+
+//constant valid date from and to
+const fromInput = document.getElementById("validfrom");
+const toInput = document.getElementById("validto");
+const today = new Date().toISOString().split("T")[0]; // yyyy-MM-dd, toISOString(): "2025-07-07T14:00:00.000Z"
+
+// Set max for fromDate = today
+fromInput.setAttribute("max", today);
+
+fromInput.addEventListener("change", () => {
+    const fromValue = fromInput.value;
+
+    if (fromValue > today) {
+        alert("Ngày bắt đầu không được lớn hơn ngày hiện tại.");
+        fromInput.value = "";
+        return;
+    }
+
+    // Set min for toDate based on fromDate
+    toInput.setAttribute("min", fromValue);
+
+    if (!toInput.value) {
+        toInput.value = today;
+    }
+
+    filterByCustomDate();
+});
+
+toInput.addEventListener("change", () => {
+    const fromValue = fromInput.value;
+    const toValue = toInput.value;
+
+    if (!fromValue) {
+        alert("Vui lòng chọn ngày bắt đầu trước.");
+        toInput.value = "";
+        return;
+    }
+    if (toValue < fromValue) {
+        alert("Ngày kết thúc không được nhỏ hơn ngày bắt đầu.");
+        toInput.value = "";
+        return;
+    }
+    filterByCustomDate();
+});

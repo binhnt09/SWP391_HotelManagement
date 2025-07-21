@@ -545,12 +545,12 @@ public class BookingDao extends DBContext {
             connection.commit();
             return true;
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (SQLException e) {
+            Logger.getLogger(BookingDao.class.getName()).log(Level.SEVERE, null, e);
             try {
                 connection.rollback(); // rollback nếu có lỗi
             } catch (SQLException ex) {
-                ex.printStackTrace();
+                Logger.getLogger(BookingDao.class.getName()).log(Level.SEVERE, null, ex);
             }
             return false;
         } finally {
@@ -560,7 +560,7 @@ public class BookingDao extends DBContext {
                 }
                 connection.setAutoCommit(true); // reset lại auto commit sau khi xong
             } catch (SQLException e) {
-                e.printStackTrace();
+                Logger.getLogger(BookingDao.class.getName()).log(Level.SEVERE, null, e);
             }
         }
     }
@@ -613,9 +613,9 @@ public class BookingDao extends DBContext {
             try {
                 connection.rollback();
             } catch (SQLException rollbackEx) {
-                rollbackEx.printStackTrace();
+                Logger.getLogger(BookingDao.class.getName()).log(Level.SEVERE, null, rollbackEx);
             }
-            e.printStackTrace();
+            Logger.getLogger(BookingDao.class.getName()).log(Level.SEVERE, null, e);
         }
         return false;
     }

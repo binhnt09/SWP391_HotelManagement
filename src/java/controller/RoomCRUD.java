@@ -221,9 +221,6 @@ public class RoomCRUD extends HttpServlet {
         request.setAttribute("numberRoom", listRoom.size());
         request.setAttribute("listRoomType", new dao.RoomTypeDAO().getListRoomType());
         //CẦN SỬA KHI KHÔNG UPDATE ĐƯỢC
-        if (checkUpdate) {
-            request.getRequestDispatcher("manageroom.jsp").forward(request, response);
-        }
 
         String[] imageIdRaw = request.getParameterValues("imagesToDelete");
         List<RoomImage> imgsToDelete = new ArrayList<>();
@@ -253,6 +250,9 @@ public class RoomCRUD extends HttpServlet {
 
             // Xóa bản ghi DB
             new dao.RoomImageDAO().deleteRoomImages(imageIds);
+            if (checkUpdate) {
+                request.getRequestDispatcher("manageroom.jsp").forward(request, response);
+            }
         }
     }
 

@@ -4,11 +4,12 @@
     Author     : viet7
 --%>
 
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <nav id="sidebar">
     <div class="sidebar-header">
         <h3>
             <a href="loadtohome">
-                <img src="image/Logo.png" class="img-fluid"/>
+                <img src="${pageContext.request.contextPath}/img/core-img/favicon.ico" class="img-fluid"/>
                 <b>Royal Hotel</b>
             </a>
         </h3>
@@ -73,25 +74,27 @@
         </li>
         
         <!-- Receptionist page -->
-        <li>
+        <li class="${pageContext.request.requestURI.endsWith('roommap.jsp') ? 'active' : ''}">
             <a href="receptionistPage">
                 <i class="material-icons">square</i>Room Map
             </a>
         </li>
 
         <!-- Cleaning List -->
-        <li>
+        <li class="${pageContext.request.requestURI.endsWith('cleaning-list.jsp') ? 'active' : ''}">
             <a href="cleaningList">
                 <i class="material-icons">square</i>Cleaner
             </a>
         </li>
 
         <!-- Promotion Management -->
-        <li>
+        <c:if test="${sessionScope.authLocal.user.userRoleId == 2}">
+        <li class="${pageContext.request.requestURI.endsWith('managevoucher.jsp') ? 'active' : ''}">
             <a href="${pageContext.request.contextPath}/vouchermanage">
                 <i class="material-icons">local_offer</i>Promotion
             </a>
         </li>
+        </c:if>
 
         <!-- Booking -->
         <li>

@@ -5,7 +5,6 @@
 package entity;
 
 import java.sql.Timestamp;
-import java.sql.Timestamp;
 
 /**
  *

@@ -310,7 +310,12 @@
                             </div>
                             <div class="mb-3">
                                 <label>Room Type</label>
-                                <input type="text" id="edit-roomType" name="roomTypeID" class="form-control">
+                                <select id="edit-roomType" name="roomTypeID" class="form-control">
+                                    <c:forEach items="${listRoomType}" var="type">
+                                        <option value="${type.roomTypeID}">${type.typeName}</option>
+                                    </c:forEach>
+                                </select>
+
                             </div>
                             <div class="mb-3">
                                 <label>Bed Type</label>
@@ -318,7 +323,7 @@
                             </div>
                             <div class="mb-3">
                                 <label>Status</label>
-                                <input type="text" id="edit-status" name="status" class="form-control">
+                                <input type="text" id="edit-status" readonly  name="status" class="form-control">
                             </div>
                             <div class="mb-3">
                                 <label for="photos">Select Img:</label>
@@ -339,19 +344,19 @@
 
                             <div class="mb-3">
                                 <label>Description</label>
-                                <textarea id="edit-description" name="description" class="form-control"></textarea>
+                                <textarea id="edit-description" readonly  name="description" class="form-control"></textarea>
                             </div>
                             <div class="mb-3">
                                 <label>Price</label>
-                                <input type="number" id="edit-price" name="price" class="form-control">
+                                <input type="number" id="edit-price" readonly  name="price" class="form-control">
                             </div>
                             <div class="mb-3">
                                 <label>Number Guest</label>
-                                <input type="number" id="edit-maxGuest" name="maxGuest" class="form-control">
+                                <input type="number" id="edit-maxGuest" readonly  name="maxGuest" class="form-control">
                             </div>
                             <div class="mb-3">
                                 <label>Area</label>
-                                <input type="number" step="any" id="edit-area" name="area" class="form-control">
+                                <input type="number" step="any" id="edit-area" readonly  name="area" class="form-control">
                             </div>
 
 
@@ -519,10 +524,10 @@
                             document.getElementById('edit-bedType').value = detail.bedType;
                             document.getElementById('edit-description').value = detail.description;
                             document.getElementById('edit-price').value = room.price;
-                            document.getElementById('edit-maxGuest').value = detail.maxGuest;
+                            document.getElementById('edit-maxGuest').value = type.numberPeople;
                             document.getElementById('edit-area').value = detail.area;
 
-                            return fetch(baseUrl +"/roomcrud?action=getImages&roomId="+roomId);
+                            return fetch(baseUrl + "/roomcrud?action=getImages&roomId=" + roomId);
                         })
                         .then(res => res.json())
                         .then(images => {

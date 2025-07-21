@@ -192,7 +192,7 @@
                              data-price="${i.getPrice()}"
                              data-roomtype="${i.getRoomType().getRoomTypeID()}">
                             <div class="single-rooms-area card shadow w-100 h-85" style="border: none;">
-                                <a href="#" onclick="showRoomDetail(this)" data-roomid="${i.roomID}"
+                                <a href="#" onclick="showRoomDetail(this, event)" data-roomid="${i.roomID}"
                                    title="Click để xem chi tiết" >
                                     <img src="${roomImgList[0].imageURL}" class="card-img-top img-fluid"
                                          style="height: 200px; object-fit: cover;" alt="Room Image">
@@ -639,7 +639,9 @@
                                             document.getElementById('roomThumbnails').style.transform = `translateX(-${scrollDistance}px)`;
                                         }
 
-                                        function showRoomDetail(element) {
+                                        function showRoomDetail(element, event) {
+                                            if (event)
+                                                event.preventDefault();
                                             const baseUrl = '${pageContext.request.contextPath}';
                                             const roomId = element.dataset.roomid;
                                             fetch(baseUrl + "/showroomdetail?roomId=" + roomId)

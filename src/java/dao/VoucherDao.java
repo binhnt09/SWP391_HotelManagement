@@ -7,11 +7,12 @@ package dao;
 import dal.DBContext;
 import entity.MembershipLevel;
 import entity.Voucher;
-import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.sql.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -21,6 +22,25 @@ import java.util.logging.Logger;
  * @author ASUS
  */
 public class VoucherDao extends DBContext {
+
+    public List<Voucher> getAllVoucher() {
+        List<Voucher> list = new ArrayList<>();
+
+        String sql = "SELECT VoucherID, Code, DiscountPercentage, ValidFrom, ValidTo, "
+                + " CreatedAt, UpdatedAt, IsDeleted, DeletedBy "
+                + " FROM Voucher ORDER BY CreatedAt DESC";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                list.add(extractVoucher(rs));
+            }
+        } catch (SQLException e) {
+            Logger.getLogger(VoucherDao.class.getName()).log(Level.SEVERE, null, e);
+        }
+        return list;
+    }
 
     public Voucher getByVoucherId(int voucherId) {
         String sql = "SELECT VoucherID, Code, DiscountPercentage, ValidFrom, ValidTo, "
@@ -40,6 +60,7 @@ public class VoucherDao extends DBContext {
         return null;
     }
 
+    //lấy voucher mà level user nhận được
     public List<Voucher> getAvailableVouchersForUser(int userId) {
         List<Voucher> list = new ArrayList<>();
         String sql = """
@@ -76,6 +97,7 @@ public class VoucherDao extends DBContext {
         return list;
     }
 
+    //lấy voucher mà user đã claim về 
     public List<Voucher> getClaimedVouchers(int userId) {
         List<Voucher> list = new ArrayList<>();
         String sql = """
@@ -98,6 +120,7 @@ public class VoucherDao extends DBContext {
         return list;
     }
 
+    //voucher mà user đã claim về và đã sử dụng
     public List<Voucher> getClaimedVouchersIsUsed(int userId) {
         List<Voucher> list = new ArrayList<>();
         String sql = """
@@ -118,6 +141,7 @@ public class VoucherDao extends DBContext {
         return list;
     }
 
+    //voucher user đã claim về và đã hết hạn
     public List<Voucher> getClaimedVouchersExpired(int userId) {
         List<Voucher> list = new ArrayList<>();
         String sql = """
@@ -140,6 +164,7 @@ public class VoucherDao extends DBContext {
         return list;
     }
 
+    //tính tổng tiền user đã chi tiêu
     public double getTotalPaidByUser(int userId) {
         String sql = """
                         SELECT ISNULL(SUM(p.Amount), 0)
@@ -159,6 +184,7 @@ public class VoucherDao extends DBContext {
         return 0;
     }
 
+    //tự động tính tổng tiền user sau mỗi lần thanh toán thành công trên hệ thống
     public void updateUserMembershipLevel(int userId) {
         String sql = """
                         UPDATE [User]
@@ -195,6 +221,7 @@ public class VoucherDao extends DBContext {
         }
     }
 
+    //update voucher đã sử dụng với mỗi user
     public void updateIsused(int userId, int voucherId) {
         String sql = "UPDATE GetVoucher SET IsUsed = 1 WHERE UserID = ? AND VoucherID = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
@@ -206,6 +233,7 @@ public class VoucherDao extends DBContext {
         }
     }
 
+    //kiểm tra voucher đã được claim chưa
     public boolean hasClaimed(int userId, int voucherId) {
         String sql = "SELECT 1 FROM GetVoucher WHERE UserID = ? AND VoucherID = ? AND IsUsed = 1";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
@@ -220,13 +248,133 @@ public class VoucherDao extends DBContext {
         }
     }
 
+    //Đếm số lượng voucher sau khi search theo code hoặc tính tổng sl voucher
+    public int countSearchResults(String keyword) {
+        String sql = "SELECT COUNT(*) FROM Voucher ";
+        boolean hasKeyword = keyword != null && !keyword.trim().isEmpty();
+        if (hasKeyword) {
+            sql += " WHERE Code LIKE ? ";
+        }
+        try (PreparedStatement stm = connection.prepareStatement(sql)) {
+            String searchParam = "%" + keyword + "%";
+            if (hasKeyword) {
+                stm.setString(1, searchParam);
+            }
+            ResultSet rs = stm.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1); // Trả về số lượng bản ghi tìm được
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(VoucherDao.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return -1;
+    }
+
+    public List<Voucher> searchOrSortVoucher(String searchVoucher, String sortBy, boolean isDecreasing, int start) {
+        List<Voucher> list = new ArrayList<>();
+        boolean hasKeyword = searchVoucher != null && !searchVoucher.trim().isEmpty();
+
+        StringBuilder sql = new StringBuilder();
+        sql.append("SELECT VoucherID, Code, DiscountPercentage, ValidFrom, ValidTo, ")
+                .append("CreatedAt, UpdatedAt, IsDeleted, DeletedBy FROM Voucher ");
+
+        if (hasKeyword) {
+            sql.append(" WHERE Code LIKE ? ");
+        }
+
+        if (sortBy != null) {
+            sql.append(" ORDER BY ");
+            switch (sortBy) {
+                case "DiscountPercentage" ->
+                    sql.append("DiscountPercentage");
+                case "CreatedAt" ->
+                    sql.append("CreatedAt");
+                default ->
+                    sql.append(sortBy);
+            }
+            if (isDecreasing) {
+                sql.append(" DESC");
+            }
+        } else {
+            sql.append(" ORDER BY CreatedAt DESC"); // Tránh lỗi nếu `sortBy` null
+        }
+
+        sql.append(" OFFSET ? ROWS FETCH NEXT 5 ROWS ONLY");
+
+        try (PreparedStatement stm = connection.prepareStatement(sql.toString())) {
+            int paramIndex = 1;
+            if (hasKeyword) {
+                stm.setString(paramIndex++, "%" + searchVoucher + "%");
+            }
+            stm.setInt(paramIndex, (start - 1) * 5);
+            ResultSet rs = stm.executeQuery();
+            while (rs.next()) {
+                list.add(extractVoucher(rs));
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(VoucherDao.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return list;
+    }
+
+    public void insertVoucher(String code, double discount, Date validFrom, Date validTo) {
+        String sql = "INSERT INTO Voucher (Code, DiscountPercentage, ValidFrom, ValidTo) VALUES (?, ?, ?, ?)";
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+
+            stmt.setString(1, code);
+            stmt.setDouble(2, discount);
+            stmt.setDate(3, validFrom);
+            stmt.setDate(4, validTo);
+
+            stmt.executeUpdate();
+        } catch (SQLException ex) {
+            Logger.getLogger(VoucherDao.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public int getVoucherIdByCode(String code) {
+        String sql = "SELECT VoucherID FROM Voucher WHERE Code = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, code);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("VoucherID");
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(VoucherDao.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return -1;
+    }
+
+    public void insertVoucherLevels(String code, String membershipLevel) {
+        int voucherId = getVoucherIdByCode(code);
+
+        String[] levelIds = membershipLevel.split(", ");
+
+        String sql = "INSERT INTO VoucherLevel (VoucherID, LevelID) VALUES (?, ?)";
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+
+            for (String levelIdStr : levelIds) {
+                int levelId = Integer.parseInt(levelIdStr.trim());
+                stmt.setInt(1, voucherId);
+                stmt.setInt(2, levelId);
+                stmt.addBatch();
+            }
+            stmt.executeBatch(); // execute all at once
+        } catch (SQLException ex) {
+            Logger.getLogger(VoucherDao.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
     private Voucher extractVoucher(ResultSet rs) throws SQLException {
         Voucher voucher = new Voucher();
         voucher.setVoucherId(rs.getInt("VoucherID"));
         voucher.setCode(rs.getString("Code"));
         voucher.setDiscountPercentage(rs.getFloat("DiscountPercentage"));
-        voucher.setValidFrom(rs.getTimestamp("ValidFrom"));
-        voucher.setValidTo(rs.getTimestamp("ValidTo"));
+        voucher.setValidFrom(rs.getDate("ValidFrom"));
+        voucher.setValidTo(rs.getDate("ValidTo"));
         voucher.setCreatedAt(rs.getTimestamp("CreatedAt"));
         voucher.setUpdatedAt(rs.getTimestamp("UpdatedAt"));
         voucher.setDeletedBy(rs.getInt("DeletedBy"));
@@ -236,7 +384,6 @@ public class VoucherDao extends DBContext {
 
     //membership
     public MembershipLevel getMembershipByUserId(int userId) {
-        MembershipLevel membership = null;
         String sql = """
                         SELECT ml.LevelID, ml.LevelName, ml.MinTotal, ml.CreatedAt, ml.UpdatedAt,
                                ml.DeletedAt, ml.DeletedBy, ml.IsDeleted
@@ -244,29 +391,49 @@ public class VoucherDao extends DBContext {
                         JOIN MembershipLevel ml ON u.LevelID = ml.LevelID
                         WHERE u.UserID = ? AND u.IsDeleted = 0 AND ml.IsDeleted = 0
                     """;
-
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
-
             ps.setInt(1, userId);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    membership = new MembershipLevel();
-                    membership.setLevelId(rs.getInt("LevelID"));
-                    membership.setLevelName(rs.getString("LevelName"));
-                    membership.setMinTotal(rs.getBigDecimal("MinTotal"));
-                    membership.setCreatedAt(rs.getTimestamp("CreatedAt"));
-                    membership.setUpdatedAt(rs.getTimestamp("UpdatedAt"));
-                    membership.setDeletedAt(rs.getTimestamp("DeletedAt"));
-                    membership.setDeletedBy(rs.getObject("DeletedBy") != null ? rs.getInt("DeletedBy") : null);
-                    membership.setIsDeleted(rs.getBoolean("IsDeleted"));
+                    return extractMembership(rs);
                 }
             }
-
         } catch (SQLException e) {
             Logger.getLogger(VoucherDao.class.getName()).log(Level.SEVERE, null, e);
         }
-
-        return membership;
+        return null;
     }
 
+    public List<MembershipLevel> getAllMembership() {
+        List<MembershipLevel> list = new ArrayList<>();
+        String sql = """
+                        SELECT ml.LevelID, ml.LevelName, ml.MinTotal, ml.CreatedAt, ml.UpdatedAt,
+                                ml.DeletedAt, ml.DeletedBy, ml.IsDeleted
+                        FROM MembershipLevel ml 
+                        WHERE ml.IsDeleted = 0
+                    """;
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    list.add(extractMembership(rs));
+                }
+            }
+        } catch (SQLException e) {
+            Logger.getLogger(VoucherDao.class.getName()).log(Level.SEVERE, null, e);
+        }
+        return list;
+    }
+
+    private MembershipLevel extractMembership(ResultSet rs) throws SQLException {
+        MembershipLevel membership = new MembershipLevel();
+        membership.setLevelId(rs.getInt("LevelID"));
+        membership.setLevelName(rs.getString("LevelName"));
+        membership.setMinTotal(rs.getBigDecimal("MinTotal"));
+        membership.setCreatedAt(rs.getTimestamp("CreatedAt"));
+        membership.setUpdatedAt(rs.getTimestamp("UpdatedAt"));
+        membership.setDeletedAt(rs.getTimestamp("DeletedAt"));
+        membership.setDeletedBy(rs.getObject("DeletedBy") != null ? rs.getInt("DeletedBy") : null);
+        membership.setIsDeleted(rs.getBoolean("IsDeleted"));
+        return membership;
+    }
 }
