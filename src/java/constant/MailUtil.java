@@ -238,4 +238,103 @@ public class MailUtil {
         sb.append("</body></html>");
         return sb.toString();
     }
+
+    public static void sendVoucherByEmail(String toEmail, String voucherCode) throws Exception {
+        final String fromEmail = EMAIL_CONFIG_EMAIL;
+        final String password = PASS_CONFIG_EMAIL;
+
+        Properties props = new Properties();
+        props.put("mail.smtp.auth", "true");
+        props.put("mail.smtp.starttls.enable", "true");
+        props.put("mail.smtp.host", "smtp.gmail.com");
+        props.put("mail.smtp.port", "587");
+
+        Session session = Session.getInstance(props, new Authenticator() {
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication(fromEmail, password);
+            }
+        });
+
+        Message msg = new MimeMessage(session);
+        msg.setFrom(new InternetAddress(fromEmail, "Palatin Support", "UTF-8"));
+        msg.setRecipient(Message.RecipientType.TO, new InternetAddress(toEmail));
+        String subject = "Voucher Code #" + voucherCode;
+        msg.setSubject(MimeUtility.encodeText(subject, "utf-8", "B"));
+//        msg.setContent("Hóa đơn thanh toán - Palatin", "text/html; charset=UTF-8");
+        msg.setHeader("Message-ID", "<" + UUID.randomUUID().toString() + "@palatin.vn>");
+
+        String html = buildVoucherEmailHtml(voucherCode);
+        msg.setContent(html, "text/html; charset=UTF-8");
+        Transport.send(msg);
+    }
+
+    private static String buildVoucherEmailHtml(String voucherCode) {
+        return String.format("""
+        <!DOCTYPE html>
+        <html lang="vi">
+        <head>
+            <meta charset="UTF-8">
+            <title>Voucher Code</title>
+            <style>
+                body {
+                    font-family: Arial, sans-serif;
+                    background-color: #f6f8fa;
+                    padding: 0;
+                    margin: 0;
+                }
+                .container {
+                    background-color: #ffffff;
+                    max-width: 600px;
+                    margin: 40px auto;
+                    padding: 30px;
+                    border-radius: 12px;
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+                }
+                .header {
+                    text-align: center;
+                    padding-bottom: 20px;
+                }
+                .header img {
+                    width: 100px;
+                }
+                .code-box {
+                    background-color: #f0f4ff;
+                    color: #1a73e8;
+                    font-size: 24px;
+                    font-weight: bold;
+                    text-align: center;
+                    padding: 16px;
+                    border-radius: 8px;
+                    margin: 20px 0;
+                }
+                .footer {
+                    font-size: 13px;
+                    color: #6b7280;
+                    margin-top: 30px;
+                    text-align: center;
+                }
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <div class="header">
+                    <img src="https://companieslogo.com/img/orig/PTN-435b2aff.png?t=1720244493" alt="Palatin Logo">
+                    <h2>Chào mừng bạn đến với Palatin</h2>
+                </div>
+                <p>Xin chào,</p>
+                <p>Bạn đã nhận được một mã voucher từ Palatin:</p>
+                <div class="code-box">%s</div>
+                <p>Vui lòng sử dụng mã này để được giảm giá khi đặt phòng. Mỗi mã chỉ có hiệu lực trong <strong>1 phút</strong>.</p>
+                <p>Trân trọng,<br>Đội ngũ Palatin</p>
+
+                <div class="footer">
+                    Nếu bạn không yêu cầu nhận voucher, vui lòng bỏ qua email này.<br>
+                    &copy; 2025 Palatin. All rights reserved.
+                </div>
+            </div>
+        </body>
+        </html>
+        """, voucherCode);
+    }
+
 }

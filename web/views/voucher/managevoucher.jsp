@@ -162,7 +162,7 @@
                                                     </ul>
                                                 </li>
                                             </ul>
-                                            <a href="#addEmployeeModal" class="btn btn-success" data-toggle="modal">
+                                            <a href="#addVoucherModal" class="btn btn-success" data-toggle="modal">
                                                 <i class="material-icons">&#xE147;</i> <span>Add New Voucher</span></a>
                                             <a href="#deleteEmployeeModal" class="btn btn-danger" data-toggle="modal">
                                                 <i class="material-icons">&#xE15C;</i> <span>Delete</span></a>
@@ -189,27 +189,32 @@
                                     </thead>
                                     <tbody>
                                         <c:forEach items="${listVoucher}" var="voucher">
-                                            <tr>
-                                                <td>
-                                                    <span class="custom-checkbox">
-                                                        <input type="checkbox" class="select-item" id="checkbox1" name="options[]" value=""/>
-                                                        <label for="checkbox1"></label>
-                                                    </span>
-                                                </td>
-                                                <td style="white-space: nowrap;">${voucher.code}</td>
-                                                <td style="white-space: nowrap;">${voucher.discountPercentage} %</td>
-                                                <td style="white-space: nowrap;">${voucher.validFrom}</td>
-                                                <td style="white-space: nowrap;">${voucher.validTo}</td>
-                                                <td style="white-space: nowrap;">${voucher.createdAt}</td>
-                                                <td style="white-space: nowrap;">${voucher.updatedAt}</td>
-                                                <td>
-                                                    <a href="#editEmployeeModal" class="edit" data-toggle="modal">
-                                                        <i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i></a>
-                                                    <a href="#" class="delete" data-toggle="modal" data-target="#deleteEmployeeModal" data-id="">
-                                                        <i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>
-                                                </td> 
-                                            </tr>
-                                        </c:forEach>
+                                        <input type="hidden" name="voucherId" value="${voucher.voucherId}"/>
+                                        <tr>
+                                            <td>
+                                                <span class="custom-checkbox">
+                                                    <input type="checkbox" class="select-item" id="checkbox1" name="options[]" value=""/>
+                                                    <label for="checkbox1"></label>
+                                                </span>
+                                            </td>
+                                            <td style="white-space: nowrap;">${voucher.code}</td>
+                                            <td style="white-space: nowrap;">${voucher.discountPercentage} %</td>
+                                            <td style="white-space: nowrap;">${voucher.validFrom}</td>
+                                            <td style="white-space: nowrap;">${voucher.validTo}</td>
+                                            <td style="white-space: nowrap;">${voucher.createdAt}</td>
+                                            <td style="white-space: nowrap;">${voucher.updatedAt}</td>
+                                            <td>
+                                                <a href="#editVoucherModal" class="edit" data-toggle="modal" data-voucherid="${voucher.voucherId}"
+                                                   onclick="openEditModal(${voucher.voucherId}, '${voucher.code}',
+                                                                   '${voucher.discountPercentage}', '${voucher.validFrom}', '${voucher.validTo}');
+                                                           return false;">
+                                                    <i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i>
+                                                </a>
+                                                <a href="#" class="delete" data-toggle="modal" data-target="#deleteEmployeeModal" data-id="">
+                                                    <i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>
+                                            </td> 
+                                        </tr>
+                                    </c:forEach>
                                     </tbody>
                                 </table>
 
@@ -235,7 +240,7 @@
                         </div>
 
                         <!-- Add Modal HTML -->
-                        <div id="addEmployeeModal" class="modal fade">
+                        <div id="addVoucherModal" class="modal fade">
                             <div class="modal-dialog">
                                 <div class="modal-content">
                                     <form action="${pageContext.request.contextPath}/vouchermanage" method="post">
@@ -248,22 +253,22 @@
                                             <div class="form-group" style="display: flex; gap: 10px">
                                                 <div style="flex: 2;">
                                                     <label>Voucher Code</label>
-                                                    <input type="text" value="" name="voucherCode" class="form-control" required>
+                                                    <input type="text" value="${param.voucherCode}" name="voucherCode" class="form-control" required>
                                                 </div>
                                                 <div style="flex: 1;">
                                                     <label>DiscountPercentage</label>
-                                                    <input type="number" value="" name="Discout" class="form-control" min="0" max="100" step="1" required>
+                                                    <input type="number" value="${param.Discout}" name="Discout" class="form-control" min="0" max="100" step="1" required>
                                                 </div>
                                             </div>
 
                                             <div class="form-group" style="display: flex; gap: 10px">
                                                 <div style="flex: 1">
                                                     <label>Valid From</label>
-                                                    <input type="date" id="validfrom" value="" name="validfrom" class="form-control" ">
+                                                    <input type="date" id="validfrom" value="${param.validfrom}" name="validfrom" class="form-control validfrom" required>
                                                 </div>
                                                 <div style="flex: 1">
                                                     <label>Valid To</label>
-                                                    <input type="date" id="validto" value="" name="validto" class="form-control" ">
+                                                    <input type="date" id="validto" value="${param.validto}" name="validto" class="form-control validto" required>
                                                 </div>
                                             </div>
 
@@ -281,7 +286,8 @@
                                                                     <li class="nav-item submenu dropdown">
                                                                         <label class="dropdown-item" style="cursor: pointer;">
                                                                             <input type="checkbox" style="width: 18px; height: 18px; margin: 5px" 
-                                                                                   class="member-checkbox" value="${memberShip.levelId}" data-name="${memberShip.levelName}">
+                                                                                   class="member-checkbox" value="${memberShip.levelId}" 
+                                                                                   ${checked ? "checked" : ""} data-name="${memberShip.levelName}">
                                                                             ${memberShip.levelName}
                                                                         </label>
                                                                     </li>
@@ -290,12 +296,6 @@
                                                         </li>
                                                     </ul>
                                                     <input type="hidden" id="memberShipId" name="memberShipId">
-                                                </div>
-
-                                                <div style="flex: 1">
-                                                    <label>Phone</label>
-                                                    <input type="text" value="" name="phone" class="form-control">
-                                                    <p id="phoneError" style="color: red;"></p>
                                                 </div>
                                             </div>
                                             <div class="modal-footer">
@@ -307,70 +307,86 @@
                                 </div>
                             </div>
                         </div>
+                        <c:if test="${not empty openModal}">
+                            <script>
+                                document.addEventListener("DOMContentLoaded", function () {
+                                    setTimeout(function () {
+                                        $('#addVoucherModal').modal('show');
+                                    }, 10);
+                                });
+                            </script>
+                        </c:if>
 
                         <!-- Edit Modal HTML -->
-                        <div id="editEmployeeModal" class="modal fade">
+                        <div id="editVoucherModal" class="modal fade">
                             <div class="modal-dialog">
                                 <div class="modal-content">
-                                    <form action="updateasg" method="post">
-                                        <input type="hidden" name="update" value="updateBooking"/>
-                                        <input type="hidden" name="bookingID" value="" id="bookIDud"/>
+                                    <form action="vouchermanage" method="post">
+                                        <input type="hidden" name="action" value="updateVoucher"/>
+                                        <input type="text" name="voucherIdUd" value="123" id="voucherIdUd"/>
+                                        <input type="text" value="${selectedLevels.contains(memberShip.levelId)}" />
+                                        <input type="text" value="${membershipList1.contains(memberShip.levelId)}" />
+
                                         <div class="modal-header">
-                                            <h4 class="modal-title">Edit Booking</h4>
-                                            <button type="button" class="close" data-dismiss="modal" 
-                                                    aria-hidden="true">&times;</button>
+                                            <h4 class="modal-title">Edit Voucher</h4>
+                                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                                         </div>
                                         <div class="modal-body">
                                             <div class="form-group" style="display: flex; gap: 10px">
-                                                <div style="flex: 1;">
-                                                    <label>First Name</label>
-                                                    <input type="text" name="fnameud" id="fnameud" class="form-control" required>
+                                                <div style="flex: 2;">
+                                                    <label>Voucher Code</label>
+                                                    <input type="text" value="${param.voucherCodeUd}" name="voucherCodeUd" id="voucherCodeUd" class="form-control" >
                                                 </div>
                                                 <div style="flex: 1;">
-                                                    <label>Last Name</label>
-                                                    <input type="text" name="lnameud" id="lnameud" class="form-control" required>
-                                                </div>
-                                            </div>
-
-                                            <div class="form-group">
-                                                <label class="form-label">Room Type</label>
-                                                <select id="roomIDsud" name="bookingIDud" class="form-control" onchange="updateTotalPriceud()">
-                                                    <option>Select Rooms</option>
-                                                </select>
-                                                <input type="hidden" id="roomIDsud" name="roomIDs">
-                                            </div>
-
-                                            <div class="form-group" style="display: flex; gap: 10px">
-                                                <div style="flex: 1">
-                                                    <label>CheckinDate</label>
-                                                    <input type="date" id="checkInud" name="checkinDate" class="form-control" onchange="updateTotalPriceud()">
-                                                </div>
-                                                <div style="flex: 1">
-                                                    <label>CheckoutDate</label>
-                                                    <input type="date" id="checkOutud" name="checkoutDate" class="form-control" onchange="updateTotalPriceud()">
+                                                    <label>DiscountPercentage</label>
+                                                    <input type="number" value="${param.DiscoutUd}" name="DiscoutUd" id="DiscoutUd" class="form-control" min="0" max="100" step="1" >
                                                 </div>
                                             </div>
 
                                             <div class="form-group" style="display: flex; gap: 10px">
                                                 <div style="flex: 1">
-                                                    <label>Phone</label>
-                                                    <input type="text" id="phoneud" name="phone" class="form-control" required>
-                                                    <p id="phoneError" style="color: red;">${phoneError}</p>
+                                                    <label>Valid From</label>
+                                                    <input type="date" id="validfromUd" value="${param.validfromUd}" name="validfromUd" class="form-control validfrom" >
                                                 </div>
                                                 <div style="flex: 1">
-                                                    <label>Email</label>
-                                                    <input type="email" id="emailud" name="email" class="form-control" required>
-                                                    <p id="emailError" style="color: red;">${emailError}</p>
+                                                    <label>Valid To</label>
+                                                    <input type="date" id="validtoUd" value="${param.validtoUd}" name="validtoUd" class="form-control validto" >
                                                 </div>
                                             </div>
-                                            <div class="form-group">
-                                                <label>TotalPrice</label>
-                                                <input type="text" id="totalPriceud" name="TotalPrice" class="form-control" >
+
+                                            <div class="form-group" style="display: flex; gap: 10px">
+                                                <div style="flex: 1">
+                                                    <label class="form-label">Member level</label>
+                                                    <ul class="nav navbar-nav menu_nav">
+                                                        <li class="nav-item submenu dropdown">
+                                                            <a href="#" id="memberDropdownUd" class="nav-link dropdown-toggle" style="background: #cccccc; color: black" 
+                                                               data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                                                                <span>Select Level</span>
+                                                            </a>
+                                                            <ul id="levelCheckboxContainer" class="dropdown-menu" style="width: 100%; text-align: left">
+                                                                <c:forEach var="memberShip" items="${listMemberShip}">
+                                                                    <c:if test="${not selectedLevels.contains(memberShip.levelId)}">
+                                                                        <li class="nav-item submenu dropdown">
+                                                                            <label class="dropdown-item" style="cursor: pointer;">
+                                                                                <input type="checkbox" style="width: 18px; height: 18px; margin: 5px" 
+                                                                                       class="member-checkboxUd" value="${memberShip.levelId}" 
+                                                                                       data-name="${memberShip.levelName}"
+                                                                                       <c:if test="${selectedLevels.contains(memberShip.levelId)}">checked</c:if>>
+                                                                                ${memberShip.levelName}
+                                                                            </label>
+                                                                        </li>
+                                                                    </c:if>
+                                                                </c:forEach>
+                                                            </ul>
+                                                        </li>
+                                                    </ul>
+                                                    <input type="hidden" id="memberShipIdUd" name="memberShipId">
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
-                                            <input type="submit" class="btn btn-info" value="Save">
+                                            <div class="modal-footer">
+                                                <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
+                                                <input type="submit" class="btn btn-info" value="Save">
+                                            </div>
                                         </div>
                                     </form>
                                 </div>
@@ -430,10 +446,35 @@
         <script src="${pageContext.request.contextPath}/js/managevoucher/popper.min.js"></script>
         <script src="${pageContext.request.contextPath}/js/managevoucher/bootstrap.min.js"></script>
         <script src="${pageContext.request.contextPath}/js/managevoucher/jquery-3.3.1.min.js"></script>
-        
+
         <script src="${pageContext.request.contextPath}/js/payment/voucher.js"></script>
 
         <script>
+        </script>
+        <script>
+            const contextPath = '<%= request.getContextPath() %>';
+        </script>
+        <script>
+            <% if (request.getSession().getAttribute("success") != null) { %>
+            Swal.fire({
+                icon: "success",
+                title: "Create voucher!",
+                text: "<%= request.getSession().getAttribute("success") %>",
+                confirmButtonColor: "#3085d6",
+                confirmButtonText: "OK"
+            <c:remove var="success" scope="session" />
+            });
+            <% } %>
+
+            <% if (request.getAttribute("errorMessage") != null) { %>
+            Swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text: "<%= request.getAttribute("errorMessage") %>",
+                confirmButtonColor: "#d33",
+                confirmButtonText: "OK"
+            });
+            <% } %>
         </script>
         <script type="text/javascript">
             $(document).ready(function () {

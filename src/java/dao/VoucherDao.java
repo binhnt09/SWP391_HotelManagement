@@ -7,7 +7,6 @@ package dao;
 import dal.DBContext;
 import entity.MembershipLevel;
 import entity.Voucher;
-import java.sql.Timestamp;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -333,6 +332,24 @@ public class VoucherDao extends DBContext {
         }
     }
 
+    public boolean updateVoucher(Voucher voucher) {
+        String sql = "UPDATE Voucher SET Code = ?, DiscountPercentage = ?, ValidFrom = ?, ValidTo = ? WHERE VoucherId = ?";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, voucher.getCode());
+            ps.setDouble(2, voucher.getDiscountPercentage());
+            ps.setDate(3, voucher.getValidFrom());
+            ps.setDate(4, voucher.getValidTo());
+            ps.setInt(5, voucher.getVoucherId());
+
+            int rowsAffected = ps.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            Logger.getLogger(VoucherDao.class.getName()).log(Level.SEVERE, null, e);
+            return false;
+        }
+    }
+
     public int getVoucherIdByCode(String code) {
         String sql = "SELECT VoucherID FROM Voucher WHERE Code = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
@@ -366,6 +383,25 @@ public class VoucherDao extends DBContext {
         } catch (SQLException ex) {
             Logger.getLogger(VoucherDao.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+    public boolean isDuplicateVoucher(String code, double discount, Date validFrom, Date validTo) {
+        String sql = """
+                     SELECT 1 FROM Voucher WHERE Code = ? AND DiscountPercentage = ?
+                        AND ValidFrom = ? AND ValidTo = ? AND IsDeleted = 0
+                     """;
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, code);
+            ps.setDouble(2, discount);
+            ps.setDate(3, validFrom);
+            ps.setDate(4, validTo);
+
+            ResultSet rs = ps.executeQuery();
+            return rs.next(); // có ít nhất 1 bản ghi trùng
+        } catch (SQLException e) {
+            Logger.getLogger(VoucherDao.class.getName()).log(Level.SEVERE, null, e);
+        }
+        return false;
     }
 
     private Voucher extractVoucher(ResultSet rs) throws SQLException {
