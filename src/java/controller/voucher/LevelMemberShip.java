@@ -62,19 +62,20 @@ public class LevelMemberShip extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-    private final VoucherDao voucherDao = new VoucherDao();
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         MembershipDao dao = new MembershipDao();
+        VoucherDao voucherDao = new VoucherDao();
+        
         String voucherIdStr = request.getParameter("voucherId");
-    int voucherId = validation.Validation.parseStringToInt(voucherIdStr);
+        int voucherId = validation.Validation.parseStringToInt(voucherIdStr);
 
+        List<MembershipLevel> allLevels = voucherDao.getAllMembership();
+        List<Integer> selectedLevelIds = dao.getSelectedMembershipLevels(voucherId);
 
-    List<MembershipLevel> allLevels = voucherDao.getAllMembership();
-    List<Integer> selectedLevelIds = dao.getSelectedMembershipLevels(voucherId);
-
-    Map<String, Object> json = new HashMap<>();
+        Map<String, Object> json = new HashMap<>();
         json.put("selectedLevelIds", selectedLevelIds);
         json.put("availableLevels", allLevels);
 

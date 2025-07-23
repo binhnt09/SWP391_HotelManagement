@@ -60,14 +60,29 @@
                             <!-- Start XP Col -->
                             <div class="col-md-5 col-lg-3 order-3 order-md-2">
                                 <div class="xp-searchbar">
-                                    <div class="input-group">
-                                        <input type="search" name="searchAccount" value="${searchVoucher}" class="form-control" placeholder="Search">
-                                        <div class="input-group-append">
-                                            <button class="btn" type="submit" id="button-addon2">GO</button>
+                                    <form action="vouchermanage" method="get" id="searchForm">
+                                        <div class="input-group">
+                                            <input type="search" name="searchVoucher" value="${searchVoucher}" class="form-control" placeholder="Search voucher ..."
+                                                   onchange="document.getElementById('searchForm').submit()">
+                                            <div class="input-group-append">
+                                                <button class="btn" type="submit" id="button-addon2">GO</button>
+                                            </div>
                                         </div>
-                                    </div>
+                                    </form>
                                 </div>
                             </div>
+                            <script>
+                                const searchInput = document.querySelector("input[name='searchVoucher']");
+                                let timeout;
+
+                                searchInput.addEventListener("input", function () {
+                                    clearTimeout(timeout);
+                                    timeout = setTimeout(() => {
+                                        document.getElementById("searchForm").submit();
+                                    }, 100); // Gửi sau khi dừng gõ 800ms
+                                });
+                            </script>
+
                             <!-- End XP Col -->
 
                             <!-- Start XP Col -->
@@ -219,14 +234,16 @@
                                 </table>
 
                                 <div class="clearfix">
-                                    <div class="hint-text">Showing <b>${count<5?count:'5'}</b> out of <b>${count}</b> entries</div>
+                                    <div class="hint-text">Showing <b>${count<6?count:'6'}</b> out of <b>${count}</b> entries</div>
                                     <ul class="pagination">
                                         <c:if test="${tag > 1}">
-                                            <li class="page-item disabled"><a href="vouchermanage?sortby=${not empty sortby ? sortby : 'default'}&orderSort=${not empty orderSort ? orderSort : 'default'}&index=${tag - 1}&searchVoucher=${not empty searchVoucher ? searchVoucher : ''}">Previous</a>
+                                            <li class="page-item disabled">
+                                                <a href="vouchermanage?sortby=${not empty sortby ? sortby : 'default'}&orderSort=${not empty orderSort ? orderSort : 'default'}&index=${tag - 1}&searchVoucher=${not empty searchVoucher ? searchVoucher : ''}">Previous</a>
                                             </li>
                                         </c:if>
                                         <c:forEach begin="1" end="${endPage}" var="i">
-                                            <li class="page-item  ${tag == i?"active":""}"><a href="vouchermanage?sortby=${not empty sortby ? sortby : 'default'}&orderSort=${not empty orderSort ? orderSort : 'default'}&index=${i}&searchVoucher=${not empty searchVoucher ? searchVoucher : ''}" class="page-link">${i}</a>
+                                            <li class="page-item  ${tag == i?"active":""}">
+                                                <a href="vouchermanage?sortby=${not empty sortby ? sortby : 'default'}&orderSort=${not empty orderSort ? orderSort : 'default'}&index=${i}&searchVoucher=${not empty searchVoucher ? searchVoucher : ''}" class="page-link">${i}</a>
                                             </li>
                                         </c:forEach>
                                         <c:if test="${tag < endPage}">
@@ -253,22 +270,22 @@
                                             <div class="form-group" style="display: flex; gap: 10px">
                                                 <div style="flex: 2;">
                                                     <label>Voucher Code</label>
-                                                    <input type="text" value="${param.voucherCode}" name="voucherCode" class="form-control" required>
+                                                    <input type="text" value="${param.voucherCode}" name="voucherCode" class="form-control" >
                                                 </div>
                                                 <div style="flex: 1;">
                                                     <label>DiscountPercentage</label>
-                                                    <input type="number" value="${param.Discout}" name="Discout" class="form-control" min="0" max="100" step="1" required>
+                                                    <input type="number" value="${param.Discout}" name="Discout" class="form-control" min="0" max="100" step="1" >
                                                 </div>
                                             </div>
 
                                             <div class="form-group" style="display: flex; gap: 10px">
                                                 <div style="flex: 1">
                                                     <label>Valid From</label>
-                                                    <input type="date" id="validfrom" value="${param.validfrom}" name="validfrom" class="form-control validfrom" required>
+                                                    <input type="date" id="validfrom" value="${param.validfrom}" name="validfrom" class="form-control validfrom" >
                                                 </div>
                                                 <div style="flex: 1">
                                                     <label>Valid To</label>
-                                                    <input type="date" id="validto" value="${param.validto}" name="validto" class="form-control validto" required>
+                                                    <input type="date" id="validto" value="${param.validto}" name="validto" class="form-control validto" >
                                                 </div>
                                             </div>
 
@@ -323,9 +340,7 @@
                                 <div class="modal-content">
                                     <form action="vouchermanage" method="post">
                                         <input type="hidden" name="action" value="updateVoucher"/>
-                                        <input type="text" name="voucherIdUd" value="123" id="voucherIdUd"/>
-                                        <input type="text" value="${selectedLevels.contains(memberShip.levelId)}" />
-                                        <input type="text" value="${membershipList1.contains(memberShip.levelId)}" />
+                                        <input type="hidden" name="voucherIdUd" value="123" id="voucherIdUd"/>
 
                                         <div class="modal-header">
                                             <h4 class="modal-title">Edit Voucher</h4>
@@ -365,17 +380,14 @@
                                                             </a>
                                                             <ul id="levelCheckboxContainer" class="dropdown-menu" style="width: 100%; text-align: left">
                                                                 <c:forEach var="memberShip" items="${listMemberShip}">
-                                                                    <c:if test="${not selectedLevels.contains(memberShip.levelId)}">
-                                                                        <li class="nav-item submenu dropdown">
-                                                                            <label class="dropdown-item" style="cursor: pointer;">
-                                                                                <input type="checkbox" style="width: 18px; height: 18px; margin: 5px" 
-                                                                                       class="member-checkboxUd" value="${memberShip.levelId}" 
-                                                                                       data-name="${memberShip.levelName}"
-                                                                                       <c:if test="${selectedLevels.contains(memberShip.levelId)}">checked</c:if>>
-                                                                                ${memberShip.levelName}
-                                                                            </label>
-                                                                        </li>
-                                                                    </c:if>
+                                                                    <li class="nav-item submenu dropdown">
+                                                                        <label class="dropdown-item" style="cursor: pointer;">
+                                                                            <input type="checkbox" style="width: 18px; height: 18px; margin: 5px" 
+                                                                                   class="member-checkboxUd" value="${memberShip.levelId}" 
+                                                                                   data-name="${memberShip.levelName}" value="${memberShip.levelId}" />
+                                                                            ${memberShip.levelName}
+                                                                        </label>
+                                                                    </li>
                                                                 </c:forEach>
                                                             </ul>
                                                         </li>
@@ -391,6 +403,15 @@
                                     </form>
                                 </div>
                             </div>
+                            <c:if test="${not empty openModalEdit}">
+                                <script>
+                                    document.addEventListener("DOMContentLoaded", function () {
+                                        setTimeout(function () {
+                                            $('#editVoucherModal').modal('show');
+                                        }, 10);
+                                    });
+                                </script>
+                            </c:if>
                         </div>
 
 
@@ -482,7 +503,6 @@
                     $('#sidebar').toggleClass('active');
                     $('#content').toggleClass('active');
                 });
-
                 $(".xp-menubar,.body-overlay").on('click', function () {
                     $('#sidebar,.body-overlay').toggleClass('show-nav');
                 });

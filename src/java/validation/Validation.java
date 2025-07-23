@@ -8,6 +8,7 @@ package validation;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.sql.Date;
 import java.util.Scanner;
 
 /**
@@ -203,6 +204,17 @@ public class Validation {
         } catch (ParseException e) {
             e.printStackTrace();
             return null; // hoặc throw
+        }
+    }
+
+    public static Date parseSqlDate(String dateStr) {
+        if (dateStr == null || dateStr.trim().isEmpty()) {
+            return null;
+        }
+        try {
+            return Date.valueOf(dateStr.trim());
+        } catch (IllegalArgumentException e) {
+            return null;
         }
     }
 

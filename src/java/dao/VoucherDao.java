@@ -298,14 +298,14 @@ public class VoucherDao extends DBContext {
             sql.append(" ORDER BY CreatedAt DESC"); // Tránh lỗi nếu `sortBy` null
         }
 
-        sql.append(" OFFSET ? ROWS FETCH NEXT 5 ROWS ONLY");
+        sql.append(" OFFSET ? ROWS FETCH NEXT 6 ROWS ONLY");
 
         try (PreparedStatement stm = connection.prepareStatement(sql.toString())) {
             int paramIndex = 1;
             if (hasKeyword) {
                 stm.setString(paramIndex++, "%" + searchVoucher + "%");
             }
-            stm.setInt(paramIndex, (start - 1) * 5);
+            stm.setInt(paramIndex, (start - 1) * 6);
             ResultSet rs = stm.executeQuery();
             while (rs.next()) {
                 list.add(extractVoucher(rs));
@@ -387,7 +387,7 @@ public class VoucherDao extends DBContext {
 
     public boolean isDuplicateVoucher(String code, double discount, Date validFrom, Date validTo) {
         String sql = """
-                     SELECT 1 FROM Voucher WHERE Code = ? AND DiscountPercentage = ?
+                     SELECT VoucherID FROM Voucher WHERE Code = ? AND DiscountPercentage = ?
                         AND ValidFrom = ? AND ValidTo = ? AND IsDeleted = 0
                      """;
         try (PreparedStatement ps = connection.prepareStatement(sql)) {

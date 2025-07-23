@@ -24,6 +24,7 @@ import java.sql.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import validation.Validation;
 
 /**
  *
@@ -71,7 +72,7 @@ public class VoucherManage extends HttpServlet {
             throws ServletException, IOException {
         String index_raw = request.getParameter("index");
 
-        String searchVoucher = request.getParameter("searchAccount");
+        String searchVoucher = request.getParameter("searchVoucher");
         String sortby = request.getParameter("sortby");
         String orderSort = request.getParameter("orderSort");
 
@@ -80,7 +81,7 @@ public class VoucherManage extends HttpServlet {
 
         int index = 1;
         if (index_raw != null) {
-            index = validation.Validation.parseStringToInt(index_raw);
+            index = Validation.parseStringToInt(index_raw);
         }
 
 //        Set<String> validSortFields = Set.of("Code", "DiscountPercentage", "CreatedAt");
@@ -96,7 +97,7 @@ public class VoucherManage extends HttpServlet {
 
         listVoucher = voucherDao.searchOrSortVoucher(searchVoucher, sortby, isDescending, index);
         count = voucherDao.countSearchResults(searchVoucher);
-        int endPage = (int) Math.ceil(count / 5.0);
+        int endPage = (int) Math.ceil(count / 6.0);
         //memeber ship
         List<MembershipLevel> listMemberShip = voucherDao.getAllMembership();
 
@@ -109,7 +110,7 @@ public class VoucherManage extends HttpServlet {
         request.setAttribute("orderSort", orderSort);
         request.setAttribute("searchVoucher", searchVoucher);
         request.setAttribute("searchVoucherEncoded", URLEncoder.encode(searchVoucher != null ? searchVoucher : "", StandardCharsets.UTF_8));
-        
+
         request.setAttribute("listVoucher", listVoucher);
         request.getRequestDispatcher("/views/voucher/managevoucher.jsp").forward(request, response);
     }
@@ -139,24 +140,33 @@ public class VoucherManage extends HttpServlet {
         String voucherCode = request.getParameter("voucherCode");
         String discout_str = request.getParameter("Discout");
 
-        Date validfrom = Date.valueOf(request.getParameter("validfrom"));
-        Date validto = Date.valueOf(request.getParameter("validto"));
+        Date validfrom = Validation.parseSqlDate(request.getParameter("validfrom"));
+        Date validto = Validation.parseSqlDate(request.getParameter("validto"));
 
         String memberShipId = request.getParameter("memberShipId");
 
         boolean valid = true;
         String errorMessage = null;
 
-        int discount = validation.Validation.parseStringToInt(discout_str);
+        double discount = Validation.parseStringToDouble(discout_str);
 
-        if (voucherDao.isDuplicateVoucher(voucherCode, discount, validfrom, validto)) {
+        if (voucherCode == null || voucherCode.isEmpty()) {
+            errorMessage = "Please enter voucher code!";
+            valid = false;
+        } else if (discount <= 0) {
+            errorMessage = "Voucher must more than 0%";
+            valid = false;
+        } else if (validfrom == null || validto == null) {
+            errorMessage = "Please select a voucher expiration date!";
+            valid = false;
+        } else if (voucherDao.isDuplicateVoucher(voucherCode, discount, validfrom, validto)) {
             errorMessage = "Voucher already exists with same code, discount, and dates.";
             valid = false;
+        } else if (memberShipId == null || memberShipId.trim().isEmpty()) {
+            errorMessage = "Please choose at least one membership level.";
+            valid = false;
         }
-//        if (memberShipId == null || memberShipId.trim().isEmpty()) {
-//            errorMessage = "Please choose at least one membership level.";
-//            valid = false;
-//        }
+
         if (!valid) {
             request.setAttribute("errorMessage", errorMessage);
             request.setAttribute("openModal", "#addVoucherModal");
@@ -169,7 +179,7 @@ public class VoucherManage extends HttpServlet {
                 AuthenticationDAO authenDao = new AuthenticationDAO();
                 String[] levelIds = memberShipId.split(", ");
                 for (String levelIdStr : levelIds) {
-                    int levelId = validation.Validation.parseStringToInt(levelIdStr.trim());
+                    int levelId = Validation.parseStringToInt(levelIdStr.trim());
 
                     List<String> emails = authenDao.getEmailByLevelId(levelId);
                     for (String email : emails) {
@@ -195,32 +205,41 @@ public class VoucherManage extends HttpServlet {
         String voucherCodeUd = request.getParameter("voucherCodeUd");
         String discout_strUd = request.getParameter("DiscoutUd");
 
-        Date validfromUd = Date.valueOf(request.getParameter("validfromUd"));
-        Date validtoUd = Date.valueOf(request.getParameter("validtoUd"));
+        Date validfromUd = Validation.parseSqlDate(request.getParameter("validfromUd"));
+        Date validtoUd = Validation.parseSqlDate(request.getParameter("validtoUd"));
 
         String memberShipId = request.getParameter("memberShipId");
 
         boolean valid = true;
         String errorMessage = null;
 
-        int discount = validation.Validation.parseStringToInt(discout_strUd);
+        double discount = Validation.parseStringToDouble(discout_strUd);
 
-        if (voucherDao.isDuplicateVoucher(voucherCodeUd, discount, validfromUd, validtoUd)) {
+        if (voucherCodeUd == null || voucherCodeUd.isEmpty()) {
+            errorMessage = "Please enter voucher code!";
+            valid = false;
+        } else if (discount <= 0) {
+            errorMessage = "Voucher must more than 0%";
+            valid = false;
+        } else if (validfromUd == null || validtoUd == null) {
+            errorMessage = "Please select a voucher expiration date!";
+            valid = false;
+        } else if (voucherDao.isDuplicateVoucher(voucherCodeUd, discount, validfromUd, validtoUd)) {
             errorMessage = "Voucher already exists with same code, discount, and dates.";
             valid = false;
+        } else if (memberShipId == null || memberShipId.trim().isEmpty()) {
+            errorMessage = "Please choose at least one membership level.";
+            valid = false;
         }
-//        if (memberShipId == null || memberShipId.trim().isEmpty()) {
-//            errorMessage = "Please choose at least one membership level.";
-//            valid = false;
-//        }
+        int voucherId = Validation.parseStringToInt(voucherIdUdStr);
         if (!valid) {
             request.setAttribute("errorMessage", errorMessage);
-            request.setAttribute("openModal", "#editVoucherModal");
+            request.setAttribute("openModalEdit", "#editVoucherModal");
+            request.setAttribute("levelId", memberShipId);
             doGet(request, response);
             return;
         }
         if (valid) {
-            int voucherId = validation.Validation.parseStringToInt(voucherIdUdStr);
             Voucher voucher = new Voucher();
             voucher.setVoucherId(voucherId);
             voucher.setCode(voucherCodeUd);
@@ -234,7 +253,7 @@ public class VoucherManage extends HttpServlet {
                 AuthenticationDAO authenDao = new AuthenticationDAO();
                 String[] levelIds = memberShipId.split(", ");
                 for (String levelIdStr : levelIds) {
-                    int levelId = validation.Validation.parseStringToInt(levelIdStr.trim());
+                    int levelId = Validation.parseStringToInt(levelIdStr.trim());
 
                     List<String> emails = authenDao.getEmailByLevelId(levelId);
                     for (String email : emails) {
@@ -249,6 +268,7 @@ public class VoucherManage extends HttpServlet {
             if (update) {
                 request.getSession().setAttribute("success", "Update Voucher successfully");
             }
+            request.getSession().setAttribute("levelId", memberShipId);
             response.sendRedirect(request.getContextPath() + "/vouchermanage");
         }
     }
