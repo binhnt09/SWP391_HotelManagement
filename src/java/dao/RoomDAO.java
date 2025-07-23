@@ -548,7 +548,6 @@ public class RoomDAO extends DBContext {
         }
     }
 
-
     public Map<Integer, List<RoomInfo>> getRoomsGroupedByFloor() {
         Map<Integer, List<RoomInfo>> map = new LinkedHashMap<>();
 
@@ -571,7 +570,7 @@ public class RoomDAO extends DBContext {
             FROM BookingDetail bd
             JOIN Booking b ON bd.BookingID = b.BookingID AND b.IsDeleted = 0
             LEFT JOIN [User] u ON b.UserID = u.UserID
-            WHERE bd.IsDeleted = 0 AND CAST(b.CheckOutDate AS DATE) >= CAST(GETDATE() AS DATE) AND  b.Status IN ('Checked-in', 'Confirmed')
+            WHERE bd.IsDeleted = 0 AND  b.Status IN ('Checked-in', 'Confirmed')
         )
 
         SELECT r.RoomID, r.RoomNumber, r.Status AS RoomStatus, r.Price,
@@ -611,10 +610,100 @@ public class RoomDAO extends DBContext {
                 map.computeIfAbsent(floor, k -> new ArrayList<>()).add(room);
             }
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception ex) {
+            Logger.getLogger(RoomDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
 
+        return map;
+    }
+
+    public Map<Integer, List<RoomInfo>> getRoomsGroupedByFilter(String keyword, String status, String roomType) {
+        Map<Integer, List<RoomInfo>> map = new LinkedHashMap<>();
+
+        StringBuilder sql = new StringBuilder("""
+        WITH BookingCTE AS (
+            SELECT bd.RoomID, b.BookingID, b.CheckInDate, b.CheckOutDate, b.Status AS BookingStatus,
+                   u.FirstName, u.LastName,
+                   ROW_NUMBER() OVER (
+                       PARTITION BY bd.RoomID 
+                       ORDER BY 
+                           CASE     
+                               WHEN b.Status = 'Checked-in' THEN 1
+                               WHEN b.Status = 'Confirmed' THEN 2
+                               WHEN b.Status = 'Pending' THEN 3
+                               WHEN b.Status = 'Checked-out' THEN 4
+                               ELSE 99
+                           END,
+                           b.CheckInDate DESC
+                   ) AS rn
+            FROM BookingDetail bd
+            JOIN Booking b ON bd.BookingID = b.BookingID AND b.IsDeleted = 0
+            LEFT JOIN [User] u ON b.UserID = u.UserID
+            WHERE bd.IsDeleted = 0 AND b.Status IN ('Checked-in', 'Confirmed') 
+        )
+        SELECT r.RoomID, r.RoomNumber, r.Status AS RoomStatus, r.Price,
+               rt.TypeName AS RoomType,
+               f.FloorNumber,
+               bc.BookingID, bc.CheckInDate, bc.CheckOutDate,
+               bc.BookingStatus,
+               bc.FirstName, bc.LastName
+        FROM Room r
+        JOIN Floor f ON r.FloorID = f.FloorID
+        JOIN RoomType rt ON r.RoomTypeID = rt.RoomTypeID
+        LEFT JOIN BookingCTE bc ON bc.RoomID = r.RoomID AND bc.rn = 1
+        WHERE r.IsDeleted = 0
+    """);
+
+        // WHERE động
+        List<Object> params = new ArrayList<>();
+
+        if (status != null && !status.isBlank()) {
+            sql.append(" AND r.Status = ? ");
+            params.add(status);
+        }
+        if (roomType != null && !roomType.isBlank()) {
+            sql.append(" AND rt.TypeName LIKE ? ");
+            params.add("%" + roomType + "%");
+        }
+        if (keyword != null && !keyword.isBlank()) {
+            sql.append(" AND (r.RoomNumber LIKE ? OR bc.FirstName LIKE ? OR bc.LastName LIKE ?) ");
+            params.add("%" + keyword + "%");
+            params.add("%" + keyword + "%");
+            params.add("%" + keyword + "%");
+        }
+
+        sql.append(" ORDER BY f.FloorNumber, r.RoomNumber ");
+
+        try (PreparedStatement ps = connection.prepareStatement(sql.toString())) {
+            for (int i = 0; i < params.size(); i++) {
+                ps.setObject(i + 1, params.get(i));
+            }
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    RoomInfo room = new RoomInfo();
+                    room.setRoomID(rs.getInt("RoomID"));
+                    room.setRoomNumber(rs.getString("RoomNumber"));
+                    room.setStatus(rs.getString("RoomStatus"));
+                    room.setPrice(rs.getDouble("Price"));
+                    room.setRoomType(rs.getString("RoomType"));
+                    room.setFloorNumber(rs.getInt("FloorNumber"));
+
+                    String guestName = ((rs.getString("FirstName") != null ? rs.getString("FirstName") : "") + " "
+                            + (rs.getString("LastName") != null ? rs.getString("LastName") : "")).trim();
+                    room.setGuestName(guestName.isBlank() ? null : guestName);
+                    room.setCheckInDate(rs.getTimestamp("CheckInDate"));
+                    room.setCheckOutDate(rs.getTimestamp("CheckOutDate"));
+                    room.setBookingStatus(rs.getString("BookingStatus"));
+
+                    int floor = rs.getInt("FloorNumber");
+                    map.computeIfAbsent(floor, k -> new ArrayList<>()).add(room);
+                }
+            }
+
+        } catch (SQLException ex) {
+            Logger.getLogger(RoomDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
         return map;
     }
 
@@ -649,8 +738,8 @@ public class RoomDAO extends DBContext {
                 list.add(booking);
             }
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (SQLException ex) {
+            Logger.getLogger(RoomDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         return list;
@@ -680,8 +769,8 @@ public class RoomDAO extends DBContext {
                 room.setFloorNumber(rs.getInt("FloorNumber"));
                 return room;
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (SQLException ex) {
+            Logger.getLogger(RoomDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
     }

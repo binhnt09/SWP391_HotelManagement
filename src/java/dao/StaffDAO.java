@@ -8,6 +8,8 @@ import dal.DBContext;
 import entity.User;
 import java.util.ArrayList;
 import java.util.List;
+import java.sql.Statement;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -55,7 +57,6 @@ public class StaffDAO extends DBContext {
 
         return staffList;
     }
-
 
     public int countTotalStaffByRole(int roleID) {
         String sql = "SELECT COUNT(*) FROM [User]"
@@ -142,7 +143,7 @@ public class StaffDAO extends DBContext {
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setInt(1, deletedBy);
             stmt.setInt(2, id);
-            return stmt.executeUpdate() >0;
+            return stmt.executeUpdate() > 0;
         } catch (Exception e) {
             Logger.getLogger(StaffDAO.class.getName()).log(Level.SEVERE, null, e);
         }
@@ -183,32 +184,37 @@ public class StaffDAO extends DBContext {
         }
         return false;
     }
-    
+
     public String getRoleName(int roleId) {
-    switch (roleId) {
-        case 3:
-            return "Receptionist";
-        case 4:
-            return "Cleaner";
-        default:
-            return "Unknown";
-    }
-}
-
-
-    public static void main(String[] args) {
-        StaffDAO dao = new StaffDAO();
-        List<User> staffs = dao.getStaffByRoleWithPaging( 3, 0, 5);
-        System.out.println(dao.countSearchStaff("", 3));
-        System.out.println("DANH SÁCH Cleaner:");
-        for (User c : staffs) {
-            System.out.println("ID: " + c.getUserId()
-                    + ", Tên: " + c.getFirstName() + " " + c.getLastName()
-                    + ", Email: " + c.getEmail()
-                    + ", SĐT: " + c.getPhone()
-                    + ", Địa chỉ: " + c.getAddress()
-                    + ", Ngày tạo: " + c.getCreatedAt()
-                    + ", Role: " + c.getUserRoleId());
+        switch (roleId) {
+            case 3:
+                return "Receptionist";
+            case 4:
+                return "Cleaner";
+            default:
+                return "Unknown";
         }
+    }
+
+    public int insertUserBasic(String firstName, String lastName, String email, int roleId) {
+        String sql = "INSERT INTO [User] (FirstName, LastName, Email, UserRoleID) VALUES (?, ?, ?, ?)";
+        try (
+                PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            ps.setString(1, firstName);
+            ps.setString(2, lastName);
+            ps.setString(3, email);
+            ps.setInt(4, roleId);
+
+            int affected = ps.executeUpdate();
+            if (affected > 0) {
+                ResultSet rs = ps.getGeneratedKeys();
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        } catch (SQLException e) {
+            Logger.getLogger(StaffDAO.class.getName()).log(Level.SEVERE, null, e);
+        }
+        return -1;
     }
 }

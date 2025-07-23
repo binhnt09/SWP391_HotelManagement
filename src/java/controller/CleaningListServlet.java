@@ -52,7 +52,7 @@ public class CleaningListServlet extends HttpServlet {
         HttpSession session = request.getSession(false); 
         Authentication auth = (session != null) ? (Authentication) session.getAttribute("authLocal") : null;
 
-        if (auth == null) {
+        if (auth == null || auth.getUser().getUserRoleId() >4) {
             response.sendRedirect("loadtohome#login-modal");
             return;
         }

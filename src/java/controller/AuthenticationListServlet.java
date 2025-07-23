@@ -11,6 +11,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
@@ -44,6 +45,14 @@ public class AuthenticationListServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        HttpSession session = request.getSession(false); 
+        Authentication auth = (session != null) ? (Authentication) session.getAttribute("authLocal") : null;
+
+        if (auth == null || auth.getUser().getUserRoleId() >1 ) {
+            response.sendRedirect("loadtohome#login-modal");
+            return;
+        }
+        
         int page = 1;
         int recordsPerPage = 10;
         

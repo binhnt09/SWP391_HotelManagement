@@ -3,13 +3,13 @@
     Created on : Jun 7, 2025, 5:49:14 PM
     Author     : viet7
 --%>
-
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <nav id="sidebar">
     <div class="sidebar-header">
         <h3>
             <a href="loadtohome">
-                <img src="image/Logo.png" class="img-fluid"/>
-                <b>Royal Hotel</b>
+                <div class="slide-img bg-img" style="background-image: url(img/bg-img/bg-1.jpg);"></div>
+                <b>Palatin Hotel</b>
             </a>
         </h3>
     </div>
@@ -23,107 +23,122 @@
         </li>
 
         <!-- Customer Management -->
-        <li class="dropdown">
-            <a href="#customerMenu" data-toggle="collapse" class="dropdown-toggle" aria-expanded="false">
-                <i class="material-icons">person</i>Customer
-            </a>
-            <ul class="collapse list-unstyled menu" id="customerMenu">
-                <li><a href="customerList"><i class="material-icons">account_circle</i>Customer Info</a></li>
-                <li><a href="customerList"><i class="material-icons">account_box</i>Customer Account</a></li>
-            </ul>
-        </li>
-
+        <c:if test="${sessionScope.authLocal.user.roleName == 'Manager' || sessionScope.authLocal.user.roleName == 'Receptionist'}"> 
+            <li class="dropdown">
+                <a href="#customerMenu" data-toggle="collapse" class="dropdown-toggle" aria-expanded="false">
+                    <i class="material-icons">person</i>Customer
+                </a>
+                <ul class="collapse list-unstyled menu" id="customerMenu">
+                    <li><a href="customerList"><i class="material-icons">account_circle</i>Customer Info</a></li>
+                </ul>
+            </li>
+        </c:if>
         <!-- Staff Management -->
-        <li class="dropdown">
-            <a href="#staffMenu" data-toggle="collapse" class="dropdown-toggle" aria-expanded="false">
-                <i class="material-icons">people</i>Staff
-            </a>
-            <ul class="collapse list-unstyled menu" id="staffMenu">
-                <li><a href="staffList"><i class="material-icons">account_circle</i>Staff Info</a></li>
-                <li><a href="accountstaff"><i class="material-icons">account_box</i>Staff Account</a></li>
-            </ul>
-        </li>
-
-        <!-- Room Management -->
-        <li>
-            <a href="roomList">
-                <i class="material-icons">domain</i>Room
-            </a>
-        </li>
+        <c:if test="${sessionScope.authLocal.user.roleName == 'Manager'}">
+            <li class="dropdown">
+                <a href="#staffMenu" data-toggle="collapse" class="dropdown-toggle" aria-expanded="false">
+                    <i class="material-icons">people</i>Staff
+                </a>
+                <ul class="collapse list-unstyled menu" id="staffMenu">
+                    <li><a href="staffList"><i class="material-icons">account_circle</i>Staff Info</a></li>
+                </ul>
+            </li>
+        </c:if>
+        <!--         Room Management 
+                <li>
+                    <a href="roomList">
+                        <i class="material-icons">domain</i>Room
+                    </a>
+                </li>-->
 
         <!-- Room Management hieu -->
-        <li>
-            <a href="manageroom">
-                <i class="material-icons">domain</i>Room
-            </a>
-        </li>
-
+        <c:if test="${sessionScope.authLocal.user.roleName == 'Manager' || sessionScope.authLocal.user.roleName == 'Receptionist'}"> 
+            <li>
+                <a href="manageroom">
+                    <i class="material-icons">domain</i>Room
+                </a>
+            </li>
+        </c:if>
         <!-- Service Management  -->
-        <li>
-            <a href="serviceList">
-                <i class="material-icons">room_service</i>Service
-            </a>
-        </li>
-
+        <c:if test="${sessionScope.authLocal.user.roleName == 'Manager' || sessionScope.authLocal.user.roleName == 'Receptionist'}"> 
+            <li>
+                <a href="serviceList">
+                    <i class="material-icons">room_service</i>Service
+                </a>
+            </li>
+        </c:if>
         <!-- Review Management -->
-        <li>
-            <a href="reviewmanager">
-                <i class="material-icons">rate_review</i>Review
-            </a>
-        </li>
-        
+        <c:if test="${sessionScope.authLocal.user.roleName == 'Manager' || sessionScope.authLocal.user.roleName == 'Receptionist'}"> 
+            <li>
+                <a href="reviewmanager">
+                    <i class="material-icons">rate_review</i>Review
+                </a>
+            </li>
+        </c:if>
+
         <!-- Receptionist page -->
-        <li>
-            <a href="receptionistPage">
-                <i class="material-icons">square</i>Room Map
-            </a>
-        </li>
-
+        <c:if test="${sessionScope.authLocal.user.roleName == 'Manager' || sessionScope.authLocal.user.roleName == 'Receptionist'}"> 
+            <li>
+                <a href="receptionistPage">
+                    <i class="material-icons">square</i>Room Map
+                </a>
+            </li>
+        </c:if>
         <!-- Cleaning List -->
-        <li>
-            <a href="cleaningList">
-                <i class="material-icons">square</i>Cleaner
-            </a>
-        </li>
-
+        <c:if test="${sessionScope.authLocal.user.roleName == 'Cleaner'}">
+            <li>
+                <a href="cleaningList">
+                    <i class="material-icons">square</i>Cleaner
+                </a>
+            </li>
+        </c:if>
         <!-- Promotion Management -->
-        <li>
-            <a href="${pageContext.request.contextPath}/vouchermanage">
-                <i class="material-icons">local_offer</i>Promotion
-            </a>
-        </li>
-
+        <c:if test="${sessionScope.authLocal.user.roleName == 'Manager'}">
+            <li>
+                <a href="${pageContext.request.contextPath}/vouchermanage">
+                    <i class="material-icons">local_offer</i>Promotion
+                </a>
+            </li>
+        </c:if>
         <!-- Booking -->
-        <li>
-            <a href="bookingcrud">
-                <i class="material-icons">touch_app</i>Booking
-            </a>
-        </li>
+        <c:if test="${sessionScope.authLocal.user.roleName == 'Manager' || sessionScope.authLocal.user.roleName == 'Receptionist'}"> 
+            <li>
+                <a href="bookingcrud">
+                    <i class="material-icons">touch_app</i>Booking
+                </a>
+            </li>
+        </c:if>
 
         <!-- Payment -->
-        <li>
-            <a href="paymentaddmin">
-                <i class="material-icons">payment</i>Payment
-            </a>
-        </li>
+        <c:if test="${sessionScope.authLocal.user.roleName == 'Manager' || sessionScope.authLocal.user.roleName == 'Receptionist'}">            
+            <li>
+                <a href="paymentaddmin">
+                    <i class="material-icons">payment</i>Payment
+                </a>
+            </li>
+        </c:if>
 
         <!-- Account -->
-        <li>
-            <a href="authenticationList">
-                <i class="material-icons">circle</i>Account
-            </a>
-        </li>
+        <c:if test="${sessionScope.authLocal.user.roleName == 'Admin System'}">
+            <li>
+                <a href="authenticationList">
+                    <i class="material-icons">circle</i>Account
+                </a>
+            </li>
+        </c:if>
 
         <!-- Reports -->
-        <li class="dropdown">
-            <a href="#reportMenu" data-toggle="collapse" class="dropdown-toggle" aria-expanded="false">
-                <i class="material-icons">insights</i>Reports
-            </a>
-            <ul class="collapse list-unstyled menu" id="reportMenu">
-                <li><a href="customerReport"><i class="material-icons">bar_chart</i>Revenue</a></li>
-                <li><a href="bookingReport"><i class="material-icons">pie_chart</i>Booking Rate</a></li>
-            </ul>
-        </li>
+        <c:if test="${sessionScope.authLocal.user.roleName == 'Manager' || sessionScope.authLocal.user.roleName == 'SystemAdmin'}">
+            <li class="dropdown">
+                <a href="#reportMenu" data-toggle="collapse" class="dropdown-toggle" aria-expanded="false">
+                    <i class="material-icons">insights</i>Reports
+                </a>
+                <ul class="collapse list-unstyled menu" id="reportMenu">
+                    <li><a href="customerReport"><i class="material-icons">bar_chart</i>Customer Report</a></li>
+<!--                    <li><a href="bookingReport"><i class="material-icons">pie_chart</i>Booking Rate</a></li>-->
+                </ul>
+            </li>
+        </c:if>
     </ul>
 </nav>
 

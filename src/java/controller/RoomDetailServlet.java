@@ -6,8 +6,11 @@ package controller;
 
 import dao.BookingDao;
 import dao.RoomDAO;
+import dao.ServiceDAO;
 import entity.BookingInfo;
+import entity.BookingServices;
 import entity.RoomInfo;
+import entity.Service;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -54,8 +57,15 @@ public class RoomDetailServlet extends HttpServlet {
         if (currentStay == null) {
             currentStay = bookingDAO.getClosestReservedBooking(roomId);
         }
-        List<BookingInfo> futureBookings = bookingDAO.getFutureBookings(roomId);
+        if (currentStay != null) {
+            List<BookingServices> bookingServices = new BookingDao().getBookingServicesByBookingId(currentStay.getBookingID());
+            List<Service> serviceList = new ServiceDAO().getAllServices();
 
+            request.setAttribute("serviceList", serviceList);
+            request.setAttribute("bookingServices", bookingServices);
+        }
+        List<BookingInfo> futureBookings = bookingDAO.getFutureBookings(roomId);
+        
         request.setAttribute("room", room);
         request.setAttribute("currentStay", currentStay);
         request.setAttribute("futureBookings", futureBookings);

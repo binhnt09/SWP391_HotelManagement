@@ -284,6 +284,21 @@ public class ServiceDAO extends DBContext {
                 rs.getBoolean("IsDeleted")
         );
     }
-    
 
+    public List<Service> getAllServices() {
+        List<Service> list = new ArrayList<>();
+        String sql = "SELECT * FROM Service WHERE IsDeleted = 0 AND Status = 1";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                list.add(extractService(rs));
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return list;
+    }
 }

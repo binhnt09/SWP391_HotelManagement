@@ -177,6 +177,7 @@
                                     </span>
                                 </th>
                                 <th>User ID</th>
+                                <th>Role</th>
                                 <th>Email</th>
                                 <th>User Key</th>
                                 <th>Auth Type</th>
@@ -198,6 +199,7 @@
                                                 </span>
                                             </td>
                                             <td>${a.user.userId}</td>
+                                            <td>${a.roleName}</td>
                                             <td>${a.user.email}</td>
                                             <td>${a.userKey}</td>
                                             <td>${a.authType}</td>
@@ -238,15 +240,6 @@
                                                     </c:when>
                                                     <c:otherwise>
                                                         <div class="d-flex justify-content-start gap-2">
-                                                            <a href="#editAuthModal"
-                                                               class="btn btn-info btn-sm me-2"
-                                                               data-toggle="modal"
-                                                               data-id="${a.authenticationID}"
-                                                               data-userkey="${a.userKey}"
-                                                               data-authtype="${a.authType}">
-                                                                Sửa
-                                                            </a>
-
                                                             <a href="authDelete?id=${a.authenticationID}"
                                                                class="btn btn-danger btn-sm"
                                                                data-toggle="tooltip"
@@ -306,20 +299,21 @@
             </div>
 
 
-            <!----add-modal start--------->
-            <div class="modal fade" tabindex="-1" id="addEmployeeModal" role="dialog">
+            <!-- Create Account Modal -->
+            <div class="modal fade" tabindex="-1" id="addAuthModal" role="dialog">
                 <div class="modal-dialog" role="document">
-                    <form action="customerUpdate" method="POST">
+                    <form action="createAccount" method="post">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title">Add Auth</h5>
+                                <h5 class="modal-title">Create New User</h5>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
                                 </button>
                             </div>
+
                             <div class="modal-body">
                                 <div class="form-group">
-                                    <label>User ID</label>
+                                    <label>First Name</label>
                                     <input type="text" class="form-control" name="firstName" required>
                                 </div>
                                 <div class="form-group">
@@ -331,18 +325,27 @@
                                     <input type="email" class="form-control" name="email" required>
                                 </div>
                                 <div class="form-group">
-                                    <label>Address</label>
-                                    <textarea class="form-control" name="address" required></textarea>
+                                    <label>Role</label>
+                                    <select class="form-control" name="roleId">
+                                        <option value="1" >System Admin</option>
+                                        <option value="2" >Manager</option>
+                                        <option value="3" >Receptionist</option>
+                                        <option value="4" >Cleaner</option>
+                                    </select>
                                 </div>
                                 <div class="form-group">
-                                    <label>Phone</label>
-                                    <input type="text" class="form-control" name="phone" required>
+                                    <label>Username</label>
+                                    <input type="text" class="form-control" name="userKey" required>
                                 </div>
-                                <input type="hidden" name="action" value="add">
+                                <div class="form-group">
+                                    <label>Password</label>
+                                    <input type="password" class="form-control" name="password" required>
+                                </div>
                             </div>
+
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                                <button type="submit" class="btn btn-success">Add</button>
+                                <button type="submit" class="btn btn-primary">Create Account</button>
                             </div>
                         </div>
                     </form>
@@ -350,58 +353,6 @@
             </div>
 
             <!----edit-modal end--------->
-
-
-
-
-
-            <!----edit-modal start--------->
-            <div class="modal fade" tabindex="-1" id="editEmployeeModal" role="dialog">
-                <div class="modal-dialog" role="document">
-                    <form action="customerUpdate" method="POST">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title">Edit Customer</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                            <div class="modal-body">
-                                <div class="form-group">
-                                    <label>First Name</label>
-                                    <input type="text" class="form-control" id="editFirstName" name="firstName" required>
-                                </div>
-                                <div class="form-group">
-                                    <label>Last Name</label>
-                                    <input type="text" class="form-control" id="editLastName" name="lastName" required>
-                                </div>
-                                <div class="form-group">
-                                    <label>Email</label>
-                                    <input type="email" class="form-control" id="editEmail" name="email" required>
-                                </div>
-                                <div class="form-group">
-                                    <label>Address</label>
-                                    <textarea class="form-control" id="editAddress" name="address" required></textarea>
-                                </div>
-                                <div class="form-group">
-                                    <label>Phone</label>
-                                    <input type="text" class="form-control" id="editPhone" name="phone" required>
-                                </div>
-                                <input type="hidden" id="editUserId" name="userId">
-                                <input type="hidden" name="action" value="update">
-                            </div>
-
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                                <button type="submit" class="btn btn-success">Save</button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-
-            <!----edit-modal end--------->
-
 
             <!----delete-modal start--------->
             <div class="modal fade" tabindex="-1" id="deleteEmployeeModal" role="dialog">

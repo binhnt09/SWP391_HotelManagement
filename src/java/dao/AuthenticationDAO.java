@@ -407,13 +407,16 @@ public class AuthenticationDAO extends DBContext {
 
     public List<Authentication> searchWithPagination(String keyword, int page, int pageSize) {
         List<Authentication> list = new ArrayList<>();
-        String sql = "SELECT a.*, u.UserID, u.Email "
-                + "FROM Authentication a "
-                + "JOIN [User] u ON a.UserID = u.UserID "
-                + "WHERE a.IsDeleted = 0 or a.IsDeleted = 1 "
-                + "AND (a.UserKey LIKE ? OR a.AuthType LIKE ? OR u.Email LIKE ?) "
-                + "ORDER BY a.CreatedAt DESC "
-                + "OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+        String sql = """
+                     SELECT a.*, u.UserID, u.Email, r.RoleName
+                     FROM Authentication a
+                     JOIN [User] u ON a.UserID = u.UserID
+                     JOIN UserRole r ON u.UserRoleID = r.UserRoleID
+                     WHERE (a.IsDeleted = 0 OR a.IsDeleted = 1)
+                       AND (a.UserKey LIKE ? OR a.AuthType LIKE ? OR u.Email LIKE ?)
+                     ORDER BY a.CreatedAt DESC
+                     OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
+                     """;
 
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             String searchTerm = "%" + keyword + "%";
@@ -428,6 +431,7 @@ public class AuthenticationDAO extends DBContext {
                 Authentication auth = extractAuthentication(rs);
                 // Set thêm email từ user
                 auth.getUser().setEmail(rs.getString("Email"));
+                auth.setRoleName(rs.getString("RoleName"));
                 list.add(auth);
             }
         } catch (SQLException e) {
@@ -497,5 +501,32 @@ public class AuthenticationDAO extends DBContext {
         auth.setDeletedBy(rs.getObject("DeletedBy") != null ? rs.getInt("DeletedBy") : null);
         auth.setIsDeleted(rs.getBoolean("IsDeleted"));
         return auth;
+    }
+
+    public boolean createAuthForAdmin(int userId, String userKey, String password) {
+        String sql = "INSERT INTO Authentication (UserID, UserKey, Password) VALUES (?, ?, ?)";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, userId);
+            ps.setString(2, userKey);
+            ps.setString(3, password);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            Logger.getLogger(AuthenticationDAO.class.getName()).log(Level.SEVERE, null, e);
+        }
+        return false;
+    }
+
+    public void logCreateUser(int targetUserId, int createdByUserId, String roleName) {
+        String sql = "INSERT INTO AccountAuditLog (Action, TargetUserID, CreatedByUserID, Details) "
+                + "VALUES (?, ?, ?, ?)";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, "CREATE_ACCOUNT");
+            stmt.setInt(2, targetUserId);
+            stmt.setInt(3, createdByUserId);
+            stmt.setString(4, "{\"role\": \"" + roleName + "\"}");
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            Logger.getLogger(AuthenticationDAO.class.getName()).log(Level.SEVERE, null, e);
+        }
     }
 }

@@ -5,6 +5,7 @@
 --%>
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ page import="java.util.concurrent.TimeUnit" %>
@@ -131,12 +132,31 @@
 
                     <!-- Main Content -->
                     <div class="col-lg-9 col-md-8 ">
-                        <div class="main-content">
-                            <div class="col-lg-9 col-md-8 ">
-                                <h2 class="mb-3 fw-bold">Lịch sử giao dịch</h2>
-                            </div>
+                    <c:if test="${not empty sessionScope.successMessage}">
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            ${sessionScope.successMessage}
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
                         </div>
-                        <input type="hidden" value="${sessionScope.authLocal.user.userId}" name="currentUserId">
+                        <c:remove var="successMessage" scope="session" />
+                    </c:if> 
+
+                    <c:if test="${not empty sessionScope.errorMessage}">
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            ${sessionScope.errorMessage}
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <c:remove var="errorMessage" scope="session" />
+                    </c:if>
+                    <div class="main-content">
+                        <div class="col-lg-9 col-md-8 ">
+                            <h2 class="mb-3 fw-bold">Lịch sử giao dịch</h2>
+                        </div>
+                    </div>
+                    <input type="hidden" value="${sessionScope.authLocal.user.userId}" name="currentUserId">
                     <c:forEach items="${listBooking}" var="i">     
                         <%
                             entity.Booking booking = (entity.Booking) pageContext.getAttribute("i");
@@ -324,6 +344,103 @@
                                                             <button class="btn btn-outline-danger">
                                                                 <i class="fas fa-times"></i>
                                                             </button>
+                                                            <button class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modal-${i.bookingId}">
+                                                                Dịch vụ
+                                                            </button>
+
+                                                            <!-- Modal tương ứng -->
+                                                            <div class="modal fade" id="modal-${i.bookingId}" tabindex="-1">
+                                                                <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                                                                    <div class="modal-content shadow-lg rounded-4">
+                                                                        <div class="modal-header bg-primary text-white">
+                                                                            <h5 class="modal-title">Chi tiết dịch vụ đã đặt</h5>
+                                                                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                                                        </div>
+
+                                                                        <div class="modal-body">
+                                                                            <!-- Danh sách dịch vụ đã đặt -->
+                                                                            <c:choose>
+                                                                                <c:when test="${empty i.bookingServices}">
+                                                                                    <div class="alert alert-info">Chưa có dịch vụ nào được đặt.</div>
+                                                                                </c:when>
+                                                                                <c:otherwise>
+                                                                                    <table class="table table-bordered align-middle text-center">
+                                                                                        <thead class="table-light">
+                                                                                            <tr>
+                                                                                                <th>Tên dịch vụ</th>
+                                                                                                <th>Ngày đặt</th>
+                                                                                                <th>Số lượng</th>
+                                                                                                <th>Đơn giá</th>
+                                                                                                <th>Thành tiền</th>
+                                                                                            </tr>
+                                                                                        </thead>
+                                                                                        <tbody>
+                                                                                            <c:set var="totalAmount" value="0" />
+                                                                                            <c:forEach var="bs" items="${i.bookingServices}">
+                                                                                                <tr>
+                                                                                                    <td>${bs.service.name}</td>
+                                                                                                    <td>${bs.createdAt}</td>
+                                                                                                    <td>${bs.quantity}</td>
+                                                                                                    <td>
+                                                                                                        <fmt:formatNumber value="${bs.priceAtUse}" type="currency" currencySymbol="₫" groupingUsed="true" maxFractionDigits="0"/>
+                                                                                                    </td>
+                                                                                                    <td>
+                                                                                                        <fmt:formatNumber value="${bs.quantity * bs.priceAtUse}" type="currency" currencySymbol="₫" groupingUsed="true" maxFractionDigits="0"/>
+                                                                                                        <c:set var="totalAmount" value="${totalAmount + (bs.quantity * bs.priceAtUse)}" />
+                                                                                                    </td>
+                                                                                                </tr>
+                                                                                            </c:forEach>
+                                                                                        </tbody>
+                                                                                        <tfoot>
+                                                                                            <tr>
+                                                                                                <th colspan="4" class="text-end">Tổng cộng:</th>
+                                                                                                <th>
+                                                                                                    <fmt:formatNumber value="${totalAmount}" type="currency" currencySymbol="₫" groupingUsed="true" maxFractionDigits="0"/>
+                                                                                                </th>
+                                                                                            </tr>
+                                                                                        </tfoot>
+                                                                                    </table>
+                                                                                </c:otherwise>
+                                                                            </c:choose>
+
+                                                                            <!-- Form thêm dịch vụ -->
+                                                                            <hr class="my-4" />
+                                                                            <h6 class="fw-bold mb-3">Thêm dịch vụ mới</h6>
+                                                                            <form action="addBookingService" method="post"
+                                                                                  onsubmit="return confirm('Bạn có chắc chắn muốn thêm dịch vụ này? Chi phí sẽ được tính vào hóa đơn khi trả phòng.');">
+
+                                                                                <input type="hidden" name="bookingId" value="${i.bookingId}" />
+
+                                                                                <div class="row mb-3">
+                                                                                    <div class="col-md-8">
+                                                                                        <label for="serviceId-${i.bookingId}" class="form-label">Chọn dịch vụ:</label>
+                                                                                        <select class="form-select" name="serviceId" id="serviceId-${i.bookingId}" required>
+                                                                                            <c:forEach var="s" items="${serviceList}">
+                                                                                                <c:set var="formattedPrice">
+                                                                                                    <fmt:formatNumber value="${s.price}" type="currency" currencySymbol="₫" groupingUsed="true" maxFractionDigits="0"/>
+                                                                                                </c:set>
+                                                                                                <option value="${s.serviceId}">
+                                                                                                    ${s.name} - ${formattedPrice}
+                                                                                                </option>
+                                                                                            </c:forEach>
+                                                                                        </select>
+                                                                                    </div>
+                                                                                    <div class="col-md-4">
+                                                                                        <label class="form-label">Số lượng:</label>
+                                                                                        <input type="number" name="quantity" value="1" min="1" class="form-control" required />
+                                                                                    </div>
+                                                                                </div>
+
+                                                                                <div class="d-grid gap-2">
+                                                                                    <button type="submit" class="btn btn-success btn-lg">
+                                                                                        <i class="fas fa-plus-circle"></i> Thêm dịch vụ
+                                                                                    </button>
+                                                                                </div>
+                                                                            </form>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -416,54 +533,54 @@
             <script src="${pageContext.request.contextPath}/js/profile.js"></script>
         <script src="${pageContext.request.contextPath}/js/authentication.js"></script>
         <script>
-            $(document).on('click', '[data-bs-toggle="modal"]', function () {
-                const button = $(this);
-                $('#bookRoomId').val(button.data('roomid'));
-                $('#bookingId').val(button.data('bookingid'));
-                $('#bookRoomDetail').val(button.data('roomdetail'));
-                $('#bookRoomNumber').val(button.data('roomnumber'));
-                $('#bookStatus').val(button.data('status'));
-                $('#bookPricePerNight').val(button.data('pricepernight'));
-                $('#bookMaxGuest').val(button.data('maxguest'));
-                $('#bookCheckin').val(button.data('checkin'));
-                $('#bookCheckout').val(button.data('checkout'));
-                $('#bookNumberNight').val(button.data('numbernight'));
-                $('#bookTextNumberNight').val(button.data('textnumbernight'));
-            });
-            document.querySelectorAll('.star-rating:not(.readonly) label').forEach(star => {
-                star.addEventListener('click', function () {
-                    this.style.transform = 'scale(1.2)';
-                    setTimeout(() => {
-                        this.style.transform = 'scale(1)';
-                    }, 200);
-                });
-            });
-            document.addEventListener("DOMContentLoaded", () => {
-                document.querySelectorAll(".star-rating input[type='radio']").forEach(input => {
-                    input.addEventListener("change", function () {
-                        const rating = this.value;
-                        const bookingId = this.name.split("_")[1];
-                        const roomId = this.closest(".rating-card").dataset.roomid;
-                        const userId = this.closest(".rating-card").dataset.userid;
-                        console.log(rating);
-                        console.log(bookingId);
-                        console.log(roomId);
-                        console.log(userId);
-                        const baseUrl = '${pageContext.request.contextPath}';
-                        fetch(baseUrl + "/roomreview?roomId=" + roomId + "&userId=" + userId + "&rating=" + rating + "&bookingId=" + bookingId, {
-                            method: "POST"
-                        })
-                                .then(res => res.json())
-                                .then(data => {
-                                    if (data.success) {
-                                        alert("Cảm ơn bạn đã đánh giá!");
-                                    } else {
-                                        alert("Không thể gửi đánh giá: " + data.message);
-                                    }
-                                });
-                    });
-                });
-            });
+                                                                                      $(document).on('click', '[data-bs-toggle="modal"]', function () {
+                                                                                          const button = $(this);
+                                                                                          $('#bookRoomId').val(button.data('roomid'));
+                                                                                          $('#bookingId').val(button.data('bookingid'));
+                                                                                          $('#bookRoomDetail').val(button.data('roomdetail'));
+                                                                                          $('#bookRoomNumber').val(button.data('roomnumber'));
+                                                                                          $('#bookStatus').val(button.data('status'));
+                                                                                          $('#bookPricePerNight').val(button.data('pricepernight'));
+                                                                                          $('#bookMaxGuest').val(button.data('maxguest'));
+                                                                                          $('#bookCheckin').val(button.data('checkin'));
+                                                                                          $('#bookCheckout').val(button.data('checkout'));
+                                                                                          $('#bookNumberNight').val(button.data('numbernight'));
+                                                                                          $('#bookTextNumberNight').val(button.data('textnumbernight'));
+                                                                                      });
+                                                                                      document.querySelectorAll('.star-rating:not(.readonly) label').forEach(star => {
+                                                                                          star.addEventListener('click', function () {
+                                                                                              this.style.transform = 'scale(1.2)';
+                                                                                              setTimeout(() => {
+                                                                                                  this.style.transform = 'scale(1)';
+                                                                                              }, 200);
+                                                                                          });
+                                                                                      });
+                                                                                      document.addEventListener("DOMContentLoaded", () => {
+                                                                                          document.querySelectorAll(".star-rating input[type='radio']").forEach(input => {
+                                                                                              input.addEventListener("change", function () {
+                                                                                                  const rating = this.value;
+                                                                                                  const bookingId = this.name.split("_")[1];
+                                                                                                  const roomId = this.closest(".rating-card").dataset.roomid;
+                                                                                                  const userId = this.closest(".rating-card").dataset.userid;
+                                                                                                  console.log(rating);
+                                                                                                  console.log(bookingId);
+                                                                                                  console.log(roomId);
+                                                                                                  console.log(userId);
+                                                                                                  const baseUrl = '${pageContext.request.contextPath}';
+                                                                                                  fetch(baseUrl + "/roomreview?roomId=" + roomId + "&userId=" + userId + "&rating=" + rating + "&bookingId=" + bookingId, {
+                                                                                                      method: "POST"
+                                                                                                  })
+                                                                                                          .then(res => res.json())
+                                                                                                          .then(data => {
+                                                                                                              if (data.success) {
+                                                                                                                  alert("Cảm ơn bạn đã đánh giá!");
+                                                                                                              } else {
+                                                                                                                  alert("Không thể gửi đánh giá: " + data.message);
+                                                                                                              }
+                                                                                                          });
+                                                                                              });
+                                                                                          });
+                                                                                      });
 
         </script>
 
