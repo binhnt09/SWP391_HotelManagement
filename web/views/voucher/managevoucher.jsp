@@ -5,6 +5,7 @@
 --%>
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!doctype html>
 <html lang="en">
@@ -14,8 +15,8 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
 
-        <link rel="icon" href="image/favicon1.png" type="image/png">
-        <title>Palatin Hotel - Voucher</title>
+        <link rel="icon" href="${pageContext.request.contextPath}/img/core-img/favicon.ico">
+        <title>Palatin Hotel - ManageVoucher</title>
 
         <link rel="stylesheet" href="${pageContext.request.contextPath}/css/managevoucher/custom.css">
 
@@ -37,56 +38,7 @@
             <!-------------------------sidebar------------>
             <!-- Brand and toggle get grouped for better mobile display -->
             <!-- Sidebar  -->
-            <nav id="sidebar">
-                <div class="sidebar-header">
-                    <h3><a href="loadtohome" style="font-weight: bold"><img src="image/Logo.png" class="img-fluid"/><span>Royal Hotel</span></a></h3>
-                </div>
-                <ul class="list-unstyled components">
-                    <li class="">
-                        <a href="#" class="dashboard"><i class="material-icons">dashboard</i>
-                            <span style="font: 17px Poppins, sans-serif; font-weight: 600; text-transform: uppercase;">Welcome </span></a>
-                    </li>
-
-                    <li class="dropdown">
-                        <a href="#homeSubmenu1" data-toggle="collapse" aria-expanded="false" 
-                           class="dropdown-toggle">
-                            <i class="material-icons">streetview</i>Customer Data</a>
-                        <ul class="collapse list-unstyled menu" id="homeSubmenu1">
-                            <li><a href="guest"><i class="material-icons">account_circle</i>Customer</a></li>
-                            <li><a href="accountguest"><i class="material-icons">account_box</i>Account</a></li>
-                        </ul>
-                    </li>
-
-                    <li class="dropdown">
-                        <a href="#pageSubmenu2" data-toggle="collapse" aria-expanded="false" 
-                           class="dropdown-toggle">
-                            <i class="material-icons">people</i><span>Staff Data</span></a>
-                        <ul class="collapse list-unstyled menu" id="pageSubmenu2">
-                            <li><a href="staff"><i class="material-icons">account_circle</i>Staff</a></li>
-                            <li><a href="accountstaff"><i class="material-icons">account_box</i>Account</a></li>
-                        </ul>
-                    </li>
-
-                    <li class="dropdown">
-                        <a href="#pageSubmenu3" data-toggle="collapse" aria-expanded="false" 
-                           class="dropdown-toggle">
-                            <i class="material-icons">account_circle</i><span>Account</span></a>
-                        <ul class="collapse list-unstyled menu" id="pageSubmenu3">
-                            <li><a href="accountstaff"><i class="material-icons">person_outline</i>Staff</a></li>
-                            <li><a href="accountguest"><i class="material-icons">person_outline</i>guest</a></li>
-                        </ul>
-                    </li>
-                    <li class="">
-                        <a href="booking"><i class="material-icons">touch_app</i><span>Booking</span></a>
-                    </li>
-                    <li class="">
-                        <a href="paymentaddmin"><i class="material-icons">payment</i><span>Payment</span></a>
-                    </li>
-                    <li class="">
-                        <a href="roomtypecontrol"><i class="material-icons">domain</i><span>Room</span></a>
-                    </li>
-                </ul>
-            </nav>
+            <%@ include file="/dashboard-layout/sidebar.jsp" %>
 
             <!--------page-content---------------->
 
@@ -109,9 +61,10 @@
                             <!-- Start XP Col -->
                             <div class="col-md-5 col-lg-3 order-3 order-md-2">
                                 <div class="xp-searchbar">
-                                    <form action="booking" method="get">
+                                    <form action="vouchermanage" method="get" id="searchForm">
                                         <div class="input-group">
-                                            <input type="search" name="searchBooking" value="" class="form-control" placeholder="Search">
+                                            <input type="search" name="searchVoucher" value="${searchVoucher}" class="form-control" placeholder="Search voucher ..."
+                                                   onchange="document.getElementById('searchForm').submit()">
                                             <div class="input-group-append">
                                                 <button class="btn" type="submit" id="button-addon2">GO</button>
                                             </div>
@@ -119,6 +72,18 @@
                                     </form>
                                 </div>
                             </div>
+                            <script>
+                                const searchInput = document.querySelector("input[name='searchVoucher']");
+                                let timeout;
+
+                                searchInput.addEventListener("input", function () {
+                                    clearTimeout(timeout);
+                                    timeout = setTimeout(() => {
+                                        document.getElementById("searchForm").submit();
+                                    }, 100); // Gửi sau khi dừng gõ 800ms
+                                });
+                            </script>
+
                             <!-- End XP Col -->
 
                             <!-- Start XP Col -->
@@ -169,12 +134,11 @@
                     </div>
                     <div class="xp-breadcrumbbar text-center">
                         <h4 class="page-title">Dashboard</h4>  
-                        <ol class="breadcrumb">
+                        <ul class="breadcrumb" style="background: none;">
                             <li class="breadcrumb-item"><a href="#">Booster</a></li>
                             <li class="breadcrumb-item active" aria-current="page">Dashboard</li>
-                        </ol>                
+                        </ul>                
                     </div>
-
                 </div>
 
 
@@ -188,7 +152,7 @@
                                 <div class="table-title">
                                     <div class="row">
                                         <div class="col-sm-6 p-0 d-flex justify-content-lg-start justify-content-center">
-                                            <h2 class="ml-lg-2">Manage Booking</h2>
+                                            <h2 class="ml-lg-2">Manage Voucher</h2>
                                             <!--<h2 class="ml-lg-4">Sort</h2>-->
                                         </div>
                                         <div class="col-sm-6 p-0 d-flex justify-content-lg-start justify-content-center">
@@ -214,9 +178,9 @@
                                                     </ul>
                                                 </li>
                                             </ul>
-                                            <a href="#addEmployeeModal" class="btn btn-success" data-toggle="modal">
-                                                <i class="material-icons">&#xE147;</i> <span>Add New Booking</span></a>
-                                            <a href="#deleteEmployeeModal" class="btn btn-danger" data-toggle="modal">
+                                            <a href="#addVoucherModal" class="btn btn-success" data-toggle="modal">
+                                                <i class="material-icons">&#xE147;</i> <span>Add New Voucher</span></a>
+                                            <a href="#deleteVoucherModal" class="btn btn-danger" data-toggle="modal">
                                                 <i class="material-icons">&#xE15C;</i> <span>Delete</span></a>
                                         </div>
                                     </div>
@@ -231,219 +195,240 @@
                                                     <label for="selectAll"></label>
                                                 </span>
                                             </th>
-                                            <th style="white-space: nowrap;">First Name</th>
-                                            <th style="white-space: nowrap;">Last Name</th>
-                                            <th>RoomID</th>
-                                            <th>CheckinDate</th>
-                                            <th>CheckoutDate</th>
-                                            <th>Phone</th>
-                                            <th>Email</th>
-                                            <th>TotalPrice</th>
-                                            <th>Actions</th>
-                                            <th>Status</th>
-                                            <th>Cancel</th>
+                                            <th style="white-space: nowrap;">Code</th>
+                                            <th style="white-space: nowrap;">Discount(%)</th>
+                                            <th>Valid From</th>
+                                            <th>Valid To</th>
+                                            <th>Create At</th>
+                                            <th>Update At</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <c:forEach items="" var="bk">
-                                            <tr>
-                                                <td>
-                                                    <span class="custom-checkbox">
-                                                        <input type="checkbox" class="select-item" id="checkbox1" name="options[]" value=""/>
-                                                        <label for="checkbox1"></label>
-                                                    </span>
-                                                </td>
-                                                <td style="white-space: nowrap;"></td>
-                                                <td style="white-space: nowrap;"></td>
-                                                <td></td>
-                                                <td style="white-space: nowrap;"></td>
-                                                <td style="white-space: nowrap;"></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td>
-                                                    <a href="#editEmployeeModal" class="edit" data-toggle="modal">
-                                                        <i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i></a>
-                                                    <a href="#" class="delete" data-toggle="modal" data-target="#deleteEmployeeModal" data-id="">
-                                                        <i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>
-                                                </td> 
-                                                <td>
-
-                                                </td>
-                                            </tr>
-                                        </c:forEach>
+                                        <c:forEach items="${listVoucher}" var="voucher">
+                                        <input type="hidden" name="voucherId" value="${voucher.voucherId}"/>
+                                        <tr>
+                                            <td>
+                                                <span class="custom-checkbox">
+                                                    <input type="checkbox" class="select-item" id="checkbox1" name="options[]" value="${voucher.voucherId}"/>
+                                                    <label for="checkbox1"></label>
+                                                </span>
+                                            </td>
+                                            <td style="white-space: nowrap;">${voucher.code}</td>
+                                            <td style="white-space: nowrap;">${voucher.discountPercentage} %</td>
+                                            <td style="white-space: nowrap;">${voucher.validFrom}</td>
+                                            <td style="white-space: nowrap;">${voucher.validTo}</td>
+                                            <td style="white-space: nowrap;">${voucher.createdAt}</td>
+                                            <td style="white-space: nowrap;">${voucher.updatedAt}</td>
+                                            <td>
+                                                <a href="#editVoucherModal" class="edit" data-toggle="modal" data-voucherid="${voucher.voucherId}"
+                                                   onclick="openEditModal(${voucher.voucherId}, '${voucher.code}',
+                                                                   '${voucher.discountPercentage}', '${voucher.validFrom}', '${voucher.validTo}');
+                                                           return false;">
+                                                    <i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i>
+                                                </a>
+                                                <a href="#" class="delete" data-toggle="modal" data-target="#deleteVoucherModal" data-id="${voucher.voucherId}">
+                                                    <i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>
+                                            </td> 
+                                        </tr>
+                                    </c:forEach>
                                     </tbody>
                                 </table>
 
                                 <div class="clearfix">
-                                    <div class="hint-text">Showing <b></b> out of <b></b> entries</div>
+                                    <div class="hint-text">Showing <b>${count<6?count:'6'}</b> out of <b>${count}</b> entries</div>
                                     <ul class="pagination">
-
+                                        <c:if test="${tag > 1}">
+                                            <li class="page-item disabled">
+                                                <a href="vouchermanage?sortby=${not empty sortby ? sortby : 'default'}&orderSort=${not empty orderSort ? orderSort : 'default'}&index=${tag - 1}&searchVoucher=${not empty searchVoucher ? searchVoucher : ''}">Previous</a>
+                                            </li>
+                                        </c:if>
+                                        <c:forEach begin="1" end="${endPage}" var="i">
+                                            <li class="page-item  ${tag == i?"active":""}">
+                                                <a href="vouchermanage?sortby=${not empty sortby ? sortby : 'default'}&orderSort=${not empty orderSort ? orderSort : 'default'}&index=${i}&searchVoucher=${not empty searchVoucher ? searchVoucher : ''}" class="page-link">${i}</a>
+                                            </li>
+                                        </c:forEach>
+                                        <c:if test="${tag < endPage}">
+                                            <li class="page-item">
+                                                <a href="vouchermanage?sortby=${not empty sortby ? sortby : 'default'}&orderSort=${not empty orderSort ? orderSort : 'default'}&index=${tag + 1}&searchVoucher=${not empty searchVoucher ? searchVoucher : ''}" class="page-link">Next</a>
+                                            </li>
+                                        </c:if>
                                     </ul>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Edit Modal HTML -->
-                        <div id="addEmployeeModal" class="modal fade">
+                        <!-- Add Modal HTML -->
+                        <div id="addVoucherModal" class="modal fade">
                             <div class="modal-dialog">
                                 <div class="modal-content">
-                                    <form action="insertasg" method="post">
-                                        <input type="hidden" name="insert" value="insertBooking"/>
+                                    <form action="${pageContext.request.contextPath}/vouchermanage" method="post">
+                                        <input type="hidden" name="action" value="insertVoucher"/>
                                         <div class="modal-header">
-                                            <h4 class="modal-title">Create Booking</h4>
-                                            <button type="button" class="close" data-dismiss="modal" 
-                                                    aria-hidden="true">&times;</button>
+                                            <h4 class="modal-title">Create Voucher</h4>
+                                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                                         </div>
                                         <div class="modal-body">
                                             <div class="form-group" style="display: flex; gap: 10px">
-                                                <div style="flex: 1;">
-                                                    <label>First Name</label>
-                                                    <input type="text" value="" name="fname" class="form-control" required>
+                                                <div style="flex: 2;">
+                                                    <label>Voucher Code</label>
+                                                    <input type="text" value="${param.voucherCode}" name="voucherCode" class="form-control" >
                                                 </div>
                                                 <div style="flex: 1;">
-                                                    <label>Last Name</label>
-                                                    <input type="text" value="" name="lname" class="form-control" required>
-                                                </div>
-                                            </div>
-
-                                            <div class="form-group">
-                                                <label class="form-label">Room Type</label>
-
-                                                <ul class="nav navbar-nav menu_nav">
-                                                    <li class="nav-item submenu dropdown">
-                                                        <a href="#" class="nav-link dropdown-toggle" style="background: #cccccc; color: black" data-toggle="dropdown" id="roomDropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                                                            <span>Select Rooms</span>
-                                                        </a>
-                                                        <ul class="dropdown-menu" id="roomList" style="width: 100%; text-align: center">
-                                                            <c:forEach var="room" items="">
-                                                                <li class="nav-item submenu dropdown custom2-dropdown2">
-                                                                    <label class="dropdown-item">
-                                                                        <input type="checkbox" style="width: 18px; height: 18px; margin: 5px" class="room-checkbox"
-                                                                               value="" data-price="" onchange="updateSelectedRooms()">
-                                                                    </label>
-                                                                </li>
-                                                            </c:forEach>
-                                                        </ul>
-                                                    </li>
-                                                </ul>
-                                                <input type="hidden" id="roomIDs" name="roomIDs">
-                                            </div>
-
-                                            <div class="form-group" style="display: flex; gap: 10px">
-                                                <div style="flex: 1">
-                                                    <label>CheckinDate</label>
-                                                    <input type="date" id="checkIn" value="" name="checkinDate" class="form-control" ">
-                                                </div>
-                                                <div style="flex: 1">
-                                                    <label>CheckoutDate</label>
-                                                    <input type="date" id="checkOut" value="" name="checkoutDate" class="form-control" ">
+                                                    <label>DiscountPercentage</label>
+                                                    <input type="number" value="${param.Discout}" name="Discout" class="form-control" min="0" max="100" step="1" >
                                                 </div>
                                             </div>
 
                                             <div class="form-group" style="display: flex; gap: 10px">
                                                 <div style="flex: 1">
-                                                    <label>Phone</label>
-                                                    <input type="text" value="" name="phone" class="form-control" required>
-                                                    <p id="phoneError" style="color: red;">${phoneError}</p>
+                                                    <label>Valid From</label>
+                                                    <input type="date" id="validfrom" value="${param.validfrom}" name="validfrom" class="form-control validfrom" >
                                                 </div>
                                                 <div style="flex: 1">
-                                                    <label>Email</label>
-                                                    <input type="email" value="" name="email" class="form-control" required>
-                                                    <p id="emailError" style="color: red;"></p>
+                                                    <label>Valid To</label>
+                                                    <input type="date" id="validto" value="${param.validto}" name="validto" class="form-control validto" >
                                                 </div>
                                             </div>
-                                            <div class="form-group">
-                                                <label>TotalPrice</label>
-                                                <input type="text" value="" id="totalPrice" name="TotalPrice" class="form-control" >
+
+                                            <div class="form-group" style="display: flex; gap: 10px">
+                                                <div style="flex: 1">
+                                                    <label class="form-label">Member level</label>
+                                                    <ul class="nav navbar-nav menu_nav">
+                                                        <li class="nav-item submenu dropdown">
+                                                            <a href="#" id="memberDropdown" class="nav-link dropdown-toggle" style="background: #cccccc; color: black" 
+                                                               data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                                                                <span>Select Level</span>
+                                                            </a>
+                                                            <ul class="dropdown-menu" style="width: 100%; text-align: left">
+                                                                <c:forEach var="memberShip" items="${listMemberShip}">
+                                                                    <li class="nav-item submenu dropdown">
+                                                                        <label class="dropdown-item" style="cursor: pointer;">
+                                                                            <input type="checkbox" style="width: 18px; height: 18px; margin: 5px" 
+                                                                                   class="member-checkbox" value="${memberShip.levelId}" 
+                                                                                   ${checked ? "checked" : ""} data-name="${memberShip.levelName}">
+                                                                            ${memberShip.levelName}
+                                                                        </label>
+                                                                    </li>
+                                                                </c:forEach>
+                                                            </ul>
+                                                        </li>
+                                                    </ul>
+                                                    <input type="hidden" id="memberShipId" name="memberShipId">
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
-                                            <input type="submit" class="btn btn-info" value="Save">
+                                            <div class="modal-footer">
+                                                <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
+                                                <input type="submit" class="btn btn-info" value="Save">
+                                            </div>
                                         </div>
                                     </form>
                                 </div>
                             </div>
                         </div>
+                        <c:if test="${not empty openModal}">
+                            <script>
+                                document.addEventListener("DOMContentLoaded", function () {
+                                    setTimeout(function () {
+                                        $('#addVoucherModal').modal('show');
+                                    }, 10);
+                                });
+                            </script>
+                        </c:if>
 
                         <!-- Edit Modal HTML -->
-                        <div id="editEmployeeModal" class="modal fade">
+                        <div id="editVoucherModal" class="modal fade">
                             <div class="modal-dialog">
                                 <div class="modal-content">
-                                    <form action="updateasg" method="post">
-                                        <input type="hidden" name="update" value="updateBooking"/>
-                                        <input type="hidden" name="bookingID" value="" id="bookIDud"/>
+                                    <form action="vouchermanage" method="post">
+                                        <input type="hidden" name="action" value="updateVoucher"/>
+                                        <input type="hidden" name="voucherIdUd" value="${param.voucherIdUd}" id="voucherIdUd"/>
+                                        <input type="hidden" name="index" value="${tag}" /> 
+
                                         <div class="modal-header">
-                                            <h4 class="modal-title">Edit Booking</h4>
-                                            <button type="button" class="close" data-dismiss="modal" 
-                                                    aria-hidden="true">&times;</button>
+                                            <h4 class="modal-title">Edit Voucher</h4>
+                                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                                         </div>
                                         <div class="modal-body">
                                             <div class="form-group" style="display: flex; gap: 10px">
-                                                <div style="flex: 1;">
-                                                    <label>First Name</label>
-                                                    <input type="text" name="fnameud" id="fnameud" class="form-control" required>
+                                                <div style="flex: 2;">
+                                                    <label>Voucher Code</label>
+                                                    <input type="text" value="${param.voucherCodeUd}" name="voucherCodeUd" id="voucherCodeUd" class="form-control" >
                                                 </div>
                                                 <div style="flex: 1;">
-                                                    <label>Last Name</label>
-                                                    <input type="text" name="lnameud" id="lnameud" class="form-control" required>
-                                                </div>
-                                            </div>
-
-                                            <div class="form-group">
-                                                <label class="form-label">Room Type</label>
-                                                <select id="roomIDsud" name="bookingIDud" class="form-control" onchange="updateTotalPriceud()">
-                                                    <option>Select Rooms</option>
-                                                </select>
-                                                <input type="hidden" id="roomIDsud" name="roomIDs">
-                                            </div>
-
-                                            <div class="form-group" style="display: flex; gap: 10px">
-                                                <div style="flex: 1">
-                                                    <label>CheckinDate</label>
-                                                    <input type="date" id="checkInud" name="checkinDate" class="form-control" onchange="updateTotalPriceud()">
-                                                </div>
-                                                <div style="flex: 1">
-                                                    <label>CheckoutDate</label>
-                                                    <input type="date" id="checkOutud" name="checkoutDate" class="form-control" onchange="updateTotalPriceud()">
+                                                    <label>DiscountPercentage</label>
+                                                    <input type="number" value="${param.DiscoutUd}" name="DiscoutUd" id="DiscoutUd" class="form-control" min="0" max="100" step="1" >
                                                 </div>
                                             </div>
 
                                             <div class="form-group" style="display: flex; gap: 10px">
                                                 <div style="flex: 1">
-                                                    <label>Phone</label>
-                                                    <input type="text" id="phoneud" name="phone" class="form-control" required>
-                                                    <p id="phoneError" style="color: red;">${phoneError}</p>
+                                                    <label>Valid From</label>
+                                                    <input type="date" id="validfromUd" value="${param.validfromUd}" name="validfromUd" class="form-control validfrom" >
                                                 </div>
                                                 <div style="flex: 1">
-                                                    <label>Email</label>
-                                                    <input type="email" id="emailud" name="email" class="form-control" required>
-                                                    <p id="emailError" style="color: red;">${emailError}</p>
+                                                    <label>Valid To</label>
+                                                    <input type="date" id="validtoUd" value="${param.validtoUd}" name="validtoUd" class="form-control validto" >
                                                 </div>
                                             </div>
-                                            <div class="form-group">
-                                                <label>TotalPrice</label>
-                                                <input type="text" id="totalPriceud" name="TotalPrice" class="form-control" >
+
+                                            <div class="form-group" style="display: flex; gap: 10px">
+                                                <div style="flex: 1">
+                                                    <label class="form-label">Member level</label>
+                                                    <ul class="nav navbar-nav menu_nav">
+                                                        <li class="nav-item submenu dropdown">
+                                                            <a href="#" id="memberDropdownUd" class="nav-link dropdown-toggle" style="background: #cccccc; color: black" 
+                                                               data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                                                                <span>Select Level</span>
+                                                            </a>
+                                                            <ul id="levelCheckboxContainer" class="dropdown-menu">
+                                                                <c:forEach var="memberShip" items="${listMemberShip}">
+                                                                    <c:set var="selectedLevels" value="${fn:split(levelId, ',')}"/>
+                                                                    <li class="nav-item submenu dropdown">
+                                                                        <label class="dropdown-item" style="cursor: pointer;">
+                                                                            <input type="checkbox" class="member-checkboxUd"
+                                                                                   value="${memberShip.levelId}" data-name="${memberShip.levelName}"
+                                                                                   <c:if test="${fn:contains(levelId, memberShip.levelId)}">checked</c:if> />
+                                                                            ${memberShip.levelName}
+                                                                        </label>
+                                                                    </li>
+                                                                </c:forEach>
+                                                            </ul>
+                                                        </li>
+                                                    </ul>
+                                                    <input type="hidden" id="memberShipIdUd" name="memberShipId">
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
-                                            <input type="submit" class="btn btn-info" value="Save">
+                                            <div class="modal-footer">
+                                                <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
+                                                <input type="submit" class="btn btn-info" value="Save">
+                                            </div>
                                         </div>
                                     </form>
                                 </div>
                             </div>
+                            <c:if test="${not empty openModalEdit}">
+                                <script>
+                                    document.addEventListener("DOMContentLoaded", function () {
+                                        setTimeout(function () {
+                                            $('#editVoucherModal').modal('show');
+                                        }, 10);
+                                    });
+                                </script>
+                            </c:if>
                         </div>
 
 
                         <!-- Delete Modal HTML -->
-                        <div id="deleteEmployeeModal" class="modal fade">
+                        <div id="deleteVoucherModal" class="modal fade">
                             <div class="modal-dialog">
                                 <div class="modal-content">
-                                    <form action="deletebooking" method="post">
+                                    <form action="${pageContext.request.contextPath}/removevoucher" method="post">
+                                        <input type="hidden" name="action" value="removeVoucher"/>
+                                        <input type="hidden" name="voucherId" value="${param.voucherIdRe}" id="voucherIdRe"/>
+                                        <input type="hidden" name="index" value="${tag}" /> 
+
                                         <div class="modal-header">
-                                            <h4 class="modal-title">Delete Booking</h4>
+                                            <h4 class="modal-title">Delete Voucher</h4>
                                             <button type="button" class="close" data-dismiss="modal" 
                                                     aria-hidden="true">&times;</button>
                                         </div>
@@ -453,14 +438,13 @@
                                         </div>
                                         <div class="modal-footer">
                                             <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
-                                            <!--<input id="deleteStaffBtn" type="submit" class="btn btn-danger" value="Delete">-->
-                                            <button id="deleteStaffBtn" class="btn btn-danger">Delete</button>
+                                            <!--<input id="deleteVoucherBtn" type="submit" class="btn btn-danger" value="Delete">-->
+                                            <button id="deleteVoucherBtn" class="btn btn-danger">Delete</button>
                                         </div>
                                     </form>
                                 </div>
                             </div>
                         </div>
-
                     </div>
 
                     <!---footer---->
@@ -490,7 +474,45 @@
         <script src="${pageContext.request.contextPath}/js/managevoucher/bootstrap.min.js"></script>
         <script src="${pageContext.request.contextPath}/js/managevoucher/jquery-3.3.1.min.js"></script>
 
+        <script src="${pageContext.request.contextPath}/js/payment/voucher.js"></script>
+
         <script>
+        </script>
+        <script>
+            const contextPath = '<%= request.getContextPath() %>';
+        </script>
+        <script>
+            <% if (request.getSession().getAttribute("success") != null) { %>
+            Swal.fire({
+                icon: "success",
+                title: "Create voucher!",
+                text: "<%= request.getSession().getAttribute("success") %>",
+                confirmButtonColor: "#3085d6",
+                confirmButtonText: "OK"
+            <c:remove var="success" scope="session" />
+            });
+            <% } %>
+            
+            <% if (request.getSession().getAttribute("errorMessageSes") != null) { %>
+            Swal.fire({
+                icon: "error",
+                title: "Remove voucher!",
+                text: "<%= request.getSession().getAttribute("errorMessageSes") %>",
+                confirmButtonColor: "#3085d6",
+                confirmButtonText: "OK"
+            <c:remove var="errorMessageSes" scope="session" />
+            });
+            <% } %>
+
+            <% if (request.getAttribute("errorMessage") != null) { %>
+            Swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text: "<%= request.getAttribute("errorMessage") %>",
+                confirmButtonColor: "#d33",
+                confirmButtonText: "OK"
+            });
+            <% } %>
         </script>
         <script type="text/javascript">
             $(document).ready(function () {
@@ -498,7 +520,6 @@
                     $('#sidebar').toggleClass('active');
                     $('#content').toggleClass('active');
                 });
-
                 $(".xp-menubar,.body-overlay").on('click', function () {
                     $('#sidebar,.body-overlay').toggleClass('show-nav');
                 });

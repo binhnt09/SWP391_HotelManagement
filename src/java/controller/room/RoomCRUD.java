@@ -240,6 +240,12 @@ public class RoomCRUD extends HttpServlet {
             }
         }
         boolean checkUpdate = new dao.RoomDAO().updateRoom(room, listImg);
+        List<Room> listRoom = new dao.RoomDAO().getListRoom(null, null, 0, 100000, 0, -1, "", "all", "", false, 4, 6, false);
+        request.setAttribute("listRoom", listRoom);
+        request.setAttribute("numberRoom", listRoom.size());
+        request.setAttribute("listRoomType", new dao.RoomTypeDAO().getListRoomType());
+        //CẦN SỬA KHI KHÔNG UPDATE ĐƯỢC
+
         String[] imageIdRaw = request.getParameterValues("imagesToDelete");
         List<RoomImage> imgsToDelete = new ArrayList<>();
         if (imageIdRaw != null) {
@@ -265,7 +271,9 @@ public class RoomCRUD extends HttpServlet {
             }
 
             new dao.RoomImageDAO().deleteRoomImages(imageIds);
-
+            if (checkUpdate) {
+                request.getRequestDispatcher("manageroom.jsp").forward(request, response);
+            }
         }
     }
 

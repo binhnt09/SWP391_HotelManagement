@@ -46,7 +46,7 @@ public class CleaningRequestDAO extends DBContext {
             FROM CleaningRequest cr
             JOIN Room r ON cr.RoomID = r.RoomID
             JOIN RoomType rt ON r.RoomTypeID = rt.RoomTypeID
-            WHERE cr.IsDeleted = 0
+            WHERE cr.IsDeleted = 0 AND cr.status != 'Completed'
             ORDER BY cr.Status, cr.RequestedAt DESC
         """;
 

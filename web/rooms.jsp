@@ -634,233 +634,235 @@
 
 
         <script>
-                                        document.addEventListener("DOMContentLoaded", function () {
-                                            const priceFrom = document.getElementById("priceFrom");
-                                            const priceTo = document.getElementById("priceTo");
+        </script>
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                const priceFrom = document.getElementById("priceFrom");
+                const priceTo = document.getElementById("priceTo");
 
-                                            function validatePriceRange() {
-                                                const from = parseInt(priceFrom.value);
-                                                const to = parseInt(priceTo.value);
+                function validatePriceRange() {
+                    const from = parseInt(priceFrom.value);
+                    const to = parseInt(priceTo.value);
 
-                                                if (!isNaN(from) && !isNaN(to)) {
-                                                    if (from < 0)
-                                                        priceFrom.value = 0;
-                                                    if (to < 0)
-                                                        priceTo.value = 0;
+                    if (!isNaN(from) && !isNaN(to)) {
+                        if (from < 0)
+                            priceFrom.value = 0;
+                        if (to < 0)
+                            priceTo.value = 0;
 
-                                                    if (from >= to) {
-                                                        alert("Giá 'From' phải nhỏ hơn giá 'To'. Vui lòng điều chỉnh.");
-                                                        priceTo.value = from + 100;
-                                                    }
-                                                }
-                                            }
+                        if (from >= to) {
+                            alert("Giá 'From' phải nhỏ hơn giá 'To'. Vui lòng điều chỉnh.");
+                            priceTo.value = from + 100;
+                        }
+                    }
+                }
 
-                                            priceFrom.addEventListener("change", validatePriceRange);
-                                            priceTo.addEventListener("change", validatePriceRange);
+                priceFrom.addEventListener("change", validatePriceRange);
+                priceTo.addEventListener("change", validatePriceRange);
 
-                                            const checkInInput = document.getElementById('checkInDate');
-                                            const checkOutInput = document.getElementById('checkOutDate');
+                const checkInInput = document.getElementById('checkInDate');
+                const checkOutInput = document.getElementById('checkOutDate');
 
-                                            // Cấu hình ngày tối thiểu và tối đa cho ngày check-in
-                                            const today = new Date();
-                                            const todayStr = today.toISOString().split('T')[0];
-                                            checkInInput.min = todayStr;
+                // Cấu hình ngày tối thiểu và tối đa cho ngày check-in
+                const today = new Date();
+                const todayStr = today.toISOString().split('T')[0];
+                checkInInput.min = todayStr;
 
-                                            const maxCheckIn = new Date(today);
-                                            maxCheckIn.setMonth(maxCheckIn.getMonth() + 6);
-                                            checkInInput.max = maxCheckIn.toISOString().split('T')[0];
+                const maxCheckIn = new Date(today);
+                maxCheckIn.setMonth(maxCheckIn.getMonth() + 6);
+                checkInInput.max = maxCheckIn.toISOString().split('T')[0];
 
-                                            // Hàm hỗ trợ cộng thêm ngày
-                                            function getNextDay(dateStr, offset = 1) {
-                                                const date = new Date(dateStr);
-                                                date.setDate(date.getDate() + offset);
-                                                return date.toISOString().split('T')[0];
-                                            }
+                // Hàm hỗ trợ cộng thêm ngày
+                function getNextDay(dateStr, offset = 1) {
+                    const date = new Date(dateStr);
+                    date.setDate(date.getDate() + offset);
+                    return date.toISOString().split('T')[0];
+                }
 
-                                            // Hàm kiểm tra hợp lệ ngày
-                                            function validateDateRange() {
-                                                const checkInValue = checkInInput.value;
-                                                const checkOutValue = checkOutInput.value;
+                // Hàm kiểm tra hợp lệ ngày
+                function validateDateRange() {
+                    const checkInValue = checkInInput.value;
+                    const checkOutValue = checkOutInput.value;
 
-                                                // Nếu chưa nhập ngày check-in thì không cần kiểm tra gì cả
-                                                if (!checkInValue)
-                                                    return;
+                    // Nếu chưa nhập ngày check-in thì không cần kiểm tra gì cả
+                    if (!checkInValue)
+                        return;
 
-                                                const checkInDate = new Date(checkInValue);
-                                                const checkOutDate = checkOutValue ? new Date(checkOutValue) : null;
+                    const checkInDate = new Date(checkInValue);
+                    const checkOutDate = checkOutValue ? new Date(checkOutValue) : null;
 
-                                                // Giới hạn ngày check-in
-                                                const maxCheckIn = new Date(today);
-                                                maxCheckIn.setMonth(maxCheckIn.getMonth() + 6);
+                    // Giới hạn ngày check-in
+                    const maxCheckIn = new Date(today);
+                    maxCheckIn.setMonth(maxCheckIn.getMonth() + 6);
 
-                                                if (checkInDate > maxCheckIn) {
-                                                    alert("Bạn không thể đặt phòng cách ngày hôm nay hơn 6 tháng!");
-                                                    checkInInput.value = maxCheckIn.toISOString().split('T')[0];
-                                                    return;
-                                                }
+                    if (checkInDate > maxCheckIn) {
+                        alert("Bạn không thể đặt phòng cách ngày hôm nay hơn 6 tháng!");
+                        checkInInput.value = maxCheckIn.toISOString().split('T')[0];
+                        return;
+                    }
 
-                                                if (checkInDate < today) {
-                                                    alert("Ngày nhận phòng không thể trước hôm nay!");
-                                                    checkInInput.value = getNextDay(todayStr);
-                                                    return;
-                                                }
+                    if (checkInDate < today) {
+                        alert("Ngày nhận phòng không thể trước hôm nay!");
+                        checkInInput.value = getNextDay(todayStr);
+                        return;
+                    }
 
-                                                const minCheckOut = getNextDay(checkInValue, 1);
-                                                const maxCheckOut = new Date(checkInDate);
-                                                maxCheckOut.setMonth(maxCheckOut.getMonth() + 1);
+                    const minCheckOut = getNextDay(checkInValue, 1);
+                    const maxCheckOut = new Date(checkInDate);
+                    maxCheckOut.setMonth(maxCheckOut.getMonth() + 1);
 
-                                                checkOutInput.min = minCheckOut;
-                                                checkOutInput.max = maxCheckOut.toISOString().split('T')[0];
+                    checkOutInput.min = minCheckOut;
+                    checkOutInput.max = maxCheckOut.toISOString().split('T')[0];
 
-                                                if (checkOutDate) {
-                                                    if (checkOutDate <= checkInDate) {
-                                                        alert("Ngày trả phòng phải sau ngày nhận phòng!");
-                                                        checkOutInput.value = null;
-                                                    } else if (checkOutDate > maxCheckOut) {
-                                                        alert("Ngày trả phòng không được quá 1 tháng sau ngày nhận phòng!");
-                                                        checkOutInput.value = null;
-                                                    }
-                                                }
-                                            }
+                    if (checkOutDate) {
+                        if (checkOutDate <= checkInDate) {
+                            alert("Ngày trả phòng phải sau ngày nhận phòng!");
+                            checkOutInput.value = null;
+                        } else if (checkOutDate > maxCheckOut) {
+                            alert("Ngày trả phòng không được quá 1 tháng sau ngày nhận phòng!");
+                            checkOutInput.value = null;
+                        }
+                    }
+                }
 
-                                            checkInInput.addEventListener('blur', validateDateRange);
-                                            checkOutInput.addEventListener('blur', validateDateRange);
+                checkInInput.addEventListener('blur', validateDateRange);
+                checkOutInput.addEventListener('blur', validateDateRange);
 
-                                            if (checkInInput.value) {
-                                                validateDateRange();
-                                            }
-
-
-                                        });
-
-
-                                        let currentIndex = 0;
-                                        const visibleCount = 5;
-                                        const thumbWidth = 60;
-                                        let totalThumbs = 0;
-                                        function updateThumbnailScroll() {
-                                            const scrollDistance = currentIndex * thumbWidth;
-                                            document.getElementById('roomThumbnails').style.transform = "translateX(-" + scrollDistance + "px)";
-                                        }
-
-                                        function showRoomDetail(element) {
-                                            if (event)
-                                                event.preventDefault();
-                                            const baseUrl = '${pageContext.request.contextPath}';
-                                            const roomId = element.dataset.roomid;
-                                            fetch(baseUrl + "/showroomdetail?roomId=" + roomId)
-                                                    .then(data => data.json())
-                                                    .then(data => {
-                                                        const room = data.room;
-                                                        const detail = data.roomdetail;
-                                                        const type = data.roomtype;
-                                                        const img = data.roomimg;
-                                                        const listAmenity = data.roomamenities;
-                                                        const listService = data.listService;
-                                                        const star = data.roomstar || 0;
-                                                        totalThumbs = img.length;
+                if (checkInInput.value) {
+                    validateDateRange();
+                }
 
 
-
-                                                        document.getElementById("selectedRoomId").value = roomId;
-                                                        document.getElementById("area").innerHTML = '<i class="fa-solid fa-chart-area"></i> Diện tích: ' + detail.area;
-                                                        document.getElementById("numberPeople").innerHTML = '<i class="fa-solid fa-people-group"></i> Số thành viên: ' + detail.maxGuest;
-                                                        document.getElementById("roomDetailDescription").innerText = detail.description;
-                                                        document.getElementById("detailPrice").innerText = room.price + "VNĐ/Đêm";
-                                                        document.getElementById("roomModalLabel").innerText = room.roomNumber + "-" + type.typeName;
-
-                                                        renderStars("avgRatingStars", star);
-
-                                                        const container = document.getElementById("amenity-container");
-                                                        container.innerHTML = "";
-
-                                                        Object.entries(listAmenity).forEach(([category, amenities], index) => {
-                                                            if (amenities && amenities.length > 0) {
-
-                                                                const title = document.createElement("div");
-                                                                title.textContent = category;
-                                                                title.style.fontWeight = "bold";
-                                                                title.style.fontSize = "16px";
-                                                                title.style.marginBottom = "8px";
-                                                                container.appendChild(title);
-
-                                                                const grid = document.createElement("div");
-                                                                grid.style.display = "grid";
-                                                                grid.style.gridTemplateColumns = "1fr 1fr";
-                                                                grid.style.gap = "6px 20px";
-                                                                grid.style.fontSize = "14px";
-
-                                                                amenities.forEach(item => {
-                                                                    const amenityItem = document.createElement("div");
-                                                                    amenityItem.textContent = "• " + item.name;
-                                                                    grid.appendChild(amenityItem);
-                                                                });
+            });
 
 
-                                                                container.appendChild(grid);
-                                                                if (container.childElementCount > 0) {
-                                                                    const hr = document.createElement("hr");
-                                                                    hr.style.border = "0";
-                                                                    hr.style.borderTop = "1px solid black";
-                                                                    hr.style.margin = "16px 0";
-                                                                    container.appendChild(hr);
-                                                                }
-                                                        }
-                                                        });
-                                                        const serviceContainer = document.getElementById("service-container");
-                                                        serviceContainer.innerHTML = "";
+            let currentIndex = 0;
+            const visibleCount = 5;
+            const thumbWidth = 60;
+            let totalThumbs = 0;
+            function updateThumbnailScroll() {
+                const scrollDistance = currentIndex * thumbWidth;
+                document.getElementById('roomThumbnails').style.transform = "translateX(-" + scrollDistance + "px)";
+            }
 
-                                                        if (listService && listService.length > 0) {
-                                                            const serviceTitle = document.createElement("div");
-                                                            serviceTitle.textContent = "Dịch vụ đi kèm";
-                                                            serviceTitle.style.fontWeight = "bold";
-                                                            serviceTitle.style.fontSize = "16px";
-                                                            serviceTitle.style.marginBottom = "8px";
-                                                            serviceContainer.appendChild(serviceTitle);
-
-                                                            const serviceGrid = document.createElement("div");
-                                                            serviceGrid.style.display = "grid";
-                                                            serviceGrid.style.gridTemplateColumns = "1fr 1fr";
-                                                            serviceGrid.style.gap = "6px 20px";
-                                                            serviceGrid.style.fontSize = "14px";
-
-                                                            listService.forEach(service => {
-                                                                const serviceItem = document.createElement("div");
-                                                                serviceItem.textContent = "• " + service.name;
-                                                                serviceGrid.appendChild(serviceItem);
-                                                            });
-
-                                                            serviceContainer.appendChild(serviceGrid);
-
-                                                            const hr = document.createElement("hr");
-                                                            hr.style.border = "0";
-                                                            hr.style.borderTop = "1px solid black";
-                                                            hr.style.margin = "16px 0";
-                                                            serviceContainer.appendChild(hr);
-                                                        }
-
-                                                        const carouselInner = document.querySelector('#roomCarousel .carousel-inner');
-                                                        const thumbnailContainer = document.getElementById('roomThumbnails');
-                                                        carouselInner.innerHTML = '';
-                                                        thumbnailContainer.innerHTML = '';
+            function showRoomDetail(element) {
+                if (event)
+                    event.preventDefault();
+                const baseUrl = '${pageContext.request.contextPath}';
+                const roomId = element.dataset.roomid;
+                fetch(baseUrl + "/showroomdetail?roomId=" + roomId)
+                        .then(data => data.json())
+                        .then(data => {
+                            const room = data.room;
+                            const detail = data.roomdetail;
+                            const type = data.roomtype;
+                            const img = data.roomimg;
+                            const listAmenity = data.roomamenities;
+                            const listService = data.listService;
+                            const star = data.roomstar || 0;
+                            totalThumbs = img.length;
 
 
-                                                        if (img.length > 0) {
-                                                            currentIndex = 0;
-                                                            img.forEach((image, index) => {
-                                                                const itemDiv = document.createElement('div');
-                                                                itemDiv.className = 'carousel-item' + (index === 0 ? ' active' : '');
 
-                                                                const imgTag = document.createElement('img');
-                                                                imgTag.src = image.imageURL;
-                                                                imgTag.className = 'd-block w-100';
-                                                                imgTag.alt = "Room Image" + (index + 1);
-                                                                itemDiv.appendChild(imgTag);
-                                                                carouselInner.appendChild(itemDiv);
+                            document.getElementById("selectedRoomId").value = roomId;
+                            document.getElementById("area").innerHTML = '<i class="fa-solid fa-chart-area"></i> Diện tích: ' + detail.area;
+                            document.getElementById("numberPeople").innerHTML = '<i class="fa-solid fa-people-group"></i> Số thành viên: ' + detail.maxGuest;
+                            document.getElementById("roomDetailDescription").innerText = detail.description;
+                            document.getElementById("detailPrice").innerText = room.price + "VNĐ/Đêm";
+                            document.getElementById("roomModalLabel").innerText = room.roomNumber + "-" + type.typeName;
 
-                                                                const thumbImg = document.createElement('img');
-                                                                thumbImg.src = image.imageURL;
-                                                                thumbImg.alt = "Thumbnail " + (index + 1);
+                            renderStars("avgRatingStars", star);
+
+                            const container = document.getElementById("amenity-container");
+                            container.innerHTML = "";
+
+                            Object.entries(listAmenity).forEach(([category, amenities], index) => {
+                                if (amenities && amenities.length > 0) {
+
+                                    const title = document.createElement("div");
+                                    title.textContent = category;
+                                    title.style.fontWeight = "bold";
+                                    title.style.fontSize = "16px";
+                                    title.style.marginBottom = "8px";
+                                    container.appendChild(title);
+
+                                    const grid = document.createElement("div");
+                                    grid.style.display = "grid";
+                                    grid.style.gridTemplateColumns = "1fr 1fr";
+                                    grid.style.gap = "6px 20px";
+                                    grid.style.fontSize = "14px";
+
+                                    amenities.forEach(item => {
+                                        const amenityItem = document.createElement("div");
+                                        amenityItem.textContent = "• " + item.name;
+                                        grid.appendChild(amenityItem);
+                                    });
+
+
+                                    container.appendChild(grid);
+                                    if (container.childElementCount > 0) {
+                                        const hr = document.createElement("hr");
+                                        hr.style.border = "0";
+                                        hr.style.borderTop = "1px solid black";
+                                        hr.style.margin = "16px 0";
+                                        container.appendChild(hr);
+                                    }
+                            }
+                            });
+                            const serviceContainer = document.getElementById("service-container");
+                            serviceContainer.innerHTML = "";
+
+                            if (listService && listService.length > 0) {
+                                const serviceTitle = document.createElement("div");
+                                serviceTitle.textContent = "Dịch vụ đi kèm";
+                                serviceTitle.style.fontWeight = "bold";
+                                serviceTitle.style.fontSize = "16px";
+                                serviceTitle.style.marginBottom = "8px";
+                                serviceContainer.appendChild(serviceTitle);
+
+                                const serviceGrid = document.createElement("div");
+                                serviceGrid.style.display = "grid";
+                                serviceGrid.style.gridTemplateColumns = "1fr 1fr";
+                                serviceGrid.style.gap = "6px 20px";
+                                serviceGrid.style.fontSize = "14px";
+
+                                listService.forEach(service => {
+                                    const serviceItem = document.createElement("div");
+                                    serviceItem.textContent = "• " + service.name;
+                                    serviceGrid.appendChild(serviceItem);
+                                });
+
+                                serviceContainer.appendChild(serviceGrid);
+
+                                const hr = document.createElement("hr");
+                                hr.style.border = "0";
+                                hr.style.borderTop = "1px solid black";
+                                hr.style.margin = "16px 0";
+                                serviceContainer.appendChild(hr);
+                            }
+
+                            const carouselInner = document.querySelector('#roomCarousel .carousel-inner');
+                            const thumbnailContainer = document.getElementById('roomThumbnails');
+                            carouselInner.innerHTML = '';
+                            thumbnailContainer.innerHTML = '';
+
+
+                            if (img.length > 0) {
+                                currentIndex = 0;
+                                img.forEach((image, index) => {
+                                    const itemDiv = document.createElement('div');
+                                    itemDiv.className = 'carousel-item' + (index === 0 ? ' active' : '');
+
+                                    const imgTag = document.createElement('img');
+                                    imgTag.src = image.imageURL;
+                                    imgTag.className = 'd-block w-100';
+                                    imgTag.alt = "Room Image" + (index + 1);
+                                    itemDiv.appendChild(imgTag);
+                                    carouselInner.appendChild(itemDiv);
+
+                                    const thumbImg = document.createElement('img');
+                                    thumbImg.src = image.imageURL;
+                                    thumbImg.alt = "Thumbnail " + (index + 1);
 //                                                                thumbImg.addEventListener('click', () => {
 //                                                                    const carousel = bootstrap.Carousel.getOrCreateInstance(document.getElementById('roomCarousel'));
 //                                                                    carousel.to(index);
@@ -877,88 +879,88 @@
 //                                                                    updateThumbnailScroll();
 //                                                                });
 
-                                                                thumbnailContainer.appendChild(thumbImg);
+                                    thumbnailContainer.appendChild(thumbImg);
 
-                                                            });
-
-
-                                                            document.querySelector('.thumb-nav.left').onclick = () => {
-                                                                if (currentIndex > 0) {
-                                                                    currentIndex--;
-                                                                    updateThumbnailScroll();
-                                                                }
-                                                            };
-
-                                                            document.querySelector('.thumb-nav.right').onclick = () => {
-                                                                if (currentIndex <= totalThumbs - visibleCount) {
-                                                                    currentIndex++;
-                                                                    updateThumbnailScroll();
-                                                                }
-                                                            };
-                                                            updateThumbnailScroll();
-                                                        }
-                                                    });
-                                            const modal = new bootstrap.Modal(document.getElementById('roomDetailModal'));
-                                            modal.show();
-                                        }
+                                });
 
 
-                                        $(document).ready(function () {
-                                            $('.single-rooms-area').hover(
-                                                    function () {
-                                                        $(this).css({
-                                                            'transform': 'scale(1.04)',
-                                                            'transition': 'transform 0.4s ease'
-                                                        });
-                                                    },
-                                                    function () {
-                                                        $(this).css('transform', 'scale(1)');
-                                                    }
-                                            );
-                                        });
+                                document.querySelector('.thumb-nav.left').onclick = () => {
+                                    if (currentIndex > 0) {
+                                        currentIndex--;
+                                        updateThumbnailScroll();
+                                    }
+                                };
 
-                                        $(document).ready(function () {
-                                            document.querySelectorAll(".room-card").forEach(card => {
-                                                const roomId = card.dataset.roomid;
-                                                const baseUrl = '${pageContext.request.contextPath}';
-                                                fetch(baseUrl + "/showroomdetail?roomId=" + roomId)
-                                                        .then(response => response.json())
-                                                        .then(data => {
-                                                            const rating = data.roomstar || 0;
-                                                            renderStars("avgRatingStars_" + roomId, rating);
-                                                        });
-                                            });
-                                        });
-                                        function renderStars(containerId, star) {
-                                            const starContainer = document.getElementById(containerId);
-                                            if (!starContainer)
-                                                return;
-                                            starContainer.innerHTML = ""; // Xóa cũ
-                                            const fullStars = Math.floor(star);
-                                            const halfStar = (star - fullStars >= 0.5);
-                                            const emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
+                                document.querySelector('.thumb-nav.right').onclick = () => {
+                                    if (currentIndex <= totalThumbs - visibleCount) {
+                                        currentIndex++;
+                                        updateThumbnailScroll();
+                                    }
+                                };
+                                updateThumbnailScroll();
+                            }
+                        });
+                const modal = new bootstrap.Modal(document.getElementById('roomDetailModal'));
+                modal.show();
+            }
 
-                                            for (let i = 0; i < fullStars; i++) {
-                                                const starIcon = document.createElement("i");
-                                                starIcon.className = "bi bi-star-fill";
-                                                starContainer.appendChild(starIcon);
-                                            }
-                                            if (halfStar) {
-                                                const starIcon = document.createElement("i");
-                                                starIcon.className = "bi bi-star-half";
-                                                starContainer.appendChild(starIcon);
-                                            }
 
-                                            for (let i = 0; i < emptyStars; i++) {
-                                                const starIcon = document.createElement("i");
-                                                starIcon.className = "bi bi-star";
-                                                starContainer.appendChild(starIcon);
-                                            }
-                                            const scoreText = document.createElement("span");
-                                            scoreText.className = "ms-2 text-dark";
-                                            scoreText.innerText = "(" + star.toFixed(1) + "/5)";
-                                            starContainer.appendChild(scoreText);
-                                        }
+            $(document).ready(function () {
+                $('.single-rooms-area').hover(
+                        function () {
+                            $(this).css({
+                                'transform': 'scale(1.04)',
+                                'transition': 'transform 0.4s ease'
+                            });
+                        },
+                        function () {
+                            $(this).css('transform', 'scale(1)');
+                        }
+                );
+            });
+
+            $(document).ready(function () {
+                document.querySelectorAll(".room-card").forEach(card => {
+                    const roomId = card.dataset.roomid;
+                    const baseUrl = '${pageContext.request.contextPath}';
+                    fetch(baseUrl + "/showroomdetail?roomId=" + roomId)
+                            .then(response => response.json())
+                            .then(data => {
+                                const rating = data.roomstar || 0;
+                                renderStars("avgRatingStars_" + roomId, rating);
+                            });
+                });
+            });
+            function renderStars(containerId, star) {
+                const starContainer = document.getElementById(containerId);
+                if (!starContainer)
+                    return;
+                starContainer.innerHTML = ""; // Xóa cũ
+                const fullStars = Math.floor(star);
+                const halfStar = (star - fullStars >= 0.5);
+                const emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
+
+                for (let i = 0; i < fullStars; i++) {
+                    const starIcon = document.createElement("i");
+                    starIcon.className = "bi bi-star-fill";
+                    starContainer.appendChild(starIcon);
+                }
+                if (halfStar) {
+                    const starIcon = document.createElement("i");
+                    starIcon.className = "bi bi-star-half";
+                    starContainer.appendChild(starIcon);
+                }
+
+                for (let i = 0; i < emptyStars; i++) {
+                    const starIcon = document.createElement("i");
+                    starIcon.className = "bi bi-star";
+                    starContainer.appendChild(starIcon);
+                }
+                const scoreText = document.createElement("span");
+                scoreText.className = "ms-2 text-dark";
+                scoreText.innerText = "(" + star.toFixed(1) + "/5)";
+                starContainer.appendChild(scoreText);
+            }
 
         </script>
     </body>

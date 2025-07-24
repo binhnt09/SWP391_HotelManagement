@@ -79,9 +79,6 @@
                         <button class="btn btn-success" onclick="openQuickCheckIn(${room.roomID})">
                             <i class="fas fa-sign-in-alt me-1"></i> Check-in
                         </button>
-                        <button class="btn btn-info" onclick="bookRoom(${room.roomID})">
-                            <i class="fas fa-calendar-plus me-1"></i> Đặt phòng
-                        </button>
                         <button class="btn btn-secondary" onclick="confirmSetMaintenance(${room.roomID})">
                             <i class="fas fa-edit me-1"></i> Sửa phòng
                         </button>
@@ -94,8 +91,8 @@
                         <button class="btn btn-primary" onclick="printInvoice(${room.roomID})">
                             <i class="fas fa-receipt me-1"></i> In hóa đơn
                         </button>
-                        <button class="btn btn-secondary" onclick="editBooking(${room.roomID})">
-                            <i class="fas fa-user-edit me-1"></i> Cập nhật thông tin khách
+                        <button class="btn btn-secondary" data-toggle="modal" data-target="#modal-${currentStay.bookingID}">
+                            Dịch vụ
                         </button>
                         <button class="btn btn-danger" onclick="openRequestCleaningModal(${room.roomID}, ${currentStay.bookingID})">
                             <i class="fas fa-broom me-1"></i> Gọi dọn phòng
@@ -212,7 +209,7 @@
                 </div>
                 <div class="mb-3">
                     <label for="phone" class="form-label">Số điện thoại</label>
-                    <input type="text" class="form-control" name="phone">
+                    <input type="text" class="form-control" name="phone" required>
                 </div>
                 <div class="mb-3">
                     <label for="nights" class="form-label">Số đêm</label>
@@ -380,5 +377,100 @@
                 </div>
             </div>
         </form>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="modal-${currentStay.bookingID}" tabindex="-1" role="dialog" aria-labelledby="modalLabel-${currentStay.bookingID}" aria-hidden="true">
+    <div class="modal-dialog custom-modal-lg modal-dialog-scrollable" role="document">
+        <div class="modal-content">
+
+            <!-- Header -->
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="modalLabel-${currentStay.bookingID}">Chi tiết dịch vụ đã đặt</h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Đóng">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <!-- Body -->
+            <div class="modal-body">
+                <!-- Danh sách dịch vụ đã đặt -->
+                <c:choose>
+                    <c:when test="${empty bookingServices}">
+                        <div class="alert alert-info">Chưa có dịch vụ nào được đặt.</div>
+                    </c:when>
+                    <c:otherwise>
+                        <table class="table table-bordered text-center">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th>Tên dịch vụ</th>
+                                    <th>Ngày đặt</th>
+                                    <th>Số lượng</th>
+                                    <th>Đơn giá</th>
+                                    <th>Thành tiền</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <c:set var="totalAmount" value="0" />
+                                <c:forEach var="bs" items="${bookingServices}">
+                                    <tr>
+                                        <td>${bs.service.name}</td>
+                                        <td>${bs.createdAt}</td>
+                                        <td>${bs.quantity}</td>
+                                        <td>
+                                            <fmt:formatNumber value="${bs.priceAtUse}" type="currency" currencySymbol="₫" groupingUsed="true" maxFractionDigits="0"/>
+                                        </td>
+                                        <td>
+                                            <fmt:formatNumber value="${bs.quantity * bs.priceAtUse}" type="currency" currencySymbol="₫" groupingUsed="true" maxFractionDigits="0"/>
+                                            <c:set var="totalAmount" value="${totalAmount + (bs.quantity * bs.priceAtUse)}" />
+                                        </td>
+                                    </tr>
+                                </c:forEach>
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <th colspan="4" class="text-right">Tổng cộng:</th>
+                                    <th>
+                                        <fmt:formatNumber value="${totalAmount}" type="currency" currencySymbol="₫" groupingUsed="true" maxFractionDigits="0"/>
+                                    </th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </c:otherwise>
+                </c:choose>
+
+                <!-- Thêm dịch vụ -->
+                <hr />
+                <h6 class="font-weight-bold mb-3">Thêm dịch vụ mới</h6>
+                <form action="addBookingServiceByRecep" method="post"
+                      onsubmit="return confirm('Bạn có chắc chắn muốn thêm dịch vụ này? Chi phí sẽ được tính vào hóa đơn khi trả phòng.');">
+
+                    <input type="hidden" name="bookingId" value="${currentStay.bookingID}" />
+
+                    <div class="form-row">
+                        <div class="form-group col-md-8">
+                            <label for="serviceId-${currentStay.bookingID}">Chọn dịch vụ:</label>
+                            <select class="form-control" name="serviceId" id="serviceId-${currentStay.bookingID}" required>
+                                <c:forEach var="s" items="${serviceList}">
+                                    <option value="${s.serviceId}">
+                                        ${s.name} - <fmt:formatNumber value="${s.price}" type="currency" currencySymbol="₫" groupingUsed="true" maxFractionDigits="0"/>
+                                    </option>
+                                </c:forEach>
+                            </select>
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="quantity-${currentStay.bookingID}">Số lượng:</label>
+                            <input type="number" name="quantity" id="quantity-${currentStay.bookingID}" value="1" min="1" class="form-control" required />
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-success btn-block mt-3">
+                        <i class="fas fa-plus-circle"></i> Thêm dịch vụ
+                    </button>
+                </form>
+            </div>
+
+        </div>
     </div>
 </div>

@@ -15,6 +15,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -66,14 +67,28 @@ public class LoginGoogleServlet extends HttpServlet {
             String accessToken = GoogleLogin.getToken(code);
             GoogleAccount acc = GoogleLogin.getUserInfo(accessToken);
 
+            System.out.println("accessToken: " + accessToken);
+            System.out.println("acc: " + acc);
             if (acc == null) {
                 forwardToHomeView(response);
                 return;
             }
 
-            String firstName = acc.getGivenName();
-            String lastName = acc.getFamilyName();
+            String fullName = acc.getName();
+
+            String firstName = "Unknown";
+            String lastName = "";
             String email = acc.getEmail();
+
+            if (fullName != null && !fullName.trim().isEmpty()) {
+                String[] paths = fullName.trim().split("\\s+");
+                if (paths.length == 1) {
+                    firstName = paths[0];
+                } else {
+                    firstName = paths[paths.length - 1];
+                    lastName = String.join(" ", Arrays.copyOfRange(paths, 0, paths.length - 1));
+                }
+            }
 
             int userId;
             AuthenticationDAO dao = new AuthenticationDAO();
