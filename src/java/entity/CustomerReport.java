@@ -23,6 +23,8 @@ public class CustomerReport {
     private Timestamp registerDate;
     private String tier;
 
+    private BigDecimal totalPaid;
+
     public CustomerReport() {
     }
 
@@ -91,25 +93,33 @@ public class CustomerReport {
     }
 
     public String getTier() {
-        if (totalSpent == null) {
+        if (totalPaid == null) {
             return "Unranked";
         }
-        if (totalSpent.compareTo(new BigDecimal("50000000")) >= 0) {
+        if (totalPaid.compareTo(new BigDecimal("50000000")) >= 0) {
             return "Platinum";
         }
-        if (totalSpent.compareTo(new BigDecimal("20000000")) >= 0) {
+        if (totalPaid.compareTo(new BigDecimal("20000000")) >= 0) {
             return "Gold";
         }
-        if (totalSpent.compareTo(new BigDecimal("5000000")) >= 0) {
+        if (totalPaid.compareTo(new BigDecimal("5000000")) >= 0) {
             return "Silver";
         }
         return "Bronze";
-    }   
+    }
 
     public void setTier(String tier) {
         this.tier = tier;
     }
 
+    public BigDecimal getTotalPaid() {
+        return totalPaid;
+    }
+
+    public void setTotalPaid(BigDecimal totalPaid) {
+        this.totalPaid = totalPaid;
+    } 
+    
     @Override
     public String toString() {
         return "CustomerReport{" + "userId=" + userId + ", firstName=" + firstName + ", lastName=" + lastName + ", email=" + email + ", totalBookings=" + totalBookings + ", totalSpent=" + totalSpent + ", lastBookingDate=" + lastBookingDate + ", registerDate=" + registerDate + ", tier=" + tier + '}';

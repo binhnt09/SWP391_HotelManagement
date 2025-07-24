@@ -17,7 +17,7 @@ import java.io.PrintWriter;
  *
  * @author viet7
  */
-@WebServlet(name = "StaffDeleteServlet", urlPatterns = {"/staffDetele"})
+@WebServlet(name = "StaffDeleteServlet", urlPatterns = {"/staffDelete"})
 public class StaffDeleteServlet extends HttpServlet {
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)

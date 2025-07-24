@@ -163,7 +163,7 @@ public class ExportExcelServlet extends HttpServlet {
             row.createCell(2).setCellValue(c.getLastName());
             row.createCell(3).setCellValue(c.getEmail());
             row.createCell(4).setCellValue(c.getTotalBookings());
-            row.createCell(5).setCellValue(c.getTotalSpent() != null ? c.getTotalSpent().doubleValue() : 0.0);
+            row.createCell(5).setCellValue(c.getTotalPaid() != null ? c.getTotalPaid().doubleValue() : 0.0);
             row.createCell(6).setCellValue(c.getLastBookingDate() != null ? c.getLastBookingDate().toString() : "N/A");
             row.createCell(7).setCellValue(c.getRegisterDate() != null ? c.getRegisterDate().toString() : "N/A");
             row.createCell(8).setCellValue(c.getTier());

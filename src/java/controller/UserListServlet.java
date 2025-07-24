@@ -21,10 +21,18 @@ import java.util.List;
  *
  * @author viet7
  */
-@WebServlet(name = "StaffListServlet", urlPatterns = {"/staffList"})
-public class StaffListSevelet extends HttpServlet {
+@WebServlet(name = "UserListServlet", urlPatterns = {"/userList"})
+public class UserListServlet extends HttpServlet {
 
-
+    /**
+     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
+     * methods.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
@@ -33,24 +41,31 @@ public class StaffListSevelet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet StaffListSevelet</title>");
+            out.println("<title>Servlet UserListServlet</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet StaffListSevelet at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet UserListServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
     }
 
-
+    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
+    /**
+     * Handles the HTTP <code>GET</code> method.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
-        HttpSession session = request.getSession(false); 
+        HttpSession session = request.getSession(false);
         Authentication auth = (session != null) ? (Authentication) session.getAttribute("authLocal") : null;
 
-        if (auth == null || auth.getUser().getUserRoleId() >2) {
+        if (auth == null || auth.getUser().getUserRoleId() > 1) {
             response.sendRedirect("loadtohome#login-modal");
             return;
         }
@@ -59,56 +74,58 @@ public class StaffListSevelet extends HttpServlet {
         int recordsPerPage = 10;
 
         String keyword = request.getParameter("keyword");
-
         String roleStr = request.getParameter("role");
-        Integer role = null;
 
+        Integer roleId = null;
         try {
-            role = Integer.parseInt(roleStr);
-        } catch (NumberFormatException e) {
-            role = null;  // Nếu parse lỗi thì coi như null
-        }
-
-        if (role == null || (role != 3 && role != 4)) {
-            role = 3;
+            roleId = Integer.parseInt(roleStr);
+        } catch (Exception e) {
+            roleId = null;
         }
 
         if (request.getParameter("page") != null) {
-            page = Integer.parseInt(request.getParameter("page"));
+            try {
+                page = Integer.parseInt(request.getParameter("page"));
+            } catch (NumberFormatException e) {
+                page = 1;
+            }
         }
 
         StaffDAO dao = new StaffDAO();
-        List<User> staffList;
-        int totalStaff;
+        List<User> userList = dao.getUsersWithPaging(keyword, roleId, (page - 1) * recordsPerPage, recordsPerPage);
+        int totalUsers = dao.countUsers(keyword, roleId);
+        
+        int totalPages = (int) Math.ceil(totalUsers * 1.0 / recordsPerPage);
 
-        if (keyword != null && !keyword.trim().isEmpty()) {
-            staffList = dao.searchStaffByPage(keyword, role, (page - 1) * recordsPerPage, recordsPerPage);
-            totalStaff = dao.countSearchStaff(keyword, role);
-        } else {
-            staffList = dao.getStaffByRoleWithPaging(role, (page - 1) * recordsPerPage, recordsPerPage);
-            totalStaff = dao.countTotalStaffByRole(role);
-        }
-
-        int totalPages = (int) Math.ceil(totalStaff * 1.0 / recordsPerPage);
-
-        request.setAttribute("staffList", staffList);
-        request.setAttribute("totalStaff", totalStaff);
+        request.setAttribute("userList", userList);
+        request.setAttribute("totalUsers", totalUsers);
         request.setAttribute("currentPage", page);
         request.setAttribute("totalPages", totalPages);
-        request.setAttribute("role", role);
+        request.setAttribute("role", roleId);
         request.setAttribute("keyword", keyword);
 
-        request.getRequestDispatcher("staff-list.jsp").forward(request, response);
+        request.getRequestDispatcher("user-list.jsp").forward(request, response);
     }
 
-
+    /**
+     * Handles the HTTP <code>POST</code> method.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         processRequest(request, response);
     }
 
-
+    /**
+     * Returns a short description of the servlet.
+     *
+     * @return a String containing servlet description
+     */
     @Override
     public String getServletInfo() {
         return "Short description";

@@ -105,11 +105,12 @@ public class ReportDAO extends DBContext {
         StringBuilder sql = new StringBuilder();
         sql.append("SELECT u.UserID, u.FirstName, u.LastName, u.Email, u.CreatedAt, ");
         sql.append("COUNT(b.BookingID) AS TotalBookings, ");
-        sql.append("ISNULL(SUM(b.TotalAmount), 0) AS TotalSpent, ");
+        sql.append("ISNULL(SUM(b.TotalAmount), 0) + ISNULL(SUM(bs.PriceAtUse * bs.Quantity), 0) AS TotalSpent, ");
         sql.append("MAX(b.BookingDate) AS LastBooking ");
         sql.append("FROM [User] u ");
         sql.append("LEFT JOIN Booking b ON u.UserID = b.UserID ");
-        sql.append("WHERE u.IsDeleted = 0 and u.UserRoleID = 5 ");
+        sql.append("LEFT JOIN BookingService bs ON b.BookingID = bs.BookingID AND bs.IsDeleted = 0 ");
+        sql.append("WHERE u.IsDeleted = 0 and (u.UserRoleID = 5 or u.UserRoleID = 6)");
 
         // Keyword
         if (keyword != null && !keyword.trim().isEmpty()) {
@@ -191,6 +192,7 @@ public class ReportDAO extends DBContext {
                 c.setTotalBookings(rs.getInt("TotalBookings"));
                 c.setTotalSpent(rs.getBigDecimal("TotalSpent"));
                 c.setLastBookingDate(rs.getTimestamp("LastBooking"));
+                c.setTotalPaid(getTotalSpentByUser(rs.getInt("UserID")));
                 list.add(c);
             }
         } catch (SQLException e) {
@@ -211,7 +213,7 @@ public class ReportDAO extends DBContext {
         sql.append("SELECT COUNT(*) FROM ( ");
         sql.append("SELECT u.UserID FROM [User] u ");
         sql.append("LEFT JOIN Booking b ON u.UserID = b.UserID ");
-        sql.append("WHERE u.IsDeleted = 0 and u.UserRoleID = 5 ");
+        sql.append("WHERE u.IsDeleted = 0 and (u.UserRoleID = 5 or u.UserRoleID = 6) ");
 
         if (keyword != null && !keyword.trim().isEmpty()) {
             sql.append(" AND (u.FirstName LIKE ? OR u.LastName LIKE ? OR u.Email LIKE ?) ");
@@ -274,7 +276,7 @@ public class ReportDAO extends DBContext {
 
         return total;
     }
-    
+
     public List<CustomerReport> exportCustomerReport(
             String keyword,
             int bookingMin, int bookingMax,
@@ -291,7 +293,7 @@ public class ReportDAO extends DBContext {
         sql.append("MAX(b.BookingDate) AS LastBooking ");
         sql.append("FROM [User] u ");
         sql.append("LEFT JOIN Booking b ON u.UserID = b.UserID ");
-        sql.append("WHERE u.IsDeleted = 0 and u.UserRoleID = 5 ");
+        sql.append("WHERE u.IsDeleted = 0 and (u.UserRoleID = 5 or u.UserRoleID = 6)");
 
         // Keyword
         if (keyword != null && !keyword.trim().isEmpty()) {
@@ -369,11 +371,36 @@ public class ReportDAO extends DBContext {
                 c.setTotalBookings(rs.getInt("TotalBookings"));
                 c.setTotalSpent(rs.getBigDecimal("TotalSpent"));
                 c.setLastBookingDate(rs.getTimestamp("LastBooking"));
+                c.setTotalPaid(getTotalSpentByUser(rs.getInt("UserID")));
                 list.add(c);
             }
         } catch (SQLException e) {
             Logger.getLogger(ReportDAO.class.getName()).log(Level.SEVERE, null, e);
         }
         return list;
+    }
+
+    public BigDecimal getTotalSpentByUser(int userId) {
+        BigDecimal total = BigDecimal.ZERO;
+        String sql = "SELECT "
+                + "ISNULL(SUM(b.TotalAmount), 0) AS TotalBookingAmount, "
+                + "ISNULL(SUM(bs.PriceAtUse * bs.Quantity), 0) AS TotalServiceAmount "
+                + "FROM Booking b "
+                + "LEFT JOIN BookingService bs ON b.BookingID = bs.BookingID AND bs.IsDeleted = 0 "
+                + "WHERE b.UserID = ? AND b.IsDeleted = 0";
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, userId);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                BigDecimal bookingAmount = rs.getBigDecimal("TotalBookingAmount");
+                BigDecimal serviceAmount = rs.getBigDecimal("TotalServiceAmount");
+                total = bookingAmount.add(serviceAmount);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); // hoặc ghi log tùy bạn
+        }
+
+        return total;
     }
 }

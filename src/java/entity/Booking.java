@@ -7,6 +7,7 @@ package entity;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.sql.Date;
+import java.util.List;
 
 /**
  *
@@ -32,6 +33,7 @@ public class Booking {
     private Timestamp actualCheckOut;
     
     private Voucher voucher;
+    private List<BookingServices> bookingServices;
     private User user;
 
     public Booking() {
@@ -197,8 +199,13 @@ public class Booking {
         this.actualCheckOut = actualCheckOut;
     }
 
-    
-    
+    public List<BookingServices> getBookingServices() {
+        return bookingServices;
+    }
+
+    public void setBookingServices(List<BookingServices> bookingServices) {
+        this.bookingServices = bookingServices;
+    }
 
     public User getUser() {
         return user;

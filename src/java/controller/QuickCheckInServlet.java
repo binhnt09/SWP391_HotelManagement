@@ -84,13 +84,14 @@ public class QuickCheckInServlet extends HttpServlet {
         booking.setCheckOutDate(checkOutDate);
 
         booking.setUserId(userId);
-        booking.setTotalAmount(new BigDecimal("0")); // sẽ tính sau
+        BigDecimal price = roomDAO.getRoomPrice(roomId);
+        BigDecimal dem = BigDecimal.valueOf(nights);
+        booking.setTotalAmount(price.multiply(dem));
         booking.setStatus("Checked-in");
 
         int bookingId = bookingDAO.insertBookingForGuest(booking);
 
         if (bookingId > 0) {
-            BigDecimal price = roomDAO.getRoomPrice(roomId);
 
             BookingDetails bd = new BookingDetails();
             bd.setBookingId(bookingId);

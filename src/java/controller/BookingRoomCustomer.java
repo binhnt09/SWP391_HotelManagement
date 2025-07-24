@@ -5,8 +5,11 @@
 package controller;
 
 import dao.BookingDao;
+import dao.ServiceDAO;
 import entity.Authentication;
 import entity.Booking;
+import entity.BookingServices;
+import entity.Service;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -71,6 +74,10 @@ public class BookingRoomCustomer extends HttpServlet {
         String roomIdRaw = request.getParameter("roomId");
         String roomDetailId = request.getParameter("bookRoomDetail");
         Authentication auth = (Authentication) request.getSession().getAttribute("authLocal");
+        
+        List<Service> allServices = new ServiceDAO().getAllServices();
+        request.setAttribute("serviceList", allServices);
+        
         List<Booking> list = new BookingDao().getBookings(
                 5, // userRoleId
                 auth.getUser().getUserId(), // currentUserId (nếu không lọc theo user)
@@ -89,8 +96,12 @@ public class BookingRoomCustomer extends HttpServlet {
             int roomId = new dao.BookingDetailDAO().getBookingDetailByBookingId(b.getBookingId()).getRoom().getRoomID();
             request.setAttribute("rating_" + b.getBookingId(), new dao.RoomReviewDAO().getRatingByRoomId(roomId, b.getUserId()));
         }
-        request.setAttribute("listBooking", list);
 
+        for (Booking booking : list) {
+            List<BookingServices> services = new BookingDao().getBookingServicesByBookingId(booking.getBookingId());
+            booking.setBookingServices(services);
+        }
+        request.setAttribute("listBooking", list);
         if (action != null) {
             switch (action.toLowerCase()) {
                 case "checkcancel":
