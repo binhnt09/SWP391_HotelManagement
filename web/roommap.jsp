@@ -343,10 +343,10 @@
                 <!-- Start XP Col -->
                 <div class="col-md-5 col-lg-3 order-3 order-md-2">
                     <div class="xp-searchbar">
-                        <form method="get" action="roomList">
+                        <form method="get" action="receptionistPage">
                             <div class="input-group">
                                 <input type="search" class="form-control" name="keyword"
-                                       value="<%= request.getParameter("keyword") != null ? request.getParameter("keyword") : "" %>"
+                                       value="${param.keyword}"
                                        placeholder="Search">
                                 <div class="input-group-append">
                                     <button class="btn" type="submit" id="button-addon2">GO</button>
@@ -507,23 +507,28 @@
 
                     <!-- Action Bar -->
                     <div class="action-bar">
-                        <button class="btn btn-secondary">
-                            <i class="fas fa-sign-in-alt"></i>
-                            DS CheckIn
-                        </button>
-                        <button class="btn btn-warning">
-                            <i class="fas fa-sign-out-alt"></i>
-                            DS Checkout
-                        </button>
-                        <button class="btn btn-primary">
-                            <i class="fas fa-list"></i>
-                            DS Khách hàng
-                        </button>
-                        <select class="form-select" style="width: auto;">
-                            <option>Sắp xếp theo tầng</option>
-                            <option>Sắp xếp theo trạng thái</option>
-                            <option>Sắp xếp theo loại phòng</option>
-                        </select>
+                        <form action="receptionistPage" method="get" class="action-bar">
+                            <input type="text" name="keyword" placeholder="Tìm theo tên phòng / tên khách" value="${param.keyword}" />
+
+                            <select name="status">
+                                <option value="">-- Trạng thái --</option>
+                                <option value="Available" ${param.status == 'Available' ? 'selected' : ''}>Còn trống</option>
+                                <option value="Occupied" ${param.status == 'Occupied' ? 'selected' : ''}>Đang ở</option>
+                                <option value="Reserved" ${param.status == 'Reserved' ? 'selected' : ''}>Đã đặt</option>
+                                <option value="Checkout" ${param.status == 'Checkout' ? 'selected' : ''}>Đã đi</option>
+                                <option value="Cleaning" ${param.status == 'Cleaning' ? 'selected' : ''}>Đang dọn</option>
+                                <option value="Non-available" ${param.status == 'Non-available' ? 'selected' : ''}>Đang bảo trì</option>
+                            </select>
+
+                            <select name="roomType">
+                                <option value="">-- Loại phòng --</option>
+                                <c:forEach var="type" items="${roomTypes}">
+                                    <option value="${type.typeName}" ${param.roomType == type.typeName ? 'selected' : ''}>${type.typeName}</option>
+                                </c:forEach>
+                            </select>
+
+                            <button type="submit" class="btn btn-primary">Lọc</button>
+                        </form>
                     </div>
 
                     <!-- Room Grid -->

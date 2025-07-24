@@ -202,9 +202,6 @@
                             <h4 class="mb-0">Manage Booking</h4>
                         </div>
                     </div>
-
-
-
                     <table class="table table-striped table-hover">
                         <thead>
                             <tr>
@@ -238,7 +235,7 @@
                                             <td>
                                                 <input type="checkbox" name="roomCheckbox" value="${b.bookingId}">
                                             </td>
-                                            <td>${b.bookingID}</td>
+                                            <td>${b.bookingId}</td>
                                             <td>${userInfo.firstName} ${userInfo.lastName}</td>
                                             <td>${room.roomNumber}</td>
                                             <td>${b.bookingDate}</td>
@@ -250,10 +247,10 @@
                                                 <a href="#" class="edit" title="Edit"
                                                    data-bs-toggle="modal" 
                                                    data-bs-target="#editbooking"
-                                                   onclick="loadEditRoom('${b.bookingID})">
+                                                   onclick="loadEditRoom('${b.bookingId})">
                                                     <i class="material-icons">&#xE254;</i>
                                                 </a>
-                                                <a href="booking?id=${b.bookingID}" class="delete" title="Delete" onclick="return confirm('Xác nhận xóa phòng này?');"><i class="material-icons">&#xE872;</i></a>
+                                                <a href="booking?id=${b.bookingId}" class="delete" title="Delete" onclick="return confirm('Xác nhận xóa phòng này?');"><i class="material-icons">&#xE872;</i></a>
                                             </td>
                                             <td>
                                                 <c:choose>
@@ -263,7 +260,7 @@
 
                                                     <c:when test="${fn:toLowerCase(b.status) == 'confirmed'}">
                                                         <form action="bookingcrud" method="post">
-                                                            <input type="hidden" name="bookingID" value="${b.bookingID}"/>
+                                                            <input type="hidden" name="bookingID" value="${b.bookingId}"/>
                                                             <input type="hidden" name="statusbooking" value="occupied"/>
                                                             <button type="submit" class="btn btn-success btn-sm">Check-In</button>
                                                         </form>
@@ -272,7 +269,7 @@
                                                     <c:when test="${fn:toLowerCase(b.status) == 'occupied'}">
                                                         <button class="btn btn-warning btn-sm">Occupied</button>
                                                         <form action="bookingcrud" method="post">
-                                                            <input type="hidden" name="bookingID" value="${b.bookingID}"/>
+                                                            <input type="hidden" name="bookingID" value="${b.bookingId}"/>
                                                             <input type="hidden" name="statusbooking" value="checkedout"/>
                                                             <button type="submit" class="btn btn-success btn-sm">Check-Out</button>
                                                         </form>
@@ -280,7 +277,7 @@
 
                                                     <c:when test="${fn:toLowerCase(b.status) == 'checkedout'}">
                                                         <form action="bookingcrud" method="post">
-                                                            <input type="hidden" name="bookingID" value="${b.bookingID}"/>
+                                                            <input type="hidden" name="bookingID" value="${b.bookingId}"/>
                                                             <input type="hidden" name="statusbooking" value="bookingdone"/>
                                                             <button type="submit" class="btn btn-info btn-sm">Cleaning</button>
                                                         </form>

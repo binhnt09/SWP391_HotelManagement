@@ -2,10 +2,16 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package controller;
+package controller.room;
 
+import controller.*;
+import dao.BookingDao;
 import dao.RoomDAO;
-import entity.Room;
+import dao.ServiceDAO;
+import entity.BookingInfo;
+import entity.BookingServices;
+import entity.RoomInfo;
+import entity.Service;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -19,8 +25,11 @@ import java.util.List;
  *
  * @author viet7
  */
-@WebServlet(name = "RoomListServlet", urlPatterns = {"/roomList"})
-public class RoomListServlet extends HttpServlet {
+@WebServlet(name = "RoomDetailServlet", urlPatterns = {"/roomDetail"})
+public class RoomDetailServlet extends HttpServlet {
+
+    RoomDAO roomDAO = new RoomDAO();
+    BookingDao bookingDAO = new BookingDao();
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -30,10 +39,10 @@ public class RoomListServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet RoomListServlet</title>");
+            out.println("<title>Servlet RoomDetailServlet</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet RoomListServlet at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet RoomDetailServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -42,33 +51,26 @@ public class RoomListServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        int page = 1;
-        int pageSize = 5;
+        int roomId = Integer.parseInt(request.getParameter("roomId"));
 
-        if (request.getParameter("page") != null) {
-            page = Integer.parseInt(request.getParameter("page"));
+        RoomInfo room = roomDAO.getRoomInfo(roomId);
+        BookingInfo currentStay = bookingDAO.getCurrentStay(roomId);
+        if (currentStay == null) {
+            currentStay = bookingDAO.getClosestReservedBooking(roomId);
         }
+        if (currentStay != null) {
+            List<BookingServices> bookingServices = new BookingDao().getBookingServicesByBookingId(currentStay.getBookingID());
+            List<Service> serviceList = new ServiceDAO().getAllServices();
 
-        int totalRoom;
-        List<Room> roomList;
-        RoomDAO dao = new RoomDAO();
-        String keyword = request.getParameter("keyword");
-        if (keyword != null && !keyword.trim().isEmpty()) {
-            roomList = dao.searchRoomsByPage(keyword, (page - 1) * pageSize, pageSize);
-            totalRoom = dao.countSearchRooms(keyword);
-        } else {
-            roomList = dao.getRoomsByPage((page - 1) * pageSize, pageSize);
-            totalRoom = dao.countAllRooms();
+            request.setAttribute("serviceList", serviceList);
+            request.setAttribute("bookingServices", bookingServices);
         }
-        int totalPages = (int) Math.ceil((double) totalRoom / pageSize);
-
-        request.setAttribute("roomList", roomList);
-        request.setAttribute("totalRoom", totalRoom);
-        request.setAttribute("totalPages", totalPages);
-        request.setAttribute("currentPage", page);
-        request.setAttribute("keyword", keyword);
-
-        request.getRequestDispatcher("room-list.jsp").forward(request, response);
+        List<BookingInfo> futureBookings = bookingDAO.getFutureBookings(roomId);
+        
+        request.setAttribute("room", room);
+        request.setAttribute("currentStay", currentStay);
+        request.setAttribute("futureBookings", futureBookings);
+        request.getRequestDispatcher("room-detail-fragment.jsp").forward(request, response);
     }
 
     @Override

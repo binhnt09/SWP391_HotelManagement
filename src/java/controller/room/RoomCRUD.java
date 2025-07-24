@@ -2,14 +2,18 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package controller;
+package controller.room;
 
 import com.google.gson.Gson;
+import dao.RoomDAO;
+import dao.RoomTypeDAO;
+import entity.Amenity;
 import entity.Hotel;
 import entity.Room;
 import entity.RoomDetail;
 import entity.RoomImage;
 import entity.RoomType;
+import entity.Service;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -25,12 +29,15 @@ import java.util.Collection;
 import java.util.List;
 import validation.Validation;
 import jakarta.servlet.annotation.MultipartConfig;
+import jakarta.servlet.http.HttpSession;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.Map;
 import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.json.JSONObject;
 
 /**
  *
@@ -91,12 +98,31 @@ public class RoomCRUD extends HttpServlet {
                 case "deleteMultiple":
                     deleteMultipleRoom(request, response);
                     break;
+                case "deleteRoomType":
+                    deleteRoomType(request, response);
+                    break;
+                case "checkBookingStatus":
+                    checkBookingStatus(request, response);
+                    break;
                 case "filterRoom":
                     filter(request, response);
                     break;
                 case "getImages":
                     getRoomImg(request, response);
                     break;
+                case "checkRoomNumber":
+                    checkRoomNumber(request, response);
+                    break;
+//                case "checkRoomTypeName":
+//                    checkRoomTypeName(request, response);
+//                    break;
+                case "getAllAmenity":
+                    getAllAmenity(request, response);
+                    break;
+                case "getAllService":
+                    getAllService(request, response);
+                    break;
+
                 default:
                     response.sendError(HttpServletResponse.SC_NOT_FOUND);
             }
@@ -114,30 +140,33 @@ public class RoomCRUD extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+            HttpSession session = request.getSession();
 
         String action = request.getParameter("action");
         if (action != null) {
             switch (action) {
                 case "add":
                     addRoom(request, response);
+                    session.setAttribute("openTab", "#managerRoom");
                     break;
                 case "edit":
                     editRoom(request, response);
+                    session.setAttribute("openTab", "#managerRoom");
+                    break;
+
+                case "editRoomType":
+                    editRoomType(request, response);
+                    session.setAttribute("openTab", "#managerRoomType");
                     break;
                 case "addRoomType":
                     addRoomType(request, response);
-                    break;
-                case "editRoomType":
-                    editRoomType(request, response);
+                    session.setAttribute("openTab", "#managerRoomType");
                     break;
                 default:
                     response.sendError(HttpServletResponse.SC_NOT_FOUND);
             }
-            List<Room> listRoom = new dao.RoomDAO().getListRoom(null, null, 0, 100000, 0, -1, "", "all", "", false, 4, 6, false);
-            request.setAttribute("listRoom", listRoom);
-            request.setAttribute("numberRoom", listRoom.size());
-            request.setAttribute("listRoomType", new dao.RoomTypeDAO().getListRoomType());
-            request.getRequestDispatcher("manageroom.jsp").forward(request, response);
+            
+            response.sendRedirect("manageroom");
         }
     }
 
@@ -159,15 +188,15 @@ public class RoomCRUD extends HttpServlet {
         String roomTypeIdRaw = request.getParameter("roomTypeID");
         String status = request.getParameter("status");
         String priceRaw = request.getParameter("price");
-        String bedType = request.getParameter("bedType");
         String description = request.getParameter("description");
-        String maxGuestRaw = request.getParameter("maxGuest");
+//        String maxGuestRaw = request.getParameter("maxGuest");
         String areaRaw = request.getParameter("area");
 
+        int typeId = Validation.parseStringToInt(roomTypeIdRaw);
         RoomDetail roomD = new RoomDetail(Validation.parseStringToInt(roomDetailRaw),
-                bedType,
+                "Family",
                 Validation.parseStringToDouble(areaRaw),
-                Validation.parseStringToInt(maxGuestRaw),
+                new dao.RoomTypeDAO().getRoomTypeById(typeId).getNumberPeople(),
                 description);
         RoomType roomT = new dao.RoomTypeDAO().getRoomTypeById(Validation.parseStringToInt(roomTypeIdRaw));
         Room room = new Room(Validation.parseStringToInt(roomIdRaw),
@@ -181,23 +210,18 @@ public class RoomCRUD extends HttpServlet {
         for (Part part : parts) {
             if ("photos".equals(part.getName()) && part.getSize() > 0) {
                 String originalFileName = Paths.get(part.getSubmittedFileName()).getFileName().toString();
-                String extension = originalFileName.substring(originalFileName.lastIndexOf('.')); // lấy đuôi .jpg, .png, ...
+                String extension = originalFileName.substring(originalFileName.lastIndexOf('.'));
 
-                // ➕ Đổi tên file theo timestamp + roomNumber
-                // BUILD
 //                String uploadPath = getServletContext().getRealPath("/") + "img";
                 String uniqueId = UUID.randomUUID().toString();
                 String newFileName = "room_" + roomNumber + "_" + uniqueId + extension;
 
-                // BUILD
 //                String uploadPath = getServletContext().getRealPath("/");
-                String uploadPath = getServletContext().getRealPath("/img");
+                String uploadPath = getServletContext().getRealPath("/") + "img";
                 File uploadDir = new File(uploadPath);
                 if (!uploadDir.exists()) {
                     uploadDir.mkdirs();
                 }
-
-                // Ghi file mới vào thư mục
                 try (InputStream input = part.getInputStream()) {
                     Files.copy(
                             input,
@@ -205,13 +229,13 @@ public class RoomCRUD extends HttpServlet {
                             StandardCopyOption.REPLACE_EXISTING
                     );
                 } catch (IOException e) {
-                    e.printStackTrace(); // kiểm tra lỗi thật sự
+                    e.printStackTrace();
                 }
 
                 // Tạo RoomImage object
                 RoomImage image = new RoomImage();
                 image.setImageURL("img/" + newFileName);
-                image.setCaption(uploadPath); // hoặc bạn có thể truyền caption riêng nếu cần
+                image.setCaption(uploadPath);
                 listImg.add(image);
             }
         }
@@ -238,8 +262,6 @@ public class RoomCRUD extends HttpServlet {
                     }
                 }
             }
-
-            // Xóa file ảnh vật lý
             for (RoomImage img : imgsToDelete) {
                 String realPath = getServletContext().getRealPath("/") + img.getImageURL(); // ví dụ: img/room_xyz.png
                 File file = new File(realPath);
@@ -248,7 +270,6 @@ public class RoomCRUD extends HttpServlet {
                 }
             }
 
-            // Xóa bản ghi DB
             new dao.RoomImageDAO().deleteRoomImages(imageIds);
             if (checkUpdate) {
                 request.getRequestDispatcher("manageroom.jsp").forward(request, response);
@@ -261,18 +282,19 @@ public class RoomCRUD extends HttpServlet {
         String roomNumber = request.getParameter("roomNumber");
         String roomTypeIdRaw = request.getParameter("roomTypeID");
         String status = request.getParameter("status");
-        String hotelRaw = request.getParameter("hotel");
+//        String hotelRaw = request.getParameter("hotel");
         String priceRaw = request.getParameter("price");
-        String bedType = request.getParameter("bedType");
+//        String bedType = request.getParameter("bedType");
         String description = request.getParameter("description");
-        String maxGuestRaw = request.getParameter("maxGuest");
+//        String maxGuestRaw = request.getParameter("maxGuest");
         String areaRaw = request.getParameter("area");
 
-        RoomDetail detail = new RoomDetail(bedType, Validation.parseStringToDouble(areaRaw), Validation.parseStringToInt(maxGuestRaw), description);
-        RoomType type = new RoomType();
-        type.setRoomTypeID(Validation.parseStringToInt(roomTypeIdRaw));
+        int typeId = Validation.parseStringToInt(roomTypeIdRaw);
+
+        RoomType type = new dao.RoomTypeDAO().getRoomTypeById(typeId);
+        RoomDetail detail = new RoomDetail(type.getTypeName(), Validation.parseStringToDouble(areaRaw), type.getNumberPeople(), description);
         Hotel hotel = new Hotel();
-        hotel.setHotelID(Validation.parseStringToInt(hotelRaw));
+        hotel.setHotelID(1);
         Room room = new Room(roomNumber, detail, type, status, Validation.parseStringToDouble(priceRaw), hotel);
 
         Collection<Part> parts = request.getParts();
@@ -281,77 +303,66 @@ public class RoomCRUD extends HttpServlet {
         for (Part part : parts) {
             if ("photos".equals(part.getName()) && part.getSize() > 0) {
                 String originalFileName = Paths.get(part.getSubmittedFileName()).getFileName().toString();
-                String extension = originalFileName.substring(originalFileName.lastIndexOf('.')); // lấy đuôi .jpg, .png, ...
+                String extension = originalFileName.substring(originalFileName.lastIndexOf('.'));
 
-                // ➕ Đổi tên file theo timestamp + roomNumber
-                long timestamp = System.currentTimeMillis(); // hoặc timestamp bạn có
-                Date date = new Date(timestamp);
-                SimpleDateFormat sdf = new SimpleDateFormat("HHmmssddMMyyyy");
-                String newFileName = "room_" + roomNumber + "_" + sdf.format(date) + extension;
+                String uniqueId = UUID.randomUUID().toString();
+                String newFileName = "room_" + roomNumber + "_" + uniqueId + extension;
 
-                // BUILD
                 String uploadPath = getServletContext().getRealPath("/") + "img";
                 File uploadDir = new File(uploadPath);
                 if (!uploadDir.exists()) {
                     uploadDir.mkdirs();
                 }
-
-                String runningPath = getServletContext().getRealPath("/");
-
-                File projectRoot = Paths.get(runningPath).getParent().getParent().toFile();
-
-                File targetImgDir = new File(projectRoot, "web/img");
-
-                if (!targetImgDir.exists()) {
-                    targetImgDir.mkdirs();
-                }
-
-                String uploadPath1 = targetImgDir.getAbsolutePath();
-
                 try (InputStream input = part.getInputStream()) {
                     Files.copy(
                             input,
-                            Paths.get(uploadPath1, newFileName),
+                            Paths.get(uploadPath, newFileName),
                             StandardCopyOption.REPLACE_EXISTING
                     );
                 } catch (IOException e) {
-                    e.printStackTrace(); // kiểm tra lỗi thật sự
+                    e.printStackTrace();
                 }
 
-                // Tạo RoomImage object
                 RoomImage image = new RoomImage();
-                image.setImageURL("img/" + uploadPath);
-                image.setCaption(uploadPath1); // hoặc bạn có thể truyền caption riêng nếu cần
+                image.setImageURL(uploadPath + newFileName);
+                image.setCaption(uploadPath);
                 listImg.add(image);
             }
         }
         boolean check = new dao.RoomDAO().addRoom(room, listImg);
-        if (check) {
-            List<Room> listRoom = new dao.RoomDAO().getListRoom(null, null, 0, 100000, 0, -1, "", "all", "", false, 4, 6, false);
-            request.setAttribute("listRoom", listRoom);
-            request.setAttribute("numberRoom", listRoom.size());
-            request.setAttribute("listRoomType", new dao.RoomTypeDAO().getListRoomType());
-            request.getRequestDispatcher("manageroom.jsp").forward(request, response);
-        } else {
-            request.getRequestDispatcher("manageroom.jsp").forward(request, response);
-        }
+//             Authentication auth = (Authentication) request.getSession().getAttribute("authLocal");
+//         if(check){
+//             new dao.NotificationDao().addNotifications(auth.getUser().getUserId(), "Bạn đã thêm phòng thành công", "Sucsess");
+//         }else{
+//             new dao.NotificationDao().addNotifications(auth.getUser().getUserId(), "Thêm phòng không thành công", "Error");
+//         }
     }
 
-    private void deleteRoom(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        String roomId = request.getParameter("roomId");
-        if (new dao.RoomDAO().updateDeleteRoom(Validation.parseStringToInt(roomId), 1, true)) {
-            List<Room> listRoom = new dao.RoomDAO().getListRoom(null, null, 0, 100000, 0, -1, "", "all", "", false, 4, 6, false);
-            request.setAttribute("listRoom", listRoom);
-            request.setAttribute("numberRoom", listRoom.size());
-            request.setAttribute("listRoomType", new dao.RoomTypeDAO().getListRoomType());
-            request.getRequestDispatcher("manageroom.jsp").forward(request, response);
+    private void deleteRoom(HttpServletRequest request, HttpServletResponse response) {
+        String roomIdStr = request.getParameter("roomId");
+        int roomId = Validation.parseStringToInt(roomIdStr);
+        RoomDAO roomDAO = new RoomDAO();
+
+        JSONObject responseJson = new JSONObject();
+
+        if (roomDAO.isRoomBooked(roomId)) {
+            responseJson.put("status", "booked");
+        } else if (roomDAO.updateDeleteRoom(roomId, 1, true)) {
+            responseJson.put("status", "success");
         } else {
-            request.getRequestDispatcher("manageroom.jsp").forward(request, response);
+            responseJson.put("status", "fail");
+        }
+
+        response.setContentType("application/json");
+        try {
+            response.getWriter().write(responseJson.toString());
+        } catch (IOException ex) {
+            Logger.getLogger(RoomCRUD.class.getName()).log(Level.SEVERE, null, ex);
         }
 
     }
 
+    //CHƯA CHECK
     private void deleteMultipleRoom(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String[] roomIdsRaw = request.getParameterValues("roomIds");
         int number = roomIdsRaw.length;
@@ -395,27 +406,64 @@ public class RoomCRUD extends HttpServlet {
                 keyWorld, "all", sortBy, check,
                 4, 6, isDeleted);
 
-        request.setAttribute("keyWorld", keyWorld);
-        request.setAttribute("roomType", roomType);
-        request.setAttribute("sortBy", sortBy);
-        request.setAttribute("sort", sort);
-        request.setAttribute("presentDeleted", viewDeleted);
-        request.setAttribute("listRoom", listRoom);
-        request.setAttribute("numberRoom", listRoom.size());
-        request.setAttribute("listRoomType", new dao.RoomTypeDAO().getListRoomType());
+        HttpSession session = request.getSession();
+
+        session.setAttribute("listRoom", listRoom);
+        session.setAttribute("numberRoom", listRoom.size());
+        session.setAttribute("listRoomType", new dao.RoomTypeDAO().getListRoomType());
+
+        session.setAttribute("keyWorld", keyWorld);
+        session.setAttribute("roomType", roomType);
+        session.setAttribute("sortBy", sortBy);
+        session.setAttribute("sort", sort);
+        session.setAttribute("presentDeleted", viewDeleted);
+
         request.getRequestDispatcher("manageroom.jsp").forward(request, response);
     }
 
     private void addRoomType(HttpServletRequest request, HttpServletResponse response) {
         String typeName = request.getParameter("typeName");
         String description = request.getParameter("description");
-        String numberPeopleRaw = request.getParameter("numberPeople");
-        String amenity = request.getParameter("amenity");
+        int numberPeople = Validation.parseStringToInt(request.getParameter("numberPeople"));
+        String amenityIdsRaw = request.getParameter("amenityIds"); 
+        String serviceIdsRaw = request.getParameter("serviceIds"); 
 
-        int numberPeople = Validation.parseStringToInt(numberPeopleRaw);
+        RoomTypeDAO roomTypeDAO = new RoomTypeDAO();
+        roomTypeDAO.addNewRoomType(typeName, numberPeople, "", description);
 
-        new dao.RoomTypeDAO().addNewRoomType(typeName, numberPeople, amenity, description);
+        List<Integer> amenityIds = new ArrayList<>();
+        if (amenityIdsRaw != null && !amenityIdsRaw.isEmpty()) {
+            for (String idStr : amenityIdsRaw.split(",")) {
+                amenityIds.add(Validation.parseStringToInt(idStr));
+            }
+        }
+        List<Integer> serviceIds = new ArrayList<>();
+        if (serviceIdsRaw != null && !serviceIdsRaw.isEmpty()) {
+            for (String idStr : serviceIdsRaw.split(",")) {
+                serviceIds.add(Validation.parseStringToInt(idStr));
+            }
+        }
 
+        int tmpId = roomTypeDAO.getLatestRoomTypeId();
+        roomTypeDAO.addAmenitiesToRoomType(tmpId, amenityIds);
+        roomTypeDAO.addServicesToRoomType(tmpId, serviceIds);
+        Map<String, List<Amenity>> grouped = new RoomTypeDAO().getAmenitiesGroupedByCategoryByRoomType(tmpId);
+
+        StringBuilder sb = new StringBuilder();
+        for (Map.Entry<String, List<Amenity>> entry : grouped.entrySet()) {
+            sb.append("+ ").append(entry.getKey()).append(": ");
+
+            List<Amenity> amenities = entry.getValue();
+            for (int i = 0; i < amenities.size(); i++) {
+                sb.append(amenities.get(i).getName());
+                if (i < amenities.size() - 1) {
+                    sb.append(", ");
+                }
+            }
+            sb.append("\n");
+        }
+
+        new dao.RoomTypeDAO().updateRoomType(new RoomType(tmpId, typeName, description, "", numberPeople, sb.toString()));
     }
 
     private void editRoomType(HttpServletRequest request, HttpServletResponse response) {
@@ -424,11 +472,50 @@ public class RoomCRUD extends HttpServlet {
         String description = request.getParameter("description");
         String numberPeopleRaw = request.getParameter("numberPeople");
         String amenity = request.getParameter("amenity");
+        String amenityIdsRaw = request.getParameter("amenityIds");
+        String serviceIdsRaw = request.getParameter("serviceIds");
 
         int numberPeople = Validation.parseStringToInt(numberPeopleRaw);
         int typeId = Validation.parseStringToInt(typeIdRaw);
 
-        new dao.RoomTypeDAO().updateRoomType(new RoomType(typeId, typeName, description, "", numberPeople, amenity));
+        new dao.RoomTypeDAO().deleteAmenitiesByRoomType(typeId);
+        new dao.RoomTypeDAO().deleteServicesByRoomType(typeId);
+
+        List<Integer> amenityIds = new ArrayList<>();
+        if (amenityIdsRaw != null && !amenityIdsRaw.isEmpty()) {
+            for (String idStr : amenityIdsRaw.split(",")) {
+                amenityIds.add(Validation.parseStringToInt(idStr));
+            }
+        }
+        
+        List<Integer> serviceIds = new ArrayList<>();
+        if (serviceIdsRaw != null && !serviceIdsRaw.isEmpty()) {
+            for (String idStr : serviceIdsRaw.split(",")) {
+                serviceIds.add(Validation.parseStringToInt(idStr));
+            }
+        }
+
+        new dao.RoomTypeDAO().updateRoomType(new RoomType(typeId, typeName, description, "", numberPeople, ""));
+        new dao.RoomTypeDAO().addAmenitiesToRoomType(typeId, amenityIds);
+        new dao.RoomTypeDAO().addServicesToRoomType(typeId, serviceIds);
+
+        Map<String, List<Amenity>> grouped = new RoomTypeDAO().getAmenitiesGroupedByCategoryByRoomType(typeId);
+
+        StringBuilder sb = new StringBuilder();
+        for (Map.Entry<String, List<Amenity>> entry : grouped.entrySet()) {
+            sb.append("+ ").append(entry.getKey()).append(": ");
+
+            List<Amenity> amenities = entry.getValue();
+            for (int i = 0; i < amenities.size(); i++) {
+                sb.append(amenities.get(i).getName());
+                if (i < amenities.size() - 1) {
+                    sb.append(", ");
+                }
+            }
+            sb.append("\n");
+        }
+
+        new dao.RoomTypeDAO().updateRoomType(new RoomType(typeId, typeName, description, "", numberPeople, sb.toString()));
     }
 
     private void getRoomImg(HttpServletRequest request, HttpServletResponse response) {
@@ -440,8 +527,118 @@ public class RoomCRUD extends HttpServlet {
         response.setCharacterEncoding("UTF-8");
         try (PrintWriter out = response.getWriter()) {
             out.write(new Gson().toJson(listImg));
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException ex) {
+            Logger.getLogger(RoomCRUD.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private void checkRoomNumber(HttpServletRequest request, HttpServletResponse response) {
+        String roomNumber = request.getParameter("roomNumber");
+        RoomDAO dao = new RoomDAO();
+        boolean exists = dao.checkRoomNumberIsExist(roomNumber);
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        try {
+            response.getWriter().write("{\"exists\": " + exists + "}");
+        } catch (IOException ex) {
+            Logger.getLogger(RoomCRUD.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+//    private void checkRoomTypeName(HttpServletRequest request, HttpServletResponse response) {
+//        String roomNumber = request.getParameter("typeName");
+//        String roomTypeID = request.getParameter("roomTypeID");
+//        boolean exists = new dao.RoomTypeDAO().isRoomTypeNameExists(roomNumber,Validation.parseStringToInt(roomTypeID));
+//        response.setContentType("application/json");
+//        response.setCharacterEncoding("UTF-8");
+//        try {
+//            response.getWriter().write("{\"exists\": " + exists + "}");
+//            System.out.println("{\"exists\": " + exists + "}");
+//        } catch (IOException ex) {
+//            Logger.getLogger(RoomCRUD.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+//    }
+
+    private void getAllAmenity(HttpServletRequest request, HttpServletResponse response) {
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+
+        Map<String, List<Amenity>> groupedAmenities = new dao.RoomTypeDAO().getAmenitiesGroupedByCategory();
+
+        // Chuyển map thành JSON
+        Gson gson = new Gson();
+        String json = gson.toJson(groupedAmenities);
+
+        try {
+            response.getWriter().write(json);
+        } catch (IOException ex) {
+            Logger.getLogger(RoomCRUD.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private void checkBookingStatus(HttpServletRequest request, HttpServletResponse response) {
+        String[] roomIdParams = request.getParameterValues("roomIds");
+        List<Integer> bookedRoomIds = new ArrayList<>();
+
+        if (roomIdParams != null) {
+            for (String idStr : roomIdParams) {
+                try {
+                    int roomId = Validation.parseStringToInt(idStr);
+                    if (new dao.RoomDAO().isRoomBooked(roomId)) {
+                        bookedRoomIds.add(roomId);
+                    }
+                } catch (NumberFormatException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        JSONObject jsonResponse = new JSONObject();
+        if (bookedRoomIds.isEmpty()) {
+            jsonResponse.put("status", "ok");
+        } else {
+            jsonResponse.put("status", "error");
+            jsonResponse.put("bookedRoomIds", bookedRoomIds);
+        }
+
+        response.setContentType("application/json");
+        try {
+            response.getWriter().write(jsonResponse.toString());
+        } catch (IOException ex) {
+            Logger.getLogger(RoomCRUD.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private void deleteRoomType(HttpServletRequest request, HttpServletResponse response) {
+        String roomTypeID = request.getParameter("roomTypeID");
+
+        RoomTypeDAO dao = new RoomTypeDAO();
+        int typeId = Validation.parseStringToInt(roomTypeID);
+        RoomType type = dao.getRoomTypeById(typeId);
+        boolean check = dao.deleteRoomType(typeId);
+        try {
+            if (check) {
+                response.getWriter().write("{\"success\": true, \"message\": \"Xóa thành công phòng " + type.getTypeName() + ".\"}");
+            } else {
+                response.getWriter().write("{\"success\": false, \"message\": \"Xóa thất bại. Có thể RoomType " + type.getTypeName() + " đang được dùng.\"}");
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(RoomCRUD.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private void getAllService(HttpServletRequest request, HttpServletResponse response) {
+        List<Service> services = new dao.ServiceDAO().getListService(); 
+
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+
+        Gson gson = new Gson(); 
+        String json = gson.toJson(services);
+
+        try {
+            response.getWriter().write(json);
+        } catch (IOException ex) {
+            Logger.getLogger(RoomCRUD.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 }

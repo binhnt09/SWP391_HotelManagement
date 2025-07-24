@@ -5,13 +5,17 @@
 package controller;
 
 import dao.RoomDAO;
+import dao.RoomTypeDAO;
+import entity.Authentication;
 import entity.RoomInfo;
 import entity.RoomStats;
+import entity.RoomType;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
@@ -46,10 +50,25 @@ public class ReceptionistPageServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        HttpSession session = request.getSession(false); 
+        Authentication auth = (session != null) ? (Authentication) session.getAttribute("authLocal") : null;
+
+        if (auth == null || auth.getUser().getUserRoleId() >3) {
+            response.sendRedirect("loadtohome#login-modal");
+            return;
+        }
+        
         RoomStats stats = roomDAO.getRoomStats();
         request.setAttribute("roomStats", stats);
         
-        Map<Integer, List<RoomInfo>> roomsByFloor = roomDAO.getRoomsGroupedByFloor();
+        List<RoomType> roomTypes = new RoomTypeDAO().getListRoomType();
+        request.setAttribute("roomTypes", roomTypes);
+        
+        String status = request.getParameter("status");
+        String roomType = request.getParameter("roomType");
+        String keyword = request.getParameter("keyword");
+        
+        Map<Integer, List<RoomInfo>> roomsByFloor = roomDAO.getRoomsGroupedByFilter(keyword, status, roomType);
         request.setAttribute("roomsByFloor", roomsByFloor);
         
         request.getRequestDispatcher("roommap.jsp").forward(request, response);

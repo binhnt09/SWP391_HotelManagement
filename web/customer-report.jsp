@@ -115,6 +115,13 @@
                 <!-- End XP Col -->
 
             </div> 
+            <div class="xp-breadcrumbbar text-center">
+                <h4 class="page-title">Dashboard</h4>  
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Customer Report</li>
+                </ol>                
+            </div>
         </div>
     </div>
 
@@ -253,7 +260,7 @@
                                             <td>${c.lastName}</td>
                                             <td>${c.email}</td>
                                             <td>${c.totalBookings}</td>
-                                            <td><fmt:formatNumber value="${c.totalSpent}" pattern="#,##0" /></td>
+                                            <td><fmt:formatNumber value="${c.totalPaid}" pattern="#,##0" /></td>
                                             <td><fmt:formatDate value="${c.lastBookingDate}" pattern="dd-MM-yyyy HH:mm" /></td>
                                             <td><fmt:formatDate value="${c.registerDate}" pattern="dd-MM-yyyy HH:mm" /></td>
                                             <td>${c.tier}</td>

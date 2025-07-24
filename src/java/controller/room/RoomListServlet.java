@@ -2,9 +2,11 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package controller;
+package controller.room;
 
+import controller.*;
 import dao.RoomDAO;
+import entity.Room;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -12,13 +14,14 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.List;
 
 /**
  *
  * @author viet7
  */
-@WebServlet(name = "RoomDeleteServlet", urlPatterns = {"/roomDelete"})
-public class RoomDeleteServlet extends HttpServlet {
+@WebServlet(name = "RoomListServlet", urlPatterns = {"/roomList"})
+public class RoomListServlet extends HttpServlet {
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -28,10 +31,10 @@ public class RoomDeleteServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet RoomDeleteServlet</title>");
+            out.println("<title>Servlet RoomListServlet</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet RoomDeleteServlet at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet RoomListServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -40,14 +43,33 @@ public class RoomDeleteServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        int roomId = Integer.parseInt(request.getParameter("id"));
+        int page = 1;
+        int pageSize = 5;
 
-        // Giả định DeletedBy = 1 (admin), bạn có thể lấy từ session nếu có login
-        int deletedBy = 1;
+        if (request.getParameter("page") != null) {
+            page = Integer.parseInt(request.getParameter("page"));
+        }
 
+        int totalRoom;
+        List<Room> roomList;
         RoomDAO dao = new RoomDAO();
-        dao.deleteRoom(roomId, deletedBy);
-        response.sendRedirect("roomList?success=deleted");
+        String keyword = request.getParameter("keyword");
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            roomList = dao.searchRoomsByPage(keyword, (page - 1) * pageSize, pageSize);
+            totalRoom = dao.countSearchRooms(keyword);
+        } else {
+            roomList = dao.getRoomsByPage((page - 1) * pageSize, pageSize);
+            totalRoom = dao.countAllRooms();
+        }
+        int totalPages = (int) Math.ceil((double) totalRoom / pageSize);
+
+        request.setAttribute("roomList", new dao.RoomDAO().getAllRoom());
+        request.setAttribute("totalRoom", totalRoom);
+        request.setAttribute("totalPages", totalPages);
+        request.setAttribute("currentPage", page);
+        request.setAttribute("keyword", keyword);
+
+        request.getRequestDispatcher("room-list.jsp").forward(request, response);
     }
 
     @Override

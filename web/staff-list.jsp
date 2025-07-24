@@ -169,10 +169,10 @@
                                     <i class="material-icons">&#xE147;</i>
                                     <span>Add New Staff</span>
                                 </a>
-                                <a href="#deleteStaffModal" class="btn btn-danger" data-toggle="modal">
-                                    <i class="material-icons">&#xE15C;</i>
-                                    <span>Delete</span>
-                                </a>
+                                <!--                                <a href="#deleteStaffModal" class="btn btn-danger" data-toggle="modal">
+                                                                    <i class="material-icons">&#xE15C;</i>
+                                                                    <span>Delete</span>
+                                                                </a>-->
                             </div>
                         </div>
                     </div>
@@ -290,23 +290,32 @@
                             <div class="modal-body">
                                 <div class="form-group">
                                     <label>First Name</label>
-                                    <input type="text" class="form-control" name="firstName" required>
+                                    <input type="text" class="form-control" id="firstName" name="firstName">
+                                    <div class="invalid-feedback" id="firstNameError"></div>
                                 </div>
+
                                 <div class="form-group">
                                     <label>Last Name</label>
-                                    <input type="text" class="form-control" name="lastName" required>
+                                    <input type="text" class="form-control" id="lastName" name="lastName">
+                                    <div class="invalid-feedback" id="lastNameError"></div>
                                 </div>
+
                                 <div class="form-group">
                                     <label>Email</label>
-                                    <input type="email" class="form-control" name="email" required>
+                                    <input type="email" class="form-control" id="email" name="email">
+                                    <div class="invalid-feedback" id="emailError"></div>
                                 </div>
+
                                 <div class="form-group">
                                     <label>Address</label>
-                                    <textarea class="form-control" name="address" required></textarea>
+                                    <textarea class="form-control" id="address" name="address"></textarea>
+                                    <div class="invalid-feedback" id="addressError"></div>
                                 </div>
+
                                 <div class="form-group">
                                     <label>Phone</label>
-                                    <input type="text" class="form-control" name="phone" required>
+                                    <input type="text" class="form-control" id="phone" name="phone">
+                                    <div class="invalid-feedback" id="phoneError"></div>
                                 </div>
                                 <div class="form-group">
                                     <label>Position</label>
@@ -336,7 +345,7 @@
             <!----edit-modal start--------->
             <div class="modal fade" tabindex="-1" id="editEmployeeModal" role="dialog">
                 <div class="modal-dialog" role="document">
-                    <form action="staffUpdate" method="POST">
+                    <form id="editEmployeeForm" action="staffUpdate" method="POST">
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h5 class="modal-title">Edit employee</h5>
@@ -348,23 +357,32 @@
                                 <div class="form-group">
                                     <label>First Name</label>
                                     <input type="text" class="form-control" id="editFirstName" name="firstName" required>
+                                    <small class="text-danger d-none" id="errorEditFirstName"></small>
                                 </div>
+
                                 <div class="form-group">
                                     <label>Last Name</label>
                                     <input type="text" class="form-control" id="editLastName" name="lastName" required>
+                                    <small class="text-danger d-none" id="errorEditLastName"></small>
                                 </div>
+
                                 <div class="form-group">
                                     <label>Email</label>
-                                    <input type="email" class="form-control" id="editEmail" name="email" required>
+                                    <input type="email" class="form-control" id="editEmail" name="email" readonly>
                                 </div>
+
                                 <div class="form-group">
                                     <label>Address</label>
                                     <textarea class="form-control" id="editAddress" name="address" required></textarea>
+                                    <small class="text-danger d-none" id="errorEditAddress"></small>
                                 </div>
+
                                 <div class="form-group">
                                     <label>Phone</label>
                                     <input type="text" class="form-control" id="editPhone" name="phone" required>
+                                    <small class="text-danger d-none" id="errorEditPhone"></small>
                                 </div>
+
                                 <div class="form-group">
                                     <label>Position</label>
                                     <select name="roleID" class="form-control">
@@ -435,8 +453,125 @@
                 console.log("firstname = ", firstname);
             });
         });
+
+        document.querySelector("#addEmployeeModal form").addEventListener("submit", function (e) {
+            e.preventDefault();
+
+            const fields = ["firstName", "lastName", "email", "address", "phone"];
+            fields.forEach(field => {
+                document.getElementById(field).classList.remove("is-invalid");
+                document.getElementById(field + "Error").textContent = "";
+            });
+
+            const firstName = document.getElementById("firstName").value.trim();
+            const lastName = document.getElementById("lastName").value.trim();
+            const email = document.getElementById("email").value.trim();
+            const address = document.getElementById("address").value.trim();
+            const phone = document.getElementById("phone").value.trim();
+
+            const nameRegex = /^[A-Za-zÀ-ỹà-ỵ\s'-]+$/; // Cho phép tên tiếng Việt, dấu, khoảng trắng, dấu nháy đơn
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            const phoneRegex = /^0\d{9}$/;
+
+            let isValid = true;
+
+            if (!firstName) {
+                showError("firstName", "First name is required.");
+                isValid = false;
+            } else if (!nameRegex.test(firstName)) {
+                showError("firstName", "First name contains invalid characters.");
+                isValid = false;
+            }
+
+            if (!lastName) {
+                showError("lastName", "Last name is required.");
+                isValid = false;
+            } else if (!nameRegex.test(lastName)) {
+                showError("lastName", "Last name contains invalid characters.");
+                isValid = false;
+            }
+
+            if (!email) {
+                showError("email", "Email is required.");
+                isValid = false;
+            } else if (!emailRegex.test(email)) {
+                showError("email", "Email format is invalid.");
+                isValid = false;
+            }
+
+            if (!address) {
+                showError("address", "Address is required.");
+                isValid = false;
+            }
+
+            if (!phone) {
+                showError("phone", "Phone number is required.");
+                isValid = false;
+            } else if (!phoneRegex.test(phone)) {
+                showError("phone", "Phone must start with 0 and contain exactly 10 digits.");
+                isValid = false;
+            }
+
+            if (isValid) {
+                this.submit();
+            }
+
+            function showError(fieldId, message) {
+                const input = document.getElementById(fieldId);
+                const errorDiv = document.getElementById(fieldId + "Error");
+                input.classList.add("is-invalid");
+                errorDiv.textContent = message;
+            }
+        });
+
+        document.getElementById('editEmployeeForm').addEventListener('submit', function (e) {
+            let isValid = true;
+
+            const firstName = document.getElementById('editFirstName');
+            const lastName = document.getElementById('editLastName');
+            const address = document.getElementById('editAddress');
+            const phone = document.getElementById('editPhone');
+
+            const errorFirstName = document.getElementById('errorEditFirstName');
+            const errorLastName = document.getElementById('errorEditLastName');
+            const errorAddress = document.getElementById('errorEditAddress');
+            const errorPhone = document.getElementById('errorEditPhone');
+
+            const nameRegex = /^[a-zA-ZÀ-ỹ\s'-]+$/;
+            const phoneRegex = /^(0\d{9,10})$/;
+
+            [errorFirstName, errorLastName, errorAddress, errorPhone].forEach(el => el.classList.add('d-none'));
+            
+            if (!firstName.value.trim() || !nameRegex.test(firstName.value.trim())) {
+                errorFirstName.textContent = "First name is required and must not contain special characters.";
+                errorFirstName.classList.remove('d-none');
+                isValid = false;
+            }
+            if (!lastName.value.trim() || !nameRegex.test(lastName.value.trim())) {
+                errorLastName.textContent = "Last name is required and must not contain special characters.";
+                errorLastName.classList.remove('d-none');
+                isValid = false;
+            }
+
+            if (!address.value.trim()) {
+                errorAddress.textContent = "Address is required.";
+                errorAddress.classList.remove('d-none');
+                isValid = false;
+            }
+
+            if (!phone.value.trim() || !phoneRegex.test(phone.value.trim())) {
+                errorPhone.textContent = "Phone must be 10–11 digits and start with 0.";
+                errorPhone.classList.remove('d-none');
+                isValid = false;
+            }
+
+            if (!isValid) {
+                e.preventDefault();
+            }
+        });
     </script>
+</script>
 
-    <!------main-content-end----------->
+<!------main-content-end----------->
 
-    <%@ include file="/dashboard-layout/footer.jsp" %>
+<%@ include file="/dashboard-layout/footer.jsp" %>

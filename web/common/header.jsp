@@ -267,6 +267,100 @@
                                                     </li>
                                                 </c:if>
                                                 <c:if test="${sessionScope.authLocal != null}">
+                                                    <script>
+                                                        const USER_ID = ${sessionScope.authLocal.user.userId};
+                                                    </script>
+                                                </c:if>
+                                                <c:if test="${sessionScope.authLocal == null}">
+                                                    <script>
+                                                        const USER_ID = null;
+                                                    </script>
+                                                </c:if>
+
+                                                <script>
+                                                    function loadNotifications() {
+                                                        const baseUrl = '${pageContext.request.contextPath}';
+                                                        fetch(baseUrl + "/notification?userId=" + USER_ID)
+                                                                .then(res => res.json())
+                                                                .then(data => {
+                                                                    console.log(data);
+                                                                    const notiMenu = document.getElementById("notiMenu");
+                                                                    const badge = document.getElementById("notiCount");
+                                                                    notiMenu.innerHTML = "";
+                                                                    badge.innerText = data.length;
+
+                                                                    if (data.length === 0) {
+                                                                        const noItem = document.createElement("div");
+                                                                        noItem.className = "dropdown-item text-center text-muted";
+                                                                        noItem.innerText = "Không có thông báo mới";
+                                                                        notiMenu.appendChild(noItem);
+                                                                        return;
+                                                                    }
+
+                                                                    data.forEach(noti => {
+                                                                        const item = document.createElement("div");
+                                                                        item.className = "dropdown-item d-flex align-items-start gap-2 border-bottom";
+
+                                                                        let iconClass = "fa-info-circle text-primary";
+                                                                        if (noti.Type === "success")
+                                                                            iconClass = "fa-check-circle text-success";
+                                                                        else if (noti.Type === "error")
+                                                                            iconClass = "fa-times-circle text-danger";
+                                                                        else if (noti.Type === "warning")
+                                                                            iconClass = "fa-exclamation-triangle text-warning";
+
+                                                                        item.innerHTML =
+                                                                                '<i class="fa ' + iconClass + ' mt-1 mr-2" style="font-size: 1.2rem;"></i>' +
+                                                                                '<div class="flex-grow-1">' +
+                                                                                '<div><strong>' + noti.Type + '</strong></div>' +
+                                                                                '<div class="text-muted">' + noti.Message + '</div>' +
+                                                                                '<div><small class="text-secondary">' + noti.createdAt + '</small></div>' +
+                                                                                '</div>';
+
+                                                                        notiMenu.appendChild(item);
+                                                                    });
+
+
+                                                                    // Add "Xem tất cả" link
+                                                                    const seeAll = document.createElement("div");
+                                                                    seeAll.className = "dropdown-item text-center";
+                                                                    seeAll.innerHTML = `<a href="${baseUrl}/all-notifications" class="text-primary">Xem tất cả thông báo</a>`;
+                                                                    notiMenu.appendChild(seeAll);
+                                                                });
+                                                    }
+                                                    loadNotifications();
+                                                    setInterval(loadNotifications, 10000);
+                                                </script>
+                                                <style>
+                                                    #notiMenu {
+                                                        max-height: 500px;
+                                                        overflow-y: auto;
+                                                        width: 350px;
+                                                    }
+                                                    .dropdown-item {
+                                                        white-space: normal !important;
+                                                        padding: 10px;
+                                                        font-size: 14px;
+                                                    }
+
+                                                    .dropdown-item:hover {
+                                                        background-color: #f1f1f1;
+                                                    }
+
+                                                    .badge-danger {
+                                                        font-size: 12px;
+                                                        padding: 4px 7px;
+                                                        border-radius: 50%;
+                                                    }
+                                                </style>
+
+                                                <c:if test="${sessionScope.authLocal != null}">
+                                                    <a class="nav-link" href="#" id="notiDropdown" data-toggle="dropdown">
+                                                        <i class="fa fa-bell"></i>
+                                                        <span class="badge badge-danger" id="notiCount">0</span>
+                                                    </a>
+                                                    <div class="dropdown-menu dropdown-menu-right shadow" id="notiMenu" style="min-width: 300px;">
+                                                    </div>
                                                     <li class="nav-item dropdown menu-btn user-info">
                                                         <a class="nav-link" href="#" id="userDropdown" role="button"
                                                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -296,6 +390,7 @@
                                                             </form>
                                                         </div>
                                                     </li>
+
                                                 </c:if>
 
                                                 <!---- verify Email ---->

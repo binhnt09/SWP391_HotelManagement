@@ -22,7 +22,7 @@
                 <div class="bird-icon"></div>
                 <div class="logo"><a href="${pageContext.request.contextPath}/loadtohome" style="text-decoration: none; color: white">The Palatin</a></div>
                 <div style="margin-left: auto; font-weight: normal;">
-                    Đừng lo lắng, giá vẫn giữ nguyên. Hoàn tất thanh toán của bạn bằng <span style="color: #FFD700;" id="countdownPayment">55:00</span> ⏰
+                    Đừng lo lắng, giá vẫn giữ nguyên. Hoàn tất thanh toán của bạn bằng <span style="color: #FFD700;" id="countdownPayment">55:00 ${totalPrice}</span> ⏰
                 </div>
             </div>
 
@@ -171,7 +171,7 @@
                     </div>
 
                     <div class="room-info">
-                        <div class="room-title">${room.getRoomNumber()}-${room.getRoomTypeID().getTypeName()}</div>
+                        <div class="room-title">${room.getRoomNumber()}-${room.getRoomType().getTypeName()}</div>
                         <div class="room-details">🏠 ${room.roomDetail.maxGuest} khách</div>
                         <div class="room-details">🍽️ Gồm bữa sáng</div>
                         <div class="room-details">📶 Without Wifi</div>

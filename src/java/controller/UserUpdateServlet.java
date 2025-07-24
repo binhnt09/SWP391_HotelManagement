@@ -4,28 +4,22 @@
  */
 package controller;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import dao.RoomDAO;
-import dao.RoomReviewDAO;
-import entity.Authentication;
-import entity.Room;
-import java.io.IOException;
-import java.io.PrintWriter;
+import dao.StaffDAO;
+import entity.User;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.io.BufferedReader;
-import org.json.JSONObject;
+import java.io.IOException;
+import java.io.PrintWriter;
 
 /**
  *
- * @author Admin
+ * @author viet7
  */
-@WebServlet(name = "RoomReview", urlPatterns = {"/roomreview"})
-public class RoomReview extends HttpServlet {
+@WebServlet(name = "UserUpdateServlet", urlPatterns = {"/userUpdate"})
+public class UserUpdateServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -44,10 +38,10 @@ public class RoomReview extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet RoomReview</title>");
+            out.println("<title>Servlet UserUpdateServlet</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet RoomReview at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet UserUpdateServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -65,31 +59,7 @@ public class RoomReview extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        try {
-            int roomId = Integer.parseInt(request.getParameter("roomId"));
-            Authentication auth = (Authentication) request.getSession().getAttribute("authLocal");
-
-            response.setContentType("application/json");
-            response.setCharacterEncoding("UTF-8");
-
-            if (auth == null || auth.getUser() == null) {
-                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                response.getWriter().write("{\"error\":\"Chưa đăng nhập\"}");
-                return;
-            }
-
-            int userId = auth.getUser().getUserId();
-
-            RoomReviewDAO reviewDAO = new RoomReviewDAO();
-            entity.RoomReview review = reviewDAO.getReviewByUserAndRoom(userId, roomId);
-
-            Gson gson = new Gson();
-            response.getWriter().write(gson.toJson(review != null ? review : new RoomReview())); // tránh null
-        } catch (Exception e) {
-            response.setStatus(500);
-            response.getWriter().write("{\"error\":\"Lỗi hệ thống\"}");
-            e.printStackTrace();
-        }
+        processRequest(request, response);
     }
 
     /**
@@ -103,23 +73,51 @@ public class RoomReview extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        String firstName = request.getParameter("firstName");
+        String lastName = request.getParameter("lastName");
+        String email = request.getParameter("email");
+        String phone = request.getParameter("phone");
+        String address = request.getParameter("address");
+        int roleID = Integer.parseInt(request.getParameter("roleID"));
 
-        String roomIdRaw = request.getParameter("roomId");
-        String userIdRaw = request.getParameter("userId");
-        String ratingRaw = request.getParameter("rating");
-        String bookingIdRaw = request.getParameter("bookingId");
+        StaffDAO dao = new StaffDAO();
+        User staff = new User();
 
-        int roomId = validation.Validation.parseStringToInt(roomIdRaw);
-        int userId = validation.Validation.parseStringToInt(userIdRaw);
-        int rating = validation.Validation.parseStringToInt(ratingRaw);
-        int bookingId = validation.Validation.parseStringToInt(bookingIdRaw);
+        staff.setFirstName(firstName);
+        staff.setLastName(lastName);
+        staff.setEmail(email);
+        staff.setPhone(phone);
+        staff.setAddress(address);
+        staff.setUserRoleId(roleID);
 
-        if (rating < 0) {
-            rating = 0;
+        boolean success = false;
+        String action = request.getParameter("action");
+
+        try {
+            if ("add".equalsIgnoreCase(action)) {
+                success = dao.insertUser(staff);
+                if (success) {
+                    request.getSession().setAttribute("successMessage", "Thêm nhân viên thành công!");
+                }
+            } else if ("update".equalsIgnoreCase(action)) {
+                int userId = Integer.parseInt(request.getParameter("userId"));
+                staff.setUserId(userId);
+                success = dao.updateUser(staff);
+                if (success) {
+                    request.getSession().setAttribute("successMessage", "Cập nhật nhân viên thành công!");
+                }
+            }
+
+            if (!success) {
+                request.getSession().setAttribute("errorMessage", "Có lỗi xảy ra, vui lòng thử lại.");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            request.getSession().setAttribute("errorMessage", "Xảy ra lỗi trong quá trình xử lý.");
         }
-        boolean check = new dao.RoomReviewDAO().insertRating(roomId, userId, rating);
-        response.setContentType("application/json");
-        response.getWriter().write(response.toString());
+
+        // Redirect về lại list
+        response.sendRedirect("userList");
     }
 
     /**
