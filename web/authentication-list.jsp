@@ -210,12 +210,12 @@
                     <div class="table-title mb-3">
                         <div class="row">
                             <div class="col-sm-6 p-0 flex justify-content-lg-start justify-content-center">
-                                <h2 class="ml-lg-2">Manage Authentication</h2>
+                                <h2 class="ml-lg-2">Manage Account</h2>
                             </div>
                             <div class="col-sm-6 p-0 flex justify-content-lg-end justify-content-center">
                                 <a href="#addAuthModal" class="btn btn-success" data-toggle="modal">
                                     <i class="material-icons">&#xE147;</i>
-                                    <span>Add New Authentication</span>
+                                    <span>Add New Account</span>
                                 </a>
                             </div>
                         </div>
@@ -233,7 +233,6 @@
                                 <th>User ID</th>
                                 <th>Role</th>
                                 <th>Email</th>
-                                <th>User Key</th>
                                 <th>Auth Type</th>
                                 <th>Created At</th>
                                 <th>Status</th>
@@ -254,8 +253,7 @@
                                             </td>
                                             <td>${a.user.userId}</td>
                                             <td>${a.roleName}</td>
-                                            <td>${a.user.email}</td>
-                                            <td>${a.userKey}</td>
+                                            <td>${a.user.email}</td>                                    
                                             <td>${a.authType}</td>
                                             <td>
                                                 <fmt:formatDate value="${a.createdAt}" pattern="yyyy-MM-dd HH:mm" />
@@ -341,10 +339,10 @@
             <!-- Create Account Modal -->
             <div class="modal fade" tabindex="-1" id="addAuthModal" role="dialog">
                 <div class="modal-dialog" role="document">
-                    <form action="createAccount" method="post">
+                    <form id="createAccountForm" action="createAccount" method="post">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title">Create New User</h5>
+                                <h5 class="modal-title">Create account for new user</h5>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
                                 </button>
@@ -353,11 +351,11 @@
                             <div class="modal-body">
                                 <div class="form-group">
                                     <label>First Name</label>
-                                    <input type="text" class="form-control" name="firstName" required>
+                                    <input type="text" class="form-control" name="firstName">
                                 </div>
                                 <div class="form-group">
                                     <label>Last Name</label>
-                                    <input type="text" class="form-control" name="lastName" required>
+                                    <input type="text" class="form-control" name="lastName">
                                 </div>
                                 <div class="form-group">
                                     <label>Role</label>
@@ -370,12 +368,12 @@
                                 </div>
                                 <div class="form-group">
                                     <label>Email(Username)</label>
-                                    <input type="email" class="form-control" name="email" required>
+                                    <input type="email" class="form-control" name="email">
                                 </div>
                                 <div class="form-group">
                                     <label>Password</label>
                                     <div class="input-group">
-                                        <input type="password" class="form-control" id="password" name="password" value="P@ssword123" required>
+                                        <input type="password" class="form-control" id="password" name="password" value="P@ssword123">
                                         <div class="input-group-append">
                                             <span class="input-group-text">
                                                 <a href="#" id="togglePassword" class="text-dark"><i class="fa fa-eye" aria-hidden="true"></i></a>
@@ -441,7 +439,7 @@
                 icon.removeClass('fa-eye-slash').addClass('fa-eye');
             }
         });
-        
+
         $(document).ready(function () {
             $('.edit').on('click', function () {
                 var id = $(this).data('id');
@@ -460,6 +458,34 @@
                 console.log("id = ", id);
                 console.log("firstname = ", firstname);
             });
+        });
+
+        document.getElementById("createAccountForm").addEventListener("submit", function (e) {
+            const firstName = document.querySelector('[name="firstName"]').value;
+            const lastName = document.querySelector('[name="lastName"]').value;
+            const email = document.querySelector('[name="email"]').value;
+            const password = document.getElementById("password").value;
+
+            let errors = [];
+
+            if (firstName.trim() === "")
+                errors.push("First Name is required.");
+            if (lastName.trim() === "")
+                errors.push("Last Name is required.");
+
+            const emailRegex = /^\S+@\S+\.\S+$/;
+            if (!emailRegex.test(email.trim()))
+                errors.push("Invalid email format.");
+
+            const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[^A-Za-z0-9]).{6,}$/;
+            if (!passwordRegex.test(password)) {
+                errors.push("Password must be at least 6 characters, contain letters, numbers, and special characters.");
+            }
+
+            if (errors.length > 0) {
+                e.preventDefault();
+                alert(errors.join("\n"));
+            }
         });
     </script>
 

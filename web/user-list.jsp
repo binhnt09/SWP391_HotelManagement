@@ -171,10 +171,10 @@
                                     </select>
                                     <input type="hidden" name="keyword" value="${keyword}"/>
                                 </form>
-                                <a href="#addEmployeeModal" class="btn btn-success" data-toggle="modal">
+<!--                                <a href="#addEmployeeModal" class="btn btn-success" data-toggle="modal">
                                     <i class="material-icons">&#xE147;</i>
                                     <span>Add New User</span>
-                                </a>
+                                </a>-->
                             </div>
                         </div>
                     </div>
@@ -425,7 +425,7 @@
         </div>
     </div>
 
-    <!----edit-modal end--------->
+    <!----add-modal end--------->
 
 
 
@@ -434,7 +434,7 @@
     <!----edit-modal start--------->
     <div class="modal fade" tabindex="-1" id="editEmployeeModal" role="dialog">
         <div class="modal-dialog" role="document">
-            <form action="staffUpdate" method="POST">
+            <form id="editEmployeeForm" action="userUpdate" method="POST">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title">Edit employee</h5>
@@ -445,11 +445,11 @@
                     <div class="modal-body">
                         <div class="form-group">
                             <label>First Name</label>
-                            <input type="text" class="form-control" id="editFirstName" name="firstName" required>
+                            <input type="text" class="form-control" id="editFirstName" name="firstName" readonly>
                         </div>
                         <div class="form-group">
                             <label>Last Name</label>
-                            <input type="text" class="form-control" id="editLastName" name="lastName" required>
+                            <input type="text" class="form-control" id="editLastName" name="lastName" readonly>
                         </div>
                         <div class="form-group">
                             <label>Email</label>
@@ -457,11 +457,11 @@
                         </div>
                         <div class="form-group">
                             <label>Address</label>
-                            <textarea class="form-control" id="editAddress" name="address" required></textarea>
+                            <textarea class="form-control" id="editAddress" name="address" readonly></textarea>
                         </div>
                         <div class="form-group">
                             <label>Phone</label>
-                            <input type="text" class="form-control" id="editPhone" name="phone" required>
+                            <input type="text" class="form-control" id="editPhone" name="phone" readonly>
                         </div>
                         <div class="form-group">
                             <label>Position</label>
