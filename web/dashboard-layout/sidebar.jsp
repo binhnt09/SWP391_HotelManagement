@@ -3,12 +3,13 @@
     Created on : Jun 7, 2025, 5:49:14 PM
     Author     : viet7
 --%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <nav id="sidebar">
     <div class="sidebar-header">
         <h3>
             <a href="loadtohome">
-                <div class="slide-img bg-img" style="background-image: url(img/bg-img/bg-1.jpg);"></div>
+                <img src="${pageContext.request.contextPath}/img/core-img/favicon.ico" class="img-fluid"/>
                 <b>Palatin Hotel</b>
             </a>
         </h3>
@@ -78,7 +79,7 @@
 
         <!-- Receptionist page -->
         <c:if test="${sessionScope.authLocal.user.roleName == 'Manager' || sessionScope.authLocal.user.roleName == 'Receptionist'}"> 
-            <li>
+            <li class="${pageContext.request.requestURI.endsWith('roommap.jsp') ? 'active' : ''}">
                 <a href="receptionistPage">
                     <i class="material-icons">square</i>Room Map
                 </a>
@@ -86,19 +87,19 @@
         </c:if>
         <!-- Cleaning List -->
         <c:if test="${sessionScope.authLocal.user.roleName == 'Cleaner'}">
-            <li>
+            <li class="${pageContext.request.requestURI.endsWith('cleaning-list.jsp') ? 'active' : ''}">
                 <a href="cleaningList">
                     <i class="material-icons">square</i>Cleaner
                 </a>
             </li>
         </c:if>
-        <!-- Promotion Management -->
-        <c:if test="${sessionScope.authLocal.user.roleName == 'Manager'}">
-            <li>
-                <a href="${pageContext.request.contextPath}/vouchermanage">
-                    <i class="material-icons">local_offer</i>Promotion
-                </a>
-            </li>
+            <!-- Promotion Management -->
+        <c:if test="${sessionScope.authLocal.user.userRoleId == 2}">
+        <li class="${pageContext.request.requestURI.endsWith('managevoucher.jsp') ? 'active' : ''}">
+            <a href="${pageContext.request.contextPath}/vouchermanage">
+                <i class="material-icons">local_offer</i>Promotion
+            </a>
+        </li>
         </c:if>
         <!-- Booking -->
         <c:if test="${sessionScope.authLocal.user.roleName == 'Manager' || sessionScope.authLocal.user.roleName == 'Receptionist'}"> 

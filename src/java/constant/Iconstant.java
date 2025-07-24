@@ -12,7 +12,7 @@ public class Iconstant {
 
     private Iconstant() {
     }
-    
+
     public static final String GOOGLE_CLIENT_ID = "";
     public static final String GOOGLE_CLIENT_SECRET = "";
 

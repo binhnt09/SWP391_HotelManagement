@@ -385,11 +385,25 @@ public class AuthenticationDAO extends DBContext {
         return -1;
     }
 
+    public List<String> getEmailByLevelId(int levelId) {
+        List<String> list = new ArrayList<>();
+        String sql = "SELECT Email FROM [User] WHERE LevelID = ? AND UserRoleID = 5";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, levelId);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                list.add(rs.getString("Email"));
+            }
+        } catch (SQLException e) {
+            Logger.getLogger(AuthenticationDAO.class.getName()).log(Level.SEVERE, null, e);
+        }
+        return list;
+    }
+
     public boolean updateUser(User user) {
-        String sql = "UPDATE [dbo].[User]\n"
-                + "   SET [FirstName] = ?, [LastName] = ?, [Phone] = ?, [Sex] = ?"
-                + "      ,[BirthDay] = ?, [Address] = ?, [UpdatedAt] = GETDATE()"
-                + " WHERE UserID = ?";
+        String sql = """
+                     UPDATE [dbo].[User]
+                        SET [FirstName] = ?, [LastName] = ?, [Phone] = ?, [Sex] = ?, [BirthDay] = ?, [Address] = ?, [UpdatedAt] = GETDATE() WHERE UserID = ?""";
         try (PreparedStatement st = connection.prepareStatement(sql)) {
             st.setString(1, user.getFirstName());
             st.setString(2, user.getLastName());

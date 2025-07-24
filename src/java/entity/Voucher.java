@@ -10,14 +10,15 @@ package entity;
  */
 
 import java.sql.Timestamp;
+import java.sql.Date;
 
 public class Voucher {
 
     private int voucherId;
     private String code;
     private double discountPercentage;
-    private Timestamp validFrom;
-    private Timestamp validTo;
+    private Date validFrom;
+    private Date validTo;
     private Timestamp createdAt;
     private Timestamp updatedAt;
     private Timestamp deletedAt;
@@ -51,19 +52,19 @@ public class Voucher {
         this.discountPercentage = discountPercentage;
     }
 
-    public Timestamp getValidFrom() {
+    public Date getValidFrom() {
         return validFrom;
     }
 
-    public void setValidFrom(Timestamp validFrom) {
+    public void setValidFrom(Date validFrom) {
         this.validFrom = validFrom;
     }
 
-    public Timestamp getValidTo() {
+    public Date getValidTo() {
         return validTo;
     }
 
-    public void setValidTo(Timestamp validTo) {
+    public void setValidTo(Date validTo) {
         this.validTo = validTo;
     }
 

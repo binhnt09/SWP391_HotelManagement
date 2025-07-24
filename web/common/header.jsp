@@ -101,8 +101,13 @@
                                                 <li><a href="${pageContext.request.contextPath}/searchroom">Rooms</a></li>
                                                 <li><a href="${pageContext.request.contextPath}/blog.jsp">News</a></li>
                                                 <li><a href="${pageContext.request.contextPath}/contact.jsp">Contact</a></li>
-                                                <li><a href="${pageContext.request.contextPath}/elements.jsp">Elements</a></li>
-                                                <li><a href="${pageContext.request.contextPath}/payment">Payment</a></li>
+                                                <li><a href="${pageContext.request.contextPath}/elements.jsp">Elements</a>
+                                                </li>
+                                                <c:if test="${sessionScope.authLocal.user.userRoleId == 2}">
+                                                    <li>
+                                                        <a href="${pageContext.request.contextPath}/vouchermanage">ManageVoucher</a>
+                                                    </li>
+                                                </c:if>
                                             </ul>
                                         </li>
                                         <li class="${pageContext.request.requestURI.endsWith('voucher.jsp') ? 'active' : ''}"><a href="${pageContext.request.contextPath}/voucher">Voucher</a></li>
