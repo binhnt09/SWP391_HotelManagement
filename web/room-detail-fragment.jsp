@@ -79,9 +79,6 @@
                         <button class="btn btn-success" onclick="openQuickCheckIn(${room.roomID})">
                             <i class="fas fa-sign-in-alt me-1"></i> Check-in
                         </button>
-                        <button class="btn btn-info" onclick="bookRoom(${room.roomID})">
-                            <i class="fas fa-calendar-plus me-1"></i> Đặt phòng
-                        </button>
                         <button class="btn btn-secondary" onclick="confirmSetMaintenance(${room.roomID})">
                             <i class="fas fa-edit me-1"></i> Sửa phòng
                         </button>
@@ -212,7 +209,7 @@
                 </div>
                 <div class="mb-3">
                     <label for="phone" class="form-label">Số điện thoại</label>
-                    <input type="text" class="form-control" name="phone">
+                    <input type="text" class="form-control" name="phone" required>
                 </div>
                 <div class="mb-3">
                     <label for="nights" class="form-label">Số đêm</label>

@@ -225,9 +225,6 @@
                                 <a href="#" class="btn btn-success" data-toggle="modal" data-target="#addServiceModal">
                                     <i class="material-icons">&#xE147;</i> <span>Add New Service</span>
                                 </a>
-                                <a href="#deleteServiceModal" class="btn btn-danger" data-toggle="modal">
-                                    <i class="material-icons">&#xE15C;</i> <span>Delete</span>
-                                </a>
                             </div>
                         </div>
                     </div>

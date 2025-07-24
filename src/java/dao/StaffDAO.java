@@ -217,4 +217,148 @@ public class StaffDAO extends DBContext {
         }
         return -1;
     }
+
+    private boolean checkUserHasAccount(int userId) {
+        String sql = "SELECT COUNT(*) FROM Authentication WHERE UserID = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, userId);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+        } catch (Exception e) {
+            Logger.getLogger(StaffDAO.class.getName()).log(Level.SEVERE, null, e);
+        }
+        return false;
+    }
+
+    public int countUsers(String keyword, Integer roleID) {
+        StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM [User] WHERE 1=1");
+
+        if (roleID != null) {
+            sql.append(" AND UserRoleID = ?");
+        }
+
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            sql.append(" AND (FirstName LIKE ? OR LastName LIKE ? OR Email LIKE ?");
+            try {
+                Integer.parseInt(keyword.trim());
+                sql.append(" OR userID = ?");
+            } catch (NumberFormatException e) {
+            }
+            sql.append(")");
+        }
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql.toString())) {
+            int index = 1;
+
+            if (roleID != null) {
+                stmt.setInt(index++, roleID);
+            }
+
+            if (keyword != null && !keyword.trim().isEmpty()) {
+                String kw = "%" + keyword + "%";
+                for (int i = 0; i < 3; i++) {
+                    stmt.setString(index++, kw);
+                }
+
+                try {
+                    int idValue = Integer.parseInt(keyword.trim());
+                    stmt.setInt(index++, idValue);
+                } catch (NumberFormatException e) {
+                }
+            }
+
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (Exception e) {
+            Logger.getLogger(StaffDAO.class.getName()).log(Level.SEVERE, null, e);
+        }
+
+        return 0;
+    }
+
+    public List<User> getUsersWithPaging(String keyword, Integer roleID, int offset, int limit) {
+        List<User> list = new ArrayList<>();
+        StringBuilder sql = new StringBuilder("SELECT * FROM [User] WHERE 1=1");
+
+        if (roleID != null) {
+            sql.append(" AND UserRoleID = ?");
+        }
+
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            sql.append(" AND (FirstName LIKE ? OR LastName LIKE ? OR Email LIKE ?");
+            try {
+                Integer.parseInt(keyword.trim());
+                sql.append(" OR userID = ?");
+            } catch (NumberFormatException e) {
+            }
+            sql.append(")");
+        }
+
+        sql.append(" ORDER BY CreatedAt DESC OFFSET ? ROWS FETCH NEXT ? ROWS ONLY");
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql.toString())) {
+            int index = 1;
+
+            if (roleID != null) {
+                stmt.setInt(index++, roleID);
+            }
+
+            if (keyword != null && !keyword.trim().isEmpty()) {
+                String kw = "%" + keyword + "%";
+                for (int i = 0; i < 3; i++) {
+                    stmt.setString(index++, kw);
+                }
+
+                try {
+                    int idValue = Integer.parseInt(keyword.trim());
+                    stmt.setInt(index++, idValue);
+                } catch (NumberFormatException e) {
+                }
+            }
+
+            stmt.setInt(index++, offset);
+            stmt.setInt(index, limit);
+
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                User s = new User();
+                int userId = rs.getInt("UserID");
+
+                s.setUserId(userId);
+                s.setFirstName(rs.getString("FirstName"));
+                s.setLastName(rs.getString("LastName"));
+                s.setEmail(rs.getString("Email"));
+                s.setPhone(rs.getString("Phone"));
+                s.setAddress(rs.getString("Address"));
+                s.setUserRoleId(rs.getInt("UserRoleID"));
+                s.setRoleName(getRoleName(rs.getInt("UserRoleID")));
+                s.setCreatedAt(rs.getTimestamp("CreatedAt"));
+                s.setIsDeleted((rs.getInt("isDeleted") == 1));
+                s.setDeletedBy(rs.getInt("DeletedBy"));
+
+                s.setHasAccount(checkUserHasAccount(userId));
+
+                list.add(s);
+            }
+        } catch (Exception e) {
+            Logger.getLogger(StaffDAO.class.getName()).log(Level.SEVERE, null, e);
+        }
+
+        return list;
+    }
+
+    public boolean restoreUser(int userId) {
+        String sql = "UPDATE [User] SET isDeleted = 0 WHERE userId = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, userId);
+            return ps.executeUpdate() > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 }

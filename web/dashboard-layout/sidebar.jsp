@@ -118,6 +118,15 @@
             </li>
         </c:if>
 
+        <!-- User -->
+        <c:if test="${sessionScope.authLocal.user.roleName == 'Admin System'}">
+            <li>
+                <a href="userList">
+                    <i class="material-icons">people</i>User
+                </a>
+            </li>
+        </c:if>
+            
         <!-- Account -->
         <c:if test="${sessionScope.authLocal.user.roleName == 'Admin System'}">
             <li>
@@ -135,7 +144,7 @@
                 </a>
                 <ul class="collapse list-unstyled menu" id="reportMenu">
                     <li><a href="customerReport"><i class="material-icons">bar_chart</i>Customer Report</a></li>
-<!--                    <li><a href="bookingReport"><i class="material-icons">pie_chart</i>Booking Rate</a></li>-->
+                    <!--                    <li><a href="bookingReport"><i class="material-icons">pie_chart</i>Booking Rate</a></li>-->
                 </ul>
             </li>
         </c:if>

@@ -155,14 +155,14 @@
                                 <h2 class="ml-lg-2">Manage customer</h2>
                             </div>
                             <div class="col-sm-6 p-0 flex justify-content-lg-end justify-content-center">
-                                <a href="#addEmployeeModal" class="btn btn-success" data-toggle="modal">
-                                    <i class="material-icons">&#xE147;</i>
-                                    <span>Add New customer</span>
-                                </a>
-                                <a href="#deleteEmployeeModal" class="btn btn-danger" data-toggle="modal">
-                                    <i class="material-icons">&#xE15C;</i>
-                                    <span>Delete</span>
-                                </a>
+                                <!--                                <a href="#addEmployeeModal" class="btn btn-success" data-toggle="modal">
+                                                                    <i class="material-icons">&#xE147;</i>
+                                                                    <span>Add New customer</span>
+                                                                </a>-->
+                                <!--                                <a href="#deleteEmployeeModal" class="btn btn-danger" data-toggle="modal">
+                                                                    <i class="material-icons">&#xE15C;</i>
+                                                                    <span>Delete</span>
+                                                                </a>-->
                             </div>
                         </div>
                     </div>
@@ -170,12 +170,9 @@
                     <table class="table table-striped table-hover table-bordered">
                         <thead>
                             <tr>
-                                <th><span class="custom-checkbox">
-                                        <input type="checkbox" id="selectAll">
-                                        <label for="selectAll"></label>                                
-                                    </span>
+                                <th>
                                 </th>
-                                <!--<th>User ID</th>-->
+                                <th>User ID</th>
                                 <th>First Name</th>
                                 <th>Last Name</th>
                                 <th>Email</th>  
@@ -197,7 +194,7 @@
                                                     <label for="checkbox${status.index}"></label>
                                                 </span>
                                             </td>
-<!--                                            <td>${c.userId}</td>-->
+                                            <td>${c.userId}</td>
                                             <td>${c.firstName}</td>
                                             <td>${c.lastName}</td>
                                             <td>${c.email}</td>
@@ -340,7 +337,7 @@
                                 </div>
                                 <div class="form-group">
                                     <label>Email</label>
-                                    <input type="email" class="form-control" id="editEmail" name="email" required>
+                                    <input type="email" class="form-control" id="editEmail" name="email" readonly>
                                 </div>
                                 <div class="form-group">
                                     <label>Address</label>

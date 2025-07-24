@@ -7,11 +7,13 @@ package dao;
 import dal.DBContext;
 import entity.Authentication;
 import entity.User;
+import java.sql.Timestamp;
 import java.sql.Statement;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.sql.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
@@ -405,33 +407,60 @@ public class AuthenticationDAO extends DBContext {
         }
     }
 
-    public List<Authentication> searchWithPagination(String keyword, int page, int pageSize) {
+    public List<Authentication> searchWithPagination(String keyword, String role, String status, String createdFrom, String createdTo, int page, int pageSize) {
         List<Authentication> list = new ArrayList<>();
-        String sql = """
-                     SELECT a.*, u.UserID, u.Email, r.RoleName
-                     FROM Authentication a
-                     JOIN [User] u ON a.UserID = u.UserID
-                     JOIN UserRole r ON u.UserRoleID = r.UserRoleID
-                     WHERE (a.IsDeleted = 0 OR a.IsDeleted = 1)
-                       AND (a.UserKey LIKE ? OR a.AuthType LIKE ? OR u.Email LIKE ?)
-                     ORDER BY a.CreatedAt DESC
-                     OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
-                     """;
+        StringBuilder sql = new StringBuilder("""
+        SELECT a.*, u.Email, r.RoleName
+        FROM Authentication a
+        JOIN [User] u ON a.UserID = u.UserID
+        JOIN UserRole r ON u.UserRoleID = r.UserRoleID
+        WHERE 1 = 1
+    """);
 
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            String searchTerm = "%" + keyword + "%";
-            ps.setString(1, searchTerm);
-            ps.setString(2, searchTerm);
-            ps.setString(3, searchTerm);
-            ps.setInt(4, (page - 1) * pageSize);
-            ps.setInt(5, pageSize);
+        List<Object> params = new ArrayList<>();
+
+        if (keyword != null && !keyword.isEmpty()) {
+            sql.append(" AND (u.Email LIKE ? OR a.UserKey LIKE ? OR a.AuthType LIKE ?)\n");
+            String kw = "%" + keyword + "%";
+            params.add(kw);
+            params.add(kw);
+            params.add(kw);
+        }
+
+        if (role != null && !role.isEmpty()) {
+            sql.append(" AND r.RoleName = ?\n");
+            params.add(role);
+        }
+
+        if (status != null && !status.isEmpty()) {
+            sql.append(" AND a.a.IsDeleted = ?\n");
+            params.add(status);
+        }
+
+        if (createdFrom != null && !createdFrom.isEmpty()) {
+            sql.append(" AND a.CreatedAt >= ?\n");
+            params.add(Date.valueOf(createdFrom) + " 00:00:00"); 
+        }
+
+        if (createdTo != null && !createdTo.isEmpty()) {
+            sql.append(" AND a.CreatedAt <= ?\n");
+            params.add(Date.valueOf(createdTo) + " 23:59:59");
+        }
+
+        sql.append(" ORDER BY a.CreatedAt DESC OFFSET ? ROWS FETCH NEXT ? ROWS ONLY");
+        params.add((page - 1) * pageSize);
+        params.add(pageSize);
+
+        try (PreparedStatement ps = connection.prepareStatement(sql.toString())) {
+            for (int i = 0; i < params.size(); i++) {
+                ps.setObject(i + 1, params.get(i));
+            }
 
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 Authentication auth = extractAuthentication(rs);
-                // Set thêm email từ user
                 auth.getUser().setEmail(rs.getString("Email"));
-                auth.setRoleName(rs.getString("RoleName"));
+                auth.setRoleName(rs.getString("RoleName")); // phải có setRoleName trong model
                 list.add(auth);
             }
         } catch (SQLException e) {
@@ -441,17 +470,50 @@ public class AuthenticationDAO extends DBContext {
         return list;
     }
 
-    public int countSearch(String keyword) {
-        String sql = "SELECT COUNT(*) "
-                + "FROM Authentication a "
-                + "JOIN [User] u ON a.UserID = u.UserID "
-                + "WHERE a.IsDeleted = 0 "
-                + "AND (a.UserKey LIKE ? OR a.AuthType LIKE ? OR u.Email LIKE ?)";
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            String searchTerm = "%" + keyword + "%";
-            ps.setString(1, searchTerm);
-            ps.setString(2, searchTerm);
-            ps.setString(3, searchTerm);
+    public int countSearch(String keyword, String role, String status, String createdFrom, String createdTo) {
+        StringBuilder sql = new StringBuilder("""
+        SELECT COUNT(*)
+        FROM Authentication a
+        JOIN [User] u ON a.UserID = u.UserID
+        JOIN UserRole r ON u.UserRoleID = r.UserRoleID
+        WHERE 1 = 1
+    """);
+
+        List<Object> params = new ArrayList<>();
+
+        if (keyword != null && !keyword.isEmpty()) {
+            sql.append(" AND (u.Email LIKE ? OR a.UserKey LIKE ? OR a.AuthType LIKE ?)\n");
+            String kw = "%" + keyword + "%";
+            params.add(kw);
+            params.add(kw);
+            params.add(kw);
+        }
+
+        if (role != null && !role.isEmpty()) {
+            sql.append(" AND r.RoleName = ?\n");
+            params.add(role);
+        }
+
+        if (status != null && !status.isEmpty()) {
+            sql.append(" AND a.IsDeleted = ?\n");
+            params.add(status);
+        }
+
+        if (createdFrom != null && !createdFrom.isEmpty()) {
+            sql.append(" AND a.CreatedAt >= ?\n");
+            params.add(Date.valueOf(createdFrom)+ " 00:00:00");
+        }
+
+        if (createdTo != null && !createdTo.isEmpty()) {
+            sql.append(" AND a.CreatedAt <= ?\n");
+            params.add(Date.valueOf(createdTo) + " 23:59:59");
+        }
+
+        try (PreparedStatement ps = connection.prepareStatement(sql.toString())) {
+            for (int i = 0; i < params.size(); i++) {
+                ps.setObject(i + 1, params.get(i));
+            }
+
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 return rs.getInt(1);
@@ -459,6 +521,7 @@ public class AuthenticationDAO extends DBContext {
         } catch (SQLException e) {
             Logger.getLogger(AuthenticationDAO.class.getName()).log(Level.SEVERE, null, e);
         }
+
         return 0;
     }
 
@@ -485,7 +548,7 @@ public class AuthenticationDAO extends DBContext {
         return false;
     }
 
-// Private helper method to map result
+
     private Authentication extractAuthentication(ResultSet rs) throws SQLException {
         Authentication auth = new Authentication();
         auth.setAuthenticationID(rs.getInt("AuthenticationID"));
@@ -529,4 +592,17 @@ public class AuthenticationDAO extends DBContext {
             Logger.getLogger(AuthenticationDAO.class.getName()).log(Level.SEVERE, null, e);
         }
     }
+    
+    public boolean usernameExists(String username) {
+    String sql = "SELECT 1 FROM Authentication WHERE Username = ?";
+    try (PreparedStatement ps = connection.prepareStatement(sql)) {
+        ps.setString(1, username);
+        try (ResultSet rs = ps.executeQuery()) {
+            return rs.next();
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return false;
+}
 }

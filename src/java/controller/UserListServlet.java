@@ -4,7 +4,6 @@
  */
 package controller;
 
-import dao.AuthenticationDAO;
 import dao.StaffDAO;
 import entity.Authentication;
 import entity.User;
@@ -16,14 +15,14 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.PrintWriter;
-import org.mindrot.jbcrypt.BCrypt;
+import java.util.List;
 
 /**
  *
  * @author viet7
  */
-@WebServlet(name = "CreateAccountServlet", urlPatterns = {"/createAccount"})
-public class CreateAccountServlet extends HttpServlet {
+@WebServlet(name = "UserListServlet", urlPatterns = {"/userList"})
+public class UserListServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -42,10 +41,10 @@ public class CreateAccountServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet CreateAccountServlet</title>");
+            out.println("<title>Servlet UserListServlet</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet CreateAccountServlet at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet UserListServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -63,7 +62,49 @@ public class CreateAccountServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        HttpSession session = request.getSession(false);
+        Authentication auth = (session != null) ? (Authentication) session.getAttribute("authLocal") : null;
+
+        if (auth == null || auth.getUser().getUserRoleId() > 1) {
+            response.sendRedirect("loadtohome#login-modal");
+            return;
+        }
+
+        int page = 1;
+        int recordsPerPage = 10;
+
+        String keyword = request.getParameter("keyword");
+        String roleStr = request.getParameter("role");
+
+        Integer roleId = null;
+        try {
+            roleId = Integer.parseInt(roleStr);
+        } catch (Exception e) {
+            roleId = null;
+        }
+
+        if (request.getParameter("page") != null) {
+            try {
+                page = Integer.parseInt(request.getParameter("page"));
+            } catch (NumberFormatException e) {
+                page = 1;
+            }
+        }
+
+        StaffDAO dao = new StaffDAO();
+        List<User> userList = dao.getUsersWithPaging(keyword, roleId, (page - 1) * recordsPerPage, recordsPerPage);
+        int totalUsers = dao.countUsers(keyword, roleId);
+        
+        int totalPages = (int) Math.ceil(totalUsers * 1.0 / recordsPerPage);
+
+        request.setAttribute("userList", userList);
+        request.setAttribute("totalUsers", totalUsers);
+        request.setAttribute("currentPage", page);
+        request.setAttribute("totalPages", totalPages);
+        request.setAttribute("role", roleId);
+        request.setAttribute("keyword", keyword);
+
+        request.getRequestDispatcher("user-list.jsp").forward(request, response);
     }
 
     /**
@@ -77,49 +118,7 @@ public class CreateAccountServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.setCharacterEncoding("UTF-8");
-        HttpSession session = request.getSession(false);
-        Authentication auth = (session != null) ? (Authentication) session.getAttribute("authLocal") : null;
-
-        if (auth == null) {
-            response.sendRedirect("loadtohome#login-modal");
-            return;
-        }
-
-        User admin = auth.getUser();
-
-        String firstName = request.getParameter("firstName");
-        String lastName = request.getParameter("lastName");
-        String email = request.getParameter("email");
-        String password = request.getParameter("password");
-        int roleId = Integer.parseInt(request.getParameter("roleId"));
-
-        if (new AuthenticationDAO().existEmail(email)) {
-            session.setAttribute("errorMessage", "Email đã tồn tại.");
-            response.sendRedirect("authenticationList");
-            return;
-        }
-        
-
-        String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
-
-        StaffDAO userDAO = new StaffDAO();
-        int userId = userDAO.insertUserBasic(firstName, lastName, email, roleId);
-
-        if (userId > 0) {
-            AuthenticationDAO authDAO = new AuthenticationDAO();
-            boolean ok = authDAO.createAuthForAdmin(userId, email, hashedPassword);
-
-            if (ok) {
-                authDAO.logCreateUser(userId, admin.getUserId(), "");
-                request.getSession().setAttribute("successMessage", "Tạo tài khoản thành công!");
-                response.sendRedirect("authenticationList");
-                return;
-            }
-        }
-
-        request.getSession().setAttribute("errorMessage", "Tạo tài khoản thất bại!");
-        request.getRequestDispatcher("authenticationList").forward(request, response);
+        processRequest(request, response);
     }
 
     /**

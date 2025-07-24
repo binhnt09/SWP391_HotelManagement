@@ -4,26 +4,22 @@
  */
 package controller;
 
-import dao.AuthenticationDAO;
 import dao.StaffDAO;
-import entity.Authentication;
 import entity.User;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.PrintWriter;
-import org.mindrot.jbcrypt.BCrypt;
 
 /**
  *
  * @author viet7
  */
-@WebServlet(name = "CreateAccountServlet", urlPatterns = {"/createAccount"})
-public class CreateAccountServlet extends HttpServlet {
+@WebServlet(name = "UserUpdateServlet", urlPatterns = {"/userUpdate"})
+public class UserUpdateServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -42,10 +38,10 @@ public class CreateAccountServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet CreateAccountServlet</title>");
+            out.println("<title>Servlet UserUpdateServlet</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet CreateAccountServlet at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet UserUpdateServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -77,49 +73,51 @@ public class CreateAccountServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.setCharacterEncoding("UTF-8");
-        HttpSession session = request.getSession(false);
-        Authentication auth = (session != null) ? (Authentication) session.getAttribute("authLocal") : null;
-
-        if (auth == null) {
-            response.sendRedirect("loadtohome#login-modal");
-            return;
-        }
-
-        User admin = auth.getUser();
-
         String firstName = request.getParameter("firstName");
         String lastName = request.getParameter("lastName");
         String email = request.getParameter("email");
-        String password = request.getParameter("password");
-        int roleId = Integer.parseInt(request.getParameter("roleId"));
+        String phone = request.getParameter("phone");
+        String address = request.getParameter("address");
+        int roleID = Integer.parseInt(request.getParameter("roleID"));
 
-        if (new AuthenticationDAO().existEmail(email)) {
-            session.setAttribute("errorMessage", "Email đã tồn tại.");
-            response.sendRedirect("authenticationList");
-            return;
-        }
-        
+        StaffDAO dao = new StaffDAO();
+        User staff = new User();
 
-        String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
+        staff.setFirstName(firstName);
+        staff.setLastName(lastName);
+        staff.setEmail(email);
+        staff.setPhone(phone);
+        staff.setAddress(address);
+        staff.setUserRoleId(roleID);
 
-        StaffDAO userDAO = new StaffDAO();
-        int userId = userDAO.insertUserBasic(firstName, lastName, email, roleId);
+        boolean success = false;
+        String action = request.getParameter("action");
 
-        if (userId > 0) {
-            AuthenticationDAO authDAO = new AuthenticationDAO();
-            boolean ok = authDAO.createAuthForAdmin(userId, email, hashedPassword);
-
-            if (ok) {
-                authDAO.logCreateUser(userId, admin.getUserId(), "");
-                request.getSession().setAttribute("successMessage", "Tạo tài khoản thành công!");
-                response.sendRedirect("authenticationList");
-                return;
+        try {
+            if ("add".equalsIgnoreCase(action)) {
+                success = dao.insertUser(staff);
+                if (success) {
+                    request.getSession().setAttribute("successMessage", "Thêm nhân viên thành công!");
+                }
+            } else if ("update".equalsIgnoreCase(action)) {
+                int userId = Integer.parseInt(request.getParameter("userId"));
+                staff.setUserId(userId);
+                success = dao.updateUser(staff);
+                if (success) {
+                    request.getSession().setAttribute("successMessage", "Cập nhật nhân viên thành công!");
+                }
             }
+
+            if (!success) {
+                request.getSession().setAttribute("errorMessage", "Có lỗi xảy ra, vui lòng thử lại.");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            request.getSession().setAttribute("errorMessage", "Xảy ra lỗi trong quá trình xử lý.");
         }
 
-        request.getSession().setAttribute("errorMessage", "Tạo tài khoản thất bại!");
-        request.getRequestDispatcher("authenticationList").forward(request, response);
+        // Redirect về lại list
+        response.sendRedirect("userList");
     }
 
     /**

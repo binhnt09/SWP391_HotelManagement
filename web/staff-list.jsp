@@ -169,10 +169,10 @@
                                     <i class="material-icons">&#xE147;</i>
                                     <span>Add New Staff</span>
                                 </a>
-                                <a href="#deleteStaffModal" class="btn btn-danger" data-toggle="modal">
+<!--                                <a href="#deleteStaffModal" class="btn btn-danger" data-toggle="modal">
                                     <i class="material-icons">&#xE15C;</i>
                                     <span>Delete</span>
-                                </a>
+                                </a>-->
                             </div>
                         </div>
                     </div>
@@ -355,7 +355,7 @@
                                 </div>
                                 <div class="form-group">
                                     <label>Email</label>
-                                    <input type="email" class="form-control" id="editEmail" name="email" required>
+                                    <input type="email" class="form-control" id="editEmail" name="email" readonly>
                                 </div>
                                 <div class="form-group">
                                     <label>Address</label>

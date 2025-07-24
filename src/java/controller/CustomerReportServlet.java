@@ -174,7 +174,7 @@ public class CustomerReportServlet extends HttpServlet {
         request.getRequestDispatcher("customer-report.jsp").forward(request, response);
 
     }
-
+   
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {

@@ -5,7 +5,6 @@
 package controller;
 
 import dao.AuthenticationDAO;
-import dao.StaffDAO;
 import entity.Authentication;
 import entity.User;
 import jakarta.servlet.ServletException;
@@ -22,8 +21,8 @@ import org.mindrot.jbcrypt.BCrypt;
  *
  * @author viet7
  */
-@WebServlet(name = "CreateAccountServlet", urlPatterns = {"/createAccount"})
-public class CreateAccountServlet extends HttpServlet {
+@WebServlet(name = "CreateAccountForUserServlet", urlPatterns = {"/createAccountForUser"})
+public class CreateAccountForUserServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -42,10 +41,10 @@ public class CreateAccountServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet CreateAccountServlet</title>");
+            out.println("<title>Servlet CreateAccountForUserServlet</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet CreateAccountServlet at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet CreateAccountForUserServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -77,7 +76,6 @@ public class CreateAccountServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.setCharacterEncoding("UTF-8");
         HttpSession session = request.getSession(false);
         Authentication auth = (session != null) ? (Authentication) session.getAttribute("authLocal") : null;
 
@@ -88,38 +86,41 @@ public class CreateAccountServlet extends HttpServlet {
 
         User admin = auth.getUser();
 
-        String firstName = request.getParameter("firstName");
-        String lastName = request.getParameter("lastName");
-        String email = request.getParameter("email");
+        // Lấy dữ liệu từ form modal
+        String userIdRaw = request.getParameter("userId");
+        String username = request.getParameter("username");
         String password = request.getParameter("password");
-        int roleId = Integer.parseInt(request.getParameter("roleId"));
+        String confirmPassword = request.getParameter("confirmPassword");
 
-        if (new AuthenticationDAO().existEmail(email)) {
-            session.setAttribute("errorMessage", "Email đã tồn tại.");
-            response.sendRedirect("authenticationList");
+        int userId;
+        try {
+            userId = Integer.parseInt(userIdRaw);
+        } catch (NumberFormatException e) {
+            session.setAttribute("errorMessage", "ID người dùng không hợp lệ.");
+            response.sendRedirect("userList");
             return;
         }
-        
+
+        if (!password.equals(confirmPassword)) {
+            session.setAttribute("errorMessage", "Mật khẩu xác nhận không khớp.");
+            response.sendRedirect("userList");
+            return;
+        }
 
         String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
 
-        StaffDAO userDAO = new StaffDAO();
-        int userId = userDAO.insertUserBasic(firstName, lastName, email, roleId);
+        AuthenticationDAO authDAO = new AuthenticationDAO();
 
-        if (userId > 0) {
-            AuthenticationDAO authDAO = new AuthenticationDAO();
-            boolean ok = authDAO.createAuthForAdmin(userId, email, hashedPassword);
-
-            if (ok) {
-                authDAO.logCreateUser(userId, admin.getUserId(), "");
-                request.getSession().setAttribute("successMessage", "Tạo tài khoản thành công!");
-                response.sendRedirect("authenticationList");
-                return;
-            }
+        boolean created = authDAO.createAuthForAdmin(userId,username, hashedPassword);
+        if (created) {
+            authDAO.logCreateUser(userId, admin.getUserId(), "");
+            session.setAttribute("successMessage", "Tạo tài khoản thành công!");
+        } else {
+            session.setAttribute("errorMessage", "Tạo tài khoản thất bại!");
         }
 
-        request.getSession().setAttribute("errorMessage", "Tạo tài khoản thất bại!");
-        request.getRequestDispatcher("authenticationList").forward(request, response);
+        response.sendRedirect("userList");
+
     }
 
     /**

@@ -26,6 +26,8 @@ public class User {
     private boolean isVerifiedEmail;
     private int userRoleId;
     private int levelId;
+    
+    private boolean hasAccount;
 
     public User() {
     }
@@ -186,8 +188,10 @@ public class User {
                 "Receptionist";
             case 4 ->
                 "Cleaner";
-            default ->
+            case 5 ->
                 "Customer";
+            default ->
+                "Guest";
         };
     }
 
@@ -195,6 +199,16 @@ public class User {
         this.roleName = roleName;
     }
 
+    public boolean isHasAccount() {
+        return hasAccount;
+    }
+
+    public void setHasAccount(boolean hasAccount) {
+        this.hasAccount = hasAccount;
+    }
+
+    
+    
     @Override
     public String toString() {
         return "User{" + "userId=" + userId + ", firstName=" + firstName + ", lastName=" + lastName + ", email=" + email + ", phone=" + phone + ", sex=" + sex + ", birthDay=" + birthDay + ", address=" + address + ","
