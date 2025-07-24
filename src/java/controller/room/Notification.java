@@ -2,10 +2,10 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package controller;
+package controller.room;
 
-import entity.Room;
-import entity.RoomType;
+import com.google.gson.Gson;
+import entity.Notifications;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -19,8 +19,8 @@ import java.util.List;
  *
  * @author Admin
  */
-@WebServlet(name = "ManageRoom", urlPatterns = {"/manageroom"})
-public class ManageRoom extends HttpServlet {
+@WebServlet(name = "Notification", urlPatterns = {"/notification"})
+public class Notification extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -39,10 +39,10 @@ public class ManageRoom extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet ManageRoom</title>");
+            out.println("<title>Servlet Notification</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet ManageRoom at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet Notification at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -60,18 +60,14 @@ public class ManageRoom extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        List<Room> listRoom = new dao.RoomDAO().getListRoom(null, null, 0, 100000, 0, -1, "", "all", "", false, 4, 6, false);
-        List<RoomType> listRoomType = new dao.RoomTypeDAO().getListRoomType();
-                
-        request.setAttribute("listRoom", listRoom);
-        request.setAttribute("listRoomType", listRoomType);
-        request.setAttribute("numberRoom", listRoom.size());
+        int userId = Integer.parseInt(request.getParameter("userId"));
+        List<Notifications> notifies = new dao.NotificationDao().getNotificationsByUserId(userId);
 
+        Gson gson = new Gson();
+        String json = gson.toJson(notifies);
 
-        request.setAttribute("listRoom", listRoom);
-        request.setAttribute("listRoomType", listRoomType);
-        request.setAttribute("numberRoom", listRoom.size());
-        request.getRequestDispatcher("manageroom.jsp").forward(request, response);
+        response.setContentType("application/json");
+        response.getWriter().write(json);
     }
 
     /**

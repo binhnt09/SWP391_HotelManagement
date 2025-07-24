@@ -2,8 +2,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package controller;
+package controller.room;
 
+import controller.*;
 import dao.RoomDAO;
 import entity.Room;
 import jakarta.servlet.ServletException;
@@ -62,7 +63,7 @@ public class RoomListServlet extends HttpServlet {
         }
         int totalPages = (int) Math.ceil((double) totalRoom / pageSize);
 
-        request.setAttribute("roomList", roomList);
+        request.setAttribute("roomList", new dao.RoomDAO().getAllRoom());
         request.setAttribute("totalRoom", totalRoom);
         request.setAttribute("totalPages", totalPages);
         request.setAttribute("currentPage", page);

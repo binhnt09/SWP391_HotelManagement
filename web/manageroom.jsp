@@ -3,7 +3,7 @@
     Created on : Jun 8, 2025, 8:46:42 PM
     Author     : Admin
 --%>
-
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
@@ -110,13 +110,17 @@
                                     </button>
                                 </div>
 
+
+                            </div>
+                        </form>
+                        <form action="manageroom" method="get" >
+                            <div class="row align-items-center mb-3 g-2">
                                 <!-- Search input -->
                                 <div class="col-auto">
                                     <input type="hidden" name="action" value="filterRoom">
-                                    <input type="text" id="searchInput" name="keyWorld" value="${keyWorld}" 
+                                    <input type="text" id="searchInput" name="keyWord" value="${keyWord}" 
                                            placeholder="Search Room" class="form-control form-control-sm" style="width: 150px;">
                                 </div>
-
                                 <!-- Sort By -->
                                 <div class="col-auto">
                                     <select name="sortBy" class="form-select form-select-sm">
@@ -141,8 +145,8 @@
                                 <!-- Sort Order -->
                                 <div class="col-auto">
                                     <select name="sort" class="form-select form-select-sm">
-                                        <option value="asc" ${sort.equals("asc") ? "selected" : ""}>↑ Giá</option>
-                                        <option value="desc" ${sort.equals("desc") ? "selected" : ""}>↓ Giá</option>
+                                        <option value="asc" ${sort.equals("asc") ? "selected" : ""}>↑ Tăng Dần</option>
+                                        <option value="desc" ${sort.equals("desc") ? "selected" : ""}>↓ Giảm dần</option>
                                     </select>
                                 </div>
 
@@ -259,6 +263,45 @@
                             </tbody>
                         </table>
                     </div>
+                    <div class=" d-flex justify-content-between align-items-center mt-3">
+                        <div class="hint-text">
+                            Showing <b>${listRoom.size()}</b> of <b>${totalPages * pageSize}</b> rooms
+                        </div>
+                        <ul class="pagination mb-0">
+                            <!-- Nút Previous -->
+                            <c:choose>
+                                <c:when test="${currentPage > 1}">
+                                    <li class="page-item">
+                                        <a href="manageroom?page=${currentPage - 1}&keyword=${keyword}&presentDeleted=${presentDeleted}&roomType=${roomType}&sort=${sort}&sortBy=${sortBy}" class="page-link">Previous</a>
+                                    </li>
+                                </c:when>
+                                <c:otherwise>
+                                    <li class="page-item disabled"><span class="page-link">Previous</span></li>
+                                    </c:otherwise>
+                                </c:choose>
+
+                            <!-- Số trang -->
+                            <c:forEach begin="1" end="${totalPages}" var="i">
+                                <li class="page-item ${i == currentPage ? 'active' : ''}">
+                                    <a class="page-link" href="manageroom?page=${i}&keyword=${keyword}&presentDeleted=${presentDeleted}&roomType=${roomType}&sort=${sort}&sortBy=${sortBy}">${i}</a>
+                                </li>
+                            </c:forEach>
+
+                            <!-- Nút Next -->
+                            <c:choose>
+                                <c:when test="${currentPage < totalPages}">
+                                    <li class="page-item">
+                                        <a href="manageroom?page=${currentPage + 1}&keyword=${keyword}&presentDeleted=${presentDeleted}&roomType=${roomType}&sort=${sort}&sortBy=${sortBy}" class="page-link">Next</a>
+                                    </li>
+                                </c:when>
+                                <c:otherwise>
+                                    <li class="page-item disabled"><span class="page-link">Next</span></li>
+                                    </c:otherwise>
+                                </c:choose>
+                        </ul>
+                    </div>
+
+
 
                     <div class="tab-pane fade ${openTab == '#managerRoomType' ? 'show active' : ''}" 
                          id="managerRoomType" role="tabpanel" aria-labelledby="managerRoomType-tab">
@@ -286,22 +329,33 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <c:forEach items="${listRoomType}" var="type">
+                                    <c:forEach items="${listRoomType}" var="type" varStatus="index">
                                         <tr>
-                                            <td>${type.roomTypeID}</td>
+                                            <td>${index.index+1}</td>
                                             <td>${type.typeName}</td>
                                             <td>${type.description}</td>
                                             <td>${type.numberPeople}</td>
-                                            <td>${type.amenity}</td>
+                                            <td><c:out value="${fn:replace(type.amenity, '+', '<br>+')}" escapeXml="false" /></td>
                                             <td>
-                                                <button class="btn btn-sm btn-primary"
-                                                        data-bs-toggle="modal"
-                                                        data-bs-target="#roomtypeModal"
-                                                        onclick="openRoomTypeModal('edit', '${type.roomTypeID}', '${type.typeName}', '${type.description}', '${type.numberPeople}', '${type.amenity}')">
-                                                    Edit
-                                                </button>
+                                                <div class="d-flex gap-2">
+                                                    <button class="btn btn-sm btn-primary edit-btn"
+                                                            data-id="${type.roomTypeID}"
+                                                            data-name="${type.typeName}"
+                                                            data-desc="${type.description}"
+                                                            data-num="${type.numberPeople}"
+                                                            data-amenity="${fn:escapeXml(type.amenity)}"
+                                                            data-bs-toggle="modal"
+                                                            data-bs-target="#roomtypeModal">
+                                                        Edit
+                                                    </button>
 
-                                                <button class="btn btn-sm btn-danger">Delete</button>
+                                                    <button type="button"
+                                                            class="btn btn-sm btn-danger delete-btn"
+                                                            data-id="${type.roomTypeID}">
+                                                        Delete
+                                                    </button>
+                                                </div>
+
                                             </td>
                                         </tr>
                                     </c:forEach>
@@ -347,7 +401,7 @@
                                     </div>
                                     <div class="mb-3">
                                         <label>Bed Type</label>
-                                        <input type="text" id="edit-bedType" name="bedType" class="form-control">
+                                        <input type="text" id="edit-bedType" name="bedType" class="form-control" readonly="">
                                     </div>
                                     <div class="mb-3">
                                         <label>Status</label>
@@ -356,12 +410,7 @@
                                     <div class="mb-3">
                                         <label>Current Images:</label>
                                         <div id="edit-room-images" style="display: flex; flex-wrap: wrap; gap: 10px;">
-                                            <c:forEach var="img" items="${editRoomImages}">
-                                                <div style="position: relative;">
-                                                    <img src="${img.imageURL}" style="width: 100px; height: 70px; object-fit: cover;">
-                                                    <input type="checkbox" name="imagesToDelete" value="${img.imageID}" style="position: absolute; top: 0; right: 0;">
-                                                </div>
-                                            </c:forEach>
+                                           
                                         </div>
                                         <small class="text-muted">Chọn ảnh để xóa</small>
                                     </div>
@@ -381,10 +430,6 @@
                                         <label>Price</label>
                                         <input type="number" id="edit-price" readonly name="price" class="form-control">
                                     </div>
-                                    <!--                                    <div class="mb-3">
-                                                                            <label>Number Guest</label>
-                                                                            <input type="number" id="edit-maxGuest" readonly name="maxGuest" class="form-control">
-                                                                        </div>-->
                                     <div class="mb-3">
                                         <label>Area</label>
                                         <input type="number" step="any" id="edit-area" readonly name="area" class="form-control">
@@ -437,10 +482,6 @@
                                         </select>
                                     </div>
                                     <div class="mb-3">
-                                        <label>Bed Type</label>
-                                        <input type="text" id="edit-bedType" name="bedType" class="form-control">
-                                    </div>
-                                    <div class="mb-3">
                                         <label>Status</label>
                                         <select name="status" class="form-select">
                                             <option value="-1">Select room status</option>
@@ -451,10 +492,6 @@
                                             <option value="Non-available">Non-available</option>
                                         </select>
                                     </div>
-                                    <!--                                    <div class="mb-3">
-                                                                            <label>Hotel</label>
-                                                                            <input type="text" id="edit-status" name="hotel" class="form-control">
-                                                                        </div>-->
                                 </div>
 
                                 <div class="col-md-6">
@@ -465,10 +502,6 @@
                                     <div class="mb-3">
                                         <label>Price</label>
                                         <input type="number" id="edit-price" name="price" class="form-control">
-                                    </div>
-                                    <div class="mb-3">
-                                        <label>Number Guest</label>
-                                        <input type="number" id="edit-maxGuest" name="maxGuest" class="form-control">
                                     </div>
                                     <div class="mb-3">
                                         <label>Area</label>
@@ -517,9 +550,15 @@
                             </div>
                             <div class="mb-3">
                                 <label>Amenities</label>
-                                <div id="amenity-container" class="border p-2 rounded" style="max-height: 200px; overflow-y: auto;"></div>
+                                <div id="amenity-container" class="border p-2 rounded" style="max-height: 300px; overflow-y: auto;"></div>
                                 <input type="hidden" name="amenityIds" id="amenityIds">
                             </div>
+                            <div class="mb-3">
+                                <label>Services</label>
+                                <div id="service-container" class="border p-2 rounded" style="max-height: 300px; overflow-y: auto;"></div>
+                                <input type="hidden" name="serviceIds" id="serviceIds">
+                            </div>
+
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -585,6 +624,61 @@
                                 document.getElementById("amenityIds").value = selectedIds.join(",");
                             });
                         });
+                fetch(baseUrl + "/roomcrud?action=getAllService")
+                        .then(res => res.json())
+                        .then(data => {
+                            console.log("Dữ liệu trả về:", data);
+
+                            const container = document.getElementById("service-container");
+                            container.innerHTML = "";
+
+                            const groupDiv = document.createElement("div");
+                            groupDiv.classList.add("mb-3");
+
+                            const title = document.createElement("strong");
+                            title.textContent = "Available Services";
+                            groupDiv.appendChild(title);
+
+                            const rowDiv = document.createElement("div");
+                            rowDiv.classList.add("row", "mt-2");
+
+                            data.forEach(service => {
+                                const colDiv = document.createElement("div");
+                                colDiv.classList.add("col-md-6");
+
+                                const checkboxDiv = document.createElement("div");
+                                checkboxDiv.classList.add("form-check");
+
+                                const checkbox = document.createElement("input");
+                                checkbox.type = "checkbox";
+                                checkbox.className = "form-check-input service-checkbox";
+                                checkbox.id = "service-" + service.serviceId;
+                                checkbox.value = service.serviceId;
+                                checkbox.dataset.name = service.name;
+
+                                const label = document.createElement("label");
+                                label.className = "form-check-label";
+                                label.htmlFor = checkbox.id;
+                                label.textContent = service.name;
+
+                                checkboxDiv.appendChild(checkbox);
+                                checkboxDiv.appendChild(label);
+                                colDiv.appendChild(checkboxDiv);
+                                rowDiv.appendChild(colDiv);
+                            });
+
+                            groupDiv.appendChild(rowDiv);
+                            container.appendChild(groupDiv);
+
+                            container.addEventListener("change", () => {
+                                const checkedBoxes = container.querySelectorAll(".service-checkbox:checked");
+                                const selectedIds = Array.from(checkedBoxes).map(cb => cb.value);
+                                document.getElementById("serviceIds").value = selectedIds.join(",");
+                            });
+                        })
+                        .catch(error => {
+                            console.error("Lỗi khi tải danh sách dịch vụ:", error);
+                        });
             });
         </script>
 
@@ -627,15 +721,53 @@
             </script>
         </c:if>
 
-
         <script>
+            document.querySelectorAll('.delete-btn').forEach(btn => {
+                btn.addEventListener('click', function () {
+                    const roomTypeID = this.getAttribute('data-id');
+                    console.log("Clicked ID:", roomTypeID);
+                    if (confirm('Bạn có chắc chắn xóa loại phòng này?')) {
+                        const baseUrl = '${pageContext.request.contextPath}';
+                        fetch(baseUrl + "/roomcrud?action=deleteRoomType&roomTypeID=" + encodeURIComponent(roomTypeID))
+                                .then(response => response.json())
+                                .then(result => {
+                                    if (result.success) {
+                                        alert(result.message);
+                                        window.location.reload();
+                                    } else {
+                                        alert(result.message);
+                                    }
+                                })
+                                .catch(error => {
+                                    console.error('Error:', error);
+                                    alert('Error deleting room type');
+                                });
+                    }
+                });
+            });
+
+
             function doDelete(id, name) {
-                if (confirm("Are you sure to delete roomName :" + name)) {
-                    window.location = "roomcrud?action=delete&roomId=" + id; //deletelesson là tên của link servlet để nó nhận doGet
-                }
+                if (!confirm("Are you sure to delete roomName: " + name))
+                    return;
+                console.log(id + name);
+                fetch("roomcrud?action=delete&roomId=" + id)
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data.status === "success") {
+                                alert("Bạn đã xóa thành công phòng " + name);
+                                window.location.reload();
+                            } else if (data.status === "booked") {
+                                alert("Phòng" + name + " hiện tại đang được đặt nên không thể xóa!.");
+                            } else {
+                                alert(data.status);
+                            }
+                        })
+                        .catch(err => {
+                            console.error("Delete error:", err);
+                            alert("Something went wrong.");
+                        });
             }
-
-
             function checkRoomNumber() {
                 const roomNumber = document.getElementById("add-roomNumber").value.trim();
                 if (!roomNumber)
@@ -656,7 +788,6 @@
                         })
                         .catch(error => console.error("Error:", error));
             }
-
 
             function openEditRoomModal(element) {
                 const baseUrl = '${pageContext.request.contextPath}';
@@ -681,7 +812,6 @@
                             document.getElementById('edit-bedType').value = detail.bedType;
                             document.getElementById('edit-description').value = detail.description;
                             document.getElementById('edit-price').value = room.price;
-                            document.getElementById('edit-maxGuest').value = type.numberPeople;
                             document.getElementById('edit-area').value = detail.area;
 
                             return fetch(baseUrl + "/roomcrud?action=getImages&roomId=" + roomId);
@@ -698,9 +828,9 @@
                             images.forEach(img => {
                                 const div = document.createElement('div');
                                 div.style.position = 'relative';
-
                                 const image = document.createElement('img');
-                                image.src = img.imageURL;
+                                image.src =  img.imageURL;
+
                                 image.style.width = '100px';
                                 image.style.height = '70px';
                                 image.style.objectFit = 'cover';
@@ -730,7 +860,8 @@
                             document.getElementById('edit-room-images').innerHTML = "<p class='text-danger'>Lỗi khi tải ảnh.</p>";
                         });
             }
-            function confirmDeleteSelected() {
+
+            async function confirmDeleteSelected() {
                 const selected = document.querySelectorAll('.room-checkbox:checked');
                 if (selected.length === 0) {
                     alert("Please select at least one room to delete.");
@@ -738,21 +869,28 @@
                 }
 
                 const ids = Array.from(selected).map(cb => cb.value);
-                console.log("Room IDs to delete:", ids); // Gỡ lỗi
+                const queryString = ids.map(id => "roomIds=" + encodeURIComponent(id)).join("&");
 
-                if (!confirm(`Are you sure to delete ${ids.length} room(s)?`)) {
-                    return;
-                }
+                try {
+                    const response = await fetch("roomcrud?action=checkBookingStatus&" + queryString);
+                    const result = await response.json();
 
-                let queryString = '';
-                for (let i = 0; i < ids.length; i++) {
-                    queryString += 'roomIds=' + ids[i];
-                    if (i < ids.length - 1) {
-                        queryString += '&';
-                        console.log(queryString);
+                    if (result.status === "error") {
+                        alert("Không thể xóa, vì những phòng này đang được đặt: " + result.bookedRoomIds.join(", "));
+                        return;
                     }
+
+                    if (!confirm(`Are you sure to delete ${ids.length} room(s)?`)) {
+                        return;
+                    }
+
+                    const deleteQuery = ids.map(id => "roomIds=" + encodeURIComponent(id)).join("&");
+                    window.location = "roomcrud?action=deleteMultiple&" + deleteQuery;
+
+                } catch (error) {
+                    console.error("Error checking booking status:", error);
+                    alert("Error checking booking status. Please try again.");
                 }
-                window.location = "roomcrud?action=deleteMultiple&" + queryString;
             }
 
             document.querySelector('thead input[type="checkbox"]').addEventListener('change', function () {
@@ -774,6 +912,18 @@
                     } else {
                         this.closest('tr').classList.remove('table-primary');
                     }
+                });
+            });
+
+            document.querySelectorAll('.edit-btn').forEach(btn => {
+                btn.addEventListener('click', function () {
+                    const id = this.dataset.id;
+                    const name = this.dataset.name;
+                    const desc = this.dataset.desc;
+                    const number = this.dataset.num;
+                    const amenity = this.dataset.amenity;
+
+                    openRoomTypeModal('edit', id, name, desc, number, amenity);
                 });
             });
             function openRoomTypeModal(mode, id = '', name = '', desc = '', number = '', amenity = '') {

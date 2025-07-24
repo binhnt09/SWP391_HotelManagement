@@ -93,9 +93,6 @@ public class BookingRoomCustomer extends HttpServlet {
 
         if (action != null) {
             switch (action.toLowerCase()) {
-                case "editbooking":
-                    editBooking(request, response);
-                    break;
                 case "checkcancel":
                     checkCancel(request, response);
                     break;
@@ -133,19 +130,6 @@ public class BookingRoomCustomer extends HttpServlet {
         return "Short description";
     }// </editor-fold>
 
-    private void editBooking(HttpServletRequest request, HttpServletResponse response) {
-        String bookingIdRaw = request.getParameter("roomId");
-        String roomIdRaw = request.getParameter("bookingId");
-        String bookRoomDetail = request.getParameter("bookRoomDetail");
-
-        String checkInraw = request.getParameter("bookCheckin");
-        String checkOutRaw = request.getParameter("bookCheckout");
-
-        Date checkInDate = validation.Validation.parseStringToSqlDate(checkInraw, "yyyy-MM-dd");
-        Date checkOutDate = validation.Validation.parseStringToSqlDate(checkOutRaw, "yyyy-MM-dd");
-
-    }
-
     private void checkCancel(HttpServletRequest request, HttpServletResponse response) {
         int bookingId = validation.Validation.parseStringToInt(request.getParameter("bookingId"));
         response.setContentType("application/json");
@@ -158,6 +142,10 @@ public class BookingRoomCustomer extends HttpServlet {
             }
             long days = ChronoUnit.DAYS.between(LocalDate.now(), checkIn);
             boolean allowCancel = days >= 7;
+            Authentication auth = (Authentication) request.getSession().getAttribute("authLocal");
+            if(!allowCancel){
+                new dao.NotificationDao().addNotifications(auth.getUser().getUserId(), "Thời gian từ hiện tại đến ngày checkin dưới 7 ngày!!!", "Thông báo");
+            }
             out.write("{\"allowCancel\":" + allowCancel + "}");
         } catch (Exception ex) {
             Logger.getLogger(BookingRoomCustomer.class.getName()).log(Level.SEVERE, null, ex);
@@ -174,12 +162,15 @@ public class BookingRoomCustomer extends HttpServlet {
         boolean success = dao.cancelBooking(bookingId);
 
         response.setContentType("application/json");
+        Authentication auth = (Authentication) request.getSession().getAttribute("authLocal");
         try {
+            new dao.NotificationDao().addNotifications(auth.getUser().getUserId(), "Bạn đã hủy phòng thành công", "Sucsess");
             response.getWriter().write("{\"message\": \"Booking cancelled successfully\"}");
         } catch (IOException ex) {
+            new dao.NotificationDao().addNotifications(auth.getUser().getUserId(), "Không thể hủy khi thời hạn dưới 7 ngày", "Error");
             Logger.getLogger(BookingRoomCustomer.class.getName()).log(Level.SEVERE, null, ex);
         }
- 
+
     }
 
 }

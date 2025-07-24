@@ -26,6 +26,9 @@ public class RoomType {
     private boolean isDeleted;
 
     private List<Amenity> amenities;
+    private List<Service> service;
+
+    
     public RoomType() {
     }
 
@@ -161,5 +164,11 @@ public class RoomType {
         this.amenities = amenities;
     }
     
-    
+    public List<Service> getService() {
+        return service;
+    }
+
+    public void setService(List<Service> service) {
+        this.service = service;
+    }
 }

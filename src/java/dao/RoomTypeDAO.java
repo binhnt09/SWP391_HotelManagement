@@ -8,13 +8,17 @@ import dal.DBContext;
 import entity.Amenity;
 import entity.AmenityCategory;
 import entity.RoomType;
+import entity.Service;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -129,13 +133,29 @@ public class RoomTypeDAO extends DBContext {
             for (int amenityId : amenityIds) {
                 ps.setInt(1, roomTypeId);
                 ps.setInt(2, amenityId);
-                ps.addBatch();  // dùng batch để tối ưu
+                ps.addBatch();
             }
             ps.executeBatch();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
+
+    public void addServicesToRoomType(int roomTypeId, List<Integer> serviceIds) {
+        String sql = "INSERT INTO RoomType_Service (RoomTypeID, ServiceID) VALUES (?, ?)";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            for (int serviceId : serviceIds) {
+                ps.setInt(1, roomTypeId);
+                ps.setInt(2, serviceId);
+                ps.addBatch();  // Tối ưu bằng cách dùng batch insert
+            }
+            ps.executeBatch();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    
 
     public boolean addNewRoomType(String typeName, int numberPeople, String amenity, String description) {
         String sql = "insert into RoomType (TypeName,NumberPeople,amenity,description,ImageURL,createdAt) values (?,?,?,?,?, GETDATE())";
@@ -165,7 +185,6 @@ public class RoomTypeDAO extends DBContext {
         return -1;
     }
 
-    
     public void deleteAmenitiesByRoomType(int roomTypeId) {
         String sql = "DELETE FROM RoomTypeAmenity WHERE RoomTypeID = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
@@ -174,6 +193,31 @@ public class RoomTypeDAO extends DBContext {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    public void deleteServicesByRoomType(int roomTypeId) {
+        String sql = "DELETE FROM RoomType_Service WHERE RoomTypeID = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, roomTypeId);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public boolean isRoomTypeNameExists(String name, int excludeId) {
+        String query = "SELECT COUNT(*) FROM RoomType WHERE typeName = ? AND roomtypeid <> ?";
+        try (PreparedStatement ps = connection.prepareStatement(query)) {
+            ps.setString(1, name);
+            ps.setInt(2, excludeId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     public Map<String, List<Amenity>> getAmenitiesGroupedByCategoryByRoomType(int roomTypeId) {
@@ -235,6 +279,44 @@ public class RoomTypeDAO extends DBContext {
         }
 
         return result;
+    }
+
+    public List<Service> getServicesByRoomTypeId(int roomTypeId) {
+        List<Service> services = new ArrayList<>();
+        String sql = "SELECT s.ServiceID, s.Name, s.Description, s.Price "
+                + "FROM RoomType_Service rts "
+                + "JOIN Service s ON rts.ServiceID = s.ServiceID "
+                + "WHERE rts.RoomTypeID = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, roomTypeId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Service s = new Service();
+                    s.setServiceId(rs.getInt("ServiceID"));
+                    s.setName(rs.getString("Name"));
+                    s.setDescription(rs.getString("Description"));
+                    s.setPrice(rs.getBigDecimal("Price"));
+                    services.add(s);
+                }
+            }
+        } catch (SQLException ex) { 
+            Logger.getLogger(RoomTypeDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return services;
+    }
+     
+
+    public boolean deleteRoomType(int roomTypeID) {
+        String sql = "DELETE FROM RoomTypeAmenity WHERE roomTypeID = ?;"
+                + "   DELETE FROM RoomType WHERE RoomTypeID = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, roomTypeID);
+            ps.setInt(2, roomTypeID);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
 }

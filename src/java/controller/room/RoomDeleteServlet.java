@@ -2,12 +2,10 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package controller;
+package controller.room;
 
-import dao.BookingDao;
+import controller.*;
 import dao.RoomDAO;
-import entity.BookingInfo;
-import entity.RoomInfo;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -15,17 +13,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.List;
 
 /**
  *
  * @author viet7
  */
-@WebServlet(name = "RoomDetailServlet", urlPatterns = {"/roomDetail"})
-public class RoomDetailServlet extends HttpServlet {
-
-    RoomDAO roomDAO = new RoomDAO();
-    BookingDao bookingDAO = new BookingDao();
+@WebServlet(name = "RoomDeleteServlet", urlPatterns = {"/roomDelete"})
+public class RoomDeleteServlet extends HttpServlet {
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -35,10 +29,10 @@ public class RoomDetailServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet RoomDetailServlet</title>");
+            out.println("<title>Servlet RoomDeleteServlet</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet RoomDetailServlet at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet RoomDeleteServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -47,19 +41,14 @@ public class RoomDetailServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        int roomId = Integer.parseInt(request.getParameter("roomId"));
+        int roomId = Integer.parseInt(request.getParameter("id"));
 
-        RoomInfo room = roomDAO.getRoomInfo(roomId);
-        BookingInfo currentStay = bookingDAO.getCurrentStay(roomId);
-        if (currentStay == null) {
-            currentStay = bookingDAO.getClosestReservedBooking(roomId);
-        }
-        List<BookingInfo> futureBookings = bookingDAO.getFutureBookings(roomId);
+        // Giả định DeletedBy = 1 (admin), bạn có thể lấy từ session nếu có login
+        int deletedBy = 1;
 
-        request.setAttribute("room", room);
-        request.setAttribute("currentStay", currentStay);
-        request.setAttribute("futureBookings", futureBookings);
-        request.getRequestDispatcher("room-detail-fragment.jsp").forward(request, response);
+        RoomDAO dao = new RoomDAO();
+        dao.deleteRoom(roomId, deletedBy);
+        response.sendRedirect("roomList?success=deleted");
     }
 
     @Override

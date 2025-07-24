@@ -109,68 +109,13 @@
                                 </div>
 
                                 <p class="form-text">Chúng tôi sẽ gửi e-voucher tới email này. ${sessionScope.authLocal.user.email} Số điện thoại (${sessionScope.authLocal.user.phone}).</p>
-
-                                <!--                                <div class="row mt-3">
-                                                                    <div class="col-6">
-                                                                        <div class="card border-primary bg-light">
-                                                                            <div class="card-body text-center p-3">
-                                                                                <i class="fas fa-phone me-2"></i>
-                                                                                <span class="small">Tôi là khách lưu trú</span>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="col-6">
-                                                                        <div class="card">
-                                                                            <div class="card-body text-center p-3">
-                                                                                <i class="fas fa-users me-2"></i>
-                                                                                <span class="small">Tôi đang đặt cho người khác</span>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>-->
                             </div>
 
-                            <!-- Special Requests -->
-<!--                            <div class="mb-4">
-                                <h5 class="fw-bold mb-3">Bạn yêu cầu nào không?</h5>
-                                <p class="text-muted small mb-3">Khi nhận phòng, khách sạn sẽ thông báo liệu yêu cầu này có được đáp ứng hay không.</p>
-
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-check mb-2">
-                                            <input class="form-check-input" type="checkbox" id="nonsmoking">
-                                            <label class="form-check-label" for="nonsmoking">Phòng không hút thuốc</label>
-                                        </div>
-                                        <div class="form-check mb-2">
-                                            <input class="form-check-input" type="checkbox" id="highfloor">
-                                            <label class="form-check-label" for="highfloor">Tầng lầu</label>
-                                        </div>
-                                        <div class="form-check mb-2">
-                                            <input class="form-check-input" type="checkbox" id="earlycheck">
-                                            <label class="form-check-label" for="earlycheck">Gửi nhận phòng</label>
-                                        </div>
-                                        <div class="form-check mb-2">
-                                            <input class="form-check-input" type="checkbox" id="other">
-                                            <label class="form-check-label" for="other">Khác</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-check mb-2">
-                                            <input class="form-check-input" type="checkbox" id="connecting">
-                                            <label class="form-check-label" for="connecting">Phòng liền thông</label>
-                                        </div>
-                                        <div class="form-check mb-2">
-                                            <input class="form-check-input" type="checkbox" id="bed">
-                                            <label class="form-check-label" for="bed">Loại giường</label>
-                                        </div>
-                                        <div class="form-check mb-2">
-                                            <input class="form-check-input" type="checkbox" id="latecheck">
-                                            <label class="form-check-label" for="latecheck">Gửi trả phòng</label>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>-->
-
+                            <h3>Dịch vụ đi kèm</h3>
+                            <div id="service-container" style="display: flex; gap: 30px;">
+                                <div id="left-column" style="flex: 1;"></div>
+                                <div id="right-column" style="flex: 1;"></div>
+                            </div>
 
                             <!-- Price Details -->
                             <div class="mb-4">
@@ -178,17 +123,21 @@
                                 <div class="card">
                                     <div class="card-body">
                                         <div class="d-flex justify-content-between mb-2">
-                                            <span>Giá phòng</span>
-                                            <span>${totalPrice} VND</span>
+                                            <span>Giá dịch vụ</span>
+                                            <span id="service-price">0 VND</span>
                                         </div>
                                         <div class="text-muted small mb-2">${room.getRoomNumber()}-${room.getRoomType().getTypeName()} (${numberNight} đêm)</div>
+                                        <div class="d-flex justify-content-between mb-2">
+                                            <span>Giá phòng</span>
+                                            <span id="room-price">${totalPrice} VND</span>
+                                        </div>
                                         <div class="d-flex justify-content-between mb-3">
 
                                         </div>
                                         <hr>
                                         <div class="d-flex justify-content-between fw-bold fs-5 price-highlight">
                                             <span>Tổng giá</span>
-                                            <span>${totalPrice} VND</span>
+                                            <span id="final-price">${totalPrice} VND</span>
                                         </div>
                                     </div>
                                 </div>
@@ -260,7 +209,6 @@
                             </div>
 
                             <hr>
-
                             <div class="d-flex justify-content-between align-items-center mb-2">
                                 <strong>Tổng Giá Phòng</strong>
                                 <div class="text-end">
@@ -275,7 +223,7 @@
                                 <div class="benefit-text small mb-1">
 
                                     <%
-                                        String checkoutStr = request.getParameter("checkout"); // ví dụ: "2025-06-25"
+                                        String checkoutStr = request.getParameter("checkout"); 
                                         String cancelDeadline = "";
 
                                         if (checkoutStr != null && !checkoutStr.isEmpty()) {
@@ -333,5 +281,84 @@
     <script src="js/active.js"></script>
     <script src="js/bootstrap/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <!-- Đảm bảo bạn đã truyền biến totalPrice từ server -->
+<c:set var="totalPrice" value="${totalPrice}" />
+<script>
+    const baseUrl = '${pageContext.request.contextPath}';
+    const roomPrice = ${totalPrice}; 
+    let servicePrice = 0;
+
+    function formatCurrency(value) {
+        return value.toLocaleString('vi-VN') + ' VND';
+    }
+
+    function sendNewTotalToSession(newTotal) {
+        fetch(baseUrl + "/bookingroom", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body: "action=updateTotalPrice&newTotal=" + newTotal
+        });
+    }
+
+    function updateTotal(servicePrice) {
+        const total = roomPrice + servicePrice;
+        document.getElementById('service-price').innerText = formatCurrency(servicePrice);
+        document.getElementById('final-price').innerText = formatCurrency(total);
+        sendNewTotalToSession(total);
+    }
+
+    fetch(baseUrl + "/bookingroom", {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: 'action=addService'
+    })
+    .then(response => response.json())
+    .then(data => {
+        const leftColumn = document.getElementById('left-column');
+        const rightColumn = document.getElementById('right-column');
+        let isLeft = true;
+
+        data.forEach(service => {
+            const column = isLeft ? leftColumn : rightColumn;
+
+            const row = document.createElement('div');
+            row.style.marginBottom = '10px';
+
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.name = 'services';
+            checkbox.value = service.serviceId;
+            checkbox.dataset.price = service.price;
+
+            checkbox.addEventListener('change', function () {
+                const price = parseFloat(this.dataset.price);
+                if (this.checked) {
+                    servicePrice += price;
+                } else {
+                    servicePrice -= price;
+                }
+                updateTotal(servicePrice);
+            });
+
+            const label = document.createElement('label');
+            label.appendChild(checkbox);
+            label.append(' ' + service.name + ' (' + formatCurrency(service.price) + ')');
+
+            row.appendChild(label);
+            column.appendChild(row);
+            isLeft = !isLeft;
+        });
+
+        // Gọi lần đầu để hiển thị ban đầu
+        updateTotal(servicePrice);
+    });
+</script>
+
+
+
 </body>
 </html>

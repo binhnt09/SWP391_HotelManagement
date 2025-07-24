@@ -2,24 +2,31 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package controller;
+package controller.room;
 
+import controller.*;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import dao.RoomDAO;
+import dao.RoomReviewDAO;
+import entity.Authentication;
 import entity.Room;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.sql.Date;
-import java.util.List;
-import validation.Validation;
+import java.io.BufferedReader;
+import org.json.JSONObject;
 
 /**
  *
  * @author Admin
  */
-public class SearchRoom extends HttpServlet {
+@WebServlet(name = "RoomReview", urlPatterns = {"/roomreview"})
+public class RoomReview extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -38,10 +45,10 @@ public class SearchRoom extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet SearchRoom</title>");
+            out.println("<title>Servlet RoomReview</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet SearchRoom at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet RoomReview at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -59,35 +66,31 @@ public class SearchRoom extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String checkin_raw = request.getParameter("checkin");
-        String checkout_raw = request.getParameter("checkout");
-        String priceFrom_raw = request.getParameter("pricefrom");
-        String priceTo_raw = request.getParameter("priceto");
-        String numberPeople_raw = request.getParameter("numberpeople");
-        String roomType_raw = request.getParameter("roomType");
+        try {
+            int roomId = Integer.parseInt(request.getParameter("roomId"));
+            Authentication auth = (Authentication) request.getSession().getAttribute("authLocal");
 
-        request.setAttribute("checkin", checkin_raw);
-        request.setAttribute("checkout" ,checkout_raw);
-        request.setAttribute("from" ,priceFrom_raw);
-        request.setAttribute("to" ,priceTo_raw);
-        request.setAttribute("numberPeople" ,numberPeople_raw);
-        request.setAttribute("type" ,roomType_raw);
-        
-        Date checkin = Validation.parseStringToSqlDate(checkin_raw ,"yyyy-MM-dd");
-        Date checkout = Validation.parseStringToSqlDate(checkout_raw , "yyyy-MM-dd");
-        double priceTo = Validation.parseStringToDouble(priceTo_raw);
-        double priceFrom = Validation.parseStringToDouble(priceFrom_raw);
-        
-        int numberPeople = Validation.parseStringToInt(numberPeople_raw);
-        int roomType = Validation.parseStringToInt(roomType_raw);
-        
-        List<Room> listRoom = new dao.RoomDAO().getListRoom(checkin, checkout, 
-                priceFrom, priceTo, numberPeople, 
-                roomType, "", "all", "", 
-                false, 4, 6, false);
-        request.setAttribute("listRoom", listRoom);
-        request.setAttribute("listRoomType", new dao.RoomTypeDAO().getListRoomType());
-        request.getRequestDispatcher("rooms.jsp").forward(request, response);
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+
+            if (auth == null || auth.getUser() == null) {
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.getWriter().write("{\"error\":\"Chưa đăng nhập\"}");
+                return;
+            }
+
+            int userId = auth.getUser().getUserId();
+
+            RoomReviewDAO reviewDAO = new RoomReviewDAO();
+            entity.RoomReview review = reviewDAO.getReviewByUserAndRoom(userId, roomId);
+
+            Gson gson = new Gson();
+            response.getWriter().write(gson.toJson(review != null ? review : new RoomReview())); // tránh null
+        } catch (Exception e) {
+            response.setStatus(500);
+            response.getWriter().write("{\"error\":\"Lỗi hệ thống\"}");
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -101,7 +104,23 @@ public class SearchRoom extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+
+        String roomIdRaw = request.getParameter("roomId");
+        String userIdRaw = request.getParameter("userId");
+        String ratingRaw = request.getParameter("rating");
+        String bookingIdRaw = request.getParameter("bookingId");
+
+        int roomId = validation.Validation.parseStringToInt(roomIdRaw);
+        int userId = validation.Validation.parseStringToInt(userIdRaw);
+        int rating = validation.Validation.parseStringToInt(ratingRaw);
+        int bookingId = validation.Validation.parseStringToInt(bookingIdRaw);
+
+        if (rating < 0) {
+            rating = 0;
+        }
+        boolean check = new dao.RoomReviewDAO().insertRating(roomId, userId, rating);
+        response.setContentType("application/json");
+        response.getWriter().write(response.toString());
     }
 
     /**

@@ -15,7 +15,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -237,9 +236,6 @@ public class BookingDao extends DBContext {
             if (pageSize > 0) {
                 sql.append(" OFFSET ? ROWS FETCH NEXT ? ROWS ONLY");
             }
-
-            System.out.println(sql.toString());
-
             ps = connection.prepareStatement(sql.toString());
 
             int index = 1;
