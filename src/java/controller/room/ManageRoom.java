@@ -2,11 +2,10 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package controller;
+package controller.room;
 
-import com.google.gson.Gson;
+import dao.RoomDAO;
 import entity.Room;
-import entity.RoomImage;
 import entity.RoomType;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -15,17 +14,15 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.HashMap;
+import jakarta.servlet.http.HttpSession;
 import java.util.List;
-import java.util.Map;
-import validation.Validation;
 
 /**
  *
  * @author Admin
  */
-@WebServlet(name = "ShowRoomDetail", urlPatterns = {"/showroomdetail"})
-public class ShowRoomDetail extends HttpServlet {
+@WebServlet(name = "ManageRoom", urlPatterns = {"/manageroom"})
+public class ManageRoom extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -44,10 +41,10 @@ public class ShowRoomDetail extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet ShowRoomDetail</title>");
+            out.println("<title>Servlet ManageRoom</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet ShowRoomDetail at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet ManageRoom at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -57,7 +54,7 @@ public class ShowRoomDetail extends HttpServlet {
     /**
      * Handles the HTTP <code>GET</code> method.
      *
-     * @param request servlet request
+     * @param request servlet requets
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
@@ -65,27 +62,55 @@ public class ShowRoomDetail extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String roomId = request.getParameter("roomId");
-        int id = Validation.parseStringToInt(roomId);
+        String pageParam = request.getParameter("page");
+        String keyword = request.getParameter("keyWord");  
+        String sortBy = request.getParameter("sortBy");
+        String roomType = request.getParameter("roomType");
+        String sort = request.getParameter("sort");
+        boolean check = "asc".equalsIgnoreCase(sort);
+        String presentDeleted = request.getParameter("presentDeleted");
 
-        Room room = new dao.RoomDAO().getRoomByRoomID(id);
-        Map<String, Object> map = new HashMap<>();
-        map.put("room", room);
-        map.put("roomdetail", room.getRoomDetail());
-        List<RoomImage> tmp = new dao.RoomImageDAO().getListRoomImgByDetailID(room.getRoomDetail().getRoomDetailID());
-        if (tmp != null) {
-            map.put("roomimg", new dao.RoomImageDAO().getListRoomImgByDetailID(room.getRoomDetail().getRoomDetailID()));
+        Boolean isDeleted = true;
+        if ("1".equalsIgnoreCase(presentDeleted)) {
+            isDeleted = null;
+        } else {
+            isDeleted = false;
         }
-        map.put("roomtype", room.getRoomType());
-        map.put("roomstar", new dao.RoomReviewDAO().getAverageRatingByRoomId(id));
+        
+        int typeId = validation.Validation.parseStringToInt(roomType);
+        int pageIndex = 1;
+        if (pageParam != null) {
+            try {
+                pageIndex = Integer.parseInt(pageParam);
+            } catch (NumberFormatException e) {
+                pageIndex = 1;
+            }
+        }
 
-        response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8");
-        response.getWriter().write(new Gson().toJson(map));
-    }
+        int pageSize = 10;
+        RoomDAO dao = new RoomDAO();
 
-    public static void main(String[] args) {
-        System.out.println(new dao.RoomDAO().getRoomByRoomID(1).getRoomType().getDeletedAt());
+        int totalRooms = 0;
+        List<Room> listRoom = null;
+
+            listRoom = dao.searchRoomsByPage(keyword, typeId, sortBy, check, isDeleted, (pageIndex - 1) * pageSize, pageSize);
+            totalRooms = dao.countSearchRooms(keyword, typeId, isDeleted);
+
+        int totalPages = (int) Math.ceil((double) totalRooms / pageSize);
+        
+        request.setAttribute("listRoom", listRoom);
+        request.setAttribute("currentPage", pageIndex);
+        request.setAttribute("totalPages", totalPages);
+        request.setAttribute("pageSize", pageSize);
+        request.setAttribute("keyWord", keyword != null ? keyword : "");
+        request.setAttribute("sortBy", sortBy);
+        request.setAttribute("roomType", roomType);
+        request.setAttribute("sort", sort);
+        request.setAttribute("presentDeleted", presentDeleted);
+        request.setAttribute("numberRoom", totalRooms);
+        request.setAttribute("listRoomType", new dao.RoomTypeDAO().getListRoomType());
+        request.getRequestDispatcher("manageroom.jsp").forward(request, response);
+
     }
 
     /**

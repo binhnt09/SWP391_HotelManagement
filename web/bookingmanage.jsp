@@ -202,9 +202,6 @@
                             <h4 class="mb-0">Manage Booking</h4>
                         </div>
                     </div>
-
-
-
                     <table class="table table-striped table-hover">
                         <thead>
                             <tr>

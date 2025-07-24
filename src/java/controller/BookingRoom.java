@@ -4,7 +4,10 @@
  */
 package controller;
 
+import com.google.gson.Gson;
+import dao.ServiceDAO;
 import entity.Room;
+import entity.Service;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -14,7 +17,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.sql.Date;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import validation.Validation;
 
 /**
@@ -43,6 +49,7 @@ public class BookingRoom extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+
         String roomID_raw = request.getParameter("roomID");
         String checkin_raw = request.getParameter("checkin");
         String checkout_raw = request.getParameter("checkout");
@@ -73,7 +80,7 @@ public class BookingRoom extends HttpServlet {
         request.getSession().setAttribute("numberNight", diffDays);
         request.setAttribute("nowTocheckin", nowTocheckinDays);
         request.getSession().setAttribute("totalPrice", totalPrice);
-        
+
         request.getRequestDispatcher("booking.jsp").forward(request, response);
     }
 
@@ -88,7 +95,12 @@ public class BookingRoom extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        String action = request.getParameter("action");
+        if (action != null && action.equalsIgnoreCase("addService")) {
+            addService(request, response);
+        } else if (action != null && action.equalsIgnoreCase("updateTotalPrice")) {
+            updateTotalPrice(request, response);
+        }
     }
 
     /**
@@ -101,4 +113,32 @@ public class BookingRoom extends HttpServlet {
         return "Short description";
     }// </editor-fold>
 
+    private void addService(HttpServletRequest request, HttpServletResponse response) {
+        List<Service> services = new ServiceDAO().getListService();
+        Gson gson = new Gson();
+        String json = gson.toJson(services);
+
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        try {
+            response.getWriter().write(json);
+        } catch (IOException ex) {
+            Logger.getLogger(BookingRoom.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private void updateTotalPrice(HttpServletRequest request, HttpServletResponse response) {
+//        String totalStr = request.getParameter("newTotal");
+//        double newTotal = Validation.parseStringToDouble(totalStr);
+//        request.getSession().setAttribute("totalPrice", newTotal);
+        String totalStr = request.getParameter("newTotal");
+        System.out.println("👉 [LOG] Tham số newTotal nhận được từ request: " + totalStr);
+
+        double newTotal = Validation.parseStringToDouble(totalStr);
+        System.out.println("👉 [LOG] Sau khi parse thành double: " + newTotal);
+
+        request.getSession().setAttribute("totalPrice", newTotal);
+        System.out.println("✅ [LOG] Session đã lưu totalPrice: " + request.getSession().getAttribute("totalPrice"));
+
+    }
 }

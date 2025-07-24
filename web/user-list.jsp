@@ -377,7 +377,7 @@
             <form action="staffUpdate" method="POST">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">Add Customer</h5>
+                        <h5 class="modal-title">Add User</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -437,7 +437,7 @@
             <form id="editEmployeeForm" action="userUpdate" method="POST">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">Edit employee</h5>
+                        <h5 class="modal-title">Edit User</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>

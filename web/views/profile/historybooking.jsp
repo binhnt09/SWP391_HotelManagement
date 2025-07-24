@@ -341,7 +341,7 @@
                                                             <button class="btn btn-outline-secondary">
                                                                 <i class="fas fa-phone"></i>
                                                             </button>
-                                                            <button class="btn btn-outline-danger">
+                                                            <button class="btn btn-outline-danger btn-cancel-booking" data-booking-id="${i.bookingId}">
                                                                 <i class="fas fa-times"></i>
                                                             </button>
                                                             <button class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modal-${i.bookingId}">
@@ -533,56 +533,79 @@
             <script src="${pageContext.request.contextPath}/js/profile.js"></script>
         <script src="${pageContext.request.contextPath}/js/authentication.js"></script>
         <script>
-                                                                                      $(document).on('click', '[data-bs-toggle="modal"]', function () {
-                                                                                          const button = $(this);
-                                                                                          $('#bookRoomId').val(button.data('roomid'));
-                                                                                          $('#bookingId').val(button.data('bookingid'));
-                                                                                          $('#bookRoomDetail').val(button.data('roomdetail'));
-                                                                                          $('#bookRoomNumber').val(button.data('roomnumber'));
-                                                                                          $('#bookStatus').val(button.data('status'));
-                                                                                          $('#bookPricePerNight').val(button.data('pricepernight'));
-                                                                                          $('#bookMaxGuest').val(button.data('maxguest'));
-                                                                                          $('#bookCheckin').val(button.data('checkin'));
-                                                                                          $('#bookCheckout').val(button.data('checkout'));
-                                                                                          $('#bookNumberNight').val(button.data('numbernight'));
-                                                                                          $('#bookTextNumberNight').val(button.data('textnumbernight'));
-                                                                                      });
-                                                                                      document.querySelectorAll('.star-rating:not(.readonly) label').forEach(star => {
-                                                                                          star.addEventListener('click', function () {
-                                                                                              this.style.transform = 'scale(1.2)';
-                                                                                              setTimeout(() => {
-                                                                                                  this.style.transform = 'scale(1)';
-                                                                                              }, 200);
-                                                                                          });
-                                                                                      });
-                                                                                      document.addEventListener("DOMContentLoaded", () => {
-                                                                                          document.querySelectorAll(".star-rating input[type='radio']").forEach(input => {
-                                                                                              input.addEventListener("change", function () {
-                                                                                                  const rating = this.value;
-                                                                                                  const bookingId = this.name.split("_")[1];
-                                                                                                  const roomId = this.closest(".rating-card").dataset.roomid;
-                                                                                                  const userId = this.closest(".rating-card").dataset.userid;
-                                                                                                  console.log(rating);
-                                                                                                  console.log(bookingId);
-                                                                                                  console.log(roomId);
-                                                                                                  console.log(userId);
-                                                                                                  const baseUrl = '${pageContext.request.contextPath}';
-                                                                                                  fetch(baseUrl + "/roomreview?roomId=" + roomId + "&userId=" + userId + "&rating=" + rating + "&bookingId=" + bookingId, {
-                                                                                                      method: "POST"
-                                                                                                  })
-                                                                                                          .then(res => res.json())
-                                                                                                          .then(data => {
-                                                                                                              if (data.success) {
-                                                                                                                  alert("Cảm ơn bạn đã đánh giá!");
-                                                                                                              } else {
-                                                                                                                  alert("Không thể gửi đánh giá: " + data.message);
-                                                                                                              }
-                                                                                                          });
-                                                                                              });
-                                                                                          });
-                                                                                      });
 
+            $(document).on('click', '[data-bs-toggle="modal"]', function () {
+                const button = $(this);
+                $('#bookRoomId').val(button.data('roomid'));
+                $('#bookingId').val(button.data('bookingid'));
+                $('#bookRoomDetail').val(button.data('roomdetail'));
+                $('#bookRoomNumber').val(button.data('roomnumber'));
+                $('#bookStatus').val(button.data('status'));
+                $('#bookPricePerNight').val(button.data('pricepernight'));
+                $('#bookMaxGuest').val(button.data('maxguest'));
+                $('#bookCheckin').val(button.data('checkin'));
+                $('#bookCheckout').val(button.data('checkout'));
+                $('#bookNumberNight').val(button.data('numbernight'));
+                $('#bookTextNumberNight').val(button.data('textnumbernight'));
+            });
+            document.querySelectorAll('.star-rating:not(.readonly) label').forEach(star => {
+                star.addEventListener('click', function () {
+                    this.style.transform = 'scale(1.2)';
+                    setTimeout(() => {
+                        this.style.transform = 'scale(1)';
+                    }, 200);
+                });
+            });
+            document.addEventListener("DOMContentLoaded", () => {
+                document.querySelectorAll(".star-rating input[type='radio']").forEach(input => {
+                    input.addEventListener("change", function () {
+                        const rating = this.value;
+                        const bookingId = this.name.split("_")[1];
+                        const roomId = this.closest(".rating-card").dataset.roomid;
+                        const userId = this.closest(".rating-card").dataset.userid;
+                        console.log(rating);
+                        console.log(bookingId);
+                        console.log(roomId);
+                        console.log(userId);
+                        const baseUrl = '${pageContext.request.contextPath}';
+                        fetch(baseUrl + "/roomreview?roomId=" + roomId + "&userId=" + userId + "&rating=" + rating + "&bookingId=" + bookingId, {
+                            method: "POST"
+                        })
+                                .then(res => res.json())
+                                .then(data => {
+                                    if (data.success) {
+                                        alert("Cảm ơn bạn đã đánh giá!");
+                                    } else {
+                                        alert("Không thể gửi đánh giá: " + data.message);
+                                    }
+                                });
+                    });
+                });
+            });
+            $(document).on('click', '.btn-cancel-booking', function () {
+                const bookingId = $(this).data('booking-id');
+                const baseUrl = '${pageContext.request.contextPath}';
+
+                fetch(baseUrl + "/bookingroomcustomer?action=checkCancel&bookingId=" + bookingId)
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data.allowCancel) {
+                                const confirmCancel = confirm("Bạn có chắc chắn muốn hủy phòng?");
+                                if (confirmCancel) {
+                                    fetch(baseUrl + "/bookingroomcustomer?action=cancelBooking&bookingId=" + bookingId, {
+                                        method: 'GET'
+                                    }).then(() => {
+                                        alert("Đã hủy thành công");
+                                        location.reload();
+                                    });
+                                }
+                            } else {
+                                alert("Bạn không thể hủy vì đã quá hạn cho phép (trước ngày check-in 7 ngày).");
+                            }
+                        });
+            });
         </script>
+
 
     </body>
 </html>

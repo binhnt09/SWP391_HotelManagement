@@ -17,6 +17,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -238,9 +239,6 @@ public class BookingDao extends DBContext {
             if (pageSize > 0) {
                 sql.append(" OFFSET ? ROWS FETCH NEXT ? ROWS ONLY");
             }
-
-            System.out.println(sql.toString());
-
             ps = connection.prepareStatement(sql.toString());
 
             int index = 1;
@@ -622,6 +620,7 @@ public class BookingDao extends DBContext {
         return false;
     }
 
+
     public List<BookingServices> getBookingServicesByBookingId(int bookingId) {
         String sql = "SELECT * FROM BookingService WHERE BookingID = ? AND IsDeleted = 0";
         List<BookingServices> list = new ArrayList<>();
@@ -672,5 +671,34 @@ public class BookingDao extends DBContext {
         }
 
         return false;
+    }
+    
+    public LocalDate getCheckInDateByBookingId(int bookingId) {
+        String sql = "SELECT CheckInDate FROM Booking WHERE BookingID = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, bookingId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getDate("CheckInDate").toLocalDate();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+    public boolean cancelBooking(int bookingId) {
+        String sql = "UPDATE Booking SET status = 'Canceled' WHERE bookingId = ?";
+        
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+             
+            ps.setInt(1, bookingId);
+            int rows = ps.executeUpdate();
+            return rows > 0;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+
     }
 }
