@@ -284,6 +284,34 @@ public class ServiceDAO extends DBContext {
                 rs.getBoolean("IsDeleted")
         );
     }
-    
 
+    public List<Service> getListService() {
+        List<Service> list = new ArrayList<>();
+        String sql = "SELECT * FROM Service WHERE IsDeleted = 0 AND Status = 1";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                Service s = new Service();
+                s.setServiceId(rs.getInt("ServiceID"));
+                s.setName(rs.getString("Name"));
+                s.setImageUrl(rs.getString("ImageURL"));
+                s.setDescription(rs.getString("Description"));
+                s.setPrice(rs.getBigDecimal("Price"));
+                s.setCategory(rs.getString("Category"));
+                s.setStatus(rs.getBoolean("Status"));
+                s.setCreatedAt(rs.getTimestamp("CreatedAt"));
+                s.setUpdatedAt(rs.getTimestamp("UpdatedAt"));
+                s.setDeletedAt(rs.getTimestamp("DeletedAt"));
+                s.setDeletedBy(rs.getInt("DeletedBy"));
+                s.setIsDeleted(rs.getBoolean("IsDeleted"));
+                list.add(s);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return list;
+    }
 }

@@ -87,7 +87,6 @@
                         <div class="col-12 col-lg-10" >
                             <div class="book-now-form" >
                                 <form action="searchroom">
-
                                     <div class="booking-frame">
                                         <div class="row">
                                         <%
@@ -113,19 +112,19 @@
 
                                         <div class="col-4 col-lg-4">
                                             <label style="font-weight: 600;">Nhập check-in:</label>
-                                            <input type="date" value="${checkin}" name="checkin" required=""  placeholder="Chọn ngày đến" class="form-control time-input" />
+                                            <input type="date" id="checkInDate" value="${checkin}" name="checkin" required=""  placeholder="Chọn ngày đến" class="form-control time-input" />
 
                                         </div>
                                         <div class="col-4 col-lg-4">
                                             <label style="font-weight: 600;">Nhập check-out:</label>
-                                            <input type="date" value="${checkout}" name="checkout" required=""  placeholder="Chọn ngày đến" class="form-control time-input"  />
+                                            <input type="date" id="checkOutDate" value="${checkout}" name="checkout" required=""  placeholder="Chọn ngày đến" class="form-control time-input"  />
                                         </div>
-                                        <div class="col-3 col-lg-3">
+                                        <div class="col-4 col-lg-4">
                                             <label style="font-weight: 600;">Giá mỗi đêm:</label>
                                             <div class="d-flex align-items-center gap-2">
-                                                <input type="number" name="pricefrom" value="${from}" step="100" placeholder="$From" class="form-control" style="max-width: 150px;">
+                                                <input type="number" id="priceFrom"  name="pricefrom" value="${from}" step="100" min="0" placeholder="$From" class="form-control" style="max-width: 200px;">
                                                 <span>&nbsp;&mdash;&nbsp;</span>
-                                                <input type="number" name="priceto" value="${to}" step="100" placeholder="$To" class="form-control" style="max-width: 150px;">
+                                                <input type="number" id="priceTo" name="priceto" value="${to}" step="100" min="0" placeholder="$To" class="form-control" style="max-width: 200px;">
                                             </div>
                                         </div>
                                     </div>
@@ -137,7 +136,7 @@
                                         </div>
                                         <div class="col-4 col-lg-4">
                                             <label style="font-weight: 600; font-size: initial; margin-top: 20px">Loại phòng:</label>
-                                            <select name="roomType" class="form-control"   >
+                                            <select name="roomType" class="form-select"   >
                                                 <option value="-1" >Select room type </option>
                                                 <c:forEach items="${listRoomType}" var="tmp">
                                                     <option value="${tmp.roomTypeID}" <c:if test="${tmp.roomTypeID == type}">selected</c:if>>${tmp.typeName}</option>
@@ -147,12 +146,8 @@
                                         <div class="col-2 col-lg-2 d-flex align-items-end">
                                             <input type="submit" value="Tìm kiếm" class="btn btn-primary w-100" />
                                         </div>
-
-
                                     </div>
-                                    <div class="row"></div>
                                 </div>
-
                             </form>
                         </div>
                     </div>
@@ -426,6 +421,90 @@
                             $(this).css('transform', 'scale(1)');
                         }
                 );
+            });
+
+            document.addEventListener("DOMContentLoaded", function () {
+                // --- RÀNG BUỘC GIÁ ---
+                const priceFrom = document.getElementById("priceFrom");
+                const priceTo = document.getElementById("priceTo");
+
+                function validatePriceRange() {
+                    const from = parseInt(priceFrom.value);
+                    const to = parseInt(priceTo.value);
+
+                    if (!isNaN(from) && !isNaN(to)) {
+                        if (from < 0)
+                            priceFrom.value = 0;
+                        if (to < 0)
+                            priceTo.value = 0;
+
+                        if (from >= to) {
+                            alert("Giá 'From' phải nhỏ hơn giá 'To'. Vui lòng điều chỉnh.");
+                            priceTo.value = from + 100;
+                        }
+                    }
+                }
+
+                priceFrom.addEventListener("change", validatePriceRange);
+                priceTo.addEventListener("change", validatePriceRange);
+
+                const checkInInput = document.getElementById('checkInDate');
+                const checkOutInput = document.getElementById('checkOutDate');
+
+                const today = new Date();
+                const todayStr = today.toISOString().split('T')[0];
+                checkInInput.min = todayStr;
+
+                const maxCheckIn = new Date(today);
+                maxCheckIn.setMonth(maxCheckIn.getMonth() + 6);
+                checkInInput.max = maxCheckIn.toISOString().split('T')[0];
+
+                function getNextDay(dateStr, offset = 1) {
+                    const date = new Date(dateStr);
+                    date.setDate(date.getDate() + offset);
+                    return date.toISOString().split('T')[0];
+                }
+
+                function validateDateRange() {
+                    const today = new Date();
+                    const checkInDate = new Date(checkInInput.value);
+                    const checkOutDate = new Date(checkOutInput.value);
+
+                    // 1. Ràng buộc check-in không quá 6 tháng kể từ hôm nay
+                    const maxCheckIn = new Date(today);
+                    maxCheckIn.setMonth(maxCheckIn.getMonth() + 6);
+
+                    if (checkInDate > maxCheckIn) {
+                        alert("Ngày check-in không được quá 6 tháng kể từ hôm nay.");
+                        checkInInput.value = maxCheckIn.toISOString().split('T')[0];
+                        return;
+                    }
+
+                    if (checkInInput.value) {
+                        const minCheckOut = getNextDay(checkInInput.value, 1);
+                        const maxCheckOut = new Date(checkInDate);
+                        maxCheckOut.setMonth(maxCheckOut.getMonth() + 1); // Tối đa 1 tháng
+
+                        checkOutInput.min = minCheckOut;
+                        checkOutInput.max = maxCheckOut.toISOString().split('T')[0];
+
+                        if (
+                                checkOutDate <= checkInDate ||
+                                checkOutDate > maxCheckOut
+                                ) {
+                            alert("Bạn chỉ có thể đặt phòng tối thiểu 1 đêm và tối đa 1 tháng.");
+                            checkOutInput.value = minCheckOut;
+                        }
+                    }
+                }
+
+
+                checkInInput.addEventListener('change', validateDateRange);
+                checkOutInput.addEventListener('change', validateDateRange);
+
+                if (checkInInput.value) {
+                    validateDateRange();
+                }
             });
         </script>
     </body>

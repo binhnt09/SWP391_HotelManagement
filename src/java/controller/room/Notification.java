@@ -2,24 +2,25 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package controller;
+package controller.room;
 
-import entity.Room;
+import com.google.gson.Gson;
+import entity.Notifications;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.sql.Date;
 import java.util.List;
-import validation.Validation;
 
 /**
  *
  * @author Admin
  */
-public class SearchRoom extends HttpServlet {
+@WebServlet(name = "Notification", urlPatterns = {"/notification"})
+public class Notification extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -38,10 +39,10 @@ public class SearchRoom extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet SearchRoom</title>");
+            out.println("<title>Servlet Notification</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet SearchRoom at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet Notification at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -59,35 +60,14 @@ public class SearchRoom extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String checkin_raw = request.getParameter("checkin");
-        String checkout_raw = request.getParameter("checkout");
-        String priceFrom_raw = request.getParameter("pricefrom");
-        String priceTo_raw = request.getParameter("priceto");
-        String numberPeople_raw = request.getParameter("numberpeople");
-        String roomType_raw = request.getParameter("roomType");
+        int userId = Integer.parseInt(request.getParameter("userId"));
+        List<Notifications> notifies = new dao.NotificationDao().getNotificationsByUserId(userId);
 
-        request.setAttribute("checkin", checkin_raw);
-        request.setAttribute("checkout" ,checkout_raw);
-        request.setAttribute("from" ,priceFrom_raw);
-        request.setAttribute("to" ,priceTo_raw);
-        request.setAttribute("numberPeople" ,numberPeople_raw);
-        request.setAttribute("type" ,roomType_raw);
-        
-        Date checkin = Validation.parseStringToSqlDate(checkin_raw ,"yyyy-MM-dd");
-        Date checkout = Validation.parseStringToSqlDate(checkout_raw , "yyyy-MM-dd");
-        double priceTo = Validation.parseStringToDouble(priceTo_raw);
-        double priceFrom = Validation.parseStringToDouble(priceFrom_raw);
-        
-        int numberPeople = Validation.parseStringToInt(numberPeople_raw);
-        int roomType = Validation.parseStringToInt(roomType_raw);
-        
-        List<Room> listRoom = new dao.RoomDAO().getListRoom(checkin, checkout, 
-                priceFrom, priceTo, numberPeople, 
-                roomType, "", "Available", "", 
-                false, 4, 6, false);
-        request.setAttribute("listRoom", listRoom);
-        request.setAttribute("listRoomType", new dao.RoomTypeDAO().getListRoomType());
-        request.getRequestDispatcher("rooms.jsp").forward(request, response);
+        Gson gson = new Gson();
+        String json = gson.toJson(notifies);
+
+        response.setContentType("application/json");
+        response.getWriter().write(json);
     }
 
     /**

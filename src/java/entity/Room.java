@@ -5,6 +5,7 @@
 package entity;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 /**
  *
@@ -14,9 +15,9 @@ public class Room {
     private int roomID;
     private String roomNumber ; // Tên phòng: VD 101 ,...
     private RoomDetail roomDetail;
-    private RoomType roomTypeID;
+    private RoomType roomType;
     private String status;
-    private double price;
+    private double price;   
 
     private Hotel hotel;
 
@@ -26,7 +27,9 @@ public class Room {
     private int deletedBy;
     private boolean isDeleted;
 
-    private RoomType roomType;
+    
+
+    
 
     public Room() {
     }
@@ -105,13 +108,6 @@ public class Room {
         this.roomDetail = roomDetail;
     }
 
-    public RoomType getRoomTypeID() {
-        return roomTypeID;
-    }
-
-    public void setRoomTypeID(RoomType roomTypeID) {
-        this.roomTypeID = roomTypeID;
-    }
 
     public String getStatus() {
         return status;
@@ -184,5 +180,7 @@ public class Room {
     public void setRoomType(RoomType roomType) {
         this.roomType = roomType;
     }
+    
+
 
 }

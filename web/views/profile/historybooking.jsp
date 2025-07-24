@@ -321,7 +321,7 @@
                                                             <button class="btn btn-outline-secondary">
                                                                 <i class="fas fa-phone"></i>
                                                             </button>
-                                                            <button class="btn btn-outline-danger">
+                                                            <button class="btn btn-outline-danger btn-cancel-booking" data-booking-id="${i.bookingId}">
                                                                 <i class="fas fa-times"></i>
                                                             </button>
                                                         </div>
@@ -464,8 +464,32 @@
                     });
                 });
             });
+            $(document).on('click', '.btn-cancel-booking', function () {
+                const bookingId = $(this).data('booking-id');
+                const baseUrl = '${pageContext.request.contextPath}';
+
+                fetch(baseUrl + "/bookingroomcustomer?action=checkCancel&bookingId=" + bookingId)
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data.allowCancel) {
+                                const confirmCancel = confirm("Bạn có chắc chắn muốn hủy phòng?");
+                                if (confirmCancel) {
+                                    fetch(baseUrl + "/bookingroomcustomer?action=cancelBooking&bookingId=" + bookingId, {
+                                        method: 'GET'
+                                    }).then(() => {
+                                        alert("Đã hủy thành công");
+                                        location.reload();
+                                    });
+                                }
+                            } else {
+                                alert("Bạn không thể hủy vì đã quá hạn cho phép (trước ngày check-in 7 ngày).");
+                            }
+                        });
+            });
+
 
         </script>
+
 
     </body>
 </html>
