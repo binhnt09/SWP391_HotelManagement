@@ -78,7 +78,14 @@ public class VoucherManage extends HttpServlet {
 
         VoucherDao voucherDao = new VoucherDao();
         List<Voucher> listVoucher = new ArrayList<>();
-
+        
+        if (index_raw == null || index_raw.isEmpty()) {
+            Object indexAttr = request.getSession().getAttribute("index");
+            if (indexAttr != null) {
+                index_raw = indexAttr.toString();
+                request.getSession().removeAttribute("index");
+            }
+        }
         int index = 1;
         if (index_raw != null) {
             index = Validation.parseStringToInt(index_raw);
@@ -131,7 +138,32 @@ public class VoucherManage extends HttpServlet {
             insertVoucher(request, response);
         } else if ("updateVoucher".equals(action)) {
             updateVoucher(request, response);
+        } else if ("removeVoucher".equals(action)) {
+            removeVoucher(request, response);
         }
+    }
+
+    protected void removeVoucher(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        String[] voucherIdRe_Raw = request.getParameterValues("voucherIdRe");
+
+        VoucherDao dao = new VoucherDao();
+        if (voucherIdRe_Raw != null) {
+            for (String id : voucherIdRe_Raw) {
+                try {
+                int voucherId = Integer.parseInt(id);
+                System.out.println("Deleting voucherId: " + voucherId);
+                dao.updateIsdeletedVoucher(voucherId);
+                } catch (NumberFormatException e) {
+                    System.out.println("Invalid bookingID: " + id);
+                    System.out.println(e);
+                }
+            }
+        }
+            String index_raw = request.getParameter("index");
+            request.getSession().setAttribute("index", index_raw);
+        request.getSession().setAttribute("success", "Remove Voucher successfully");
+        response.sendRedirect(request.getContextPath() + "/vouchermanage");
     }
 
     protected void insertVoucher(HttpServletRequest request, HttpServletResponse response)
@@ -233,9 +265,11 @@ public class VoucherManage extends HttpServlet {
         }
         int voucherId = Validation.parseStringToInt(voucherIdUdStr);
         if (!valid) {
+            String index_raw = request.getParameter("index");
             request.setAttribute("errorMessage", errorMessage);
             request.setAttribute("openModalEdit", "#editVoucherModal");
             request.setAttribute("levelId", memberShipId);
+            request.setAttribute("index", index_raw);
             doGet(request, response);
             return;
         }

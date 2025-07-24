@@ -5,6 +5,7 @@
 --%>
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!doctype html>
 <html lang="en">
@@ -179,7 +180,7 @@
                                             </ul>
                                             <a href="#addVoucherModal" class="btn btn-success" data-toggle="modal">
                                                 <i class="material-icons">&#xE147;</i> <span>Add New Voucher</span></a>
-                                            <a href="#deleteEmployeeModal" class="btn btn-danger" data-toggle="modal">
+                                            <a href="#deleteVoucherModal" class="btn btn-danger" data-toggle="modal">
                                                 <i class="material-icons">&#xE15C;</i> <span>Delete</span></a>
                                         </div>
                                     </div>
@@ -208,7 +209,7 @@
                                         <tr>
                                             <td>
                                                 <span class="custom-checkbox">
-                                                    <input type="checkbox" class="select-item" id="checkbox1" name="options[]" value=""/>
+                                                    <input type="checkbox" class="select-item" id="checkbox1" name="options[]" value="${voucher.voucherId}"/>
                                                     <label for="checkbox1"></label>
                                                 </span>
                                             </td>
@@ -225,7 +226,7 @@
                                                            return false;">
                                                     <i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i>
                                                 </a>
-                                                <a href="#" class="delete" data-toggle="modal" data-target="#deleteEmployeeModal" data-id="">
+                                                <a href="#" class="delete" data-toggle="modal" data-target="#deleteVoucherModal" data-id="${voucher.voucherId}">
                                                     <i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>
                                             </td> 
                                         </tr>
@@ -340,7 +341,8 @@
                                 <div class="modal-content">
                                     <form action="vouchermanage" method="post">
                                         <input type="hidden" name="action" value="updateVoucher"/>
-                                        <input type="hidden" name="voucherIdUd" value="123" id="voucherIdUd"/>
+                                        <input type="hidden" name="voucherIdUd" value="${param.voucherIdUd}" id="voucherIdUd"/>
+                                        <input type="hidden" name="index" value="${tag}" /> 
 
                                         <div class="modal-header">
                                             <h4 class="modal-title">Edit Voucher</h4>
@@ -378,13 +380,14 @@
                                                                data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
                                                                 <span>Select Level</span>
                                                             </a>
-                                                            <ul id="levelCheckboxContainer" class="dropdown-menu" style="width: 100%; text-align: left">
+                                                            <ul id="levelCheckboxContainer" class="dropdown-menu">
                                                                 <c:forEach var="memberShip" items="${listMemberShip}">
+                                                                    <c:set var="selectedLevels" value="${fn:split(levelId, ',')}"/>
                                                                     <li class="nav-item submenu dropdown">
                                                                         <label class="dropdown-item" style="cursor: pointer;">
-                                                                            <input type="checkbox" style="width: 18px; height: 18px; margin: 5px" 
-                                                                                   class="member-checkboxUd" value="${memberShip.levelId}" 
-                                                                                   data-name="${memberShip.levelName}" value="${memberShip.levelId}" />
+                                                                            <input type="checkbox" class="member-checkboxUd"
+                                                                                   value="${memberShip.levelId}" data-name="${memberShip.levelName}"
+                                                                                   <c:if test="${fn:contains(levelId, memberShip.levelId)}">checked</c:if> />
                                                                             ${memberShip.levelName}
                                                                         </label>
                                                                     </li>
@@ -416,12 +419,16 @@
 
 
                         <!-- Delete Modal HTML -->
-                        <div id="deleteEmployeeModal" class="modal fade">
+                        <div id="deleteVoucherModal" class="modal fade">
                             <div class="modal-dialog">
                                 <div class="modal-content">
-                                    <form action="deletebooking" method="post">
+                                    <form action="${pageContext.request.contextPath}/removevoucher" method="post">
+                                        <input type="hidden" name="action" value="removeVoucher"/>
+                                        <input type="hidden" name="voucherId" value="${param.voucherIdRe}" id="voucherIdRe"/>
+                                        <input type="hidden" name="index" value="${tag}" /> 
+
                                         <div class="modal-header">
-                                            <h4 class="modal-title">Delete Booking</h4>
+                                            <h4 class="modal-title">Delete Voucher</h4>
                                             <button type="button" class="close" data-dismiss="modal" 
                                                     aria-hidden="true">&times;</button>
                                         </div>
@@ -431,14 +438,13 @@
                                         </div>
                                         <div class="modal-footer">
                                             <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
-                                            <!--<input id="deleteStaffBtn" type="submit" class="btn btn-danger" value="Delete">-->
-                                            <button id="deleteStaffBtn" class="btn btn-danger">Delete</button>
+                                            <!--<input id="deleteVoucherBtn" type="submit" class="btn btn-danger" value="Delete">-->
+                                            <button id="deleteVoucherBtn" class="btn btn-danger">Delete</button>
                                         </div>
                                     </form>
                                 </div>
                             </div>
                         </div>
-
                     </div>
 
                     <!---footer---->
@@ -484,6 +490,17 @@
                 confirmButtonColor: "#3085d6",
                 confirmButtonText: "OK"
             <c:remove var="success" scope="session" />
+            });
+            <% } %>
+            
+            <% if (request.getSession().getAttribute("errorMessageSes") != null) { %>
+            Swal.fire({
+                icon: "error",
+                title: "Remove voucher!",
+                text: "<%= request.getSession().getAttribute("errorMessageSes") %>",
+                confirmButtonColor: "#3085d6",
+                confirmButtonText: "OK"
+            <c:remove var="errorMessageSes" scope="session" />
             });
             <% } %>
 

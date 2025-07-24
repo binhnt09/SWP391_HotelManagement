@@ -247,3 +247,114 @@ function openEditModal(voucherId, code, discount, from, to) {
                 updateSelectedLevelsUd();
             }).catch(err => console.error("FETCH ERROR:", err));
 }
+
+//delete checkbox
+$(document).ready(function () {
+    restoreSelection(); // Khôi phục checkbox khi tải trang
+    // Chọn/Bỏ chọn tất cả
+    $("#selectAll").click(function () {
+        let isChecked = this.checked;
+        $(".select-item").prop("checked", isChecked);
+
+        let selectedStaff = [];
+        if (isChecked) {
+            // Nếu chọn tất cả, lưu toàn bộ staff ID vào mảng
+            $(".select-item").each(function () {
+                selectedStaff.push($(this).val());
+            });
+        }
+        localStorage.setItem("selectedStaff", JSON.stringify(selectedStaff));
+    });
+
+    // Xử lý chọn từng checkbox
+    $(".select-item").click(function () {
+        updateSelection($(this).val(), $(this).prop("checked"));
+    });
+    // Khi nhấn "Delete" để lấy danh sách Staff ID
+    $(".btn-danger[data-toggle='modal']").click(function () {
+        let selectedIDs = JSON.parse(localStorage.getItem("selectedStaff")) || [];
+        if (selectedIDs.length === 0) {
+            alert("Please select at least one staff to delete.");
+            return false;
+        }
+        // Lưu danh sách ID vào thuộc tính data
+        $("#deleteVoucherBtn").data("selected-ids", selectedIDs);
+    });
+    // Khi nhấn "Delete" trong modal -> gửi AJAX
+    $("#deleteVoucherBtn").click(function () {
+        let bookingID = $(this).data("selected-ids");
+        if (bookingID.length > 0) {
+            $.ajax({
+                type: "POST",
+                url: "removevoucher",
+                traditional: true,
+                data: {voucherId: bookingID},
+                success: function () {
+                    $("#deleteVoucherModal").modal("hide");
+                    alert("Selected Booking deleted successfully!");
+                    localStorage.removeItem("selectedStaff"); // Xóa danh sách đã chọn
+                    setTimeout(function () {
+                        location.reload();
+                    }, 500);
+                },
+                error: function () {
+                    alert("Error deleting booking. Please try again.");
+                }
+            });
+        }
+    });
+});
+// 🛠️ **Cập nhật trạng thái checkbox vào localStorage**
+function updateSelection(staffID, isChecked) {
+    let selectedStaff = JSON.parse(localStorage.getItem("selectedStaff")) || [];
+    if (isChecked) {
+        // Nếu chọn thì thêm vào danh sách nếu chưa có
+        if (!selectedStaff.includes(staffID)) {
+            selectedStaff.push(staffID);
+        }
+    } else {
+        // Nếu bỏ chọn thì xóa khỏi danh sách
+        selectedStaff = selectedStaff.filter(id => id !== staffID);
+    }
+    localStorage.setItem("selectedStaff", JSON.stringify(selectedStaff));
+}
+
+// 🔄 **Khôi phục trạng thái checkbox khi chuyển trang**
+function restoreSelection() {
+    let selectedStaff = JSON.parse(localStorage.getItem("selectedStaff")) || [];
+
+    $(".select-item").each(function () {
+        if (selectedStaff.includes($(this).val())) {
+            $(this).prop("checked", true);
+        }
+    });
+    // Cập nhật trạng thái "Select All" dựa trên checkbox đã chọn
+    $("#selectAll").prop("checked", $(".select-item:checked").length === $(".select-item").length);
+}
+
+//delete icon thung rac
+var bookingToDelete = ""; // Lưu Staff ID cần xóa
+// Khi nhấn vào nút xóa, lấy Staff ID từ `data-id`
+$(".delete").click(function () {
+    bookingToDelete = $(this).data("id"); // Lưu ID vào biến
+});
+// Khi nhấn nút Delete trong modal, gửi yêu cầu AJAX
+$("#deleteVoucherBtn").click(function () {
+    if (bookingToDelete) {
+        $.ajax({
+            type: "POST",
+            url: "removevoucher", // Servlet xử lý xóa
+            data: {voucherId: bookingToDelete},
+            success: function () {
+                $("#deleteVoucherModal").modal("hide"); // Ẩn modal sau khi xóa
+                alert("Staff deleted successfully!");
+                setTimeout(function () {
+                    location.reload(); // Reload trang sau khi modal đóng
+                }, 500); // Chờ modal đóng rồi reload
+            },
+            error: function () {
+                alert("Error deleting staff. Please try again.");
+            }
+        });
+    }
+});

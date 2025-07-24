@@ -249,7 +249,7 @@ public class VoucherDao extends DBContext {
 
     //Đếm số lượng voucher sau khi search theo code hoặc tính tổng sl voucher
     public int countSearchResults(String keyword) {
-        String sql = "SELECT COUNT(*) FROM Voucher ";
+        String sql = "SELECT COUNT(*) FROM Voucher WHERE IsDeleted = 0";
         boolean hasKeyword = keyword != null && !keyword.trim().isEmpty();
         if (hasKeyword) {
             sql += " WHERE Code LIKE ? ";
@@ -275,10 +275,10 @@ public class VoucherDao extends DBContext {
 
         StringBuilder sql = new StringBuilder();
         sql.append("SELECT VoucherID, Code, DiscountPercentage, ValidFrom, ValidTo, ")
-                .append("CreatedAt, UpdatedAt, IsDeleted, DeletedBy FROM Voucher ");
+                .append("CreatedAt, UpdatedAt, IsDeleted, DeletedBy FROM Voucher WHERE IsDeleted = 0 ");
 
         if (hasKeyword) {
-            sql.append(" WHERE Code LIKE ? ");
+            sql.append(" AND Code LIKE ? ");
         }
 
         if (sortBy != null) {
@@ -343,6 +343,19 @@ public class VoucherDao extends DBContext {
             ps.setInt(5, voucher.getVoucherId());
 
             int rowsAffected = ps.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            Logger.getLogger(VoucherDao.class.getName()).log(Level.SEVERE, null, e);
+            return false;
+        }
+    }
+
+    public boolean updateIsdeletedVoucher(int voucherId) {
+        String sql = "update Voucher set IsDeleted = 1 WHERE VoucherID = ?";
+
+        try (PreparedStatement stm = connection.prepareStatement(sql)) {
+            stm.setInt(1, voucherId);
+            int rowsAffected = stm.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
             Logger.getLogger(VoucherDao.class.getName()).log(Level.SEVERE, null, e);
