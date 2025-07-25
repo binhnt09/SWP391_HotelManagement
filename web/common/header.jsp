@@ -111,19 +111,6 @@
                                             </ul>
                                         </li>
                                         <li class="${pageContext.request.requestURI.endsWith('voucher.jsp') ? 'active' : ''}"><a href="${pageContext.request.contextPath}/voucher">Voucher</a></li>
-                                        <!--                                        <li><a href="#">Mega Menu</a>
-                                                                                    <div class="megamenu">
-                                                                                        <ul class="single-mega cn-col-4">
-                                                                                            <li><a href="home.jsp">Home</a></li>
-                                                                                            <li><a href="about-us.jsp">About Us</a></li>
-                                                                                            <li><a href="services.jsp">Services</a></li>
-                                                                                            <li><a href="rooms.jsp">Rooms</a></li>
-                                                                                            <li class=""><a href="blog.jsp">News</a></li>
-                                                                                            <li><a href="contact.jsp">Contact</a></li>
-                                                                                            <li class=""><a href="elements.jsp">Elements</a></li>
-                                                                                        </ul>
-                                                                                    </div>
-                                                                                </li>-->
                                         <li class="${pageContext.request.requestURI.endsWith('services.jsp') ? 'active' : ''}"><a href="${pageContext.request.contextPath}/services.jsp">Services</a></li>
                                         <li class="${pageContext.request.requestURI.endsWith('contact.jsp') ? 'active' : ''}"><a href="${pageContext.request.contextPath}/contact.jsp">Contact</a></li>
                                     </ul>
@@ -390,7 +377,6 @@
                                                             </form>
                                                         </div>
                                                     </li>
-
                                                 </c:if>
 
                                                 <!---- verify Email ---->

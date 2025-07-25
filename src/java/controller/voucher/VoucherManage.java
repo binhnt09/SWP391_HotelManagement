@@ -6,7 +6,6 @@ package controller.voucher;
 
 import constant.MailUtil;
 import dao.AuthenticationDAO;
-import dao.MembershipDao;
 import dao.VoucherDao;
 import entity.MembershipLevel;
 import entity.Voucher;
@@ -138,9 +137,7 @@ public class VoucherManage extends HttpServlet {
             insertVoucher(request, response);
         } else if ("updateVoucher".equals(action)) {
             updateVoucher(request, response);
-        } else if ("removeVoucher".equals(action)) {
-            removeVoucher(request, response);
-        }
+        } 
     }
 
     protected void removeVoucher(HttpServletRequest request, HttpServletResponse response)
@@ -182,8 +179,8 @@ public class VoucherManage extends HttpServlet {
 
         double discount = Validation.parseStringToDouble(discout_str);
 
-        if (voucherCode == null || voucherCode.isEmpty()) {
-            errorMessage = "Please enter voucher code!";
+        if (voucherCode == null || voucherCode.isEmpty() || !voucherCode.matches("^[a-zA-Z0-9]+$")) {
+            errorMessage = "Please enter voucher code must contain only letters and number!";
             valid = false;
         } else if (discount <= 0) {
             errorMessage = "Voucher must more than 0%";
@@ -216,7 +213,7 @@ public class VoucherManage extends HttpServlet {
                     List<String> emails = authenDao.getEmailByLevelId(levelId);
                     for (String email : emails) {
                         try {
-                            MailUtil.sendVoucherByEmail(email, voucherCode);
+                            MailUtil.sendVoucherByEmail(email, voucherCode, discount, validfrom, validto);
                         } catch (Exception ex) {
                             Logger.getLogger(VoucherManage.class.getName()).log(Level.SEVERE, null, ex);
                         }
@@ -247,8 +244,8 @@ public class VoucherManage extends HttpServlet {
 
         double discount = Validation.parseStringToDouble(discout_strUd);
 
-        if (voucherCodeUd == null || voucherCodeUd.isEmpty()) {
-            errorMessage = "Please enter voucher code!";
+        if (voucherCodeUd == null || voucherCodeUd.isEmpty() || !voucherCodeUd.matches("^[a-zA-Z0-9]+$")) {
+            errorMessage = "Please enter voucher code must contain only letters and number!";
             valid = false;
         } else if (discount <= 0) {
             errorMessage = "Voucher must more than 0%";
@@ -292,7 +289,7 @@ public class VoucherManage extends HttpServlet {
                     List<String> emails = authenDao.getEmailByLevelId(levelId);
                     for (String email : emails) {
                         try {
-                            MailUtil.sendVoucherByEmail(email, voucherCodeUd);
+                            MailUtil.sendVoucherByEmail(email, voucherCodeUd, discount, validfromUd, validtoUd);
                         } catch (Exception ex) {
                             Logger.getLogger(VoucherManage.class.getName()).log(Level.SEVERE, null, ex);
                         }

@@ -70,10 +70,9 @@
                             <input type="hidden" name="method" value="Vnpay" />
                             <div class="payment-method-header">
                                 <div class="radio-btn"></div>
-                                <div style="font-weight: bold;">E-Wallet</div>
+                                <div style="font-weight: bold;">VNPay</div>
                                 <div class="payment-icons">
                                     <div class="vnpay-logo">VN<span>Pay</span></div>
-                                    <div class="payment-icon momo">MOMO</div>
                                 </div>
                             </div>
                             <!--                            <div class="qr-info" id="Vnpay-details">
@@ -89,7 +88,7 @@
                                                         </div>-->
                         </div>
 
-                        <div class="payment-method" onclick="selectPayment(this)" data-method="banktransfer">
+<!--                        <div class="payment-method" onclick="selectPayment(this)" data-method="banktransfer">
                             <div class="payment-method-header">
                                 <div class="radio-btn"></div>
                                 <div style="font-weight: bold;">ATM Cards/Mobile Banking</div>
@@ -105,7 +104,7 @@
                                 <div class="radio-btn"></div>
                                 <div style="font-weight: bold;">Cash</div>
                             </div>
-                        </div>
+                        </div>-->
 
                         <!--<input type="hidden" class="coupon-input">-->
                         <div class="coupon-section">
@@ -116,7 +115,7 @@
                                 <span class="toggle-button">Thêm mã</span>
                             </div>
                             <div class="coupon-input-container" id="coupon-container" style="display: none;flex-direction: column; gap: 16px; margin-top: 12px;">
-                                <input type="text" placeholder="Enter coupon code or select available coupon(s)" id="coupon-input" style="padding: 10px; width: 100%; box-sizing: border-box; border-radius: 6px;">
+                                <input type="hidden" placeholder="Enter coupon code or select available coupon(s)" id="coupon-input" style="padding: 10px; width: 100%; box-sizing: border-box; border-radius: 6px;">
                                 <input type="hidden" id="total-price-data" value="${sessionScope.totalPrice}" />
                                 <div class="voucher-list">
                                     <p>Hoặc chọn một mã từ danh sách:</p>
