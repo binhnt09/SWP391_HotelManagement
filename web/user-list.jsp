@@ -370,67 +370,6 @@
         </div>
     </div>
 
-
-    <!----add-modal start--------->
-    <div class="modal fade" tabindex="-1" id="addEmployeeModal" role="dialog">
-        <div class="modal-dialog" role="document">
-            <form action="staffUpdate" method="POST">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Add User</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="form-group">
-                            <label>First Name</label>
-                            <input type="text" class="form-control" name="firstName" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Last Name</label>
-                            <input type="text" class="form-control" name="lastName" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Email</label>
-                            <input type="email" class="form-control" name="email" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Address</label>
-                            <textarea class="form-control" name="address" required></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label>Phone</label>
-                            <input type="text" class="form-control" name="phone" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Position</label>
-                            <select name="roleID" class="form-control">
-                                <option value="1" ${role == 1 ? 'selected' : ''}>SystemAdmin</option>
-                                <option value="2" ${role == 2 ? 'selected' : ''}>Manager</option>
-                                <option value="3" ${role == 3 ? 'selected' : ''}>Receptionist</option>
-                                <option value="4" ${role == 4 ? 'selected' : ''}>Cleaner</option>
-                                <option value="5" ${role == 5 ? 'selected' : ''}>Customer</option>
-                            </select>
-                        </div>
-
-                        <input type="hidden" name="action" value="add">
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-success">Add</button>
-                    </div>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!----add-modal end--------->
-
-
-
-
-
     <!----edit-modal start--------->
     <div class="modal fade" tabindex="-1" id="editEmployeeModal" role="dialog">
         <div class="modal-dialog" role="document">

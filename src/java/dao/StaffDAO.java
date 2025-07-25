@@ -361,4 +361,18 @@ public class StaffDAO extends DBContext {
         }
         return false;
     }
+
+    public boolean updateUserRole(int userId, int newRoleId) {
+        String sql = "UPDATE [User] SET UserRoleID = ?, UpdatedAt = GETDATE() WHERE UserID = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, newRoleId);
+            ps.setInt(2, userId);
+            int rowsAffected = ps.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            Logger.getLogger(StaffDAO.class.getName()).log(Level.SEVERE, null, e);
+        }
+        return false;
+    }
+    
 }

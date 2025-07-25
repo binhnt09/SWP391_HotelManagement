@@ -329,11 +329,13 @@
                             <div class="modal-body">
                                 <div class="form-group">
                                     <label>First Name</label>
-                                    <input type="text" class="form-control" id="editFirstName" name="firstName" required>
+                                    <input type="text" class="form-control" id="editFirstName" name="firstName" required pattern="^(?!\s*$)[A-Za-zÀ-ỹ0-9\s]+$" 
+                                           title="Không được để trống, không chỉ toàn khoảng trắng và không chứa ký tự đặc biệt">
                                 </div>
                                 <div class="form-group">
                                     <label>Last Name</label>
-                                    <input type="text" class="form-control" id="editLastName" name="lastName" required>
+                                    <input type="text" class="form-control" id="editLastName" name="lastName" required pattern="^(?!\s*$)[A-Za-zÀ-ỹ0-9\s]+$" 
+                                           title="Không được để trống, không chỉ toàn khoảng trắng và không chứa ký tự đặc biệt">
                                 </div>
                                 <div class="form-group">
                                     <label>Email</label>
@@ -341,11 +343,12 @@
                                 </div>
                                 <div class="form-group">
                                     <label>Address</label>
-                                    <textarea class="form-control" id="editAddress" name="address" required></textarea>
+                                    <textarea class="form-control" id="editAddress" name="address" required pattern="^(?!\s*$)[A-Za-zÀ-ỹ0-9\s]+$" 
+                                              title="Không được để trống, không chỉ toàn khoảng trắng và không chứa ký tự đặc biệt"></textarea>
                                 </div>
                                 <div class="form-group">
                                     <label>Phone</label>
-                                    <input type="text" class="form-control" id="editPhone" name="phone" required>
+                                    <input type="text" class="form-control" id="editPhone" name="phone" required pattern="0\d{9}" title="Số điện thoại không hợp lệ (phải có 10 chữ số và bắt đầu bằng 0)!">
                                 </div>
                                 <input type="hidden" id="editUserId" name="userId">
                                 <input type="hidden" name="action" value="update">
