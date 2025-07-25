@@ -8,6 +8,7 @@ package validation;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.sql.Date;
 import java.util.Scanner;
 
 /**
@@ -206,6 +207,17 @@ public class Validation {
         }
     }
 
+    public static Date parseSqlDate(String dateStr) {
+        if (dateStr == null || dateStr.trim().isEmpty()) {
+            return null;
+        }
+        try {
+            return Date.valueOf(dateStr.trim());
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
+    }
+
     public static java.sql.Timestamp parseStringToSqlTimestamp(String dateStr, String pattern) {
         if (dateStr == null || dateStr.trim().isEmpty()) {
             return null; // hoặc throw new IllegalArgumentException("Date string is empty");
@@ -242,5 +254,4 @@ public class Validation {
             throw new IllegalArgumentException("Invalid number format: " + value);
         }
     }
-     
 }

@@ -12,7 +12,6 @@ import java.util.List;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Arrays;
 
 /**
  *
@@ -40,6 +39,10 @@ public class RoomImageDAO extends DBContext {
             e.printStackTrace();
         }
         return list;
+    }
+    
+    public static void main(String[] args) {
+        System.out.println(new dao.RoomImageDAO().getListRoomImgByDetailID(73).size());
     }
     public RoomImage getImgByImgId(int id){
         RoomImage  img = null;
@@ -94,12 +97,4 @@ public class RoomImageDAO extends DBContext {
         return false;
     }
 
-    public static void main(String[] args) {
-        List<RoomImage> list = new dao.RoomImageDAO().getListRoomImgByDetailID(1);
-        for (RoomImage roomImage : list) {
-            System.out.println(roomImage.getCaption());
-        }
-        System.out.println(new dao.RoomImageDAO().deleteRoomImages(new ArrayList<>(Arrays.asList(52,53,54,55    ))));
-        System.out.println(new dao.RoomImageDAO().getImgByImgId(2).getImageURL());
-    }
 }

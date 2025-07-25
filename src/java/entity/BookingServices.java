@@ -8,14 +8,14 @@ package entity;
  *
  * @author ASUS
  */
-
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 
 public class BookingServices {
-    
+
     private int bookingServiceId;
     private int BookingId;
+    private int ServiceId;
     private int quantity;
     private BigDecimal priceAtUse;
     private Timestamp usedAt;
@@ -25,7 +25,7 @@ public class BookingServices {
     private Timestamp deletedAt;
     private Integer deletedBy;
     private boolean isDeleted;
-    
+
     private Service service;
 
     public BookingServices() {
@@ -45,6 +45,14 @@ public class BookingServices {
 
     public void setBookingId(int BookingId) {
         this.BookingId = BookingId;
+    }
+
+    public int getServiceId() {
+        return ServiceId;
+    }
+
+    public void setServiceId(int ServiceId) {
+        this.ServiceId = ServiceId;
     }
 
     public int getQuantity() {
@@ -129,7 +137,7 @@ public class BookingServices {
 
     @Override
     public String toString() {
-        return "BookingServices{" + "bookingServiceId=" + bookingServiceId + ", BookingId=" + BookingId + ", quantity=" + quantity + ", priceAtUse=" + priceAtUse + ", usedAt=" + usedAt + ", isPreOrdered=" + isPreOrdered + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + ", deletedAt=" + deletedAt + ", deletedBy=" + deletedBy + ", isDeleted=" + isDeleted + ", service=" + service + '}';
+        return "BookingServices{" + "bookingServiceId=" + bookingServiceId + ", BookingId=" + BookingId + ", ServiceId=" + ServiceId + ", quantity=" + quantity + ", priceAtUse=" + priceAtUse + ", usedAt=" + usedAt + ", isPreOrdered=" + isPreOrdered + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + ", deletedAt=" + deletedAt + ", deletedBy=" + deletedBy + ", isDeleted=" + isDeleted + ", service=" + service + '}';
     }
 
 }

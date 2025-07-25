@@ -5,6 +5,7 @@
 package entity;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 /**
  *
@@ -14,27 +15,17 @@ public class Room {
     private int roomID;
     private String roomNumber ; // Tên phòng: VD 101 ,...
     private RoomDetail roomDetail;
+    private RoomType roomType;
     private String status;
-    private double price;
-    
+    private double price;   
+
     private Hotel hotel;
-    
+
     private Timestamp createdAt;
     private Timestamp updatedAt;
     private Timestamp deletedAt;
     private int deletedBy;
     private boolean isDeleted;
-    
-    private RoomType roomType;
-
-    public RoomType getRoomType() {
-        return roomType;
-    }
-
-    public void setRoomType(RoomType roomType) {
-        this.roomType = roomType;
-    }
-
     public Room() {
     }
 
@@ -46,7 +37,7 @@ public class Room {
         this.price = price;
         this.hotel = hotel;
     }
-    
+
 
     public Room(int roomID, String roomNumber, RoomDetail roomDetail, RoomType roomType, String status, double price) {
         this.roomID = roomID;
@@ -56,7 +47,7 @@ public class Room {
         this.status = status;
         this.price = price;
     }
-    
+
 
     public Room(int roomID, String roomNumber, RoomDetail roomDetail, String status, double price, Hotel hotel, Timestamp createdAt, Timestamp updatedAt, Timestamp deletedAt, int deletedBy, boolean isDeleted) {
         this.roomID = roomID;
@@ -72,6 +63,7 @@ public class Room {
         this.isDeleted = isDeleted;
     }
 
+
     public Room(int roomID, String roomNumber, RoomDetail roomDetail, RoomType roomType, String status, double price, Hotel hotel, Timestamp createdAt, Timestamp updatedAt, Timestamp deletedAt, int deletedBy, boolean isDeleted) {
         this.roomID = roomID;
         this.roomNumber = roomNumber;
@@ -86,8 +78,6 @@ public class Room {
         this.deletedBy = deletedBy;
         this.isDeleted = isDeleted;
     }
-
-     
 
     public int getRoomID() {
         return roomID;
@@ -112,6 +102,7 @@ public class Room {
     public void setRoomDetail(RoomDetail roomDetail) {
         this.roomDetail = roomDetail;
     }
+
 
     public String getStatus() {
         return status;
@@ -176,5 +167,15 @@ public class Room {
     public void setIsDeleted(boolean isDeleted) {
         this.isDeleted = isDeleted;
     }
+
+    public RoomType getRoomType() {
+        return roomType;
+    }
+
+    public void setRoomType(RoomType roomType) {
+        this.roomType = roomType;
+    }
+    
+
 
 }

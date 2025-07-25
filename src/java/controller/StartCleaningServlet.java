@@ -24,15 +24,6 @@ import java.io.PrintWriter;
 @WebServlet(name = "StartCleaningServlet", urlPatterns = {"/startCleaning"})
 public class StartCleaningServlet extends HttpServlet {
 
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
@@ -50,15 +41,6 @@ public class StartCleaningServlet extends HttpServlet {
         }
     }
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -76,14 +58,13 @@ public class StartCleaningServlet extends HttpServlet {
             User cleaner = auth.getUser();
 
             if (cleaner == null || cleaner.getUserId() == 0) {
-                response.sendRedirect("login.jsp");
+                response.sendRedirect("loadtohome#login-modal");
                 return;
             }
 
             CleaningHistoryDAO cleaningDAO = new CleaningHistoryDAO();
             boolean success = cleaningDAO.startCleaning(roomId, cleaner.getUserId());
 
-            // 2. Nếu thành công, cập nhật trạng thái phòng sang "Cleaning"
             if (success) {
                 cleaningDAO.updateRoomStatus(roomId, "Cleaning");
                 session.setAttribute("successMessage", "Bắt đầu dọn phòng thành công.");
@@ -98,11 +79,6 @@ public class StartCleaningServlet extends HttpServlet {
         response.sendRedirect("cleaningList");
     }
 
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
     @Override
     public String getServletInfo() {
         return "Short description";

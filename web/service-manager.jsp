@@ -13,7 +13,7 @@
     <!----------------top-navbar---------------->
     <div class="top-navbar">
         <div class="xp-topbar">
-
+            <!--dsjgouhdud-->
             <!-- Start XP Row -->
             <div class="row"> 
                 <!-- Start XP Col -->
@@ -225,9 +225,6 @@
                                 <a href="#" class="btn btn-success" data-toggle="modal" data-target="#addServiceModal">
                                     <i class="material-icons">&#xE147;</i> <span>Add New Service</span>
                                 </a>
-                                <a href="#deleteServiceModal" class="btn btn-danger" data-toggle="modal">
-                                    <i class="material-icons">&#xE15C;</i> <span>Delete</span>
-                                </a>
                             </div>
                         </div>
                     </div>
@@ -252,10 +249,10 @@
                                     <c:forEach var="s" items="${serviceList}">
                                         <tr>
                                             <td>
-                                                <input type="checkbox" name="serviceCheckbox" value="${s.serviceID}">
+                                                <input type="checkbox" name="serviceCheckbox" value="${s.serviceId}">
                                             </td>
                                             <td>
-                                                <img src="${s.imageURL}" alt="${s.name}" style="width: 60px; height: 60px; object-fit: cover; border-radius: 6px;" />
+                                                <img src="${s.imageUrl}" alt="${s.name}" style="width: 60px; height: 60px; object-fit: cover; border-radius: 6px;" />
                                             </td>
                                             <td>${s.name}</td>
                                             <td>${s.category}</td>
@@ -280,17 +277,17 @@
                                             </td>
                                             <td>
                                                 <a href="#" class="editServiceBtn" 
-                                                   data-id="${s.serviceID}" 
+                                                   data-id="${s.serviceId}" 
                                                    data-name="${s.name}" 
                                                    data-category="${s.category}" 
                                                    data-description="${s.description}" 
                                                    data-price="${s.price}" 
-                                                   data-image="${s.imageURL}" 
+                                                   data-image="${s.imageUrl}" 
                                                    data-status="${s.status}" 
                                                    data-toggle="modal" data-target="#editServiceModal">
                                                     <i class="material-icons">&#xE254;</i>
                                                 </a>
-                                                <a href="serviceDelete?id=${s.serviceID}" class="delete" title="Delete"
+                                                <a href="serviceDelete?id=${s.serviceId}" class="delete" title="Delete"
                                                    onclick="return confirm('Xác nhận xóa dịch vụ này?');">
                                                     <i class="material-icons">&#xE872;</i>
                                                 </a>
@@ -367,10 +364,10 @@
                     </div>
 
 
-                    <!-- Update Service Modal -->
+                    <!-- Edit Service Modal -->
                     <div class="modal fade" tabindex="-1" id="editServiceModal" role="dialog">
                         <div class="modal-dialog" role="document">
-                            <form action="serviceUpdate" method="POST" enctype="multipart/form-data">
+                            <form action="serviceUpdate" method="POST" enctype="multipart/form-data" onsubmit="return validateEditService()">
                                 <div class="modal-content">
                                     <div class="modal-header">
                                         <h5 class="modal-title">Edit Service</h5>
@@ -383,25 +380,25 @@
                                         <!-- Name -->
                                         <div class="form-group">
                                             <label>Service Name</label>
-                                            <input type="text" class="form-control" id="editName" name="name" required>
+                                            <input type="text" class="form-control" id="editName" name="name" required pattern=".*\S.*" title="Không được điền toàn khoảng trắng">
                                         </div>
 
                                         <!-- Category -->
                                         <div class="form-group">
                                             <label>Category</label>
-                                            <input type="text" class="form-control" id="editCategory" name="category" required>
+                                            <input type="text" class="form-control" id="editCategory" name="category" required pattern=".*\S.*" title="Không được điền toàn khoảng trắng">
                                         </div>
 
                                         <!-- Description -->
                                         <div class="form-group">
                                             <label>Description</label>
-                                            <textarea class="form-control" id="editDescription" name="description" rows="3" required></textarea>
+                                            <textarea class="form-control" id="editDescription" name="description" rows="3" required pattern=".*\S.*" title="Không được điền toàn khoảng trắng"></textarea>
                                         </div>
 
                                         <!-- Price -->
                                         <div class="form-group">
                                             <label>Price (VNĐ)</label>
-                                            <input type="number" step="0.01" class="form-control" id="editPrice" name="price" required>
+                                            <input type="number" step="0.01" min="1" max="1000000000" class="form-control" id="editPrice" name="price" required title="Giá phải là số lớn hơn 0, có thể có phần thập phân (ví dụ: 10000 hoặc 10000.50)">
                                         </div>
 
                                         <!-- Image URL -->
@@ -434,9 +431,10 @@
                     </div>
                     <!----edit-modal end--------->
 
+                    <!-- Add Service Modal -->
                     <div class="modal fade" tabindex="-1" id="addServiceModal" role="dialog">
                         <div class="modal-dialog" role="document">
-                            <form action="serviceUpdate" method="POST" enctype="multipart/form-data">
+                            <form action="serviceUpdate" method="POST" enctype="multipart/form-data" onsubmit="return validateAddService()">
                                 <div class="modal-content">
                                     <div class="modal-header">
                                         <h5 class="modal-title">Add Service</h5>
@@ -448,25 +446,25 @@
                                         <!-- Name -->
                                         <div class="form-group">
                                             <label>Service Name</label>
-                                            <input type="text" class="form-control" name="name" required>
+                                            <input type="text" class="form-control" name="name" required pattern=".*\S.*" title="Không được điền toàn khoảng trắng">
                                         </div>
 
                                         <!-- Category -->
                                         <div class="form-group">
                                             <label>Category</label>
-                                            <input type="text" class="form-control" name="category" required>
+                                            <input type="text" class="form-control" name="category" required pattern=".*\S.*" title="Không được điền toàn khoảng trắng">
                                         </div>
 
                                         <!-- Description -->
                                         <div class="form-group">
                                             <label>Description</label>
-                                            <textarea class="form-control" name="description" rows="3" required></textarea>
+                                            <textarea class="form-control" name="description" rows="3" required pattern=".*\S.*" title="Không được điền toàn khoảng trắng"></textarea>
                                         </div>
 
                                         <!-- Price -->
                                         <div class="form-group">
                                             <label>Price (VNĐ)</label>
-                                            <input type="number" step="0.01" class="form-control" name="price" required>
+                                            <input type="number" step="0.01" min="1" max="1000000000" class="form-control" name="price" required title="Giá phải là số lớn hơn 0, có thể có phần thập phân (ví dụ: 10000 hoặc 10000.50)" >
                                         </div>
 
                                         <!-- Image URL -->

@@ -5,6 +5,7 @@
 --%>
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ page import="java.util.concurrent.TimeUnit" %>
@@ -131,12 +132,31 @@
 
                     <!-- Main Content -->
                     <div class="col-lg-9 col-md-8 ">
-                        <div class="main-content">
-                            <div class="col-lg-9 col-md-8 ">
-                                <h2 class="mb-3 fw-bold">Lịch sử giao dịch</h2>
-                            </div>
+                    <c:if test="${not empty sessionScope.successMessage}">
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            ${sessionScope.successMessage}
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
                         </div>
-                        <input type="hidden" value="${sessionScope.authLocal.user.userId}" name="currentUserId">
+                        <c:remove var="successMessage" scope="session" />
+                    </c:if> 
+
+                    <c:if test="${not empty sessionScope.errorMessage}">
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            ${sessionScope.errorMessage}
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <c:remove var="errorMessage" scope="session" />
+                    </c:if>
+                    <div class="main-content">
+                        <div class="col-lg-9 col-md-8 ">
+                            <h2 class="mb-3 fw-bold">Lịch sử giao dịch</h2>
+                        </div>
+                    </div>
+                    <input type="hidden" value="${sessionScope.authLocal.user.userId}" name="currentUserId">
                     <c:forEach items="${listBooking}" var="i">     
                         <%
                             entity.Booking booking = (entity.Booking) pageContext.getAttribute("i");
@@ -316,14 +336,108 @@
                                                                     data-textNumberNight="${numberNightSoon}"
                                                                     data-maxGuest="${room.roomDetail.maxGuest}"
                                                                     title="Edit Room">
-                                                                <i class="fas fa-phone"></i>Chỉnh sửa
+                                                                <i class="fas fa-phone"></i>View Detail
                                                             </button>
-                                                            <button class="btn btn-outline-secondary">
-                                                                <i class="fas fa-phone"></i>
-                                                            </button>
-                                                            <button class="btn btn-outline-danger">
+                                                            <button class="btn btn-outline-danger btn-cancel-booking" data-booking-id="${i.bookingId}">
                                                                 <i class="fas fa-times"></i>
                                                             </button>
+                                                            <button class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modal-${i.bookingId}">
+                                                                Dịch vụ
+                                                            </button>
+
+                                                            <!-- Modal tương ứng -->
+                                                            <div class="modal fade" id="modal-${i.bookingId}" tabindex="-1">
+                                                                <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                                                                    <div class="modal-content shadow-lg rounded-4">
+                                                                        <div class="modal-header bg-primary text-white">
+                                                                            <h5 class="modal-title">Chi tiết dịch vụ đã đặt</h5>
+                                                                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                                                        </div>
+
+                                                                        <div class="modal-body">
+                                                                            <!-- Danh sách dịch vụ đã đặt -->
+                                                                            <c:choose>
+                                                                                <c:when test="${empty i.bookingServices}">
+                                                                                    <div class="alert alert-info">Chưa có dịch vụ nào được đặt.</div>
+                                                                                </c:when>
+                                                                                <c:otherwise>
+                                                                                    <table class="table table-bordered align-middle text-center">
+                                                                                        <thead class="table-light">
+                                                                                            <tr>
+                                                                                                <th>Tên dịch vụ</th>
+                                                                                                <th>Ngày đặt</th>
+                                                                                                <th>Số lượng</th>
+                                                                                                <th>Đơn giá</th>
+                                                                                                <th>Thành tiền</th>
+                                                                                            </tr>
+                                                                                        </thead>
+                                                                                        <tbody>
+                                                                                            <c:set var="totalAmount" value="0" />
+                                                                                            <c:forEach var="bs" items="${i.bookingServices}">
+                                                                                                <tr>
+                                                                                                    <td>${bs.service.name}</td>
+                                                                                                    <td>${bs.createdAt}</td>
+                                                                                                    <td>${bs.quantity}</td>
+                                                                                                    <td>
+                                                                                                        <fmt:formatNumber value="${bs.priceAtUse}" type="currency" currencySymbol="₫" groupingUsed="true" maxFractionDigits="0"/>
+                                                                                                    </td>
+                                                                                                    <td>
+                                                                                                        <fmt:formatNumber value="${bs.quantity * bs.priceAtUse}" type="currency" currencySymbol="₫" groupingUsed="true" maxFractionDigits="0"/>
+                                                                                                        <c:set var="totalAmount" value="${totalAmount + (bs.quantity * bs.priceAtUse)}" />
+                                                                                                    </td>
+                                                                                                </tr>
+                                                                                            </c:forEach>
+                                                                                        </tbody>
+                                                                                        <tfoot>
+                                                                                            <tr>
+                                                                                                <th colspan="4" class="text-end">Tổng cộng:</th>
+                                                                                                <th>
+                                                                                                    <fmt:formatNumber value="${totalAmount}" type="currency" currencySymbol="₫" groupingUsed="true" maxFractionDigits="0"/>
+                                                                                                </th>
+                                                                                            </tr>
+                                                                                        </tfoot>
+                                                                                    </table>
+                                                                                </c:otherwise>
+                                                                            </c:choose>
+
+                                                                            <!-- Form thêm dịch vụ -->
+                                                                            <hr class="my-4" />
+                                                                            <h6 class="fw-bold mb-3">Thêm dịch vụ mới</h6>
+                                                                            <form action="addBookingService" method="post"
+                                                                                  onsubmit="return confirm('Bạn có chắc chắn muốn thêm dịch vụ này? Chi phí sẽ được tính vào hóa đơn khi trả phòng.');">
+
+                                                                                <input type="hidden" name="bookingId" value="${i.bookingId}" />
+
+                                                                                <div class="row mb-3">
+                                                                                    <div class="col-md-8">
+                                                                                        <label for="serviceId-${i.bookingId}" class="form-label">Chọn dịch vụ:</label>
+                                                                                        <select class="form-select" name="serviceId" id="serviceId-${i.bookingId}" required>
+                                                                                            <c:forEach var="s" items="${serviceList}">
+                                                                                                <c:set var="formattedPrice">
+                                                                                                    <fmt:formatNumber value="${s.price}" type="currency" currencySymbol="₫" groupingUsed="true" maxFractionDigits="0"/>
+                                                                                                </c:set>
+                                                                                                <option value="${s.serviceId}">
+                                                                                                    ${s.name} - ${formattedPrice}
+                                                                                                </option>
+                                                                                            </c:forEach>
+                                                                                        </select>
+                                                                                    </div>
+                                                                                    <div class="col-md-4">
+                                                                                        <label class="form-label">Số lượng:</label>
+                                                                                        <input type="number" name="quantity" value="1" min="1" class="form-control" required />
+                                                                                    </div>
+                                                                                </div>
+
+                                                                                <div class="d-grid gap-2">
+                                                                                    <button type="submit" class="btn btn-success btn-lg">
+                                                                                        <i class="fas fa-plus-circle"></i> Thêm dịch vụ
+                                                                                    </button>
+                                                                                </div>
+                                                                            </form>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -337,137 +451,157 @@
                 </div>
             </div>
         </div>
-    </div>
-</div>
 
-<style>
-    .custom-modal-width {
-        max-width: 75%; /* hoặc 1200px */
-    }
+        <style>
+            .custom-modal-width {
+                max-width: 75%; /* hoặc 1200px */
+            }
 
-</style>
-<div class="modal fade" id="editbooking" tabindex="-1">
-    <div class="modal-dialog custom-modal-width">
-        <form id="editRoomForm" method="get" action="bookingroomcustomer"  enctype="multipart/form-data">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Edit Room</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-
-                <div class="modal-body">
-                    <input type="hidden" name="action" value="editBook">
-                    <input type="hidden" id="bookRoomId" name="roomId">
-                    <input type="hidden" id="bookingId" name="bookingId">
-                    <input type="hidden" id="bookRoomDetail" name="bookRoomDetail">
-                    <input type="hidden" id="bookNumberNight" name="bookNumberNight">
-
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label>Room Number</label>
-                            <input type="text" id="bookRoomNumber" name="bookRoomNumber" class="form-control" readonly="">
+        </style>
+        <div class="modal fade" id="editbooking" tabindex="-1">
+            <div class="modal-dialog custom-modal-width">
+                <form id="editRoomForm" method="get" action="bookingroomcustomer"  enctype="multipart/form-data">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">View Booking</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
-                        <div class="col-md-6 mb-3">
-                            <label>Status</label>
-                            <input type="text" id="bookStatus" name="bookStatus" class="form-control" readonly="">
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label>Total Price</label>
-                            <input type="number" id="bookPricePerNight" name="bookPricePerNight" class="form-control">
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label>Number people</label>
-                            <input type="number" id="bookMaxGuest" name="bookMaxGuest" class="form-control">
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label>Check-in</label>
-                            <input type="date" id="bookCheckin" name="bookCheckin" class="form-control">
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label>Check-out</label>
-                            <input type="date" id="bookCheckout" name="bookCheckout" class="form-control">
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label>Number Night</label>
-                            <input type="text" id="bookTextNumberNight" class="form-control" readonly="">
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-primary">Update Room</button>
-                    </div>
-                </div>  
-        </form>
-    </div>
-</div>
-<!-- Footer -->
-<jsp:include page="/views/profile/footerprofile.jsp"></jsp:include>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-    <!-- jQuery (vì Bootstrap 4 phụ thuộc) -->
+                        <div class="modal-body">
+                            <input type="hidden" name="action" value="editBook">
+                            <input type="hidden" id="bookRoomId" name="roomId">
+                            <input type="hidden" id="bookingId" name="bookingId">
+                            <input type="hidden" id="bookRoomDetail" name="bookRoomDetail">
+                            <input type="hidden" id="bookNumberNight" name="bookNumberNight">
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label>Room Number</label>
+                                    <input type="text" id="bookRoomNumber" name="bookRoomNumber" class="form-control" readonly="">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label>Status</label>
+                                    <input type="text" id="bookStatus" name="bookStatus" class="form-control" readonly="">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label>Total Price</label>
+                                    <input type="number" id="bookPricePerNight" name="bookPricePerNight" readonly="" class="form-control">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label>Number people</label>
+                                    <input type="number" id="bookMaxGuest" name="bookMaxGuest" readonly="" class="form-control">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label>Check-in</label>
+                                    <input type="date" id="bookCheckin" name="bookCheckin" readonly="" class="form-control">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label>Check-out</label>
+                                    <input type="date" id="bookCheckout" name="bookCheckout" readonly="" class="form-control">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label>Number Night</label>
+                                    <input type="text" id="bookTextNumberNight" class="form-control" readonly="">
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            </div>
+                        </div>  
+                </form>
+            </div>
+        </div>
+        <!-- Footer -->
+        <jsp:include page="/views/profile/footerprofile.jsp"></jsp:include>
+
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+            <!-- jQuery (vì Bootstrap 4 phụ thuộc) -->
+
+            <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 
-    <!-- Popper.js -->
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+            <!-- Popper.js -->
+            <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
 
-    <!-- Bootstrap 4 JS -->
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+            <!-- Bootstrap 4 JS -->
+            <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
-    <script src="${pageContext.request.contextPath}/js/profile.js"></script>
-<script src="${pageContext.request.contextPath}/js/authentication.js"></script>
-<script>
-    $(document).on('click', '[data-bs-toggle="modal"]', function () {
-        const button = $(this);
-        $('#bookRoomId').val(button.data('roomid'));
-        $('#bookingId').val(button.data('bookingid'));
-        $('#bookRoomDetail').val(button.data('roomdetail'));
-        $('#bookRoomNumber').val(button.data('roomnumber'));
-        $('#bookStatus').val(button.data('status'));
-        $('#bookPricePerNight').val(button.data('pricepernight'));
-        $('#bookMaxGuest').val(button.data('maxguest'));
-        $('#bookCheckin').val(button.data('checkin'));
-        $('#bookCheckout').val(button.data('checkout'));
-        $('#bookNumberNight').val(button.data('numbernight'));
-        $('#bookTextNumberNight').val(button.data('textnumbernight'));
-    });
-    document.querySelectorAll('.star-rating:not(.readonly) label').forEach(star => {
-        star.addEventListener('click', function () {
-            this.style.transform = 'scale(1.2)';
-            setTimeout(() => {
-                this.style.transform = 'scale(1)';
-            }, 200);
-        });
-    });
-    document.addEventListener("DOMContentLoaded", () => {
-        document.querySelectorAll(".star-rating input[type='radio']").forEach(input => {
-            input.addEventListener("change", function () {
-                const rating = this.value;
-                const bookingId = this.name.split("_")[1];
-                const roomId = this.closest(".rating-card").dataset.roomid;
-                const userId = this.closest(".rating-card").dataset.userid;
-                console.log(rating);
-                console.log(bookingId);
-                console.log(roomId);
-                console.log(userId);
+            <script src="${pageContext.request.contextPath}/js/profile.js"></script>
+        <script src="${pageContext.request.contextPath}/js/authentication.js"></script>
+        <script>
+
+            $(document).on('click', '[data-bs-toggle="modal"]', function () {
+                const button = $(this);
+                $('#bookRoomId').val(button.data('roomid'));
+                $('#bookingId').val(button.data('bookingid'));
+                $('#bookRoomDetail').val(button.data('roomdetail'));
+                $('#bookRoomNumber').val(button.data('roomnumber'));
+                $('#bookStatus').val(button.data('status'));
+                $('#bookPricePerNight').val(button.data('pricepernight'));
+                $('#bookMaxGuest').val(button.data('maxguest'));
+                $('#bookCheckin').val(button.data('checkin'));
+                $('#bookCheckout').val(button.data('checkout'));
+                $('#bookNumberNight').val(button.data('numbernight'));
+                $('#bookTextNumberNight').val(button.data('textnumbernight'));
+            });
+            document.querySelectorAll('.star-rating:not(.readonly) label').forEach(star => {
+                star.addEventListener('click', function () {
+                    this.style.transform = 'scale(1.2)';
+                    setTimeout(() => {
+                        this.style.transform = 'scale(1)';
+                    }, 200);
+                });
+            });
+            document.addEventListener("DOMContentLoaded", () => {
+                document.querySelectorAll(".star-rating input[type='radio']").forEach(input => {
+                    input.addEventListener("change", function () {
+                        const rating = this.value;
+                        const bookingId = this.name.split("_")[1];
+                        const roomId = this.closest(".rating-card").dataset.roomid;
+                        const userId = this.closest(".rating-card").dataset.userid;
+                        console.log(rating);
+                        console.log(bookingId);
+                        console.log(roomId);
+                        console.log(userId);
+                        const baseUrl = '${pageContext.request.contextPath}';
+                        fetch(baseUrl + "/roomreview?roomId=" + roomId + "&userId=" + userId + "&rating=" + rating + "&bookingId=" + bookingId, {
+                            method: "POST"
+                        })
+                                .then(res => res.json())
+                                .then(data => {
+                                    if (data.success) {
+                                        alert("Cảm ơn bạn đã đánh giá!");
+                                    } else {
+                                        alert("Không thể gửi đánh giá: " + data.message);
+                                    }
+                                });
+                    });
+                });
+            });
+            $(document).on('click', '.btn-cancel-booking', function () {
+                const bookingId = $(this).data('booking-id');
                 const baseUrl = '${pageContext.request.contextPath}';
-                fetch(baseUrl + "/roomreview?roomId=" + roomId + "&userId=" + userId + "&rating=" + rating + "&bookingId=" + bookingId, {
-                    method: "POST"
-                })
+
+                fetch(baseUrl + "/bookingroomcustomer?action=checkCancel&bookingId=" + bookingId)
                         .then(res => res.json())
                         .then(data => {
-                            if (data.success) {
-                                alert("Cảm ơn bạn đã đánh giá!");
+                            if (data.allowCancel) {
+                                const confirmCancel = confirm("Bạn có chắc chắn muốn hủy phòng?");
+                                if (confirmCancel) {
+                                    fetch(baseUrl + "/bookingroomcustomer?action=cancelBooking&bookingId=" + bookingId, {
+                                        method: 'GET'
+                                    }).then(() => {
+                                        alert("Đã hủy thành công");
+                                        location.reload();
+                                    });
+                                }
                             } else {
-                                alert("Không thể gửi đánh giá: " + data.message);
+                                alert("Bạn không thể hủy vì đã quá hạn cho phép (trước ngày check-in 7 ngày).");
                             }
                         });
             });
-        });
-    });
+        </script>
 
-</script>
 
-</body>
+    </body>
 </html>

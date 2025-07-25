@@ -30,7 +30,7 @@
         <link rel="icon" href="img/core-img/favicon.ico">
 
         <!--Core Stylesheet--> 
-        <link rel="stylesheet" href="style.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/style.css">
 
         <script src="https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit" async defer></script>
 
@@ -61,7 +61,7 @@
                         <nav class="classy-navbar justify-content-between" id="palatinNav">
 
                             <!-- Nav brand -->
-                            <a href="loadtohome" class="nav-brand"><img src="img/core-img/logo.png" alt=""></a>
+                            <a href="${pageContext.request.contextPath}/loadtohome" class="nav-brand"><img src="${pageContext.request.contextPath}/img/core-img/logo.png" alt=""></a>
 
                             <!-- Navbar Toggler -->
                             <div class="classy-navbar-toggler">
@@ -86,41 +86,35 @@
                                 <!-- Nav Start -->
                                 <div class="classynav">
                                     <ul>
-                                        <li class="${pageContext.request.requestURI.endsWith('home.jsp') ? 'active' : ''}"><a href="loadtohome">Home</a></li>
-                                        <li class="${pageContext.request.requestURI.endsWith('rooms.jsp') ? 'active' : ''}"><a href="searchroom">Room</a></li>
+                                        <li class="${pageContext.request.requestURI.endsWith('home.jsp') ? 'active' : ''}"><a href="${pageContext.request.contextPath}/loadtohome">Home</a></li>
+                                        <!--<li class="${pageContext.request.requestURI.endsWith('rooms.jsp') ? 'active' : ''}"><a href="${pageContext.request.contextPath}/searchroom">Room</a></li>-->
                                         <li><a href="#">More</a>
                                             <ul class="dropdown">
-                                                <li><a href="loadtohome">Home</a></li>
-                                                <li><a href="about-us.jsp">About Us</a></li>
-                                                <li class="${pageContext.request.requestURI.endsWith('manageroom.jsp') ? 'active' : ''}"><a href="manageroom">Manage Room</a></li>
-                                                <li class="${pageContext.request.requestURI.endsWith('managerDashboard.jsp') ? 'active' : ''}"><a href="managerDashboard.jsp">Manage</a></li>
+                                                <li><a href="${pageContext.request.contextPath}/loadtohome">Home</a></li>
+                                                <li><a href="${pageContext.request.contextPath}/about-us.jsp">About Us</a></li>
+                                                    <c:if test="${sessionScope.authLocal.user.roleName == 'Manager' }"> 
+                                                    <li class="${pageContext.request.requestURI.endsWith('manageroom.jsp') ? 'active' : ''}"><a href="${pageContext.request.contextPath}/manageroom">Manage Room</a></li>
+                                                    </c:if>
+                                                <li class="${pageContext.request.requestURI.endsWith('managerDashboard.jsp') ? 'active' : ''}"><a href="${pageContext.request.contextPath}/managerDashboard.jsp">Manage</a></li>
                                                 <li><a href="services.jsp">Services</a></li>
                                                 <li><a class="dropdown-item" href="${pageContext.request.contextPath}/bookingcrud">
-                                                         Đặt chỗ của tôi
+                                                        Đặt chỗ của tôi
                                                     </a></li>
-                                                <li><a href="searchroom">Rooms</a></li>
-                                                <li><a href="blog.jsp">News</a></li>
-                                                <li><a href="contact.jsp">Contact</a></li>
-                                                <li><a href="elements.jsp">Elements</a></li>
-                                                <li><a href="payment">Payment</a></li>
+                                                <li><a href="${pageContext.request.contextPath}/searchroom">Rooms</a></li>
+                                                <li><a href="${pageContext.request.contextPath}/blog.jsp">News</a></li>
+                                                <li><a href="${pageContext.request.contextPath}/contact.jsp">Contact</a></li>
+                                                <li><a href="${pageContext.request.contextPath}/elements.jsp">Elements</a>
+                                                </li>
+                                                <c:if test="${sessionScope.authLocal.user.userRoleId == 2}">
+                                                    <li>
+                                                        <a href="${pageContext.request.contextPath}/vouchermanage">ManageVoucher</a>
+                                                    </li>
+                                                </c:if>
                                             </ul>
                                         </li>
-                                        <li class="${pageContext.request.requestURI.endsWith('about-us.jsp') ? 'active' : ''}"><a href="about-us.jsp">About Us</a></li>
-                                        <!--                                        <li><a href="#">Mega Menu</a>
-                                                                                    <div class="megamenu">
-                                                                                        <ul class="single-mega cn-col-4">
-                                                                                            <li><a href="home.jsp">Home</a></li>
-                                                                                            <li><a href="about-us.jsp">About Us</a></li>
-                                                                                            <li><a href="services.jsp">Services</a></li>
-                                                                                            <li><a href="rooms.jsp">Rooms</a></li>
-                                                                                            <li class=""><a href="blog.jsp">News</a></li>
-                                                                                            <li><a href="contact.jsp">Contact</a></li>
-                                                                                            <li class=""><a href="elements.jsp">Elements</a></li>
-                                                                                        </ul>
-                                                                                    </div>
-                                                                                </li>-->
-                                        <li class="${pageContext.request.requestURI.endsWith('services.jsp') ? 'active' : ''}"><a href="services.jsp">Services</a></li>
-                                        <li class="${pageContext.request.requestURI.endsWith('contact.jsp') ? 'active' : ''}"><a href="contact.jsp">Contact</a></li>
+                                        <li class="${pageContext.request.requestURI.endsWith('voucher.jsp') ? 'active' : ''}"><a href="${pageContext.request.contextPath}/voucher">Voucher</a></li>
+                                        <li class="${pageContext.request.requestURI.endsWith('services.jsp') ? 'active' : ''}"><a href="${pageContext.request.contextPath}/services.jsp">Services</a></li>
+                                        <li class="${pageContext.request.requestURI.endsWith('contact.jsp') ? 'active' : ''}"><a href="${pageContext.request.contextPath}/contact.jsp">Contact</a></li>
                                     </ul>
 
                                     <!-- Button -->
@@ -262,6 +256,161 @@
                                                     </li>
                                                 </c:if>
                                                 <c:if test="${sessionScope.authLocal != null}">
+                                                    <script>
+                                                        const USER_ID = ${sessionScope.authLocal.user.userId};
+                                                    </script>
+                                                </c:if>
+                                                <c:if test="${sessionScope.authLocal == null}">
+                                                    <script>
+                                                        const USER_ID = null;
+                                                    </script>
+                                                </c:if>
+
+                                                <script>
+                                                    function loadNotifications() {
+                                                        const baseUrl = '${pageContext.request.contextPath}';
+                                                        fetch(baseUrl + "/notification?userId=" + USER_ID)
+                                                                .then(res => res.json())
+                                                                .then(data => {
+                                                                    console.log(data);
+                                                                    const notiMenu = document.getElementById("notiMenu");
+                                                                    const badge = document.getElementById("notiCount");
+                                                                    notiMenu.innerHTML = "";
+                                                                    badge.innerText = data.filter(noti => !noti.IsRead).length;
+                                                                    badge.style.display = 'none';
+                                                                    console.log(data.filter(noti => !noti.IsRead).length);
+
+
+                                                                    if (data.length === 0) {
+                                                                        const noItem = document.createElement("div");
+                                                                        noItem.className = "dropdown-item text-center text-muted";
+                                                                        noItem.innerText = "Không có thông báo mới";
+                                                                        notiMenu.appendChild(noItem);
+                                                                        return;
+                                                                    }
+
+                                                                    data.forEach(noti => {
+                                                                        const item = document.createElement("div");
+                                                                        item.className = "dropdown-item d-flex align-items-start gap-2 border-bottom position-relative";
+                                                                        item.id = "notify_" + noti.NotificationId;
+                                                                        if (noti.IsRead) {
+                                                                            item.classList.add("noti-read");
+                                                                        } else {
+                                                                            item.classList.add("noti-unread");
+                                                                        }
+                                                                        let iconClass = "fa-info-circle text-primary";
+                                                                        if (noti.Type === "success")
+                                                                            iconClass = "fa-check-circle text-success";
+                                                                        else if (noti.Type === "error")
+                                                                            iconClass = "fa-times-circle text-danger";
+                                                                        else if (noti.Type === "warning")
+                                                                            iconClass = "fa-exclamation-triangle text-warning";
+
+                                                                        item.innerHTML =
+                                                                                '<i class="fa ' + iconClass + ' mt-1 mr-2" style="font-size: 1.2rem;"></i>' +
+                                                                                '<div class="flex-grow-1" style="cursor: pointer;" onclick="markAsRead(' + noti.NotificationId + ')">' +
+                                                                                '<div><strong>' + noti.Type + '</strong></div>' +
+                                                                                '<div class="text-muted">' + noti.Message + '</div>' +
+                                                                                '<div><small class="text-secondary">' + noti.createdAt + '</small></div>' +
+                                                                                '</div>' +
+                                                                                '<button class="btn btn-sm btn-link text-danger position-absolute top-0 end-0" style="font-size: 16px;" onclick="deleteNotification(' + noti.NotificationId + ')">' +
+                                                                                '<i class="fa fa-times"></i></button>';
+
+                                                                        notiMenu.appendChild(item);
+                                                                    });
+
+                                                                });
+                                                    }
+                                                    loadNotifications();
+                                                    setInterval(loadNotifications, 10000);
+
+
+                                                    function deleteNotification(id) {
+                                                        const baseUrl = '${pageContext.request.contextPath}';
+                                                        fetch(baseUrl + "/notification?action=deleteNotify&id=" + id, {
+                                                            method: 'POST'
+                                                        })
+                                                                .then(res => {
+                                                                    if (res.ok) {
+                                                                        loadNotifications();
+
+                                                                        setTimeout(() => {
+                                                                            document.getElementById("notiDropdown").click();
+                                                                        }, 10);
+                                                                    } else {
+                                                                        alert("Xóa thông báo thất bại.");
+                                                                    }
+                                                                })
+                                                                .catch(error => console.error("Lỗi khi xóa thông báo:", error));
+                                                    }
+                                                    function markAsRead(id) {
+                                                        fetch('notification?action=isRead&id=' + id, {method: 'POST'})
+                                                                .then(res => {
+                                                                    if (res.ok) {
+                                                                        const itemElement = document.getElementById("notify_" + id);
+                                                                        if (itemElement) {
+                                                                            itemElement.classList.remove("noti-unread");
+                                                                            itemElement.classList.add("noti-read");
+                                                                        }
+
+                                                                        const badge = document.getElementById("notiCount");
+                                                                        if (badge) {
+                                                                            let count = parseInt(badge.innerText);
+                                                                            if (!isNaN(count) && count > 0) {
+                                                                                badge.innerText = count - 1;
+                                                                            }
+                                                                        }
+                                                                        setTimeout(() => {
+                                                                            document.getElementById("notiDropdown").click();
+                                                                        }, 10);
+                                                                    } else {
+                                                                        console.error("Không thể đánh dấu là đã đọc.");
+                                                                    }
+                                                                })
+                                                                .catch(err => console.error("Lỗi markAsRead:", err));
+                                                    }
+
+
+                                                </script>
+                                                <style>
+                                                    .noti-unread {
+                                                        background-color: #f0f8ff;
+                                                    }
+
+                                                    .noti-read {
+                                                        background-color: #f8f9fa;
+                                                        opacity: 0.85;
+                                                    }
+
+                                                    #notiMenu {
+                                                        max-height: 500px;
+                                                        overflow-y: auto;
+                                                        width: 350px;
+                                                    }
+                                                    .dropdown-item {
+                                                        white-space: normal !important;
+                                                        padding: 10px;
+                                                        font-size: 14px;
+                                                    }
+
+                                                    .dropdown-item:hover {
+                                                        background-color: #f1f1f1;
+                                                    }
+
+                                                    .badge-danger {
+                                                        font-size: 12px;
+                                                        padding: 4px 7px;
+                                                        border-radius: 50%;
+                                                    }
+                                                </style>
+
+                                                <c:if test="${sessionScope.authLocal != null}">
+                                                    <a class="nav-link" href="#" id="notiDropdown" data-toggle="dropdown">
+                                                        <i class="fa fa-bell"></i>
+                                                        <span class="badge badge-danger" id="notiCount">0</span>
+                                                    </a>
+                                                    <div class="dropdown-menu dropdown-menu-right shadow" id="notiMenu" style="min-width: 300px;">
+                                                    </div>
                                                     <li class="nav-item dropdown menu-btn user-info">
                                                         <a class="nav-link" href="#" id="userDropdown" role="button"
                                                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -272,9 +421,11 @@
                                                                 <div class="font-weight-bold text-dark">🥉 Bronze Priority</div>
                                                                 <div class="text-muted small">0 Điểm</div>
                                                             </div>
-                                                            <a class="dropdown-item" href="updateprofile" style="color: black"><i class="fa fa-user mr-2 text-primary"></i> Tài khoản của tôi</a>
-                                                            <a class="dropdown-item" href="updateprofile" style="color: black"><i class="fa fa-user mr-2 text-primary"></i> Cập nhật hồ sơ</a>
-                                                            <a class="dropdown-item" href="payment" style="color: black"><i class="fa fa-credit-card mr-2 text-primary"></i> Payment</a>
+                                                            <a class="dropdown-item" href="${pageContext.request.contextPath}/voucherforcustomer" style="color: black"><i class="fa fa-user mr-2 text-primary"></i> Điểm</a>
+                                                            <a class="dropdown-item" href="${pageContext.request.contextPath}/updateprofile" style="color: black"><i class="fa fa-user mr-2 text-primary"></i> Chỉnh sửa hồ sơ</a>
+                                                            <a class="dropdown-item" href="${pageContext.request.contextPath}/paymenthistory" style="color: black"><i class="fas fa-list mr-2 text-primary"></i> Danh sách giao dịch</a>
+                                                            <a class="dropdown-item" href="${pageContext.request.contextPath}/bookingroomcustomer" style="color: black"><i class="fas fa-bed mr-2 text-primary"></i> Đặt chỗ của tôi</a>
+                                                            <a class="dropdown-item" href="${pageContext.request.contextPath}/voucher" style="color: black"><i class="fa fa-credit-card mr-2 text-primary"></i> Khuyến mãi</a>
                                                             <!--<a href="#verifyEmailChange-modal" class="dropdown-item switch-modal" style="font-size: 14px; color: black">Change your password </a>-->
                                                             <c:if test="${sessionScope.authLocal.authType eq 'local'}">
                                                                 <a href="#changePassword-modal" class="dropdown-item switch-modal" style="font-size: 14px; color: black">
@@ -826,17 +977,17 @@
 
         <!-- ##### All Javascript Script ##### -->
         <!--jQuery-2.2.4 js--> 
-        <script src="js/jquery/jquery-2.2.4.min.js"></script>
+        <script src="${pageContext.request.contextPath}/js/jquery/jquery-2.2.4.min.js"></script>
         <!--Popper js--> 
-        <script src="js/bootstrap/popper.min.js"></script>
+        <script src="${pageContext.request.contextPath}/js/bootstrap/popper.min.js"></script>
         <!--Bootstrap js--> 
-        <script src="js/bootstrap/bootstrap.min.js"></script>
+        <script src="${pageContext.request.contextPath}/js/bootstrap/bootstrap.min.js"></script>
         <!--All Plugins js--> 
-        <script src="js/plugins/plugins.js"></script>
+        <script src="${pageContext.request.contextPath}/js/plugins/plugins.js"></script>
         <!--Active js--> 
-        <script src="js/active.js"></script>
+        <script src="${pageContext.request.contextPath}/js/active.js"></script>
         <!----login js---->
-        <script src="js/authentication.js">
+        <script src="${pageContext.request.contextPath}/js/authentication.js">
         </script>
     </body>
 

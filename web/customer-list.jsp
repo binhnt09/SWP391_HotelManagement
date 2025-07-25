@@ -155,14 +155,14 @@
                                 <h2 class="ml-lg-2">Manage customer</h2>
                             </div>
                             <div class="col-sm-6 p-0 flex justify-content-lg-end justify-content-center">
-                                <a href="#addEmployeeModal" class="btn btn-success" data-toggle="modal">
-                                    <i class="material-icons">&#xE147;</i>
-                                    <span>Add New customer</span>
-                                </a>
-                                <a href="#deleteEmployeeModal" class="btn btn-danger" data-toggle="modal">
-                                    <i class="material-icons">&#xE15C;</i>
-                                    <span>Delete</span>
-                                </a>
+                                <!--                                <a href="#addEmployeeModal" class="btn btn-success" data-toggle="modal">
+                                                                    <i class="material-icons">&#xE147;</i>
+                                                                    <span>Add New customer</span>
+                                                                </a>-->
+                                <!--                                <a href="#deleteEmployeeModal" class="btn btn-danger" data-toggle="modal">
+                                                                    <i class="material-icons">&#xE15C;</i>
+                                                                    <span>Delete</span>
+                                                                </a>-->
                             </div>
                         </div>
                     </div>
@@ -170,12 +170,9 @@
                     <table class="table table-striped table-hover table-bordered">
                         <thead>
                             <tr>
-                                <th><span class="custom-checkbox">
-                                        <input type="checkbox" id="selectAll">
-                                        <label for="selectAll"></label>                                
-                                    </span>
+                                <th>
                                 </th>
-                                <!--<th>User ID</th>-->
+                                <th>User ID</th>
                                 <th>First Name</th>
                                 <th>Last Name</th>
                                 <th>Email</th>  
@@ -197,7 +194,7 @@
                                                     <label for="checkbox${status.index}"></label>
                                                 </span>
                                             </td>
-<!--                                            <td>${c.userId}</td>-->
+                                            <td>${c.userId}</td>
                                             <td>${c.firstName}</td>
                                             <td>${c.lastName}</td>
                                             <td>${c.email}</td>
@@ -299,7 +296,7 @@
                                 </div>
                                 <div class="form-group">
                                     <label>Phone</label>
-                                    <input type="text" class="form-control" name="phone" required>
+                                    <input type="text" class="form-control" name="phone" pattern="^\d{9,11}$" title="Vui lòng nhập số điện thoại từ 9 đến 11 chữ số, chỉ nhận chữ số." required>
                                 </div>
                                 <input type="hidden" name="action" value="add">
                             </div>
@@ -332,23 +329,26 @@
                             <div class="modal-body">
                                 <div class="form-group">
                                     <label>First Name</label>
-                                    <input type="text" class="form-control" id="editFirstName" name="firstName" required>
+                                    <input type="text" class="form-control" id="editFirstName" name="firstName" required pattern="^(?!\s*$)[A-Za-zÀ-ỹ0-9\s]+$" 
+                                           title="Không được để trống, không chỉ toàn khoảng trắng và không chứa ký tự đặc biệt">
                                 </div>
                                 <div class="form-group">
                                     <label>Last Name</label>
-                                    <input type="text" class="form-control" id="editLastName" name="lastName" required>
+                                    <input type="text" class="form-control" id="editLastName" name="lastName" required pattern="^(?!\s*$)[A-Za-zÀ-ỹ0-9\s]+$" 
+                                           title="Không được để trống, không chỉ toàn khoảng trắng và không chứa ký tự đặc biệt">
                                 </div>
                                 <div class="form-group">
                                     <label>Email</label>
-                                    <input type="email" class="form-control" id="editEmail" name="email" required>
+                                    <input type="email" class="form-control" id="editEmail" name="email" readonly>
                                 </div>
                                 <div class="form-group">
                                     <label>Address</label>
-                                    <textarea class="form-control" id="editAddress" name="address" required></textarea>
+                                    <textarea class="form-control" id="editAddress" name="address" required pattern="^(?!\s*$)[A-Za-zÀ-ỹ0-9\s]+$" 
+                                              title="Không được để trống, không chỉ toàn khoảng trắng và không chứa ký tự đặc biệt"></textarea>
                                 </div>
                                 <div class="form-group">
                                     <label>Phone</label>
-                                    <input type="text" class="form-control" id="editPhone" name="phone" required>
+                                    <input type="text" class="form-control" id="editPhone" name="phone" pattern="^\d{9,11}$" title="Vui lòng nhập số điện thoại từ 9 đến 11 chữ số, chỉ nhận chữ số." required>
                                 </div>
                                 <input type="hidden" id="editUserId" name="userId">
                                 <input type="hidden" name="action" value="update">

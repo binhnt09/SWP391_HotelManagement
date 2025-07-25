@@ -13,8 +13,8 @@ import java.sql.Timestamp;
  */
 public class Payment {
 
-    private int paymentID;
-    private int bookingID;
+    private int paymentId;
+    private int bookingId;
     private BigDecimal amount;
     private String method;
     private String status;
@@ -28,23 +28,25 @@ public class Payment {
     private Integer deletedBy;
     private boolean isDeleted;
 
+    private Booking booking;
+
     public Payment() {
     }
 
-    public int getPaymentID() {
-        return paymentID;
+    public int getPaymentId() {
+        return paymentId;
     }
 
-    public void setPaymentID(int paymentID) {
-        this.paymentID = paymentID;
+    public void setPaymentId(int paymentId) {
+        this.paymentId = paymentId;
     }
 
-    public int getBookingID() {
-        return bookingID;
+    public int getBookingId() {
+        return bookingId;
     }
 
-    public void setBookingID(int bookingID) {
-        this.bookingID = bookingID;
+    public void setBookingId(int bookingId) {
+        this.bookingId = bookingId;
     }
 
     public BigDecimal getAmount() {
@@ -143,9 +145,19 @@ public class Payment {
         this.isDeleted = isDeleted;
     }
 
+    public Booking getBooking() {
+        return booking;
+    }
+
+    public void setBooking(Booking booking) {
+        this.booking = booking;
+    }
+
     @Override
     public String toString() {
-        return "Payment{" + "paymentID=" + paymentID + ", bookingID=" + bookingID + ", amount=" + amount + ", method=" + method + ", status=" + status + ", transactionCode=" + transactionCode + ", bankCode=" + bankCode + ", gatewayResponse=" + gatewayResponse + ", qrRef=" + qrRef + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + ", deletedAt=" + deletedAt + ", deletedBy=" + deletedBy + ", isDeleted=" + isDeleted + '}';
+        return "Payment{" + "paymentId=" + paymentId + ", bookingId=" + bookingId + ", amount=" + amount + ", method=" + method + ", status=" + status
+                + ", transactionCode=" + transactionCode + ", bankCode=" + bankCode + ", gatewayResponse=" + gatewayResponse + ", qrRef=" + qrRef + ", createdAt="
+                + createdAt + ", updatedAt=" + updatedAt + ", deletedAt=" + deletedAt + ", deletedBy=" + deletedBy + ", isDeleted=" + isDeleted + ", booking=" + booking + '}';
     }
 
 }

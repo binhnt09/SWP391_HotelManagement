@@ -87,45 +87,25 @@
                         <div class="col-12 col-lg-10" >
                             <div class="book-now-form" >
                                 <form action="searchroom">
-
                                     <div class="booking-frame">
                                         <div class="row">
-                                        <%
-                                            String checkin = request.getParameter("checkin");
-                                            if (checkin == null || checkin.trim().isEmpty()) {
-                                                Calendar calendar = Calendar.getInstance();
-                                                calendar.add(Calendar.DAY_OF_YEAR, 1); // ngày mai
-                                                Date tomorrow = calendar.getTime();
-                                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                                                checkin = sdf.format(tomorrow);
-                                            }
-                                            String checkout = request.getParameter("checkout");
-                                            if (checkout == null || checkout.trim().isEmpty()) {
-                                                Calendar calendar = Calendar.getInstance();
-                                                calendar.add(Calendar.DAY_OF_YEAR, 2); // ngày kia
-                                                Date afterTomorrow = calendar.getTime();
-                                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                                                checkout = sdf.format(afterTomorrow);
-                                            }
-                                            request.setAttribute("checkin", checkin);
-                                            request.setAttribute("checkout", checkout);
-                                        %>
 
-                                        <div class="col-4 col-lg-4">
-                                            <label style="font-weight: 600;">Nhập check-in:</label>
-                                            <input type="date" value="${checkin}" name="checkin" required=""  placeholder="Chọn ngày đến" class="form-control time-input" />
+
+                                            <div class="col-4 col-lg-4">
+                                                <label style="font-weight: 600;">Nhập check-in:</label>
+                                                <input type="date" id="checkInDate" value="${checkin}" name="checkin" required=""  placeholder="Chọn ngày đến" class="form-control time-input" />
 
                                         </div>
                                         <div class="col-4 col-lg-4">
                                             <label style="font-weight: 600;">Nhập check-out:</label>
-                                            <input type="date" value="${checkout}" name="checkout" required=""  placeholder="Chọn ngày đến" class="form-control time-input"  />
+                                            <input type="date" id="checkOutDate" value="${checkout}" name="checkout" required=""  placeholder="Chọn ngày đến" class="form-control time-input"  />
                                         </div>
-                                        <div class="col-3 col-lg-3">
+                                        <div class="col-4 col-lg-4">
                                             <label style="font-weight: 600;">Giá mỗi đêm:</label>
                                             <div class="d-flex align-items-center gap-2">
-                                                <input type="number" name="pricefrom" value="${from}" step="100" placeholder="$From" class="form-control" style="max-width: 150px;">
+                                                <input type="number" id="priceFrom"  name="pricefrom" value="${from}" step="100" min="0" placeholder="$From" class="form-control" style="max-width: 200px;">
                                                 <span>&nbsp;&mdash;&nbsp;</span>
-                                                <input type="number" name="priceto" value="${to}" step="100" placeholder="$To" class="form-control" style="max-width: 150px;">
+                                                <input type="number" id="priceTo" name="priceto" value="${to}" step="100" min="0" placeholder="$To" class="form-control" style="max-width: 200px;">
                                             </div>
                                         </div>
                                     </div>
@@ -137,7 +117,7 @@
                                         </div>
                                         <div class="col-4 col-lg-4">
                                             <label style="font-weight: 600; font-size: initial; margin-top: 20px">Loại phòng:</label>
-                                            <select name="roomType" class="form-control"   >
+                                            <select name="roomType" class="form-select"   >
                                                 <option value="-1" >Select room type </option>
                                                 <c:forEach items="${listRoomType}" var="tmp">
                                                     <option value="${tmp.roomTypeID}" <c:if test="${tmp.roomTypeID == type}">selected</c:if>>${tmp.typeName}</option>
@@ -147,12 +127,8 @@
                                         <div class="col-2 col-lg-2 d-flex align-items-end">
                                             <input type="submit" value="Tìm kiếm" class="btn btn-primary w-100" />
                                         </div>
-
-
                                     </div>
-                                    <div class="row"></div>
                                 </div>
-
                             </form>
                         </div>
                     </div>
@@ -275,8 +251,6 @@
                                 <h4>Deluxe Room</h4>
                                 <p>Phòng đơn hiện đại, tiện nghi phù hợp cho khách đi công tác hoặc du lịch một mình. Bao gồm giường đơn, bàn làm việc và Wi-Fi tốc độ cao.</p>
                             </div>
-                            <!-- Book Room -->
-                            <a href="searchroom" class="book-room-btn btn palatin-btn">Book Room</a>
                         </div>
                     </div>
 
@@ -293,8 +267,6 @@
                                 <h4>Double Suite</h4>
                                 <p>Không gian sang trọng với thiết kế tinh tế, bao gồm giường lớn, minibar, tivi màn hình phẳng và ban công hướng nhìn ra thành phố.</p>
                             </div>
-                            <!-- Book Room -->
-                            <a href="searchroom" class="book-room-btn btn palatin-btn">Book Room</a>
                         </div>
                     </div>
 
@@ -311,8 +283,6 @@
                                 <h4>Single Room</h4>
                                 <p>Phù hợp cho cặp đôi hoặc gia đình nhỏ, phòng suite đôi có không gian rộng rãi, 2 giường, phòng tắm sang trọng và khu vực tiếp khách riêng.</p>
                             </div>
-                            <!-- Book Room -->
-                            <a href="searchroom" class="book-room-btn btn palatin-btn">Book Room</a>
                         </div>
                     </div>
 
@@ -410,22 +380,123 @@
         <script src="js/plugins/plugins.js"></script>
         <script src="js/active.js"></script>
 
+        <script>
+        </script>
         <!-- Script khởi tạo -->
         <script>
+            $(document).ready(function () {
+                $('.single-rooms-area').hover(
+                        function () {
+                            $(this).css({
+                                'transform': 'scale(1.03)',
+                                'transition': 'transform 0.3s ease'
+                            });
+                        },
+                        function () {
+                            $(this).css('transform', 'scale(1)');
+                        }
+                );
+            });
 
-                                        $(document).ready(function () {
-                                            $('.single-rooms-area').hover(
-                                                    function () {
-                                                        $(this).css({
-                                                            'transform': 'scale(1.03)',
-                                                            'transition': 'transform 0.3s ease'
-                                                        });
-                                                    },
-                                                    function () {
-                                                        $(this).css('transform', 'scale(1)');
-                                                    }
-                                            );
-                                        });
+            document.addEventListener("DOMContentLoaded", function () {
+                const priceFrom = document.getElementById("priceFrom");
+                const priceTo = document.getElementById("priceTo");
+
+                function validatePriceRange() {
+                    const from = parseInt(priceFrom.value);
+                    const to = parseInt(priceTo.value);
+
+                    if (!isNaN(from) && !isNaN(to)) {
+                        if (from < 0)
+                            priceFrom.value = 0;
+                        if (to < 0)
+                            priceTo.value = 0;
+
+                        if (from >= to) {
+                            alert("Giá 'From' phải nhỏ hơn giá 'To'. Vui lòng điều chỉnh.");
+                            priceTo.value = from + 100;
+                        }
+                    }
+                }
+
+                priceFrom.addEventListener("change", validatePriceRange);
+                priceTo.addEventListener("change", validatePriceRange);
+
+                const checkInInput = document.getElementById('checkInDate');
+                const checkOutInput = document.getElementById('checkOutDate');
+
+                // Cấu hình ngày tối thiểu và tối đa cho ngày check-in
+                const today = new Date();
+                const todayStr = today.toISOString().split('T')[0];
+                checkInInput.min = todayStr;
+
+                const maxCheckIn = new Date(today);
+                maxCheckIn.setMonth(maxCheckIn.getMonth() + 6);
+                checkInInput.max = maxCheckIn.toISOString().split('T')[0];
+
+                // Hàm hỗ trợ cộng thêm ngày
+                function getNextDay(dateStr, offset = 1) {
+                    const date = new Date(dateStr);
+                    date.setDate(date.getDate() + offset);
+                    return date.toISOString().split('T')[0];
+                }
+
+                // Hàm kiểm tra hợp lệ ngày
+                function validateDateRange() {
+                    const checkInValue = checkInInput.value;
+                    const checkOutValue = checkOutInput.value;
+
+                    // Nếu chưa nhập ngày check-in thì không cần kiểm tra gì cả
+                    if (!checkInValue)
+                        return;
+
+                    const checkInDate = new Date(checkInValue);
+                    const checkOutDate = checkOutValue ? new Date(checkOutValue) : null;
+
+                    // Giới hạn ngày check-in
+                    const maxCheckIn = new Date(today);
+                    maxCheckIn.setMonth(maxCheckIn.getMonth() + 6);
+
+                    if (checkInDate > maxCheckIn) {
+                        alert("Bạn không thể đặt phòng cách ngày hôm nay hơn 6 tháng!");
+                        checkInInput.value = maxCheckIn.toISOString().split('T')[0];
+                        return;
+                    }
+
+                    if (checkInDate < today) {
+                        alert("Ngày nhận phòng không thể trước hôm nay!");
+                        checkInInput.value = getNextDay(todayStr);
+                        return;
+                    }
+
+                    const minCheckOut = getNextDay(checkInValue, 1);
+                    const maxCheckOut = new Date(checkInDate);
+                    maxCheckOut.setMonth(maxCheckOut.getMonth() + 1);
+
+                    checkOutInput.min = minCheckOut;
+                    checkOutInput.max = maxCheckOut.toISOString().split('T')[0];
+
+                    if (checkOutDate) {
+                        if (checkOutDate <= checkInDate) {
+                            alert("Ngày trả phòng phải sau ngày nhận phòng!");
+                            checkOutInput.value = null;
+                        } else if (checkOutDate > maxCheckOut) {
+                            alert("Ngày trả phòng không được quá 1 tháng sau ngày nhận phòng!");
+                            checkOutInput.value = null;
+                        }
+                    }
+                }
+
+                checkInInput.addEventListener('blur', validateDateRange);
+                checkOutInput.addEventListener('blur', validateDateRange);
+
+                if (checkInInput.value) {
+                    validateDateRange();
+                }
+
+
+            });
+
         </script>
     </body>
 </html>

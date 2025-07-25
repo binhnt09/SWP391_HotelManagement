@@ -22,6 +22,7 @@ public class Authentication {
     private Integer deletedBy;
     private boolean isDeleted;
     private User user;
+    private String roleName;
 
     public Authentication() {
     }
@@ -122,6 +123,16 @@ public class Authentication {
     public void setUser(User user) {
         this.user = user;
     }
+
+    public String getRoleName() {
+        return roleName;
+    }
+
+    public void setRoleName(String roleName) {
+        this.roleName = roleName;
+    }
+    
+    
 
     @Override
     public String toString() {

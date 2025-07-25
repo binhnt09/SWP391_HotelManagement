@@ -5,8 +5,11 @@
 package controller;
 
 import dao.BookingDao;
+import dao.ServiceDAO;
 import entity.Authentication;
 import entity.Booking;
+import entity.BookingServices;
+import entity.Service;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -15,7 +18,11 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.sql.Date;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -66,8 +73,11 @@ public class BookingRoomCustomer extends HttpServlet {
         String action = request.getParameter("action");
         String roomIdRaw = request.getParameter("roomId");
         String roomDetailId = request.getParameter("bookRoomDetail");
-
         Authentication auth = (Authentication) request.getSession().getAttribute("authLocal");
+        
+        List<Service> allServices = new ServiceDAO().getAllServices();
+        request.setAttribute("serviceList", allServices);
+        
         List<Booking> list = new BookingDao().getBookings(
                 5, // userRoleId
                 auth.getUser().getUserId(), // currentUserId (nếu không lọc theo user)
@@ -80,41 +90,31 @@ public class BookingRoomCustomer extends HttpServlet {
                 0,
                 false // isDeleted
         );
-        for(Booking b : list){
+        request.setAttribute("listBooking", list);
+
+        for (Booking b : list) {
             int roomId = new dao.BookingDetailDAO().getBookingDetailByBookingId(b.getBookingId()).getRoom().getRoomID();
-            request.setAttribute("rating_"+b.getBookingId(), new dao.RoomReviewDAO().getRatingByRoomId(roomId, b.getUserId()));
+            request.setAttribute("rating_" + b.getBookingId(), new dao.RoomReviewDAO().getRatingByRoomId(roomId, b.getUserId()));
+        }
+
+        for (Booking booking : list) {
+            List<BookingServices> services = new BookingDao().getBookingServicesByBookingId(booking.getBookingId());
+            booking.setBookingServices(services);
         }
         request.setAttribute("listBooking", list);
-        
         if (action != null) {
             switch (action.toLowerCase()) {
-                case "editbooking":
-                    editBooking(request, response);
+                case "checkcancel":
+                    checkCancel(request, response);
+                    break;
+                case "cancelbooking":
+                    cancelBooking(request, response);
                     break;
                 default:
                     response.sendError(HttpServletResponse.SC_NOT_FOUND);
             }
         }
-
         request.getRequestDispatcher("/views/profile/historybooking.jsp").forward(request, response);
-    }
-
-    public static void main(String[] args) {
-        List<Booking> list = new BookingDao().getBookings(
-                5, // userRoleId
-                52, // currentUserId (nếu không lọc theo user)
-                -1,
-                null,
-                "b.BookingID", // sortBy
-                null, // sortBy
-                true, // isAsc
-                0,
-                0,
-                false // isDeleted
-        );
-        for (Booking booking : list) {
-            System.out.println(booking.getBookingId());
-        }
     }
 
     /**
@@ -141,18 +141,47 @@ public class BookingRoomCustomer extends HttpServlet {
         return "Short description";
     }// </editor-fold>
 
-    private void editBooking(HttpServletRequest request, HttpServletResponse response) {
-        String bookingIdRaw = request.getParameter("roomId");
-        String roomIdRaw = request.getParameter("bookingId");
-        String bookRoomDetail = request.getParameter("bookRoomDetail");
+    private void checkCancel(HttpServletRequest request, HttpServletResponse response) {
+        int bookingId = validation.Validation.parseStringToInt(request.getParameter("bookingId"));
+        response.setContentType("application/json");
 
-        String checkInraw = request.getParameter("bookCheckin");
-        String checkOutRaw = request.getParameter("bookCheckout");
-    
-        Date checkInDate = validation.Validation.parseStringToSqlDate(checkInraw, "yyyy-MM-dd");
-        Date checkOutDate = validation.Validation.parseStringToSqlDate(checkOutRaw, "yyyy-MM-dd");
-    
-        
+        try (PrintWriter out = response.getWriter()) {
+            LocalDate checkIn = new dao.BookingDao().getCheckInDateByBookingId(bookingId);
+            if (checkIn == null) {
+                out.write("{\"error\":\"Check-in date not found\"}");
+                return;
+            }
+            long days = ChronoUnit.DAYS.between(LocalDate.now(), checkIn);
+            boolean allowCancel = days >= 7;
+            Authentication auth = (Authentication) request.getSession().getAttribute("authLocal");
+            if(!allowCancel){
+                new dao.NotificationDao().addNotifications(auth.getUser().getUserId(), "Thời gian từ hiện tại đến ngày checkin dưới 7 ngày!!!", "Thông báo");
+            }
+            out.write("{\"allowCancel\":" + allowCancel + "}");
+        } catch (Exception ex) {
+            Logger.getLogger(BookingRoomCustomer.class.getName()).log(Level.SEVERE, null, ex);
+
+        }
+
+    }
+
+    private void cancelBooking(HttpServletRequest request, HttpServletResponse response) {
+        String bookingIdStr = request.getParameter("bookingId");
+        int bookingId = validation.Validation.parseStringToInt(bookingIdStr);
+        BookingDao dao = new BookingDao();
+
+        boolean success = dao.cancelBooking(bookingId);
+
+        response.setContentType("application/json");
+        Authentication auth = (Authentication) request.getSession().getAttribute("authLocal");
+        try {
+            new dao.NotificationDao().addNotifications(auth.getUser().getUserId(), "Bạn đã hủy phòng thành công", "Sucsess");
+            response.getWriter().write("{\"message\": \"Booking cancelled successfully\"}");
+        } catch (IOException ex) {
+            new dao.NotificationDao().addNotifications(auth.getUser().getUserId(), "Không thể hủy khi thời hạn dưới 7 ngày", "Error");
+            Logger.getLogger(BookingRoomCustomer.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
     }
 
 }

@@ -5,15 +5,9 @@
 package dao;
 
 import dal.DBContext;
-import entity.Booking;
-import entity.BookingDetails;
 import entity.BookingServices;
-import entity.Invoice;
 import entity.Payment;
-import entity.Room;
-import entity.Service;
-import entity.User;
-import entity.Voucher;
+import java.math.BigDecimal;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -29,12 +23,57 @@ import java.util.logging.Logger;
  */
 public class PaymentDao extends DBContext {
 
+    public List<Payment> getAllPayments() {
+        List<Payment> list = new ArrayList<>();
+
+        String sql = """
+                     SELECT p.PaymentID, p.BookingID, p.Method, p.TransactionCode, p.BankCode, p.Amount, p.Status,  
+                     p.CreatedAt, p.UpdatedAt, p.DeletedBy, p.IsDeleted
+                     FROM Payment p
+                     WHERE p.IsDeleted = 0
+                     ORDER BY p.CreatedAt DESC;""";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                list.add(extractPayment(rs));
+            }
+        } catch (SQLException e) {
+            Logger.getLogger(PaymentDao.class.getName()).log(Level.SEVERE, null, e);
+        }
+        return list;
+    }
+
+    public List<Payment> getAllPaymentsByUserId(int UserId) {
+        List<Payment> list = new ArrayList<>();
+
+        String sql = """
+                     SELECT p.PaymentID, p.BookingID, p.Method, p.BankCode,
+                        p.TransactionCode, p.Amount, p.Status, p.CreatedAt,
+                        p.UpdatedAt, p.DeletedBy, p.IsDeleted
+                     FROM Payment p
+                        JOIN Booking b ON p.BookingID = b.BookingID
+                     WHERE b.UserID = ? AND p.IsDeleted = 0
+                     ORDER BY p.CreatedAt DESC;""";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql);) {
+            ps.setInt(1, UserId);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                list.add(extractPayment(rs));
+            }
+        } catch (SQLException e) {
+            Logger.getLogger(PaymentDao.class.getName()).log(Level.SEVERE, null, e);
+        }
+        return list;
+    }
+
     public int insertPayment(Payment payment) {
         String sql = "INSERT INTO [dbo].[Payment] "
                 + "([BookingID], [Amount], [Method], [Status], [TransactionCode], [BankCode], [GatewayResponse], [QRRef], [CreatedAt], [UpdatedAt], [IsDeleted]) "
                 + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, GETDATE(), GETDATE(), 0)";
         try (PreparedStatement st = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            st.setInt(1, payment.getBookingID());
+            st.setInt(1, payment.getBookingId());
             st.setBigDecimal(2, payment.getAmount());
             st.setString(3, payment.getMethod());
             st.setString(4, payment.getStatus());
@@ -65,7 +104,7 @@ public class PaymentDao extends DBContext {
         String sql = "UPDATE [dbo].[Payment] SET [Status] = ?, [UpdatedAt] = GETDATE() WHERE [PaymentID] = ?";
         try (PreparedStatement st = connection.prepareStatement(sql)) {
             st.setString(1, payment.getStatus());
-            st.setInt(2, payment.getPaymentID());
+            st.setInt(2, payment.getPaymentId());
             return st.executeUpdate() > 0;
         } catch (SQLException e) {
             Logger.getLogger(PaymentDao.class.getName()).log(Level.SEVERE, null, e);
@@ -73,112 +112,176 @@ public class PaymentDao extends DBContext {
         }
     }
 
-    public Invoice getInvoice(int bookingId) {
-        Invoice invoice = new Invoice();
-        List<BookingServices> bookServices = new ArrayList<>();
-
-        String sql = "SELECT \n"
-                + "	b.BookingID, u.FirstName, u.LastName, u.Email, u.phone, r.RoomID, r.RoomNumber, r.Price AS RoomPrice, \n"
-                + "	bd.BookingDetailID, bd.Nights, s.ServiceID, s.Name AS ServiceName, s.Category, s.Price AS ServicePrice,\n"
-                + "	bs.BookingServiceID, bs.Quantity, bs.PriceAtUse, bs.UsedAt, v.VoucherID, v.Code, v.DiscountPercentage,\n"
-                + "	v.ValidFrom, v.ValidTo, p.PaymentID, p.Amount, p.Method, p.Status, p.TransactionCode,\n"
-                + "	p.BankCode, b.BookingDate, b.CheckInDate, b.CheckOutDate\n"
-                + "FROM Booking b\n"
-                + "	JOIN BookingDetail bd ON bd.BookingID = b.BookingID\n"
-                + "	JOIN Room r ON r.RoomID = bd.RoomID\n"
-                + "	JOIN Payment p ON p.BookingID = b.BookingID\n"
-                + "	JOIN [User] u ON u.UserID = b.UserID\n"
-                + "	LEFT JOIN Voucher v ON v.VoucherID = b.VoucherID\n"
-                + "	LEFT JOIN BookingService bs ON bs.BookingID = b.BookingID AND bs.IsDeleted = 0\n"
-                + "	LEFT JOIN [Service] s ON s.ServiceID = bs.ServiceID\n"
-                + "WHERE b.BookingID = ?";
+    public Payment getPaymentByBookingId(int bookingId) {
+        String sql = """
+                     SELECT p.PaymentID, p.BookingID, p.Method, p.TransactionCode, p.BankCode, p.Amount, p.Status,
+                            p.CreatedAt, p.UpdatedAt, p.DeletedBy, p.IsDeleted, b.BookingID 
+                     FROM Payment p 
+                        JOIN Booking b ON p.BookingID = b.BookingID
+                     WHERE p.BookingID = ? AND p.IsDeleted = 0""";
 
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, bookingId);
+            ResultSet rs = ps.executeQuery();
 
+            if (rs.next()) {
+                return extractPayment(rs);
+            }
+        } catch (SQLException e) {
+            Logger.getLogger(PaymentDao.class.getName()).log(Level.SEVERE, null, e);
+        }
+        return null;
+    }
+
+    public List<BookingServices> getBookingServiceByBookingId(int bookingId) {
+        List<BookingServices> list = new ArrayList<>();
+        String sql = "SELECT BookingServiceID, BookingID, ServiceID, Quantity, PriceAtUse, UsedAt, "
+                + " IsPreOrdered, CreatedAt, UpdatedAt, DeletedAt, DeletedBy, IsDeleted"
+                + " FROM BookingService WHERE BookingID = ? AND IsDeleted = 0";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, bookingId);
             ResultSet rs = ps.executeQuery();
 
             while (rs.next()) {
-                // Chỉ cần tạo 1 lần
-                if (invoice.getBooking() == null) {
-                    // Booking
-                    Booking booking = new Booking();
-                    booking.setBookingId(rs.getInt("BookingID"));
-                    booking.setBookingDate(rs.getTimestamp("BookingDate"));
-                    booking.setCheckInDate(rs.getDate("CheckInDate"));
-                    booking.setCheckOutDate(rs.getDate("CheckOutDate"));
+                BookingServices bs = new BookingServices();
+                bs.setBookingServiceId(rs.getInt("BookingServiceID"));
+                bs.setBookingId(rs.getInt("BookingID"));
+                bs.setServiceId(rs.getInt("ServiceID"));
+                bs.setQuantity(rs.getInt("Quantity"));
+                bs.setPriceAtUse(rs.getBigDecimal("PriceAtUse"));
+                bs.setUsedAt(rs.getTimestamp("UsedAt"));
+                bs.setIsPreOrdered(rs.getBoolean("IsPreOrdered"));
+                bs.setCreatedAt(rs.getTimestamp("CreatedAt"));
+                bs.setUpdatedAt(rs.getTimestamp("UpdatedAt"));
+                bs.setDeletedBy(rs.getInt("DeletedBy"));
+                bs.setIsDeleted(rs.getBoolean("IsDeleted"));
 
-                    int voucherId = rs.getInt("voucherID");
-                    if (voucherId > 0) {
-                        Voucher voucher = new Voucher();
-                        voucher.setVoucherId(voucherId);
-                        voucher.setCode(rs.getString("code"));
-                        voucher.setDiscountPercentage(rs.getDouble("discountPercentage"));
-                        voucher.setValidFrom(rs.getTimestamp("validFrom"));
-                        voucher.setValidTo(rs.getTimestamp("validTo"));
-
-                        booking.setVoucher(voucher);
-                    }
-                    invoice.setBooking(booking);
-
-                    // User
-                    User user = new User();
-                    user.setFirstName(rs.getString("FirstName"));
-                    user.setLastName(rs.getString("LastName"));
-                    user.setEmail(rs.getString("Email"));
-                    user.setPhone(rs.getString("Phone"));
-                    invoice.setUser(user);
-
-                    // Room
-                    Room room = new Room();
-                    BookingDetails detail = new BookingDetails();
-                    room.setRoomID(rs.getInt("RoomID"));
-                    room.setRoomNumber(rs.getString("RoomNumber"));
-                    room.setPrice(rs.getDouble("RoomPrice"));
-                    detail.setRoom(room);
-                    // BookingDetail
-//                    detail.getRoom().setRoomID(rs.getInt("RoomID"));
-//                    detail.getRoom().setRoomNumber(rs.getString("RoomNumber"));
-//                    detail.getRoom().setPrice(rs.getDouble("RoomPrice"));
-                    detail.setBookingDetailId(rs.getInt("BookingServiceID"));
-                    detail.setNights(rs.getInt("Nights"));
-                    invoice.setBookingDetails(detail);
-
-                    // Payment
-                    Payment payment = new Payment();
-                    payment.setPaymentID(rs.getInt("PaymentID"));
-                    payment.setAmount(rs.getBigDecimal("Amount"));
-                    payment.setMethod(rs.getString("Method"));
-                    payment.setStatus(rs.getString("Status"));
-                    payment.setTransactionCode(rs.getString("TransactionCode"));
-                    payment.setBankCode(rs.getString("BankCode"));
-                    invoice.setPayment(payment);
-                }
-
-                // Nếu có dịch vụ
-                int serviceId = rs.getInt("ServiceID");
-                if (serviceId > 0) {
-                    Service service = new Service();
-                    service.setServiceId(serviceId);
-                    service.setName(rs.getString("ServiceName"));
-                    service.setCategory(rs.getString("Category"));
-                    service.setPrice(rs.getBigDecimal("ServicePrice"));
-
-                    BookingServices bs = new BookingServices();
-                    bs.setBookingServiceId(rs.getInt("BookingServiceID"));
-                    bs.setQuantity(rs.getInt("Quantity"));
-                    bs.setPriceAtUse(rs.getBigDecimal("PriceAtUse"));
-                    bs.setUsedAt(rs.getTimestamp("UsedAt"));
-                    bs.setIsPreOrdered(rs.getBoolean("IsPreOrdered"));
-                    bs.setService(service);
-
-                    bookServices.add(bs);
-                }
+                list.add(bs);
             }
-            invoice.setBookingServices(bookServices);
         } catch (Exception e) {
             Logger.getLogger(PaymentDao.class.getName()).log(Level.SEVERE, null, e);
         }
-        return invoice;
+        return list;
+    }
+    
+    //tinh tong thanh toan user
+    public BigDecimal calculateDiscountedTotal(BigDecimal baseAmount, Integer voucherId) {
+        BigDecimal autoDiscount = BigDecimal.ZERO;
+        BigDecimal voucherDiscount = BigDecimal.ZERO;
+
+        // Auto discount
+//        if (baseAmount.compareTo(new BigDecimal("500000")) >= 0) {
+//            autoDiscount = baseAmount.multiply(new BigDecimal("0.10"));
+//        }
+
+        // Voucher discount nếu có
+        if (voucherId != null) {
+            String sql = """
+                SELECT DiscountPercentage FROM Voucher
+                WHERE VoucherID = ? AND IsDeleted = 0
+                  AND (ValidFrom IS NULL OR ValidFrom <= GETDATE())
+                  AND (ValidTo IS NULL OR ValidTo >= GETDATE())
+            """;
+            try (PreparedStatement ps = connection.prepareStatement(sql)) {
+                ps.setInt(1, voucherId);
+                ResultSet rs = ps.executeQuery();
+                if (rs.next()) {
+                    BigDecimal percent = rs.getBigDecimal("DiscountPercentage");
+                    voucherDiscount = baseAmount.multiply(percent).divide(new BigDecimal("100"));
+
+                }
+            } catch (SQLException e) {
+                Logger.getLogger(PaymentDao.class.getName()).log(Level.SEVERE, null, e);
+            }
+        }
+        return baseAmount.subtract(autoDiscount).subtract(voucherDiscount);
+    }
+    
+    //Đếm số lượng voucher sau khi search theo code hoặc tính tổng sl voucher
+    public int countSearchResults(String keyword) {
+        String sql = "SELECT COUNT(*) FROM Payment WHERE IsDeleted = 0";
+        boolean hasKeyword = keyword != null && !keyword.trim().isEmpty();
+        if (hasKeyword) {
+            sql += " AND (CAST(Amount AS CHAR) LIKE ? OR Method LIKE ? OR BankCode LIKE ?) ";
+        }
+        try (PreparedStatement stm = connection.prepareStatement(sql)) {
+            String searchParam = "%" + keyword + "%";
+            if (hasKeyword) {
+                stm.setString(1, searchParam);
+            }
+            ResultSet rs = stm.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1); // Trả về số lượng bản ghi tìm được
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(PaymentDao.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return -1;
+    }
+
+    public List<Payment> searchOrSortPayment(String searchPayment, String sortBy, boolean isDecreasing, int start) {
+        List<Payment> list = new ArrayList<>();
+        boolean hasKeyword = searchPayment != null && !searchPayment.trim().isEmpty();
+
+        StringBuilder sql = new StringBuilder();
+        sql.append("SELECT p.* FROM Payment p WHERE p.IsDeleted = 0 ");
+
+        if (hasKeyword) {
+            sql.append(" AND (CAST(p.Amount AS CHAR) LIKE ? OR p.Method LIKE ? OR p.BankCode LIKE ?) ");
+        }
+
+        if (sortBy != null) {
+            sql.append(" ORDER BY ");
+            switch (sortBy) {
+                case "Amount" ->
+                    sql.append("p.Amount");
+                case "BankCode" ->
+                    sql.append("p.BankCode");
+                case "CreatedAt" ->
+                    sql.append("p.CreatedAt");
+                default ->
+                    sql.append("p.").append(sortBy);
+            }
+            if (isDecreasing) {
+                sql.append(" DESC");
+            }
+        } else {
+            sql.append(" ORDER BY p.CreatedAt DESC"); // Tránh lỗi nếu `sortBy` null
+        }
+
+        sql.append(" OFFSET ? ROWS FETCH NEXT 6 ROWS ONLY");
+
+        try (PreparedStatement stm = connection.prepareStatement(sql.toString())) {
+            int paramIndex = 1;
+            if (hasKeyword) {
+                stm.setString(paramIndex++, "%" + searchPayment + "%");
+            }
+            int offset = Math.max((start - 1), 0) * 6;
+            stm.setInt(paramIndex, offset);
+            ResultSet rs = stm.executeQuery();
+            while (rs.next()) {
+                list.add(extractPayment(rs));
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(PaymentDao.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return list;
+    }
+
+    private Payment extractPayment(ResultSet rs) throws SQLException {
+        Payment p = new Payment();
+        p.setPaymentId(rs.getInt("PaymentID"));
+        p.setBookingId(rs.getInt("BookingID"));
+        p.setMethod(rs.getString("Method"));
+        p.setTransactionCode(rs.getString("TransactionCode"));
+        p.setBankCode(rs.getString("BankCode"));
+        p.setAmount(rs.getBigDecimal("Amount"));
+        p.setStatus(rs.getString("Status"));
+        p.setCreatedAt(rs.getTimestamp("CreatedAt"));
+        p.setUpdatedAt(rs.getTimestamp("UpdatedAt"));
+        p.setDeletedBy(rs.getInt("DeletedBy"));
+        p.setIsDeleted(rs.getBoolean("IsDeleted"));
+        return p;
     }
 }

@@ -6,6 +6,7 @@ package dao;
 
 import dal.DBContext;
 import entity.User;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.sql.PreparedStatement;
@@ -181,6 +182,29 @@ public class CustomerDAO extends DBContext {
             Logger.getLogger(CustomerDAO.class.getName()).log(Level.SEVERE, null, e);
         }
         return null;
+    }
+
+    public int createGuestUser(String firstName, String lastName, String phone) {
+        String sql = "INSERT INTO [User] (FirstName, LastName, Email, Phone, UserRoleID) "
+                + "VALUES (?, ?, ?, ?, 6)";
+        try (PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            String email = "guest_" + System.currentTimeMillis() + "@guest.local";
+            ps.setString(1, firstName);
+            ps.setString(2, lastName);
+            ps.setString(3, email);
+            ps.setString(4, phone);
+
+            int affected = ps.executeUpdate();
+            if (affected > 0) {
+                ResultSet rs = ps.getGeneratedKeys();
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return -1;
     }
 
     public static void main(String[] args) {

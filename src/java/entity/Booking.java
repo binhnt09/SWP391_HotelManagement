@@ -7,6 +7,7 @@ package entity;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.sql.Date;
+import java.util.List;
 
 /**
  *
@@ -28,8 +29,12 @@ public class Booking {
     private Integer deletedBy;
     private boolean isDeleted;
     
-    private Voucher voucher;
+    private Timestamp actualCheckIn;
+    private Timestamp actualCheckOut;
     
+    private Voucher voucher;
+    private List<BookingServices> bookingServices;
+    private User user;
 
     public Booking() {
     }
@@ -64,7 +69,6 @@ public class Booking {
         this.deletedBy = deletedBy;
         this.isDeleted = isDeleted;
     }
-
 
     public int getBookingId() {
         return bookingId;
@@ -178,9 +182,42 @@ public class Booking {
         this.voucher = voucher;
     }
 
+
+    public Timestamp getActualCheckIn() {
+        return actualCheckIn;
+    }
+
+    public void setActualCheckIn(Timestamp actualCheckIn) {
+        this.actualCheckIn = actualCheckIn;
+    }
+
+    public Timestamp getActualCheckOut() {
+        return actualCheckOut;
+    }
+
+    public void setActualCheckOut(Timestamp actualCheckOut) {
+        this.actualCheckOut = actualCheckOut;
+    }
+
+    public List<BookingServices> getBookingServices() {
+        return bookingServices;
+    }
+
+    public void setBookingServices(List<BookingServices> bookingServices) {
+        this.bookingServices = bookingServices;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+
     @Override
     public String toString() {
-        return "Booking{" + "bookingID=" + bookingId + ", userID=" + userId + ", voucherID=" + voucherId + ", bookingDate=" + bookingDate + ", checkInDate=" + checkInDate + ", checkOutDate=" + checkOutDate + ", totalAmount=" + totalAmount + ", status=" + status + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + ", deletedAt=" + deletedAt + ", deletedBy=" + deletedBy + ", isDeleted=" + isDeleted + ", voucher=" + voucher + '}';
+        return "Booking{" + "bookingId=" + bookingId + ", userId=" + userId + ", voucherId=" + voucherId + ", bookingDate=" + bookingDate + ", checkInDate=" + checkInDate + ", checkOutDate=" + checkOutDate + ", totalAmount=" + totalAmount + ", status=" + status + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + ", deletedAt=" + deletedAt + ", deletedBy=" + deletedBy + ", isDeleted=" + isDeleted + ", voucher=" + voucher + ", user=" + user + '}';
     }
-    
 }

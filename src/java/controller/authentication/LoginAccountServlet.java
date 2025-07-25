@@ -48,16 +48,14 @@ public class LoginAccountServlet extends HttpServlet {
             throws ServletException, IOException {
         String action = request.getParameter("action");
 
-        if ("login".equals(action)) {
-            login(request, response);
-        } else if ("verifyEmail".equals(action)) {
-            verifyEmail(request, response);
-        } else if ("resendCode".equals(action)) {
-            resendVerifyCode(request, response);
-        } else if ("verifyCode".equals(action)) {
-            verifyCode(request, response);
-        } else if ("register".equals(action)) {
-            completeRegister(request, response);
+        if (null != action) switch (action) {
+            case "login" -> login(request, response);
+            case "verifyEmail" -> verifyEmail(request, response);
+            case "resendCode" -> resendVerifyCode(request, response);
+            case "verifyCode" -> verifyCode(request, response);
+            case "register" -> completeRegister(request, response);
+            default -> {
+            }
         }
     }
 
@@ -135,7 +133,7 @@ public class LoginAccountServlet extends HttpServlet {
                 forwardToHomeView(request, response);
                 return;
             }
-        } catch (Exception e) {
+        } catch (ServletException | IOException e) {
             throw new ServletException("Lỗi kiểm tra email", e);
         }
         // Nếu đã có expiredAt trong session và vẫn còn hiệu lực thì ko gửi lại mã
@@ -223,8 +221,8 @@ public class LoginAccountServlet extends HttpServlet {
             }
 
             dispatcher.forward(request, response);
-        } catch (Exception e) {
-            throw new ServletException("Lỗi xử lý xác minh mã", e);
+        } catch (ServletException | IOException e) {
+            Logger.getLogger(LoginAccountServlet.class.getName()).log(Level.SEVERE, null, e);
         }
     }
 

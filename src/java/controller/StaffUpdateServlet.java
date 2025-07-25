@@ -14,7 +14,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-
 /**
  *
  * @author viet7
@@ -30,7 +29,7 @@ public class StaffUpdateServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet StaffUpdateServlet</title>");            
+            out.println("<title>Servlet StaffUpdateServlet</title>");
             out.println("</head>");
             out.println("<body>");
             out.println("<h1>Servlet StaffUpdateServlet at " + request.getContextPath() + "</h1>");
@@ -48,13 +47,12 @@ public class StaffUpdateServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-                String firstName = request.getParameter("firstName");
+        String firstName = request.getParameter("firstName");
         String lastName = request.getParameter("lastName");
         String email = request.getParameter("email");
         String phone = request.getParameter("phone");
         String address = request.getParameter("address");
         int roleID = Integer.parseInt(request.getParameter("roleID"));
-        
 
         StaffDAO dao = new StaffDAO();
         User staff = new User();
@@ -73,14 +71,14 @@ public class StaffUpdateServlet extends HttpServlet {
             if ("add".equalsIgnoreCase(action)) {
                 success = dao.insertUser(staff);
                 if (success) {
-                    request.getSession().setAttribute("successMessage", "Thêm khách hàng thành công!");
+                    request.getSession().setAttribute("successMessage", "Thêm nhân viên thành công!");
                 }
             } else if ("update".equalsIgnoreCase(action)) {
                 int userId = Integer.parseInt(request.getParameter("userId"));
                 staff.setUserId(userId);
                 success = dao.updateUser(staff);
                 if (success) {
-                    request.getSession().setAttribute("successMessage", "Cập nhật khách hàng thành công!");
+                    request.getSession().setAttribute("successMessage", "Cập nhật nhân viên thành công!");
                 }
             }
 
@@ -92,7 +90,6 @@ public class StaffUpdateServlet extends HttpServlet {
             request.getSession().setAttribute("errorMessage", "Xảy ra lỗi trong quá trình xử lý.");
         }
 
-        // Redirect về lại list
         response.sendRedirect("staffList");
     }
 

@@ -5,9 +5,12 @@
 package controller;
 
 import dao.CleaningHistoryDAO;
+import dao.CleaningRequestDAO;
 import entity.Authentication;
 import entity.CleaningHistory;
+import entity.CleaningRequest;
 import entity.Room;
+import entity.User;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -45,20 +48,27 @@ public class CleaningListServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        HttpSession session = request.getSession();
-        Authentication auth = (Authentication) session.getAttribute("authLocal");  // Đảm bảo bạn lưu cleaner trong session với key 'user'
 
-        int cleaner = auth.getUser().getUserId();
+        HttpSession session = request.getSession(false); 
+        Authentication auth = (session != null) ? (Authentication) session.getAttribute("authLocal") : null;
+
+        if (auth == null || auth.getUser().getUserRoleId() >4) {
+            response.sendRedirect("loadtohome#login-modal");
+            return;
+        }
+
+        User cleaner = auth.getUser();
 
         try {
-            CleaningHistoryDAO dao = new CleaningHistoryDAO();
+            CleaningHistoryDAO chDAO = new CleaningHistoryDAO();
+            CleaningRequestDAO crDAO = new CleaningRequestDAO();
+
+            List<Room> pendingRooms = chDAO.getListRoomForCleaner();
+            List<CleaningRequest> cleaningRequests = crDAO.getAllRequestsForCleaner();
+            List<CleaningHistory> inProgressTasks = chDAO.getCleaningHistoryByCleanerInProgress(cleaner.getUserId());
             
-            List<Room> pendingRooms = dao.getListRoomForCleaner();
-
-            List<CleaningHistory> inProgressTasks = dao.getCleaningHistoryByCleanerInProgress(cleaner);
-
-            // Đẩy dữ liệu sang JSP
             request.setAttribute("pendingRooms", pendingRooms);
+            request.setAttribute("cleaningRequests", cleaningRequests);
             request.setAttribute("inProgressTasks", inProgressTasks);
 
         } catch (Exception e) {
@@ -67,7 +77,6 @@ public class CleaningListServlet extends HttpServlet {
         }
 
         request.getRequestDispatcher("cleaning-list.jsp").forward(request, response);
-
     }
 
     @Override

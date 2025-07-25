@@ -28,10 +28,10 @@
                 <!-- Start XP Col -->
                 <div class="col-md-5 col-lg-3 order-3 order-md-2">
                     <div class="xp-searchbar">
-                        <form method="get" action="customerList">
+                        <form method="get" action="authenticationList">
                             <div class="input-group">
                                 <input type="search" class="form-control" name="keyword"
-                                       value="<%= request.getParameter("keyword") != null ? request.getParameter("keyword") : "" %>"
+                                       value="${param.keyword}"
                                        placeholder="Search">
                                 <div class="input-group-append">
                                     <button class="btn" type="submit" id="button-addon2">GO</button>
@@ -118,7 +118,7 @@
             <h4 class="page-title">Dashboard</h4>  
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Customer Info</li>
+                <li class="breadcrumb-item active" aria-current="page">Account Info</li>
             </ol>                
         </div>
 
@@ -149,19 +149,73 @@
                         <c:remove var="errorMessage" scope="session" />
                     </c:if>
 
+                    <!-- Filter Section -->
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h6 class="mb-0">Filter Accounts</h6>
+                        </div>
+                        <div class="card-body py-2">
+                            <form method="get" action="authenticationList">
+                                <div class="form-row align-items-end">
+                                    <!-- Keyword -->
+                                    <div class="form-group col-md-2 mb-1">
+                                        <label class="small mb-1">Keyword</label>
+                                        <input type="text" name="keyword" class="form-control form-control-sm"
+                                               value="${param.keyword}" placeholder="Email, UserKey...">
+                                    </div>
+
+                                    <!-- Role -->
+                                    <div class="form-group col-md-2 mb-1">
+                                        <label class="small mb-1">Role</label>
+                                        <select name="role" class="form-control form-control-sm">
+                                            <option value="" ${empty param.role ? 'selected' : ''}>All</option>
+                                            <option value="SystemAdmin" ${param.role == 'SystemAdmin' ? 'selected' : ''}>SystemAdmin</option>
+                                            <option value="Manager" ${param.role == 'Manager' ? 'selected' : ''}>Manager</option>
+                                            <option value="Receptionist" ${param.role == 'Receptionist' ? 'selected' : ''}>Receptionist</option>
+                                            <option value="Cleaner" ${param.role == 'Cleaner' ? 'selected' : ''}>Cleaner</option>
+                                            <option value="Customer" ${param.role == 'Customer' ? 'selected' : ''}>Customer</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- Status -->
+                                    <div class="form-group col-md-2 mb-1">
+                                        <label class="small mb-1">Status</label>
+                                        <select name="status" class="form-control form-control-sm">
+                                            <option value="" ${empty param.status ? 'selected' : ''}>All</option>
+                                            <option value="0" ${param.status == '0' ? 'selected' : ''}>Active</option>
+                                            <option value="1" ${param.status == '1' ? 'selected' : ''}>Inactive</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- Created Date Range -->
+                                    <div class="form-group col-md-3 mb-1">
+                                        <label class="small mb-1">Created At</label>
+                                        <div class="d-flex gap-1">
+                                            <input type="date" name="createdFrom" class="form-control form-control-sm mr-1"
+                                                   value="${param.createdFrom}">
+                                            <input type="date" name="createdTo" class="form-control form-control-sm"
+                                                   value="${param.createdTo}">
+                                        </div>
+                                    </div>
+
+                                    <!-- Apply button -->
+                                    <div class="form-group col-md-1 mb-1">
+                                        <label class="small mb-1 d-block">&nbsp;</label>
+                                        <button type="submit" class="btn btn-primary btn-sm w-100">Apply</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
                     <div class="table-title mb-3">
                         <div class="row">
                             <div class="col-sm-6 p-0 flex justify-content-lg-start justify-content-center">
-                                <h2 class="ml-lg-2">Manage Authentication</h2>
+                                <h2 class="ml-lg-2">Manage Account</h2>
                             </div>
                             <div class="col-sm-6 p-0 flex justify-content-lg-end justify-content-center">
                                 <a href="#addAuthModal" class="btn btn-success" data-toggle="modal">
                                     <i class="material-icons">&#xE147;</i>
-                                    <span>Add New Authentication</span>
-                                </a>
-                                <a href="#deleteAuthModal" class="btn btn-danger" data-toggle="modal">
-                                    <i class="material-icons">&#xE15C;</i>
-                                    <span>Delete</span>
+                                    <span>Add New Account</span>
                                 </a>
                             </div>
                         </div>
@@ -177,8 +231,8 @@
                                     </span>
                                 </th>
                                 <th>User ID</th>
+                                <th>Role</th>
                                 <th>Email</th>
-                                <th>User Key</th>
                                 <th>Auth Type</th>
                                 <th>Created At</th>
                                 <th>Status</th>
@@ -198,8 +252,8 @@
                                                 </span>
                                             </td>
                                             <td>${a.user.userId}</td>
-                                            <td>${a.user.email}</td>
-                                            <td>${a.userKey}</td>
+                                            <td>${a.roleName}</td>
+                                            <td>${a.user.email}</td>                                    
                                             <td>${a.authType}</td>
                                             <td>
                                                 <fmt:formatDate value="${a.createdAt}" pattern="yyyy-MM-dd HH:mm" />
@@ -214,21 +268,6 @@
                                                     </c:otherwise>
                                                 </c:choose>
                                             </td>
-                                            <!--                                            <td>
-                                                                                            <a href="#editAuthModal"
-                                                                                               class="edit"
-                                                                                               data-toggle="modal"
-                                                                                               data-id="${a.authenticationID}"
-                                                                                               data-userkey="${a.userKey}"
-                                                                                               data-authtype="${a.authType}">
-                                                                                                <i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i>
-                                                                                            </a>
-                                                                                            <a href="authDelete?id=${a.authenticationID}" class="delete" data-toggle="tooltip" title="Delete"
-                                                                                               onclick="return confirm('Xác nhận xóa bản ghi này?');">
-                                                                                                <i class="material-icons">&#xE872;</i>
-                                                                                            </a>
-                                                                                        </td>-->
-
                                             <td class="text-center">
                                                 <c:choose>
                                                     <c:when test="${a.isDeleted}">
@@ -238,15 +277,6 @@
                                                     </c:when>
                                                     <c:otherwise>
                                                         <div class="d-flex justify-content-start gap-2">
-                                                            <a href="#editAuthModal"
-                                                               class="btn btn-info btn-sm me-2"
-                                                               data-toggle="modal"
-                                                               data-id="${a.authenticationID}"
-                                                               data-userkey="${a.userKey}"
-                                                               data-authtype="${a.authType}">
-                                                                Sửa
-                                                            </a>
-
                                                             <a href="authDelete?id=${a.authenticationID}"
                                                                class="btn btn-danger btn-sm"
                                                                data-toggle="tooltip"
@@ -306,94 +336,58 @@
             </div>
 
 
-            <!----add-modal start--------->
-            <div class="modal fade" tabindex="-1" id="addEmployeeModal" role="dialog">
+            <!-- Create Account Modal -->
+            <div class="modal fade" tabindex="-1" id="addAuthModal" role="dialog">
                 <div class="modal-dialog" role="document">
-                    <form action="customerUpdate" method="POST">
+                    <form id="createAccountForm" action="createAccount" method="post">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title">Add Auth</h5>
+                                <h5 class="modal-title">Create account for new user</h5>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
                                 </button>
                             </div>
-                            <div class="modal-body">
-                                <div class="form-group">
-                                    <label>User ID</label>
-                                    <input type="text" class="form-control" name="firstName" required>
-                                </div>
-                                <div class="form-group">
-                                    <label>Last Name</label>
-                                    <input type="text" class="form-control" name="lastName" required>
-                                </div>
-                                <div class="form-group">
-                                    <label>Email</label>
-                                    <input type="email" class="form-control" name="email" required>
-                                </div>
-                                <div class="form-group">
-                                    <label>Address</label>
-                                    <textarea class="form-control" name="address" required></textarea>
-                                </div>
-                                <div class="form-group">
-                                    <label>Phone</label>
-                                    <input type="text" class="form-control" name="phone" required>
-                                </div>
-                                <input type="hidden" name="action" value="add">
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                                <button type="submit" class="btn btn-success">Add</button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
 
-            <!----edit-modal end--------->
-
-
-
-
-
-            <!----edit-modal start--------->
-            <div class="modal fade" tabindex="-1" id="editEmployeeModal" role="dialog">
-                <div class="modal-dialog" role="document">
-                    <form action="customerUpdate" method="POST">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title">Edit Customer</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
                             <div class="modal-body">
                                 <div class="form-group">
                                     <label>First Name</label>
-                                    <input type="text" class="form-control" id="editFirstName" name="firstName" required>
+                                    <input type="text" class="form-control" name="firstName" required pattern="^(?!\s*$)[A-Za-zÀ-ỹ0-9\s]+$" 
+                                           title="Không được để trống, không chỉ toàn khoảng trắng và không chứa ký tự đặc biệt">
                                 </div>
                                 <div class="form-group">
                                     <label>Last Name</label>
-                                    <input type="text" class="form-control" id="editLastName" name="lastName" required>
+                                    <input type="text" class="form-control" name="lastName" required pattern="^(?!\s*$)[A-Za-zÀ-ỹ0-9\s]+$" 
+                                           title="Không được để trống, không chỉ toàn khoảng trắng và không chứa ký tự đặc biệt">
                                 </div>
                                 <div class="form-group">
-                                    <label>Email</label>
-                                    <input type="email" class="form-control" id="editEmail" name="email" required>
+                                    <label>Role</label>
+                                    <select class="form-control" name="roleId">
+                                        <option value="1" >System Admin</option>
+                                        <option value="2" >Manager</option>
+                                        <option value="3" >Receptionist</option>
+                                        <option value="4" >Cleaner</option>
+                                    </select>
                                 </div>
                                 <div class="form-group">
-                                    <label>Address</label>
-                                    <textarea class="form-control" id="editAddress" name="address" required></textarea>
+                                    <label>Email(Username)</label>
+                                    <input type="email" class="form-control" name="email" required>
                                 </div>
                                 <div class="form-group">
-                                    <label>Phone</label>
-                                    <input type="text" class="form-control" id="editPhone" name="phone" required>
+                                    <label>Password</label>
+                                    <div class="input-group">
+                                        <input type="password" class="form-control" id="password" name="password" value="P@ssword123">
+                                        <div class="input-group-append">
+                                            <span class="input-group-text">
+                                                <a href="#" id="togglePassword" class="text-dark"><i class="fa fa-eye" aria-hidden="true"></i></a>
+                                            </span>
+                                        </div>
+                                    </div>
                                 </div>
-                                <input type="hidden" id="editUserId" name="userId">
-                                <input type="hidden" name="action" value="update">
                             </div>
 
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                                <button type="submit" class="btn btn-success">Save</button>
+                                <button type="submit" class="btn btn-primary">Create Account</button>
                             </div>
                         </div>
                     </form>
@@ -401,7 +395,6 @@
             </div>
 
             <!----edit-modal end--------->
-
 
             <!----delete-modal start--------->
             <div class="modal fade" tabindex="-1" id="deleteEmployeeModal" role="dialog">
@@ -434,6 +427,21 @@
     </div>
 
     <script>
+
+        $('#togglePassword').on('click', function (e) {
+            e.preventDefault();
+            var input = $('#password');
+            var icon = $(this).find('i');
+
+            if (input.attr('type') === 'password') {
+                input.attr('type', 'text');
+                icon.removeClass('fa-eye').addClass('fa-eye-slash');
+            } else {
+                input.attr('type', 'password');
+                icon.removeClass('fa-eye-slash').addClass('fa-eye');
+            }
+        });
+
         $(document).ready(function () {
             $('.edit').on('click', function () {
                 var id = $(this).data('id');
@@ -452,6 +460,34 @@
                 console.log("id = ", id);
                 console.log("firstname = ", firstname);
             });
+        });
+
+        document.getElementById("createAccountForm").addEventListener("submit", function (e) {
+            const firstName = document.querySelector('[name="firstName"]').value;
+            const lastName = document.querySelector('[name="lastName"]').value;
+            const email = document.querySelector('[name="email"]').value;
+            const password = document.getElementById("password").value;
+
+            let errors = [];
+
+            if (firstName.trim() === "")
+                errors.push("First Name is required.");
+            if (lastName.trim() === "")
+                errors.push("Last Name is required.");
+
+            const emailRegex = /^\S+@\S+\.\S+$/;
+            if (!emailRegex.test(email.trim()))
+                errors.push("Invalid email format.");
+
+            const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[^A-Za-z0-9]).{6,}$/;
+            if (!passwordRegex.test(password)) {
+                errors.push("Password must be at least 6 characters, contain letters, numbers, and special characters.");
+            }
+
+            if (errors.length > 0) {
+                e.preventDefault();
+                alert(errors.join("\n"));
+            }
         });
     </script>
 

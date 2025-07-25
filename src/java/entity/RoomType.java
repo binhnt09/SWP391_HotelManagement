@@ -5,7 +5,7 @@
 package entity;
 
 import java.sql.Timestamp;
-import java.sql.Timestamp;
+import java.util.List;
 
 /**
  *
@@ -24,6 +24,10 @@ public class RoomType {
     private int deletedBy;
     private boolean isDeleted;
 
+    private List<Amenity> amenities;
+    private List<Service> service;
+
+    
     public RoomType() {
     }
 
@@ -64,6 +68,7 @@ public class RoomType {
     public int getNumberPeople() {
         return numberPeople;
     }
+    
 
     public void setNumberPeople(int numberPeople) {
         this.numberPeople = numberPeople;
@@ -149,6 +154,20 @@ public class RoomType {
     public void setIsDeleted(boolean isDeleted) {
         this.isDeleted = isDeleted;
     }
+
+    public List<Amenity> getAmenities() {
+        return amenities;
+    }
+
+    public void setAmenities(List<Amenity> amenities) {
+        this.amenities = amenities;
+    }
     
-    
+    public List<Service> getService() {
+        return service;
+    }
+
+    public void setService(List<Service> service) {
+        this.service = service;
+    }
 }
