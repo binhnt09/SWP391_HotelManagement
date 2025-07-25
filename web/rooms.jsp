@@ -6,6 +6,7 @@
 <%@ page import="java.util.*, java.text.SimpleDateFormat" %>
 <%@ page import="java.util.List" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html lang="en">
@@ -182,25 +183,28 @@
                                          style="height: 200px; object-fit: cover;" alt="Room Image">
                                 </a>
                                 <div class="card-body d-flex flex-column" style="height: 50px">
-                                    <p class="price-from text-end mb-2" style="font-weight: bold; color: white;">
-                                        From $${i.getPrice()}/night
+                                    <p class="price-from text-start mb-2" style="font-weight: bold; color: white;">
+                                        From $<fmt:formatNumber value="${i.price}" type="number" groupingUsed="true" />/night
                                     </p>
                                     <h5 class="card-title">${i.getRoomNumber()} - ${i.getRoomType().getTypeName()}<div id="avgRatingStars_${i.getRoomID()}" class="mb-2 text-warning d-inline-block"></div></h5>
-                                    <p class="card-text flex-grow-1">${i.getRoomDetail().getDescription()}</p>
-                                    <ul class="list-unstyled text-muted small mt-2">
+                                    <p class="card-text">${i.getRoomDetail().getDescription()}</p>
+                                    <ul class="list-unstyled text-muted fs-6 mt-2 row">
                                         <c:choose>
                                             <c:when test="${not empty listService}">
                                                 <c:forEach var="service" items="${listService}">
-                                                    <li class="d-flex align-items-center mb-1">
+                                                    <li class="d-flex align-items-center mb-1 col-6"> 
                                                         <i class="bi bi-check-circle-fill text-success me-2"></i> ${service.name}
                                                     </li>
                                                 </c:forEach>
                                             </c:when>
                                             <c:otherwise>
-                                                <li><i class="bi bi-x-circle text-danger me-2"></i> Không có dịch vụ đi kèm</li>
-                                                </c:otherwise>
-                                            </c:choose>
+                                                <li class="col-12">
+                                                    <i class="bi bi-x-circle text-danger me-2"></i> Không có dịch vụ đi kèm
+                                                </li>
+                                            </c:otherwise>
+                                        </c:choose>
                                     </ul>
+
 
                                     <a href="bookingroom?roomID=${i.getRoomID()}&checkin=${checkin}&checkout=${checkout}" class="btn palatin-btn mt-auto">Book Room</a>
                                 </div>
@@ -208,8 +212,6 @@
                         </div>
                     </c:forEach>
                 </div>
-
-
             </div>
         </section>
         <script>
@@ -542,12 +544,9 @@
                     </div>
                     <div class="modal-body p-0">
                         <div class="row g-0">
-                            <!-- Image Carousel -->
                             <div class="col-md-8">
-                                <!-- Carousel chính -->
                                 <div id="roomCarousel" class="carousel slide mb-3" data-bs-ride="carousel">
                                     <div class="carousel-inner">
-                                        <!-- JS sẽ đẩy ảnh chính vào đây -->
                                     </div>
                                     <button class="carousel-control-prev" type="button" data-bs-target="#roomCarousel" data-bs-slide="prev">
                                         <span class="carousel-control-prev-icon" aria-hidden="true"></span>
@@ -634,8 +633,6 @@
 
 
         <script>
-        </script>
-        <script>
             document.addEventListener("DOMContentLoaded", function () {
                 const priceFrom = document.getElementById("priceFrom");
                 const priceTo = document.getElementById("priceTo");
@@ -663,7 +660,6 @@
                 const checkInInput = document.getElementById('checkInDate');
                 const checkOutInput = document.getElementById('checkOutDate');
 
-                // Cấu hình ngày tối thiểu và tối đa cho ngày check-in
                 const today = new Date();
                 const todayStr = today.toISOString().split('T')[0];
                 checkInInput.min = todayStr;
@@ -672,26 +668,22 @@
                 maxCheckIn.setMonth(maxCheckIn.getMonth() + 6);
                 checkInInput.max = maxCheckIn.toISOString().split('T')[0];
 
-                // Hàm hỗ trợ cộng thêm ngày
                 function getNextDay(dateStr, offset = 1) {
                     const date = new Date(dateStr);
                     date.setDate(date.getDate() + offset);
                     return date.toISOString().split('T')[0];
                 }
 
-                // Hàm kiểm tra hợp lệ ngày
                 function validateDateRange() {
                     const checkInValue = checkInInput.value;
                     const checkOutValue = checkOutInput.value;
 
-                    // Nếu chưa nhập ngày check-in thì không cần kiểm tra gì cả
                     if (!checkInValue)
                         return;
 
                     const checkInDate = new Date(checkInValue);
                     const checkOutDate = checkOutValue ? new Date(checkOutValue) : null;
 
-                    // Giới hạn ngày check-in
                     const maxCheckIn = new Date(today);
                     maxCheckIn.setMonth(maxCheckIn.getMonth() + 6);
 
@@ -863,21 +855,6 @@
                                     const thumbImg = document.createElement('img');
                                     thumbImg.src = image.imageURL;
                                     thumbImg.alt = "Thumbnail " + (index + 1);
-//                                                                thumbImg.addEventListener('click', () => {
-//                                                                    const carousel = bootstrap.Carousel.getOrCreateInstance(document.getElementById('roomCarousel'));
-//                                                                    carousel.to(index);
-//
-//                                                                    document.querySelectorAll('#roomThumbnails img').forEach(img => img.classList.remove('active'));
-//                                                                    thumbImg.classList.add('active');
-//
-//                                                                    if (index < currentIndex) {
-//                                                                        currentIndex = index;
-//                                                                    } else if (index >= currentIndex + visibleCount) {
-//                                                                        currentIndex = index - visibleCount + 1;
-//                                                                    }
-//
-//                                                                    updateThumbnailScroll();
-//                                                                });
 
                                     thumbnailContainer.appendChild(thumbImg);
 
@@ -935,7 +912,7 @@
                 const starContainer = document.getElementById(containerId);
                 if (!starContainer)
                     return;
-                starContainer.innerHTML = ""; // Xóa cũ
+                starContainer.innerHTML = ""; 
                 const fullStars = Math.floor(star);
                 const halfStar = (star - fullStars >= 0.5);
                 const emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
@@ -963,5 +940,6 @@
             }
 
         </script>
+        
     </body>
 </html>

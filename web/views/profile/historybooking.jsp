@@ -336,10 +336,7 @@
                                                                     data-textNumberNight="${numberNightSoon}"
                                                                     data-maxGuest="${room.roomDetail.maxGuest}"
                                                                     title="Edit Room">
-                                                                <i class="fas fa-phone"></i>Chỉnh sửa
-                                                            </button>
-                                                            <button class="btn btn-outline-secondary">
-                                                                <i class="fas fa-phone"></i>
+                                                                <i class="fas fa-phone"></i>View Detail
                                                             </button>
                                                             <button class="btn btn-outline-danger btn-cancel-booking" data-booking-id="${i.bookingId}">
                                                                 <i class="fas fa-times"></i>
@@ -466,7 +463,7 @@
                 <form id="editRoomForm" method="get" action="bookingroomcustomer"  enctype="multipart/form-data">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title">Edit Room</h5>
+                            <h5 class="modal-title">View Booking</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
 
@@ -488,19 +485,19 @@
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label>Total Price</label>
-                                    <input type="number" id="bookPricePerNight" name="bookPricePerNight" class="form-control">
+                                    <input type="number" id="bookPricePerNight" name="bookPricePerNight" readonly="" class="form-control">
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label>Number people</label>
-                                    <input type="number" id="bookMaxGuest" name="bookMaxGuest" class="form-control">
+                                    <input type="number" id="bookMaxGuest" name="bookMaxGuest" readonly="" class="form-control">
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label>Check-in</label>
-                                    <input type="date" id="bookCheckin" name="bookCheckin" class="form-control">
+                                    <input type="date" id="bookCheckin" name="bookCheckin" readonly="" class="form-control">
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label>Check-out</label>
-                                    <input type="date" id="bookCheckout" name="bookCheckout" class="form-control">
+                                    <input type="date" id="bookCheckout" name="bookCheckout" readonly="" class="form-control">
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label>Number Night</label>
@@ -509,7 +506,6 @@
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                <button type="submit" class="btn btn-primary">Update Room</button>
                             </div>
                         </div>  
                 </form>

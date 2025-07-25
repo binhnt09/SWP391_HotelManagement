@@ -255,41 +255,27 @@
                                             <td>
                                                 <c:choose>
                                                     <c:when test="${fn:toLowerCase(b.status) == 'pending'}">
-                                                        <button class="btn btn-primary btn-sm">Pending</button>
+                                                        <button class="btn btn-primary btn-sm" disabled>Pending</button>
                                                     </c:when>
 
                                                     <c:when test="${fn:toLowerCase(b.status) == 'confirmed'}">
-                                                        <form action="bookingcrud" method="post">
-                                                            <input type="hidden" name="bookingID" value="${b.bookingId}"/>
-                                                            <input type="hidden" name="statusbooking" value="occupied"/>
-                                                            <button type="submit" class="btn btn-success btn-sm">Check-In</button>
-                                                        </form>
+                                                        <button class="btn btn-success btn-sm" disabled>Check-In</button>
                                                     </c:when>
 
                                                     <c:when test="${fn:toLowerCase(b.status) == 'occupied'}">
-                                                        <button class="btn btn-warning btn-sm">Occupied</button>
-                                                        <form action="bookingcrud" method="post">
-                                                            <input type="hidden" name="bookingID" value="${b.bookingId}"/>
-                                                            <input type="hidden" name="statusbooking" value="checkedout"/>
-                                                            <button type="submit" class="btn btn-success btn-sm">Check-Out</button>
-                                                        </form>
+                                                        <button class="btn btn-warning btn-sm" disabled>Occupied</button>
+                                                        <button class="btn btn-success btn-sm" disabled>Check-Out</button>
                                                     </c:when>
 
                                                     <c:when test="${fn:toLowerCase(b.status) == 'checkedout'}">
-                                                        <form action="bookingcrud" method="post">
-                                                            <input type="hidden" name="bookingID" value="${b.bookingId}"/>
-                                                            <input type="hidden" name="statusbooking" value="bookingdone"/>
-                                                            <button type="submit" class="btn btn-info btn-sm">Cleaning</button>
-                                                        </form>
+                                                        <button class="btn btn-info btn-sm" disabled>Cleaning</button>
                                                     </c:when>
-
 
                                                     <c:when test="${fn:toLowerCase(b.status) == 'bookingdone'}">
                                                         <button class="btn btn-secondary btn-sm" disabled>Cancelled</button>
                                                     </c:when>
                                                 </c:choose>
                                             </td>
-
                                         </tr>
                                     </c:forEach>
                                 </c:when>

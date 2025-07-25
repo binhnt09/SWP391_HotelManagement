@@ -14,6 +14,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
+import validation.Validation;
 
 /**
  *
@@ -60,14 +61,17 @@ public class Notification extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        int userId = Integer.parseInt(request.getParameter("userId"));
+        int userId = Validation.parseStringToInt(request.getParameter("userId"));
+        if (userId == -1) {
+            return;
+        }
         List<Notifications> notifies = new dao.NotificationDao().getNotificationsByUserId(userId);
 
         Gson gson = new Gson();
-        String json = gson.toJson(notifies);
 
         response.setContentType("application/json");
-        response.getWriter().write(json);
+        response.setCharacterEncoding("UTF-8");
+        new Gson().toJson(notifies, response.getWriter());
     }
 
     /**
