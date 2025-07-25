@@ -563,12 +563,6 @@
                         </c:forEach>
                     </div>
 
-                    <!-- Chat Widget -->
-<!--                    <div class="chat-widget" onclick="openChat()">
-                        <i class="fas fa-comments"></i>
-                        Chat
-                    </div>
-
                      Support Widget 
                     <div class="skyhotel-support">
                         <i class="fas fa-headset"></i>

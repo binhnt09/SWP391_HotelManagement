@@ -207,15 +207,17 @@
 
                 <div class="mb-3">
                     <label for="firstName" class="form-label">Họ</label>
-                    <input type="text" class="form-control" name="firstName" required pattern=".*\S.*" title="Không được điền toàn khoảng trắng">
+                    <input type="text" class="form-control" name="firstName" required pattern="^(?!\s*$)[A-Za-zÀ-ỹ0-9\s]+$" 
+                           title="Không được để trống, không chỉ toàn khoảng trắng và không chứa ký tự đặc biệt">
                 </div>
                 <div class="mb-3">
                     <label for="lastName" class="form-label">Tên</label>
-                    <input type="text" class="form-control" name="lastName" required pattern=".*\S.*" title="Không được điền toàn khoảng trắng">
+                    <input type="text" class="form-control" name="lastName" required pattern="^(?!\s*$)[A-Za-zÀ-ỹ0-9\s]+$" 
+                           title="Không được để trống, không chỉ toàn khoảng trắng và không chứa ký tự đặc biệt">
                 </div>
                 <div class="mb-3">
                     <label for="phone" class="form-label">Số điện thoại</label>
-                    <input type="text" class="form-control" name="phone" pattern="^\d{9,11}$" title="Vui lòng nhập số điện thoại từ 9 đến 11 chữ số, chỉ nhận chữ số."required>
+                    <input type="text" class="form-control" name="phone" pattern="0\d{9}" title="Số điện thoại không hợp lệ (phải có 10 chữ số và bắt đầu bằng 0)!" required>
                 </div>
                 <div class="mb-3">
                     <label for="nights" class="form-label">Số đêm</label>

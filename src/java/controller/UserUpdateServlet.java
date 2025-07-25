@@ -102,7 +102,7 @@ public class UserUpdateServlet extends HttpServlet {
             } else if ("update".equalsIgnoreCase(action)) {
                 int userId = Integer.parseInt(request.getParameter("userId"));
                 staff.setUserId(userId);
-                success = dao.updateUser(staff);
+                success = dao.updateUserRole(userId, roleID);
                 if (success) {
                     request.getSession().setAttribute("successMessage", "Cập nhật nhân viên thành công!");
                 }
