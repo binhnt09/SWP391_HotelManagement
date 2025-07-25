@@ -46,7 +46,6 @@ public class CleaningHistoryDAO extends DBContext {
     public boolean finishCleaning(int roomId, int cleaningId, String note) {
         String updateCleaning = "UPDATE CleaningHistory SET EndTime = GETDATE(), Note = ?, Status = 'Completed', UpdatedAt = GETDATE() WHERE CleaningID = ?";
 
-        // Query kiểm tra trạng thái mới sau khi dọn
         String checkRoomStatus = """
         SELECT 
             CASE 
@@ -73,7 +72,6 @@ public class CleaningHistoryDAO extends DBContext {
         try {
             connection.setAutoCommit(false);
 
-            // Cập nhật CleaningHistory
             try (PreparedStatement ps1 = connection.prepareStatement(updateCleaning)) {
                 ps1.setString(1, note);
                 ps1.setInt(2, cleaningId);
@@ -84,7 +82,6 @@ public class CleaningHistoryDAO extends DBContext {
                 }
             }
 
-            // Xác định trạng thái mới của phòng
             String newStatus = "Available";
             try (PreparedStatement ps2 = connection.prepareStatement(checkRoomStatus)) {
                 ps2.setInt(1, roomId);
@@ -95,7 +92,6 @@ public class CleaningHistoryDAO extends DBContext {
                 }
             }
 
-            // Cập nhật trạng thái phòng
             try (PreparedStatement ps3 = connection.prepareStatement(updateRoom)) {
                 ps3.setString(1, newStatus);
                 ps3.setInt(2, roomId);

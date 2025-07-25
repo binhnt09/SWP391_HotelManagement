@@ -63,7 +63,6 @@ public class ServiceUpdateServlet extends HttpServlet {
         BigDecimal price = new BigDecimal(request.getParameter("price"));
         boolean status = "true".equals(request.getParameter("status"));
 
-        // Xử lý file upload
         Part filePart = request.getPart("imageFile");
         String imageURL = null;
 
@@ -92,7 +91,6 @@ public class ServiceUpdateServlet extends HttpServlet {
         ServiceDAO dao = new ServiceDAO();
 
         if ("update".equals(request.getParameter("action"))) {
-            //Lấy Id và file 
             int id = Integer.parseInt(request.getParameter("serviceID"));
             service.setServiceId(id);
 

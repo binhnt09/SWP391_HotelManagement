@@ -20,7 +20,6 @@ import java.sql.SQLException;
  */
 public class CleaningRequestDAO extends DBContext {
 
-    // 1. Thêm yêu cầu dọn phòng mới
     public boolean createRequest(int bookingId, int roomId, String note) {
         String sql = """
             INSERT INTO CleaningRequest (BookingID, RoomID, Note)
@@ -37,7 +36,6 @@ public class CleaningRequestDAO extends DBContext {
         return false;
     }
 
-    // Lấy danh sách yêu cầu dọn phòng (cho cleaner)
     public List<CleaningRequest> getAllRequestsForCleaner() {
         List<CleaningRequest> list = new ArrayList<>();
         String sql = """
