@@ -290,31 +290,34 @@
                             <div class="modal-body">
                                 <div class="form-group">
                                     <label>First Name</label>
-                                    <input type="text" class="form-control" id="firstName" name="firstName">
+                                    <input type="text" class="form-control" id="firstName" name="firstName" required pattern="^(?!\s*$)[A-Za-zÀ-ỹ0-9\s]+$" 
+                                           title="Không được để trống, không chỉ toàn khoảng trắng và không chứa ký tự đặc biệt">
                                     <div class="invalid-feedback" id="firstNameError"></div>
                                 </div>
 
                                 <div class="form-group">
                                     <label>Last Name</label>
-                                    <input type="text" class="form-control" id="lastName" name="lastName">
+                                    <input type="text" class="form-control" id="lastName" name="lastName" required pattern="^(?!\s*$)[A-Za-zÀ-ỹ0-9\s]+$" 
+                                           title="Không được để trống, không chỉ toàn khoảng trắng và không chứa ký tự đặc biệt">
                                     <div class="invalid-feedback" id="lastNameError"></div>
                                 </div>
 
                                 <div class="form-group">
                                     <label>Email</label>
-                                    <input type="email" class="form-control" id="email" name="email">
+                                    <input type="email" class="form-control" id="email" name="email" required>
                                     <div class="invalid-feedback" id="emailError"></div>
                                 </div>
 
                                 <div class="form-group">
                                     <label>Address</label>
-                                    <textarea class="form-control" id="address" name="address"></textarea>
+                                    <textarea class="form-control" id="address" name="address" required pattern="^(?!\s*$)[A-Za-zÀ-ỹ0-9\s]+$" 
+                                              title="Không được để trống, không chỉ toàn khoảng trắng và không chứa ký tự đặc biệt"></textarea>
                                     <div class="invalid-feedback" id="addressError"></div>
                                 </div>
 
                                 <div class="form-group">
                                     <label>Phone</label>
-                                    <input type="text" class="form-control" id="phone" name="phone">
+                                    <input type="text" class="form-control" id="phone" name="phone" required pattern="0\d{9}" title="Số điện thoại không hợp lệ (phải có 10 chữ số và bắt đầu bằng 0)!" required>
                                     <div class="invalid-feedback" id="phoneError"></div>
                                 </div>
                                 <div class="form-group">
@@ -356,13 +359,15 @@
                             <div class="modal-body">
                                 <div class="form-group">
                                     <label>First Name</label>
-                                    <input type="text" class="form-control" id="editFirstName" name="firstName" required>
+                                    <input type="text" class="form-control" id="editFirstName" name="firstName" required pattern="^(?!\s*$)[A-Za-zÀ-ỹ0-9\s]+$" 
+                                           title="Không được để trống, không chỉ toàn khoảng trắng và không chứa ký tự đặc biệt">
                                     <small class="text-danger d-none" id="errorEditFirstName"></small>
                                 </div>
 
                                 <div class="form-group">
                                     <label>Last Name</label>
-                                    <input type="text" class="form-control" id="editLastName" name="lastName" required>
+                                    <input type="text" class="form-control" id="editLastName" name="lastName" required pattern="^(?!\s*$)[A-Za-zÀ-ỹ0-9\s]+$" 
+                                           title="Không được để trống, không chỉ toàn khoảng trắng và không chứa ký tự đặc biệt">
                                     <small class="text-danger d-none" id="errorEditLastName"></small>
                                 </div>
 
@@ -373,13 +378,14 @@
 
                                 <div class="form-group">
                                     <label>Address</label>
-                                    <textarea class="form-control" id="editAddress" name="address" required></textarea>
+                                    <textarea class="form-control" id="editAddress" name="address" required pattern="^(?!\s*$)[A-Za-zÀ-ỹ0-9\s]+$" 
+                                              title="Không được để trống, không chỉ toàn khoảng trắng và không chứa ký tự đặc biệt"></textarea>
                                     <small class="text-danger d-none" id="errorEditAddress"></small>
                                 </div>
 
                                 <div class="form-group">
                                     <label>Phone</label>
-                                    <input type="text" class="form-control" id="editPhone" name="phone" required>
+                                    <input type="text" class="form-control" id="editPhone" name="phone" pattern="0\d{9}" title="Số điện thoại không hợp lệ (phải có 10 chữ số và bắt đầu bằng 0)!" required>
                                     <small class="text-danger d-none" id="errorEditPhone"></small>
                                 </div>
 
@@ -541,7 +547,7 @@
             const phoneRegex = /^(0\d{9,10})$/;
 
             [errorFirstName, errorLastName, errorAddress, errorPhone].forEach(el => el.classList.add('d-none'));
-            
+
             if (!firstName.value.trim() || !nameRegex.test(firstName.value.trim())) {
                 errorFirstName.textContent = "First name is required and must not contain special characters.";
                 errorFirstName.classList.remove('d-none');

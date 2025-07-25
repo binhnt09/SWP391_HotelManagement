@@ -4,25 +4,21 @@
  */
 package controller;
 
-import dao.AuthenticationDAO;
-import entity.Authentication;
-import entity.User;
+import dao.RoomDAO;
+import java.io.IOException;
+import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
-import java.io.IOException;
-import java.io.PrintWriter;
-import org.mindrot.jbcrypt.BCrypt;
 
 /**
  *
- * @author viet7
+ * @author ASUS
  */
-@WebServlet(name = "CreateAccountForUserServlet", urlPatterns = {"/createAccountForUser"})
-public class CreateAccountForUserServlet extends HttpServlet {
+@WebServlet(name = "ChangeRoomStatusServlet", urlPatterns = {"/changeRoomStatus"})
+public class ChangeRoomStatusServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -41,10 +37,10 @@ public class CreateAccountForUserServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet CreateAccountForUserServlet</title>");
+            out.println("<title>Servlet ChangeRoomStatusServlet</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet CreateAccountForUserServlet at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet ChangeRoomStatusServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -76,49 +72,16 @@ public class CreateAccountForUserServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        HttpSession session = request.getSession(false);
-        Authentication auth = (session != null) ? (Authentication) session.getAttribute("authLocal") : null;
-
-        if (auth == null) {
-            response.sendRedirect("loadtohome#login-modal");
-            return;
-        }
-
-        User admin = auth.getUser();
-
-        String userIdRaw = request.getParameter("userId");
-        String username = request.getParameter("username");
-        String password = request.getParameter("password");
-        String confirmPassword = request.getParameter("confirmPassword");
-
-        int userId;
-        try {
-            userId = Integer.parseInt(userIdRaw);
-        } catch (NumberFormatException e) {
-            session.setAttribute("errorMessage", "ID người dùng không hợp lệ.");
-            response.sendRedirect("userList");
-            return;
-        }
-
-        if (!password.equals(confirmPassword)) {
-            session.setAttribute("errorMessage", "Mật khẩu xác nhận không khớp.");
-            response.sendRedirect("userList");
-            return;
-        }
-
-        String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
-
-        AuthenticationDAO authDAO = new AuthenticationDAO();
-
-        boolean created = authDAO.createAuthForAdmin(userId,username, hashedPassword);
-        if (created) {
-            authDAO.logCreateUser(userId, admin.getUserId(), "");
-            session.setAttribute("successMessage", "Tạo tài khoản thành công!");
+        int roomId = Integer.parseInt(request.getParameter("roomId"));
+        RoomDAO dao = new RoomDAO();
+        boolean success = dao.updateRoomStatus(roomId, "Reserved");
+        if (success) {
+            request.getSession().setAttribute("successMessage", "Cập nhật trạng thái phòng thành công!");
+            response.sendRedirect("receptionistPage");
         } else {
-            session.setAttribute("errorMessage", "Tạo tài khoản thất bại!");
+            request.getSession().setAttribute("errorMessage", "Cập nhật trạng thái phòng thất bại!");
+            response.sendRedirect("receptionistPage");
         }
-
-        response.sendRedirect("userList");
 
     }
 

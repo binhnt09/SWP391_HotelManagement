@@ -13,7 +13,7 @@
     <!----------------top-navbar---------------->
     <div class="top-navbar">
         <div class="xp-topbar">
-<!--dsjgouhdud-->
+            <!--dsjgouhdud-->
             <!-- Start XP Row -->
             <div class="row"> 
                 <!-- Start XP Col -->
@@ -380,25 +380,25 @@
                                         <!-- Name -->
                                         <div class="form-group">
                                             <label>Service Name</label>
-                                            <input type="text" class="form-control" id="editName" name="name" required>
+                                            <input type="text" class="form-control" id="editName" name="name" required pattern=".*\S.*" title="Không được điền toàn khoảng trắng">
                                         </div>
 
                                         <!-- Category -->
                                         <div class="form-group">
                                             <label>Category</label>
-                                            <input type="text" class="form-control" id="editCategory" name="category" required>
+                                            <input type="text" class="form-control" id="editCategory" name="category" required pattern=".*\S.*" title="Không được điền toàn khoảng trắng">
                                         </div>
 
                                         <!-- Description -->
                                         <div class="form-group">
                                             <label>Description</label>
-                                            <textarea class="form-control" id="editDescription" name="description" rows="3" required></textarea>
+                                            <textarea class="form-control" id="editDescription" name="description" rows="3" required pattern=".*\S.*" title="Không được điền toàn khoảng trắng"></textarea>
                                         </div>
 
                                         <!-- Price -->
                                         <div class="form-group">
                                             <label>Price (VNĐ)</label>
-                                            <input type="number" step="0.01" class="form-control" id="editPrice" name="price" required>
+                                            <input type="number" step="0.01" min="1" max="1000000000" class="form-control" id="editPrice" name="price" required title="Giá phải là số lớn hơn 0, có thể có phần thập phân (ví dụ: 10000 hoặc 10000.50)">
                                         </div>
 
                                         <!-- Image URL -->
@@ -446,25 +446,25 @@
                                         <!-- Name -->
                                         <div class="form-group">
                                             <label>Service Name</label>
-                                            <input type="text" class="form-control" name="name" required>
+                                            <input type="text" class="form-control" name="name" required pattern=".*\S.*" title="Không được điền toàn khoảng trắng">
                                         </div>
 
                                         <!-- Category -->
                                         <div class="form-group">
                                             <label>Category</label>
-                                            <input type="text" class="form-control" name="category" required>
+                                            <input type="text" class="form-control" name="category" required pattern=".*\S.*" title="Không được điền toàn khoảng trắng">
                                         </div>
 
                                         <!-- Description -->
                                         <div class="form-group">
                                             <label>Description</label>
-                                            <textarea class="form-control" name="description" rows="3" required></textarea>
+                                            <textarea class="form-control" name="description" rows="3" required pattern=".*\S.*" title="Không được điền toàn khoảng trắng"></textarea>
                                         </div>
 
                                         <!-- Price -->
                                         <div class="form-group">
                                             <label>Price (VNĐ)</label>
-                                            <input type="number" step="0.01" class="form-control" name="price" required>
+                                            <input type="number" step="0.01" min="1" max="1000000000" class="form-control" name="price" required title="Giá phải là số lớn hơn 0, có thể có phần thập phân (ví dụ: 10000 hoặc 10000.50)" >
                                         </div>
 
                                         <!-- Image URL -->
@@ -500,79 +500,6 @@
     </div>
 
     <script>
-        function isValidNameCategory(value) {
-            const regex = /^[\p{L}\p{N}\s\-]+$/u; // Unicode letters, numbers, space, hyphen
-            return regex.test(value);
-        }
-
-        function isValidPrice(value) {
-            const price = parseFloat(value);
-            return !isNaN(price) && price > 0 && price < 1_000_000_000;
-        }
-
-        function isValidImage(file) {
-            if (!file)
-                return true; // Image is optional
-            const allowedExtensions = /\.(jpg|jpeg|png)$/i;
-            const maxSize = 2 * 1024 * 1024; // 2MB
-            return allowedExtensions.test(file.name) && file.size <= maxSize;
-        }
-
-        function validateForm(modalId) {
-            const modal = document.getElementById(modalId);
-            const name = modal.querySelector("input[name='name']").value.trim();
-            const category = modal.querySelector("input[name='category']").value.trim();
-            const description = modal.querySelector("textarea[name='description']").value.trim();
-            const price = modal.querySelector("input[name='price']").value.trim();
-            const imageFile = modal.querySelector("input[name='imageFile']").files[0];
-            const status = modal.querySelector("select[name='status']").value;
-
-            // Required fields
-            if (!name || !category || !description || !price) {
-                alert("Please fill in all required fields.");
-                return false;
-            }
-
-            // Name & Category validation
-            if (!isValidNameCategory(name)) {
-                alert("Service Name contains invalid characters. Only letters, numbers, spaces, and hyphens are allowed.");
-                return false;
-            }
-            if (!isValidNameCategory(category)) {
-                alert("Category contains invalid characters. Only letters, numbers, spaces, and hyphens are allowed.");
-                return false;
-            }
-
-            // Description length
-            if (description.length > 500) {
-                alert("Description must be less than 500 characters.");
-                return false;
-            }
-
-            // Price validation
-            if (!isValidPrice(price)) {
-                alert("Price must be a positive number less than 1,000,000,000.");
-                return false;
-            }
-
-            // Image file validation
-            if (!isValidImage(imageFile)) {
-                alert("Invalid image. Only .jpg, .jpeg, .png files under 2MB are allowed.");
-                return false;
-            }
-
-
-            return true;
-        }
-
-        function validateAddService() {
-            return validateForm("addServiceModal");
-        }
-
-        function validateEditService() {
-            return validateForm("editServiceModal");
-        }
-
         $(document).on("click", ".editServiceBtn", function () {
             $("#editServiceID").val($(this).data("id"));
             $("#editName").val($(this).data("name"));

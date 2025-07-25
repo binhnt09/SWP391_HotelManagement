@@ -454,6 +454,7 @@
                                         <label>Price</label>
                                         <input type="number" id="edit-price" name="price" class="form-control" onblur="validateEditPrice()">
                                         <small id="editPriceError" class="text-danger d-none">Giá phải là số dương và không được để trống.</small>
+
                                     </div>
 
                                     <div class="mb-3">

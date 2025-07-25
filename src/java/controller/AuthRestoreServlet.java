@@ -41,7 +41,6 @@ public class AuthRestoreServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         int id = Integer.parseInt(request.getParameter("id"));
-//        int deletedBy = 1; // hoặc lấy từ session người dùng đăng nhập: ((User) session.getAttribute("user")).getId()
         AuthenticationDAO dao = new AuthenticationDAO();
         if (dao.restoreAuth(id)){
             request.getSession().setAttribute("successMessage", "Khôi phục bản ghi thành công!");

@@ -82,6 +82,12 @@
                         <button class="btn btn-secondary" onclick="confirmSetMaintenance(${room.roomID})">
                             <i class="fas fa-edit me-1"></i> Sửa phòng
                         </button>
+                        <form action="changeRoomStatus" method="post">
+                            <input type="hidden" name="roomId" value="${room.roomID}" />
+                            <button type="submit" class="btn btn-secondary">
+                                <i class="fas fa-edit me-1"></i> Chuyển sang Đặt Trước
+                            </button>
+                        </form>
                     </c:when>
 
                     <c:when test="${room.status eq 'Occupied'}">
@@ -201,15 +207,17 @@
 
                 <div class="mb-3">
                     <label for="firstName" class="form-label">Họ</label>
-                    <input type="text" class="form-control" name="firstName" required>
+                    <input type="text" class="form-control" name="firstName" required pattern="^(?!\s*$)[A-Za-zÀ-ỹ0-9\s]+$" 
+                           title="Không được để trống, không chỉ toàn khoảng trắng và không chứa ký tự đặc biệt">
                 </div>
                 <div class="mb-3">
                     <label for="lastName" class="form-label">Tên</label>
-                    <input type="text" class="form-control" name="lastName" required>
+                    <input type="text" class="form-control" name="lastName" required pattern="^(?!\s*$)[A-Za-zÀ-ỹ0-9\s]+$" 
+                           title="Không được để trống, không chỉ toàn khoảng trắng và không chứa ký tự đặc biệt">
                 </div>
                 <div class="mb-3">
                     <label for="phone" class="form-label">Số điện thoại</label>
-                    <input type="text" class="form-control" name="phone" required>
+                    <input type="text" class="form-control" name="phone" pattern="0\d{9}" title="Số điện thoại không hợp lệ (phải có 10 chữ số và bắt đầu bằng 0)!" required>
                 </div>
                 <div class="mb-3">
                     <label for="nights" class="form-label">Số đêm</label>

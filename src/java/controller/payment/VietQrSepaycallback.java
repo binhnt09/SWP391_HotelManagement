@@ -148,7 +148,7 @@ public class VietQrSepaycallback extends HttpServlet {
         Booking bookingUser = dao.findUserByBookingId(bookingId);
 
         if (bookingUser != null) {
-            dao.updateStatus(bookingId, "PAID");
+            dao.updateStatus(bookingId, "Confirmed");
             User user = bookingUser.getUser();
             String email = user.getEmail();
 

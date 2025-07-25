@@ -563,17 +563,11 @@
                         </c:forEach>
                     </div>
 
-                    <!-- Chat Widget -->
-                    <div class="chat-widget" onclick="openChat()">
-                        <i class="fas fa-comments"></i>
-                        Chat
-                    </div>
-
-                    <!-- Support Widget -->
+                     Support Widget 
                     <div class="skyhotel-support">
                         <i class="fas fa-headset"></i>
                         Hỗ trợ Skyhotel
-                    </div>
+                    </div>-->
 
                     <!-- Room Details Modal -->
                     <div class="modal fade" id="roomModal" tabindex="-1" role="dialog" aria-labelledby="roomModalLabel" aria-hidden="true">
@@ -691,12 +685,10 @@
                             alert('Chức năng chat đang được phát triển');
                         }
 
-                        // Auto refresh every 5 minutes
                         setInterval(function () {
                             location.reload();
                         }, 300000);
 
-                        // Keyboard shortcuts
                         document.addEventListener('keydown', function (e) {
                             if (e.ctrlKey && e.key === 'r') {
                                 e.preventDefault();
@@ -704,7 +696,6 @@
                             }
                         });
 
-                        // Room status update simulation
                         function updateRoomStatus(roomNumber, newStatus) {
                             const roomCard = document.querySelector(`[onclick="showRoomDetails(${roomNumber})"]`);
                             if (roomCard) {
@@ -712,14 +703,12 @@
                             }
                         }
 
-                        // Initialize tooltips
                         document.addEventListener('DOMContentLoaded', function () {
                             const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
                             const tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
                                 return new bootstrap.Tooltip(tooltipTriggerEl);
                             });
                         });
-
 
                     </script>
 

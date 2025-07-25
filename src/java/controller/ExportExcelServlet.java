@@ -55,13 +55,13 @@ public class ExportExcelServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        //lấy keyword 
+
         String keyword = request.getParameter("keyword");
         if (keyword == null) {
             keyword = "";
         }
 
-        // --- Từ bộ lọc ---
+
         String tier = request.getParameter("tier");
         String bookingRange = request.getParameter("bookingRange");
         String spentRange = request.getParameter("spentRange");
@@ -75,7 +75,6 @@ public class ExportExcelServlet extends HttpServlet {
         String sort = request.getParameter("sort");
         String order = request.getParameter("order");
 
-        // --- Parse Booking Range ---
         int bookingMin = 0, bookingMax = Integer.MAX_VALUE;
         if (bookingRange != null && !bookingRange.isEmpty()) {
             if (bookingRange.equals("0")) {
@@ -90,7 +89,6 @@ public class ExportExcelServlet extends HttpServlet {
             }
         }
 
-// --- Parse Spent Range ---
         long spentMin = 0, spentMax = Long.MAX_VALUE;
         if (spentRange != null && !spentRange.isEmpty()) {
             switch (spentRange) {
@@ -121,7 +119,6 @@ public class ExportExcelServlet extends HttpServlet {
             }
         }
 
-        // --- Parse Date to Timestamp ---
         Timestamp registerStartTS = null, registerEndTS = null;
         Timestamp bookingStartTS = null, bookingEndTS = null;
 

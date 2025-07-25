@@ -89,7 +89,7 @@ public class VnpayReturn extends HttpServlet {
 
                     // Update booking status
                     BookingDao bookingDao = new BookingDao();
-                    bookingDao.updateStatus(bookingId, "PAID");
+                    bookingDao.updateStatus(bookingId, "Confirmed");
 
                     PaymentDao paymentDao = new PaymentDao();
                     // Insert payment
