@@ -60,7 +60,6 @@ public class QuickCheckInServlet extends HttpServlet {
         String phone = request.getParameter("phone");
         int nights = Integer.parseInt(request.getParameter("nights"));
 
-        // Validate input
         if (firstName == null || firstName.isBlank() || lastName == null || phone == null || nights <= 0) {
             request.getSession().setAttribute("errorMessage", "Check-in thất bại!");
             response.sendRedirect("receptionistPage");
@@ -71,11 +70,9 @@ public class QuickCheckInServlet extends HttpServlet {
         RoomDAO roomDAO = new RoomDAO();
         CustomerDAO customerDAO = new CustomerDAO();
 
-        // Tạo booking cho khách lẻ
         int userId = customerDAO.createGuestUser(firstName, lastName, phone);
         Booking booking = new Booking();
 
-        // Convert LocalDate to Date
         LocalDate checkInLocalDate = LocalDate.now();
         LocalDate checkOutLocalDate = checkInLocalDate.plusDays(nights);
         java.sql.Date checkInDate = java.sql.Date.valueOf(checkInLocalDate);

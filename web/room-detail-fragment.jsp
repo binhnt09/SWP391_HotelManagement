@@ -201,15 +201,15 @@
 
                 <div class="mb-3">
                     <label for="firstName" class="form-label">Họ</label>
-                    <input type="text" class="form-control" name="firstName" required>
+                    <input type="text" class="form-control" name="firstName" required pattern=".*\S.*" title="Không được điền toàn khoảng trắng">
                 </div>
                 <div class="mb-3">
                     <label for="lastName" class="form-label">Tên</label>
-                    <input type="text" class="form-control" name="lastName" required>
+                    <input type="text" class="form-control" name="lastName" required pattern=".*\S.*" title="Không được điền toàn khoảng trắng">
                 </div>
                 <div class="mb-3">
                     <label for="phone" class="form-label">Số điện thoại</label>
-                    <input type="text" class="form-control" name="phone" required>
+                    <input type="text" class="form-control" name="phone" pattern="^\d{9,11}$" title="Vui lòng nhập số điện thoại từ 9 đến 11 chữ số, chỉ nhận chữ số."required>
                 </div>
                 <div class="mb-3">
                     <label for="nights" class="form-label">Số đêm</label>

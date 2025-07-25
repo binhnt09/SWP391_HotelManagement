@@ -90,7 +90,6 @@ public class StaffUpdateServlet extends HttpServlet {
             request.getSession().setAttribute("errorMessage", "Xảy ra lỗi trong quá trình xử lý.");
         }
 
-        // Redirect về lại list
         response.sendRedirect("staffList");
     }
 

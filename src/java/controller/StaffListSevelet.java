@@ -66,7 +66,7 @@ public class StaffListSevelet extends HttpServlet {
         try {
             role = Integer.parseInt(roleStr);
         } catch (NumberFormatException e) {
-            role = null;  // Nếu parse lỗi thì coi như null
+            role = null; 
         }
 
         if (role == null || (role != 3 && role != 4)) {

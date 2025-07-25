@@ -1083,7 +1083,7 @@ public class RoomDAO extends DBContext {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return BigDecimal.ZERO;  // hoặc null hoặc tùy xử lý khi không có phòng
+        return BigDecimal.ZERO; 
     }
 
     public RoomStats getRoomStats() {

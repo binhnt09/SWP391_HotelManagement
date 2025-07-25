@@ -47,7 +47,6 @@ public class ReportServlet extends HttpServlet {
         response.setContentType("application/json");
         PrintWriter out = response.getWriter();
 
-        // Dữ liệu giả lập, bạn có thể thay bằng dữ liệu lấy từ DB
         String json = """
         {
           "labels": ["Tháng 1", "Tháng 2", "Tháng 3", "Tháng 4"],
