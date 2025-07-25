@@ -501,7 +501,7 @@
 
     <script>
         function isValidNameCategory(value) {
-            const regex = /^[\p{L}\p{N}\s\-]+$/u; // Unicode letters, numbers, space, hyphen
+            const regex = /^[\p{L}\p{N}\s\-]+$/u; 
             return regex.test(value);
         }
 
@@ -512,7 +512,7 @@
 
         function isValidImage(file) {
             if (!file)
-                return true; // Image is optional
+                return true; 
             const allowedExtensions = /\.(jpg|jpeg|png)$/i;
             const maxSize = 2 * 1024 * 1024; // 2MB
             return allowedExtensions.test(file.name) && file.size <= maxSize;
@@ -527,13 +527,12 @@
             const imageFile = modal.querySelector("input[name='imageFile']").files[0];
             const status = modal.querySelector("select[name='status']").value;
 
-            // Required fields
+
             if (!name || !category || !description || !price) {
                 alert("Please fill in all required fields.");
                 return false;
             }
 
-            // Name & Category validation
             if (!isValidNameCategory(name)) {
                 alert("Service Name contains invalid characters. Only letters, numbers, spaces, and hyphens are allowed.");
                 return false;
@@ -543,19 +542,16 @@
                 return false;
             }
 
-            // Description length
             if (description.length > 500) {
                 alert("Description must be less than 500 characters.");
                 return false;
             }
 
-            // Price validation
             if (!isValidPrice(price)) {
                 alert("Price must be a positive number less than 1,000,000,000.");
                 return false;
             }
 
-            // Image file validation
             if (!isValidImage(imageFile)) {
                 alert("Invalid image. Only .jpg, .jpeg, .png files under 2MB are allowed.");
                 return false;

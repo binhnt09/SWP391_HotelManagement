@@ -71,19 +71,28 @@ public class RoomReviewDAO extends DBContext {
             ps.setInt(1, roomId);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-                return rs.getDouble("AvgRating"); // Nếu không có kết quả, sẽ trả về 0.0
+                return rs.getDouble("AvgRating"); 
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return 0.0; // Trả về 0 nếu lỗi hoặc không có đánh giá
+        return 0.0; 
     }
 
-    public static void main(String[] args) {
-        System.out.println(new dao.RoomReviewDAO().getReviewByUserAndRoom(1, 1).getComment());
-        System.out.println(new dao.RoomReviewDAO().insertRating(4, 4, 5));
-        System.out.println(new dao.RoomReviewDAO().getRatingByRoomId(1, 52));
-        System.out.println(new dao.RoomReviewDAO().getAverageRatingByRoomId(1));
+    public int countNumberPeopleRateStar(int roomId){
+        String sql = "SELECT count(*) FROM RoomReview WHERE RoomID = ? AND IsDeleted = 0";
+         try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, roomId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1); 
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
     }
+    
+     
 
 }

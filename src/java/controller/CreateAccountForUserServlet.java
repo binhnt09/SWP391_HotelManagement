@@ -86,7 +86,6 @@ public class CreateAccountForUserServlet extends HttpServlet {
 
         User admin = auth.getUser();
 
-        // Lấy dữ liệu từ form modal
         String userIdRaw = request.getParameter("userId");
         String username = request.getParameter("username");
         String password = request.getParameter("password");

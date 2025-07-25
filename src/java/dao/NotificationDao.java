@@ -29,6 +29,7 @@ public class NotificationDao extends DBContext {
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 Notifications noti = new Notifications();
+                noti.setNotificationId(rs.getInt("NotificationId"));
                 noti.setUserId(new dao.AuthenticationDAO().findUserById(rs.getInt("NotificationID")));
                 noti.setMessage(rs.getString("Message"));
                 noti.setType(rs.getString("Type"));
@@ -43,6 +44,24 @@ public class NotificationDao extends DBContext {
         }
         return list;
     }
+
+    public boolean deleteNotificationById(int id) {
+        String sql = "DELETE FROM Notifications WHERE NotificationID = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            int affectedRows = ps.executeUpdate();
+            return affectedRows > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+    
+    public static void main(String[] args) {
+        System.out.println(new dao.NotificationDao().deleteNotificationById(1));
+    }
+
+     
 
     public boolean addNotifications(int userId, String mess, String type) {
         String sql = "INSERT INTO Notifications (userid, Message, type, createdat) "
@@ -72,13 +91,13 @@ public class NotificationDao extends DBContext {
 
         return false;
     }
-    
-    public int countNotification(int userId){
+
+    public int countNotification(int userId) {
         String sql = "Select count(*) from Notifications where userID = ? ";
-        try(PreparedStatement pre = connection.prepareStatement(sql)){
+        try (PreparedStatement pre = connection.prepareStatement(sql)) {
             pre.setInt(1, userId);
             ResultSet rs = pre.executeQuery();
-            if(rs.next()){
+            if (rs.next()) {
                 return rs.getInt(1);
             }
         } catch (SQLException ex) {
@@ -87,7 +106,4 @@ public class NotificationDao extends DBContext {
         return 0;
     }
 
-    public static void main(String[] args) {
-        System.out.println(new dao.NotificationDao().countNotification(53));
-    }
 }

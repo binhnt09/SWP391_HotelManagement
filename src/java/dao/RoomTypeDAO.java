@@ -155,8 +155,6 @@ public class RoomTypeDAO extends DBContext {
         }
     }
 
-    
-
     public boolean addNewRoomType(String typeName, int numberPeople, String amenity, String description) {
         String sql = "insert into RoomType (TypeName,NumberPeople,amenity,description,ImageURL,createdAt) values (?,?,?,?,?, GETDATE())";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
@@ -299,24 +297,29 @@ public class RoomTypeDAO extends DBContext {
                     services.add(s);
                 }
             }
-        } catch (SQLException ex) { 
+        } catch (SQLException ex) {
             Logger.getLogger(RoomTypeDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
         return services;
     }
-     
 
     public boolean deleteRoomType(int roomTypeID) {
-        String sql = "DELETE FROM RoomTypeAmenity WHERE roomTypeID = ?;"
-                + "   DELETE FROM RoomType WHERE RoomTypeID = ?";
+        String sql = "DELETE FROM RoomTypeAmenity WHERE roomTypeID = ?; "
+                + "DELETE FROM RoomType_Service WHERE roomTypeID = ? ;"
+                + "   DELETE FROM RoomType WHERE RoomTypeID = ? ";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, roomTypeID);
             ps.setInt(2, roomTypeID);
+            ps.setInt(3, roomTypeID);
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return false;
+    }
+
+    public static void main(String[] args) {
+        System.out.println(new dao.RoomTypeDAO().deleteRoomType(36));
     }
 
 }

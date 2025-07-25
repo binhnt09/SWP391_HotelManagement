@@ -5,6 +5,7 @@
 --%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
@@ -109,8 +110,11 @@
                                         <i class="fas fa-trash me-1"></i> DELETE
                                     </button>
                                 </div>
-
-
+                                <div class="col-auto">
+                                    <button type="button" onclick="return confirmRestoreSelected();" class="btn btn-success">
+                                        <i class="fas fa-undo me-1"></i> RESTORE
+                                    </button>
+                                </div>
                             </div>
                         </form>
                         <form action="manageroom" method="get" >
@@ -118,6 +122,7 @@
                                 <!-- Search input -->
                                 <div class="col-auto">
                                     <input type="hidden" name="action" value="filterRoom">
+                                    <input type="hidden" name="page" value="${current}">
                                     <input type="text" id="searchInput" name="keyWord" value="${keyWord}" 
                                            placeholder="Search Room" class="form-control form-control-sm" style="width: 150px;">
                                 </div>
@@ -236,8 +241,8 @@
                                                       </c:otherwise>
                                                   </c:choose>
                                                   ">${i.status}</span></td>
-                                        <td>${i.roomDetail.area}</td>
-                                        <td class="text-success fw-bold">$${i.price}</td>
+                                        <td>  <fmt:formatNumber value="${i.roomDetail.area}" type="number" groupingUsed="true" maxFractionDigits="2" /> m&sup2;</td>
+                                        <td class="text-success fw-bold"> <fmt:formatNumber value="${i.price}" type="number" groupingUsed="true" maxFractionDigits="2" />đ</td>
                                         <td>${i.roomDetail.maxGuest}</td>
                                         <td>${i.roomDetail.description} </td>                                            
                                         <td>
@@ -250,8 +255,6 @@
                                                title="Edit Room">
                                                 <i class="fa-solid fa-pen-to-square"></i>
                                             </a>
-
-
                                             <a href="#" onclick="doDelete('${i.roomID}', '${i.roomNumber}'); return false;" 
                                                class="delete" 
                                                style="color: red;margin-left: 5px" 
@@ -262,43 +265,47 @@
                                 </c:forEach>
                             </tbody>
                         </table>
-                    </div>
-                    <div class=" d-flex justify-content-between align-items-center mt-3">
-                        <div class="hint-text">
-                            Showing <b>${listRoom.size()}</b> of <b>${totalPages * pageSize}</b> rooms
+                        <div class=" d-flex justify-content-between align-items-center mt-3">
+                            <div class="hint-text">
+                                Showing <b>${listRoom.size()}</b> of <b>${totalPages * pageSize}</b> rooms
+                            </div>
+                            <ul class="pagination mb-0">
+                                <!-- Nút Previous -->
+                                <script>
+                                    const currentPage = ${currentPage};
+                                </script>
+                                <c:choose>
+                                    <c:when test="${currentPage > 1}">
+                                        <li class="page-item">
+                                            <a href="manageroom?page=${currentPage - 1}&keyword=${keyword}&presentDeleted=${presentDeleted}&roomType=${roomType}&sort=${sort}&sortBy=${sortBy}" class="page-link">Previous</a>
+                                        </li>
+
+                                    </c:when>
+                                    <c:otherwise>
+                                        <li class="page-item disabled"><span class="page-link">Previous</span></li>
+                                        </c:otherwise>
+                                    </c:choose>
+
+                                <!-- Số trang -->
+                                <c:forEach begin="1" end="${totalPages}" var="i">
+                                    <li class="page-item ${i == currentPage ? 'active' : ''}">
+                                        <a class="page-link" href="manageroom?page=${i}&keyword=${keyword}&presentDeleted=${presentDeleted}&roomType=${roomType}&sort=${sort}&sortBy=${sortBy}">${i}</a>
+                                    </li>
+                                </c:forEach>
+
+                                <!-- Nút Next -->
+                                <c:choose>
+                                    <c:when test="${currentPage < totalPages}">
+                                        <li class="page-item">
+                                            <a href="manageroom?page=${currentPage + 1}&keyword=${keyword}&presentDeleted=${presentDeleted}&roomType=${roomType}&sort=${sort}&sortBy=${sortBy}" class="page-link">Next</a>
+                                        </li>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <li class="page-item disabled"><span class="page-link">Next</span></li>
+                                        </c:otherwise>
+                                    </c:choose>
+                            </ul>
                         </div>
-                        <ul class="pagination mb-0">
-                            <!-- Nút Previous -->
-                            <c:choose>
-                                <c:when test="${currentPage > 1}">
-                                    <li class="page-item">
-                                        <a href="manageroom?page=${currentPage - 1}&keyword=${keyword}&presentDeleted=${presentDeleted}&roomType=${roomType}&sort=${sort}&sortBy=${sortBy}" class="page-link">Previous</a>
-                                    </li>
-                                </c:when>
-                                <c:otherwise>
-                                    <li class="page-item disabled"><span class="page-link">Previous</span></li>
-                                    </c:otherwise>
-                                </c:choose>
-
-                            <!-- Số trang -->
-                            <c:forEach begin="1" end="${totalPages}" var="i">
-                                <li class="page-item ${i == currentPage ? 'active' : ''}">
-                                    <a class="page-link" href="manageroom?page=${i}&keyword=${keyword}&presentDeleted=${presentDeleted}&roomType=${roomType}&sort=${sort}&sortBy=${sortBy}">${i}</a>
-                                </li>
-                            </c:forEach>
-
-                            <!-- Nút Next -->
-                            <c:choose>
-                                <c:when test="${currentPage < totalPages}">
-                                    <li class="page-item">
-                                        <a href="manageroom?page=${currentPage + 1}&keyword=${keyword}&presentDeleted=${presentDeleted}&roomType=${roomType}&sort=${sort}&sortBy=${sortBy}" class="page-link">Next</a>
-                                    </li>
-                                </c:when>
-                                <c:otherwise>
-                                    <li class="page-item disabled"><span class="page-link">Next</span></li>
-                                    </c:otherwise>
-                                </c:choose>
-                        </ul>
                     </div>
 
 
@@ -384,12 +391,19 @@
                             <input type="hidden" name="action" value="edit">
                             <input type="hidden" id="edit-roomID" name="roomID">
                             <input type="hidden" id="edit-roomDetail" name="roomDetail">
+                            <input type="hidden" id="page" name="currentPage" value="${currentPage}">
                             <div class="row g-3">
                                 <!-- Cột trái -->
                                 <div class="col-md-6">
                                     <div class="mb-3">
                                         <label>Room Number</label>
-                                        <input type="text" id="edit-roomNumber" name="roomNumber" class="form-control">
+                                        <input type="text" id="edit-roomNumber" name="roomNumber"
+                                               class="form-control"
+                                               onkeypress="preventSpace(event)"
+                                               onblur="checkDuplicateRoomNumberEdit()">
+                                        <input type="hidden" id="edit-roomId11" value="${room.id}">
+                                        <small id="editRoomNumberError" class="text-danger d-none">Tên phòng đã tồn tại.</small>
+
                                     </div>
                                     <div class="mb-3">
                                         <label>Room Type</label>
@@ -399,18 +413,23 @@
                                             </c:forEach>
                                         </select>
                                     </div>
-                                    <div class="mb-3">
-                                        <label>Bed Type</label>
-                                        <input type="text" id="edit-bedType" name="bedType" class="form-control" readonly="">
-                                    </div>
-                                    <div class="mb-3">
-                                        <label>Status</label>
-                                        <input type="text" id="edit-status" readonly name="status" class="form-control">
-                                    </div>
+                                    <!--                                    <div class="mb-3">
+                                                                            <label>Bed Type</label>
+                                                                            <input type="text" id="edit-bedType" name="bedType" class="form-control" readonly="">
+                                                                        </div>-->
+                                    <label>Status</label>
+                                    <select name="status" id="edit-status" class="form-select">
+                                        <option value="-1">Select room status</option>
+                                        <option value="Available">Available</option>
+                                        <option value="Occupied">Occupied</option>
+                                        <option value="Reserved">Reserved</option>
+                                        <option value="Cleaning">Cleaning</option>
+                                        <option value="Non-available">Non-available</option>
+                                    </select>
                                     <div class="mb-3">
                                         <label>Current Images:</label>
                                         <div id="edit-room-images" style="display: flex; flex-wrap: wrap; gap: 10px;">
-                                           
+
                                         </div>
                                         <small class="text-muted">Chọn ảnh để xóa</small>
                                     </div>
@@ -424,15 +443,15 @@
                                     </div>
                                     <div class="mb-3">
                                         <label>Description</label>
-                                        <textarea id="edit-description" readonly name="description" class="form-control"></textarea>
+                                        <textarea id="edit-description"  name="description" class="form-control"></textarea>
                                     </div>
                                     <div class="mb-3">
                                         <label>Price</label>
-                                        <input type="number" id="edit-price" readonly name="price" class="form-control">
+                                        <input type="number" id="edit-price"  name="price" class="form-control">
                                     </div>
                                     <div class="mb-3">
                                         <label>Area</label>
-                                        <input type="number" step="any" id="edit-area" readonly name="area" class="form-control">
+                                        <input type="number" step="any" id="edit-area"  name="area" class="form-control">
                                     </div>
                                 </div>
                             </div>
@@ -464,26 +483,29 @@
                         </div>
                         <div class="modal-body">
                             <input type="hidden" name="action" value="add">
+                            <input type="hidden" name="totalRooms" value="${numberRoom}">
                             <div class="row">
                                 <!-- Cột bên trái -->
                                 <div class="col-md-6">
                                     <div class="mb-3">
                                         <label>Room Number</label>
-                                        <input type="text" id="add-roomNumber" name="roomNumber" onblur="checkRoomNumber()" class="form-control">
+                                        <input type="text" id="add-roomNumber" name="roomNumber" onkeydown="preventSpace(event)" onblur="checkRoomNumber()" class="form-control">
                                         <small id="roomNumberError" class="text-danger d-none">Room number already exists.</small>
                                     </div>
                                     <div class="mb-3">
                                         <label>Room Type</label>
-                                        <select name="roomTypeID" class="form-select">
-                                            <option value="-1">Select room type</option>
+                                        <select name="roomTypeID" id="roomTypeID" class="form-select">
+                                            <option value="-1" >Select room type</option>
                                             <c:forEach items="${listRoomType}" var="tmp">
                                                 <option value="${tmp.roomTypeID}">${tmp.typeName}</option>
                                             </c:forEach>
                                         </select>
+                                        <small id="roomTypeError" class="text-danger d-none">Please select a room type.</small>
+
                                     </div>
                                     <div class="mb-3">
                                         <label>Status</label>
-                                        <select name="status" class="form-select">
+                                        <select name="status" id="roomStatus" class="form-select">
                                             <option value="-1">Select room status</option>
                                             <option value="Available">Available</option>
                                             <option value="Occupied">Occupied</option>
@@ -491,6 +513,8 @@
                                             <option value="Cleaning">Cleaning</option>
                                             <option value="Non-available">Non-available</option>
                                         </select>
+                                        <small id="roomStatusError" class="text-danger d-none">Please select a room status.</small>
+
                                     </div>
                                 </div>
 
@@ -501,11 +525,11 @@
                                     </div>
                                     <div class="mb-3">
                                         <label>Price</label>
-                                        <input type="number" id="edit-price" name="price" class="form-control">
+                                        <input type="number" id="edit-price"  name="price" class="form-control" required="">
                                     </div>
                                     <div class="mb-3">
                                         <label>Area</label>
-                                        <input type="number" step="any" id="edit-area" name="area" class="form-control">
+                                        <input type="number" step="any" id="edit-area" name="area" class="form-control" required="">
                                     </div>
                                     <div class="mb-3">
                                         <label>Description</label>
@@ -546,7 +570,7 @@
                             </div>
                             <div class="mb-3">
                                 <label>Number of People</label>
-                                <input type="number" name="numberPeople" id="numberPeople" class="form-control" required>
+                                <input type="number" name="numberPeople" id="numberPeople" min="1" class="form-control" required>
                             </div>
                             <div class="mb-3">
                                 <label>Amenities</label>
@@ -728,7 +752,7 @@
                     console.log("Clicked ID:", roomTypeID);
                     if (confirm('Bạn có chắc chắn xóa loại phòng này?')) {
                         const baseUrl = '${pageContext.request.contextPath}';
-                        fetch(baseUrl + "/roomcrud?action=deleteRoomType&roomTypeID=" + encodeURIComponent(roomTypeID))
+                        fetch(baseUrl + "/roomcrud?action=deleteRoomType&roomTypeID=" + roomTypeID)
                                 .then(response => response.json())
                                 .then(result => {
                                     if (result.success) {
@@ -768,26 +792,77 @@
                             alert("Something went wrong.");
                         });
             }
+
+            let isRoomNumberValid = false;
+            function preventSpace(event) {
+                if (event.key === " ") {
+                    event.preventDefault();
+                }
+            }
             function checkRoomNumber() {
+                const roomNumberInput = document.getElementById("add-roomNumber");
                 const roomNumber = document.getElementById("add-roomNumber").value.trim();
-                if (!roomNumber)
+                const errorEl = document.getElementById("roomNumberError");
+
+                if (!roomNumber) {
+                    isRoomNumberValid = false;
+                    errorEl.textContent = "Tên phòng không được trống.";
+                    errorEl.classList.remove("d-none");
+                    roomNumberInput.classList.add("is-invalid");
                     return;
+                }
                 const baseUrl = '${pageContext.request.contextPath}';
                 fetch(baseUrl + "/roomcrud?action=checkRoomNumber&roomNumber=" + roomNumber)
                         .then(response => response.json())
                         .then(data => {
                             console.log(data.exists);
-                            const errorEl = document.getElementById("roomNumberError");
                             if (data.exists) {
+                                isRoomNumberValid = false;
                                 errorEl.classList.remove("d-none");
+                                errorEl.textContent = "Tên phòng đã tồn tại.";
                                 document.getElementById("add-roomNumber").classList.add("is-invalid");
                             } else {
+                                isRoomNumberValid = true;
                                 errorEl.classList.add("d-none");
                                 document.getElementById("add-roomNumber").classList.remove("is-invalid");
                             }
                         })
-                        .catch(error => console.error("Error:", error));
+                        .catch(error => {
+                            console.error("Error:", error);
+                            isRoomNumberValid = false;
+                        });
             }
+//            function checkDuplicateRoomNumberEdit() {
+//                const roomNumberInput = document.getElementById("edit-roomNumber");
+//                const roomNumber = roomNumberInput.value.trim();
+//                const roomId = document.getElementById("edit-roomId11").value;
+//                const errorEl = document.getElementById("editRoomNumberError");
+//
+//                if (!roomNumber) {
+//                    errorEl.textContent = "Tên phòng không được để trống.";
+//                    errorEl.classList.remove("d-none");
+//                    roomNumberInput.classList.add("is-invalid");
+//                    return;
+//                }
+//
+//                const baseUrl = `${pageContext.request.contextPath}`;
+//                fetch(baseUrl+"/roomcrud?action=checkRoomNumberEdit&roomNumber="+roomNumber++"&roomId="roomId)
+//                                .then(response => response.json())
+//                                .then(data => {
+//                                    if (data.exists) {
+//                                        errorEl.textContent = "Tên phòng đã tồn tại.";
+//                                        errorEl.classList.remove("d-none");
+//                                        roomNumberInput.classList.add("is-invalid");
+//                                    } else {
+//                                        errorEl.classList.add("d-none");
+//                                        roomNumberInput.classList.remove("is-invalid");
+//                                    }
+//                                })
+//                                .catch(error => {
+//                                    console.error("Lỗi khi kiểm tra tên phòng:", error);
+//                                });
+//                    }
+
 
             function openEditRoomModal(element) {
                 const baseUrl = '${pageContext.request.contextPath}';
@@ -809,12 +884,12 @@
                             document.getElementById('edit-roomNumber').value = room.roomNumber;
                             document.getElementById('edit-roomType').value = type.roomTypeID;
                             document.getElementById('edit-status').value = room.status;
-                            document.getElementById('edit-bedType').value = detail.bedType;
+//                            document.getElementById('edit-bedType').value = detail.bedType;
                             document.getElementById('edit-description').value = detail.description;
                             document.getElementById('edit-price').value = room.price;
                             document.getElementById('edit-area').value = detail.area;
 
-                            return fetch(baseUrl + "/roomcrud?action=getImages&roomId=" + roomId);
+                            return fetch(baseUrl + "/roomcrud?action=getImages&roomDetailId=" + data.roomdetail.roomDetailID);
                         })
                         .then(res => res.json())
                         .then(images => {
@@ -829,8 +904,8 @@
                                 const div = document.createElement('div');
                                 div.style.position = 'relative';
                                 const image = document.createElement('img');
-                                image.src =  img.imageURL;
-
+                                image.src = img.imageURL;
+                                console.log(img.imageURL);
                                 image.style.width = '100px';
                                 image.style.height = '70px';
                                 image.style.objectFit = 'cover';
@@ -859,6 +934,24 @@
                             console.error("Lỗi khi tải dữ liệu phòng:", err);
                             document.getElementById('edit-room-images').innerHTML = "<p class='text-danger'>Lỗi khi tải ảnh.</p>";
                         });
+            }
+
+
+            async function confirmRestoreSelected() {
+                const selected = document.querySelectorAll('.room-checkbox:checked');
+                if (selected.length === 0) {
+                    alert("Please select at least one room to restore.");
+                    return;
+                }
+
+                const ids = Array.from(selected).map(cb => cb.value);
+                const restoreQuery = ids.map(id => "roomIds=" + encodeURIComponent(id)).join("&");
+                console.log(restoreQuery);
+                if (!confirm(`Bạn có muốn khôi phục room(s) ?`)) {
+                    return;
+                }
+
+                window.location = "roomcrud?currentPage=" + currentPage + "&action=restoreMultiple&" + restoreQuery;
             }
 
             async function confirmDeleteSelected() {
@@ -960,5 +1053,73 @@
 
 
         </script>
+
+        <script>
+            document.addEventListener("DOMContentLoaded", () => {
+                const form = document.getElementById("addRoomForm");
+
+                form.addEventListener("submit", function (event) {
+                    if (!isRoomNumberValid) {
+                        event.preventDefault();
+                        checkRoomNumber();
+                        alert("Hãy viết tên phòng hợp lệ trước khi thêm phòng!!.");
+                    }
+                });
+            });
+        </script>
+        <script> // Chỗ này là validate add room
+            document.getElementById("addRoomForm").addEventListener("submit", function (event) {
+                let isValid = true;
+
+                const roomType = document.getElementById("roomTypeID");
+                const roomStatus = document.getElementById("roomStatus");
+
+                const roomTypeError = document.getElementById("roomTypeError");
+                const roomStatusError = document.getElementById("roomStatusError");
+
+                if (roomType.value === "-1") {
+                    roomType.classList.add("is-invalid");
+                    roomTypeError.classList.remove("d-none");
+                    isValid = false;
+                } else {
+                    roomType.classList.remove("is-invalid");
+                    roomTypeError.classList.add("d-none");
+                }
+
+                if (roomStatus.value === "-1") {
+                    roomStatus.classList.add("is-invalid");
+                    roomStatusError.classList.remove("d-none");
+                    isValid = false;
+                } else {
+                    roomStatus.classList.remove("is-invalid");
+                    roomStatusError.classList.add("d-none");
+                }
+
+                if (!isValid) {
+                    event.preventDefault();
+                }
+            });
+            document.getElementById("roomTypeID").addEventListener("change", function () {
+                const roomTypeSelect = this;
+                const errorMsg = document.getElementById("roomTypeError");
+                if (roomTypeSelect.value !== "-1") {
+                    errorMsg.classList.add("d-none");
+                    roomTypeSelect.classList.remove("is-invalid");
+                }
+            });
+
+            document.getElementById("roomStatus").addEventListener("change", function () {
+                const roomStatusSelect = this;
+                const errorMsg = document.getElementById("roomStatusError");
+                if (roomStatusSelect.value !== "-1") {
+                    errorMsg.classList.add("d-none");
+                    roomStatusSelect.classList.remove("is-invalid");
+                }
+            });
+        </script>
+
+
+
+
     </body>
 </html>

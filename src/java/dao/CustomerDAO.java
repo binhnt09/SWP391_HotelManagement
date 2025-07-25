@@ -198,7 +198,7 @@ public class CustomerDAO extends DBContext {
             if (affected > 0) {
                 ResultSet rs = ps.getGeneratedKeys();
                 if (rs.next()) {
-                    return rs.getInt(1); // userID
+                    return rs.getInt(1);
                 }
             }
         } catch (Exception e) {

@@ -19,8 +19,6 @@ import java.util.logging.Logger;
  * @author viet7
  */
 public class ServiceDAO extends DBContext {
-    // Get all active & not-deleted services
-// Search service by keyword + pagination
 
     public List<Service> searchServicesByPage(String keyword, int offset, int limit) {
         List<Service> list = new ArrayList<>();
@@ -47,7 +45,6 @@ public class ServiceDAO extends DBContext {
         return list;
     }
 
-// Get total count for search
     public int getTotalServiceSearchCount(String keyword) {
         String sql = "SELECT COUNT(*) FROM Service WHERE IsDeleted = 0 AND "
                 + "(Name LIKE ? OR Category LIKE ? OR Description LIKE ?)";
@@ -69,7 +66,6 @@ public class ServiceDAO extends DBContext {
         return 0;
     }
 
-// Insert new service
     public boolean insertService(Service s) {
         String sql = "INSERT INTO Service (Name, ImageURL, Description, Price, Category, Status, CreatedAt, UpdatedAt, IsDeleted) "
                 + "VALUES (?, ?, ?, ?, ?, ?, GETDATE(), GETDATE(), 0)";
@@ -90,7 +86,6 @@ public class ServiceDAO extends DBContext {
         return false;
     }
 
-// Update existing service
     public boolean updateService(Service s) {
         String sql = "UPDATE Service SET Name=?, ImageURL=?, Description=?, Price=?, Category=?, Status=?, "
                 + "UpdatedAt=GETDATE() WHERE ServiceID=? AND IsDeleted = 0";
@@ -112,7 +107,6 @@ public class ServiceDAO extends DBContext {
         return false;
     }
 
-// Soft delete service
     public boolean deleteService(int id, int deletedBy) {
         String sql = "UPDATE Service SET IsDeleted = 1, DeletedAt = GETDATE(), DeletedBy = ? WHERE ServiceID = ?";
 
@@ -127,7 +121,6 @@ public class ServiceDAO extends DBContext {
         return false;
     }
 
-// Get service by ID
     public Service getServiceById(int id) {
         String sql = "SELECT * FROM Service WHERE ServiceID = ? AND IsDeleted = 0";
 
@@ -145,7 +138,6 @@ public class ServiceDAO extends DBContext {
         return null;
     }
 
-// Check inuse service
     public boolean isServiceInUse(int serviceId) {
         String sql = "SELECT COUNT(*) FROM BookingService WHERE ServiceID = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
@@ -179,7 +171,6 @@ public class ServiceDAO extends DBContext {
             sql.append(" AND Status = ?");
         }
 
-        // Validate sort field
         if (sortField != null && !sortField.isEmpty()) {
             if (sortField.equals("Name") || sortField.equals("Price")) {
                 sql.append(" ORDER BY ").append(sortField);
@@ -267,7 +258,6 @@ public class ServiceDAO extends DBContext {
         return 0;
     }
 
-// Private helper method to map result
     private Service extractService(ResultSet rs) throws SQLException {
         return new Service(
                 rs.getInt("ServiceID"),

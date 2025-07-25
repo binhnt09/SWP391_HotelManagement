@@ -112,12 +112,10 @@ public class ReportDAO extends DBContext {
         sql.append("LEFT JOIN BookingService bs ON b.BookingID = bs.BookingID AND bs.IsDeleted = 0 ");
         sql.append("WHERE u.IsDeleted = 0 and (u.UserRoleID = 5 or u.UserRoleID = 6)");
 
-        // Keyword
         if (keyword != null && !keyword.trim().isEmpty()) {
             sql.append(" AND (u.FirstName LIKE ? OR u.LastName LIKE ? OR u.Email LIKE ?) ");
         }
 
-        // Tier is handled after totalSpent is calculated
         sql.append("GROUP BY u.UserID, u.FirstName, u.LastName, u.Email, u.CreatedAt ");
         sql.append("HAVING COUNT(b.BookingID) BETWEEN ? AND ? ");
         sql.append("AND ISNULL(SUM(b.TotalAmount), 0) BETWEEN ? AND ? ");
@@ -295,12 +293,10 @@ public class ReportDAO extends DBContext {
         sql.append("LEFT JOIN Booking b ON u.UserID = b.UserID ");
         sql.append("WHERE u.IsDeleted = 0 and (u.UserRoleID = 5 or u.UserRoleID = 6)");
 
-        // Keyword
         if (keyword != null && !keyword.trim().isEmpty()) {
             sql.append(" AND (u.FirstName LIKE ? OR u.LastName LIKE ? OR u.Email LIKE ?) ");
         }
 
-        // Tier is handled after totalSpent is calculated
         sql.append("GROUP BY u.UserID, u.FirstName, u.LastName, u.Email, u.CreatedAt ");
         sql.append("HAVING COUNT(b.BookingID) BETWEEN ? AND ? ");
         sql.append("AND ISNULL(SUM(b.TotalAmount), 0) BETWEEN ? AND ? ");
@@ -318,7 +314,6 @@ public class ReportDAO extends DBContext {
             sql.append(" AND MAX(b.BookingDate) <= ? ");
         }
 
-        // Sorting
         if (sort != null && !sort.isEmpty()) {
             if (sort.equals("totalSpent") || sort.equals("totalBookings") || sort.equals("registerDate")) {
                 sql.append(" ORDER BY " + (sort.equals("registerDate") ? "u.CreatedAt" : sort));
@@ -398,7 +393,7 @@ public class ReportDAO extends DBContext {
                 total = bookingAmount.add(serviceAmount);
             }
         } catch (SQLException e) {
-            e.printStackTrace(); // hoặc ghi log tùy bạn
+            e.printStackTrace(); 
         }
 
         return total;
