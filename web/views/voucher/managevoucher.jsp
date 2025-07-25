@@ -72,17 +72,6 @@
                                     </form>
                                 </div>
                             </div>
-                            <script>
-                                const searchInput = document.querySelector("input[name='searchVoucher']");
-                                let timeout;
-
-                                searchInput.addEventListener("input", function () {
-                                    clearTimeout(timeout);
-                                    timeout = setTimeout(() => {
-                                        document.getElementById("searchForm").submit();
-                                    }, 100); // Gửi sau khi dừng gõ 800ms
-                                });
-                            </script>
 
                             <!-- End XP Col -->
 
@@ -114,11 +103,21 @@
                                                     <span class="xp-user-live"></span>
                                                 </a>
                                                 <ul class="dropdown-menu small-menu">
-                                                    <li>
-                                                        <a href="#"><span class="material-icons">settings</span>Settings</a>
-                                                    </li>
-                                                    <li>
-                                                        <a href="login.jsp"><span class="material-icons">logout</span>Logout</a>
+                                                    <li class="nav-item dropdown menu-btn user-info">
+                                                        <a class="nav-link" href="#" id="userDropdown" role="button"
+                                                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                            <i class="fa fa-user"></i>
+                                                        </a>
+                                                        <div class="dropdown-menu dropdown-menu-right shadow border-0" aria-labelledby="userDropdown" style="min-width: 250px;">
+                                                            <a class="dropdown-item" href="${pageContext.request.contextPath}/updateprofile" style="color: black"><i class="fa fa-user mr-2 text-primary"></i> Chỉnh sửa hồ sơ</a>
+                                                            <a class="dropdown-item" href="${pageContext.request.contextPath}/voucher" style="color: black"><i class="fa fa-credit-card mr-2 text-primary"></i> Khuyến mãi</a>
+                                                            <div class="dropdown-divider"></div>
+                                                            <form action="logingoogle" method="post" style="display:inline;">
+                                                                <button type="submit" name="logout" value="true" class="dropdown-item">
+                                                                    <i class="fa fa-sign-out-alt mr-2"></i> Đăng xuất
+                                                                </button>
+                                                            </form>
+                                                        </div>
                                                     </li>
                                                 </ul>
                                             </li>
@@ -165,14 +164,42 @@
                                                             <a href="#" class="nav-link" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
                                                                 Asscending</a>
                                                             <ul class=" custom2-dropdown3">
-
+                                                                <li class="nav-item">
+                                                                    <a class="nav-link" href="vouchermanage?sortby=code&orderSort=asc&searchVoucher=${not empty searchVoucher ? searchVoucher : ''}">Voucher Code</a>
+                                                                </li>
+                                                                <li class="nav-item">
+                                                                    <a class="nav-link" href="vouchermanage?sortby=discountPercentage&orderSort=asc&searchVoucher=${not empty searchVoucher ? searchVoucher : ''}">Discount</a>
+                                                                </li>
+                                                                <li class="nav-item">
+                                                                    <a class="nav-link" href="vouchermanage?sortby=validFrom&orderSort=asc&searchVoucher=${not empty searchVoucher ? searchVoucher : ''}">Valid From</a>
+                                                                </li>
+                                                                <li class="nav-item">
+                                                                    <a class="nav-link" href="vouchermanage?sortby=validTo&orderSort=asc&searchVoucher=${not empty searchVoucher ? searchVoucher : ''}">Valid To</a>
+                                                                </li>
+                                                                <li class="nav-item">
+                                                                    <a class="nav-link" href="vouchermanage?sortby=createdAt&orderSort=asc&searchVoucher=${not empty searchVoucher ? searchVoucher : ''}">Create Date</a>
+                                                                </li>
                                                             </ul>
                                                         </li>
                                                         <li class="nav-item submenu dropdown custom2-dropdown2">
                                                             <a href="#" class="nav-link" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
                                                                 Decreasing</a>
                                                             <ul class=" custom2-dropdown3">
-
+                                                                <li class="nav-item">
+                                                                    <a class="nav-link" href="vouchermanage?sortby=code&orderSort=desc&searchVoucher=${not empty searchVoucher ? searchVoucher : ''}">Voucher Code</a>
+                                                                </li>
+                                                                <li class="nav-item">
+                                                                    <a class="nav-link" href="vouchermanage?sortby=discountPercentage&orderSort=desc&searchVoucher=${not empty searchVoucher ? searchVoucher : ''}">Discount</a>
+                                                                </li>
+                                                                <li class="nav-item">
+                                                                    <a class="nav-link" href="vouchermanage?sortby=validFrom&orderSort=desc&searchVoucher=${not empty searchVoucher ? searchVoucher : ''}">Valid From</a>
+                                                                </li>
+                                                                <li class="nav-item">
+                                                                    <a class="nav-link" href="vouchermanage?sortby=validTo&orderSort=desc&searchVoucher=${not empty searchVoucher ? searchVoucher : ''}">Valid To</a>
+                                                                </li>
+                                                                <li class="nav-item">
+                                                                    <a class="nav-link" href="vouchermanage?sortby=createdAt&orderSort=desc&searchVoucher=${not empty searchVoucher ? searchVoucher : ''}">Create Date</a>
+                                                                </li>
                                                             </ul>
                                                         </li>
                                                     </ul>
@@ -222,8 +249,8 @@
                                             <td>
                                                 <a href="#editVoucherModal" class="edit" data-toggle="modal" data-voucherid="${voucher.voucherId}"
                                                    onclick="openEditModal(${voucher.voucherId}, '${voucher.code}',
-                                                                   '${voucher.discountPercentage}', '${voucher.validFrom}', '${voucher.validTo}');
-                                                           return false;">
+                                                               '${voucher.discountPercentage}', '${voucher.validFrom}', '${voucher.validTo}');
+                                                       return false;">
                                                     <i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i>
                                                 </a>
                                                 <a href="#" class="delete" data-toggle="modal" data-target="#deleteVoucherModal" data-id="${voucher.voucherId}">
@@ -484,33 +511,33 @@
         <script>
             <% if (request.getSession().getAttribute("success") != null) { %>
             Swal.fire({
-                icon: "success",
-                title: "Create voucher!",
-                text: "<%= request.getSession().getAttribute("success") %>",
-                confirmButtonColor: "#3085d6",
-                confirmButtonText: "OK"
+            icon: "success",
+                    title: "Create voucher!",
+                    text: "<%= request.getSession().getAttribute("success") %>",
+                    confirmButtonColor: "#3085d6",
+                    confirmButtonText: "OK"
             <c:remove var="success" scope="session" />
             });
             <% } %>
-            
+
             <% if (request.getSession().getAttribute("errorMessageSes") != null) { %>
             Swal.fire({
-                icon: "error",
-                title: "Remove voucher!",
-                text: "<%= request.getSession().getAttribute("errorMessageSes") %>",
-                confirmButtonColor: "#3085d6",
-                confirmButtonText: "OK"
+            icon: "error",
+                    title: "Remove voucher!",
+                    text: "<%= request.getSession().getAttribute("errorMessageSes") %>",
+                    confirmButtonColor: "#3085d6",
+                    confirmButtonText: "OK"
             <c:remove var="errorMessageSes" scope="session" />
             });
             <% } %>
 
             <% if (request.getAttribute("errorMessage") != null) { %>
             Swal.fire({
-                icon: "error",
-                title: "Oops...",
-                text: "<%= request.getAttribute("errorMessage") %>",
-                confirmButtonColor: "#d33",
-                confirmButtonText: "OK"
+            icon: "error",
+                    title: "Oops...",
+                    text: "<%= request.getAttribute("errorMessage") %>",
+                    confirmButtonColor: "#d33",
+                    confirmButtonText: "OK"
             });
             <% } %>
         </script>
@@ -520,7 +547,7 @@
                     $('#sidebar').toggleClass('active');
                     $('#content').toggleClass('active');
                 });
-                $(".xp-menubar,.body-overlay").on('click', function () {
+                    $(".xp-menubar,.body-overlay").on('click', function () {
                     $('#sidebar,.body-overlay').toggleClass('show-nav');
                 });
             });

@@ -165,6 +165,7 @@ public class PaymentDao extends DBContext {
         return list;
     }
     
+    //tinh tong thanh toan user
     public BigDecimal calculateDiscountedTotal(BigDecimal baseAmount, Integer voucherId) {
         BigDecimal autoDiscount = BigDecimal.ZERO;
         BigDecimal voucherDiscount = BigDecimal.ZERO;
@@ -195,6 +196,77 @@ public class PaymentDao extends DBContext {
             }
         }
         return baseAmount.subtract(autoDiscount).subtract(voucherDiscount);
+    }
+    
+    //Đếm số lượng voucher sau khi search theo code hoặc tính tổng sl voucher
+    public int countSearchResults(String keyword) {
+        String sql = "SELECT COUNT(*) FROM Payment WHERE IsDeleted = 0";
+        boolean hasKeyword = keyword != null && !keyword.trim().isEmpty();
+        if (hasKeyword) {
+            sql += " AND (CAST(Amount AS CHAR) LIKE ? OR Method LIKE ? OR BankCode LIKE ?) ";
+        }
+        try (PreparedStatement stm = connection.prepareStatement(sql)) {
+            String searchParam = "%" + keyword + "%";
+            if (hasKeyword) {
+                stm.setString(1, searchParam);
+            }
+            ResultSet rs = stm.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1); // Trả về số lượng bản ghi tìm được
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(PaymentDao.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return -1;
+    }
+
+    public List<Payment> searchOrSortPayment(String searchPayment, String sortBy, boolean isDecreasing, int start) {
+        List<Payment> list = new ArrayList<>();
+        boolean hasKeyword = searchPayment != null && !searchPayment.trim().isEmpty();
+
+        StringBuilder sql = new StringBuilder();
+        sql.append("SELECT p.* FROM Payment p WHERE p.IsDeleted = 0 ");
+
+        if (hasKeyword) {
+            sql.append(" AND (CAST(p.Amount AS CHAR) LIKE ? OR p.Method LIKE ? OR p.BankCode LIKE ?) ");
+        }
+
+        if (sortBy != null) {
+            sql.append(" ORDER BY ");
+            switch (sortBy) {
+                case "Amount" ->
+                    sql.append("p.Amount");
+                case "BankCode" ->
+                    sql.append("p.BankCode");
+                case "CreatedAt" ->
+                    sql.append("p.CreatedAt");
+                default ->
+                    sql.append("p.").append(sortBy);
+            }
+            if (isDecreasing) {
+                sql.append(" DESC");
+            }
+        } else {
+            sql.append(" ORDER BY p.CreatedAt DESC"); // Tránh lỗi nếu `sortBy` null
+        }
+
+        sql.append(" OFFSET ? ROWS FETCH NEXT 6 ROWS ONLY");
+
+        try (PreparedStatement stm = connection.prepareStatement(sql.toString())) {
+            int paramIndex = 1;
+            if (hasKeyword) {
+                stm.setString(paramIndex++, "%" + searchPayment + "%");
+            }
+            int offset = Math.max((start - 1), 0) * 6;
+            stm.setInt(paramIndex, offset);
+            ResultSet rs = stm.executeQuery();
+            while (rs.next()) {
+                list.add(extractPayment(rs));
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(PaymentDao.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return list;
     }
 
     private Payment extractPayment(ResultSet rs) throws SQLException {
