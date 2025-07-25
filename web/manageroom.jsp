@@ -447,11 +447,11 @@
                                     </div>
                                     <div class="mb-3">
                                         <label>Price</label>
-                                        <input type="number" id="edit-price"  name="price" class="form-control">
+                                        <input type="number" id="edit-price"  name="price" min="0" class="form-control">
                                     </div>
                                     <div class="mb-3">
                                         <label>Area</label>
-                                        <input type="number" step="any" id="edit-area"  name="area" class="form-control">
+                                        <input type="number" step="any" id="edit-area" min="0"  name="area" class="form-control">
                                     </div>
                                 </div>
                             </div>
@@ -525,11 +525,11 @@
                                     </div>
                                     <div class="mb-3">
                                         <label>Price</label>
-                                        <input type="number" id="edit-price"  name="price" class="form-control" required="">
+                                        <input type="number" id="edit-price" min="0"  name="price" class="form-control" required="">
                                     </div>
                                     <div class="mb-3">
                                         <label>Area</label>
-                                        <input type="number" step="any" id="edit-area" name="area" class="form-control" required="">
+                                        <input type="number" step="any" min="0" id="edit-area" name="area" class="form-control" required="">
                                     </div>
                                     <div class="mb-3">
                                         <label>Description</label>

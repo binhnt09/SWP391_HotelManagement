@@ -69,13 +69,7 @@
             </li>
         </c:if>
         <!-- Review Management -->
-        <c:if test="${sessionScope.authLocal.user.roleName == 'Manager' || sessionScope.authLocal.user.roleName == 'Receptionist'}"> 
-            <li>
-                <a href="reviewmanager">
-                    <i class="material-icons">rate_review</i>Review
-                </a>
-            </li>
-        </c:if>
+        
 
         <!-- Receptionist page -->
         <c:if test="${sessionScope.authLocal.user.roleName == 'Manager' || sessionScope.authLocal.user.roleName == 'Receptionist'}"> 
