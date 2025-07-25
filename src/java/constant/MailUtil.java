@@ -6,6 +6,7 @@ package constant;
 
 import entity.Invoice;
 import entity.InvoiceServiceDetail;
+import java.sql.Date;
 import javax.mail.*;
 import javax.mail.internet.*;
 import java.util.Properties;
@@ -239,7 +240,7 @@ public class MailUtil {
         return sb.toString();
     }
 
-    public static void sendVoucherByEmail(String toEmail, String voucherCode) throws Exception {
+    public static void sendVoucherByEmail(String toEmail, String voucherCode, double discount, Date validFrom, Date validTo) throws Exception {
         final String fromEmail = EMAIL_CONFIG_EMAIL;
         final String password = PASS_CONFIG_EMAIL;
 
@@ -263,78 +264,55 @@ public class MailUtil {
 //        msg.setContent("Hóa đơn thanh toán - Palatin", "text/html; charset=UTF-8");
         msg.setHeader("Message-ID", "<" + UUID.randomUUID().toString() + "@palatin.vn>");
 
-        String html = buildVoucherEmailHtml(voucherCode);
+        String html = buildVoucherEmailHtml(voucherCode, discount, validFrom, validTo);
         msg.setContent(html, "text/html; charset=UTF-8");
         Transport.send(msg);
     }
 
-    private static String buildVoucherEmailHtml(String voucherCode) {
-        return String.format("""
-        <!DOCTYPE html>
-        <html lang="vi">
-        <head>
-            <meta charset="UTF-8">
-            <title>Voucher Code</title>
-            <style>
-                body {
-                    font-family: Arial, sans-serif;
-                    background-color: #f6f8fa;
-                    padding: 0;
-                    margin: 0;
-                }
-                .container {
-                    background-color: #ffffff;
-                    max-width: 600px;
-                    margin: 40px auto;
-                    padding: 30px;
-                    border-radius: 12px;
-                    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-                }
-                .header {
-                    text-align: center;
-                    padding-bottom: 20px;
-                }
-                .header img {
-                    width: 100px;
-                }
-                .code-box {
-                    background-color: #f0f4ff;
-                    color: #1a73e8;
-                    font-size: 24px;
-                    font-weight: bold;
-                    text-align: center;
-                    padding: 16px;
-                    border-radius: 8px;
-                    margin: 20px 0;
-                }
-                .footer {
-                    font-size: 13px;
-                    color: #6b7280;
-                    margin-top: 30px;
-                    text-align: center;
-                }
-            </style>
-        </head>
-        <body>
-            <div class="container">
-                <div class="header">
-                    <img src="https://companieslogo.com/img/orig/PTN-435b2aff.png?t=1720244493" alt="Palatin Logo">
-                    <h2>Chào mừng bạn đến với Palatin</h2>
-                </div>
-                <p>Xin chào,</p>
-                <p>Bạn đã nhận được một mã voucher từ Palatin:</p>
-                <div class="code-box">%s</div>
-                <p>Vui lòng sử dụng mã này để được giảm giá khi đặt phòng. Mỗi mã chỉ có hiệu lực trong <strong>1 phút</strong>.</p>
-                <p>Trân trọng,<br>Đội ngũ Palatin</p>
+    private static String buildVoucherEmailHtml(String voucherCode, double discount, Date validFrom, Date validTo) {
+        StringBuilder sb = new StringBuilder();
 
-                <div class="footer">
-                    Nếu bạn không yêu cầu nhận voucher, vui lòng bỏ qua email này.<br>
-                    &copy; 2025 Palatin. All rights reserved.
-                </div>
-            </div>
-        </body>
-        </html>
-        """, voucherCode);
+        sb.append("<html><head><style>")
+                .append("body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f2f2f2; padding: 20px; margin: 0; }")
+                .append(".container { max-width: 600px; background-color: #ffffff; padding: 30px; margin: 0 auto; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }")
+                .append(".header { text-align: center; }")
+                .append(".header h2 { color: #27ae60; margin-bottom: 10px; }")
+                .append(".voucher-box { border: 2px dashed #27ae60; padding: 20px; border-radius: 8px; margin: 20px 0; background-color: #eafaf1; }")
+                .append(".voucher-code { font-size: 24px; font-weight: bold; color: #2c3e50; letter-spacing: 2px; }")
+                .append(".details { margin-top: 15px; }")
+                .append(".details li { margin-bottom: 8px; font-size: 16px; color: #34495e; }")
+                .append(".cta { display: block; width: fit-content; background-color: #27ae60; color: white; text-decoration: none; padding: 12px 20px; border-radius: 5px; margin: 20px auto 0; text-align: center; font-weight: bold; }")
+                .append(".footer { text-align: center; margin-top: 30px; font-size: 14px; color: #7f8c8d; }")
+                .append("</style></head><body>");
+
+        sb.append("<div class='container'>")
+                .append("<div class='header'>")
+                .append("<h2>🎁 Voucher Ưu Đãi Đặc Biệt Từ Palatin Hotel</h2>")
+                .append("<p>Cảm ơn bạn đã đồng hành cùng chúng tôi!</p>")
+                .append("<p>Truy cập ngay website để nhận voucher liền tay: </p>")
+                .append("<a href='http://localhost:8080/swp391_hotelmanagement/voucher' style='color:#27ae60; text-decoration:none;'>Nhận </a></p>")
+                .append("</div>");
+
+        if (voucherCode != null) {
+            sb.append("<div class='voucher-box'>")
+                    .append("<div class='voucher-code'>").append(voucherCode).append("</div>")
+                    .append("<ul class='details'>")
+                    .append("<li>🔻 <strong>Giảm giá:</strong> ").append(discount).append("%</li>")
+                    .append("<li>📅 <strong>Hiệu lực từ:</strong> ").append(validFrom).append("</li>")
+                    .append("<li>⏳ <strong>Đến hết ngày:</strong> ").append(validTo).append("</li>")
+                    .append("</ul>")
+                    .append("</div>")
+                    .append("<a href='http://localhost:8080/swp391_hotelmanagement/searchroom' class='cta'>Đặt phòng ngay & áp dụng voucher</a>");
+        } else {
+            sb.append("<p style='color: red; text-align: center;'><strong>❌ Không có voucher nào được áp dụng.</strong></p>");
+        }
+
+        sb.append("<div class='footer'>")
+                .append("📞 Mọi thắc mắc vui lòng liên hệ: 0123-456-789 hoặc <a href='mailto:support@palatinhotel.com'>support@palatinhotel.com</a>")
+                .append("</div>");
+
+        sb.append("</div></body></html>");
+        return sb.toString();
     }
 
 }
