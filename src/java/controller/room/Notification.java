@@ -72,6 +72,7 @@ public class Notification extends HttpServlet {
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
         new Gson().toJson(notifies, response.getWriter());
+
     }
 
     /**
@@ -85,7 +86,17 @@ public class Notification extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        String action = request.getParameter("action");
+        switch (action) {
+            case "deleteNotify":
+                deleteNotify(request, response);
+                break;
+            case "isRead":
+                isRead(request, response);
+                break;
+            default:
+                throw new AssertionError();
+        }
     }
 
     /**
@@ -97,5 +108,35 @@ public class Notification extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
+
+    private void deleteNotify(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        int id = Validation.parseStringToInt(request.getParameter("id"));
+        if (id == -1) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return;
+        }
+
+        boolean success = new dao.NotificationDao().deleteNotificationById(id);
+        if (success) {
+            response.setStatus(HttpServletResponse.SC_OK);
+        } else {
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    private void isRead(HttpServletRequest request, HttpServletResponse response) {
+        int id = Validation.parseStringToInt(request.getParameter("id"));
+        if (id == -1) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return;
+        }
+        boolean success = new dao.NotificationDao().UpdateNotificationReadById(id);
+        if (success) {
+            response.setStatus(HttpServletResponse.SC_OK);
+        } else {
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        }
+    }
 
 }

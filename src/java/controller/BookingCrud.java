@@ -60,63 +60,82 @@ public class BookingCrud extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-    
     int pageIndex = 0;
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         String status = request.getParameter("status");
         String roomIdRaw = request.getParameter("roomId");
         String keyword = request.getParameter("keyword");
-        String checkinRaw = request.getParameter("checkin");
-        
-        
+        String sortBy = request.getParameter("sortBy");
+        String isAscRaw = request.getParameter("isAsc");
 
+// Parse roomId
         int roomId = validation.Validation.parseStringToInt(roomIdRaw);
-        Date checkin = validation.Validation.parseStringToSqlDate(checkinRaw, "yyyy-MM-dd");
-        
-        int pageSize = 5;
 
-        String pageParam = request.getParameter("page");
-        if (pageParam != null) {
-            pageIndex = Integer.parseInt(pageParam) - 1; // Vì page bắt đầu từ 1
+// Mặc định sắp xếp
+        if (sortBy == null || sortBy.isEmpty()) {
+            sortBy = "b.BookingID";
+        } else {
+            // Map các giá trị sortBy đơn giản sang cột SQL
+            if (sortBy.equals("price")) {
+                sortBy = "b.TotalAmount";
+            } else if (sortBy.equals("bookingDate")) {
+                sortBy = "b.BookingDate";
+            } else {
+                sortBy = "b.BookingID"; // fallback nếu không khớp
+            }
         }
 
+        boolean isAsc = true;
+        if (isAscRaw != null && isAscRaw.equalsIgnoreCase("desc")) {
+            isAsc = false;
+        }
 
-        int totalRecords = new BookingDao().countBookings(keyword, status,roomId); // bạn cần tạo hàm này
+        int pageSize = 5;
+        int pageIndex = 0;
+        String pageParam = request.getParameter("page");
+        if (pageParam != null) {
+            try {
+                pageIndex = Integer.parseInt(pageParam) - 1;
+            } catch (NumberFormatException e) {
+                pageIndex = 0;
+            }
+        }
+        int totalRecords = new BookingDao().countBookings(keyword, status, roomId);
         int totalPages = (int) Math.ceil((double) totalRecords / pageSize);
 
         List<Booking> list = new BookingDao().getBookings(
-                0, // userRoleId
-                -1, // currentUserId (nếu không lọc theo user)
-                roomId, 
+                0, 
+                -1, 
+                roomId,
                 status,
-                "b.BookingID", // sortBy
-                keyword, // sortBy
-                true, // isAsc
+                sortBy,
+                keyword,
+                isAsc,
                 pageIndex,
                 pageSize,
                 false // isDeleted
         );
-        
+
         List<Room> listRoomBooked = new ArrayList<>();
         List<Integer> listRoomId = new dao.BookingDetailDAO().getAllRoomIdByBookingDetail();
         for (Integer id : listRoomId) {
             listRoomBooked.add(new dao.RoomDAO().getRoomByRoomID(id));
-            System.out.println(id);
         }
 
-        
         request.setAttribute("status", status);
         request.setAttribute("roomId", roomIdRaw);
         request.setAttribute("keyword", keyword);
-        request.setAttribute("checkin", checkinRaw);
+        request.setAttribute("sortBy", request.getParameter("sortBy"));  // dùng raw để giữ nguyên chuỗi như "price"
+        request.setAttribute("isAsc", isAscRaw);
         request.setAttribute("listRoomBooked", listRoomBooked);
         request.setAttribute("listBooking", list);
         request.setAttribute("totalPages", totalPages);
         request.setAttribute("currentPage", pageIndex + 1);
-        request.setAttribute("keyword", keyword);
+
         request.getRequestDispatcher("bookingmanage.jsp").forward(request, response);
 
     }
@@ -135,14 +154,13 @@ public class BookingCrud extends HttpServlet {
         String bookingIdRaw = request.getParameter("bookingID");
         String status = request.getParameter("statusbooking");
         boolean check = new dao.BookingDao().updateStatus(validation.Validation.parseStringToInt(bookingIdRaw), status);
-        if(check){
-            pageIndex =0;
+        if (check) {
+            pageIndex = 0;
             doGet(request, response);
-        }else{
+        } else {
             System.out.println("asghkfyasgfsagfaushgfuo");
         }
-        
-        
+
     }
 
     /**
@@ -154,5 +172,5 @@ public class BookingCrud extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
- 
+
 }

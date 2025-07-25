@@ -401,35 +401,38 @@
                                                class="form-control"
                                                onkeypress="preventSpace(event)"
                                                onblur="checkDuplicateRoomNumberEdit()">
-                                        <input type="hidden" id="edit-roomId11" value="${room.id}">
+                                        <!--<input type="hidden" id="edit-roomId11" value="${room.id}">-->
                                         <small id="editRoomNumberError" class="text-danger d-none">Tên phòng đã tồn tại.</small>
-
                                     </div>
+
                                     <div class="mb-3">
                                         <label>Room Type</label>
                                         <select id="edit-roomType" name="roomTypeID" class="form-control">
+                                            <option value="-1" disabled>Chọn loại phòng</option>
                                             <c:forEach items="${listRoomType}" var="type">
                                                 <option value="${type.roomTypeID}">${type.typeName}</option>
                                             </c:forEach>
                                         </select>
+                                        <small id="editRoomTypeError" class="text-danger d-none">Vui lòng chọn loại phòng.</small>
                                     </div>
-                                    <!--                                    <div class="mb-3">
-                                                                            <label>Bed Type</label>
-                                                                            <input type="text" id="edit-bedType" name="bedType" class="form-control" readonly="">
-                                                                        </div>-->
-                                    <label>Status</label>
-                                    <select name="status" id="edit-status" class="form-select">
-                                        <option value="-1">Select room status</option>
-                                        <option value="Available">Available</option>
-                                        <option value="Occupied">Occupied</option>
-                                        <option value="Reserved">Reserved</option>
-                                        <option value="Cleaning">Cleaning</option>
-                                        <option value="Non-available">Non-available</option>
-                                    </select>
+
+                                    <div class="mb-3">
+                                        <label>Status</label>
+                                        <select name="status" id="edit-status" class="form-select">
+                                            <option value="-1" disabled>Chọn trạng thái phòng</option>
+                                            <option value="Available">Available</option>
+                                            <option value="Occupied">Occupied</option>
+                                            <option value="Reserved">Reserved</option>
+                                            <option value="Cleaning">Cleaning</option>
+                                            <option value="Non-available">Non-available</option>
+                                        </select>
+                                        <small id="editStatusError" class="text-danger d-none">Vui lòng chọn trạng thái hợp lệ.</small>
+                                    </div>
+
                                     <div class="mb-3">
                                         <label>Current Images:</label>
                                         <div id="edit-room-images" style="display: flex; flex-wrap: wrap; gap: 10px;">
-
+                                            <!-- ảnh hiện tại được render tại đây -->
                                         </div>
                                         <small class="text-muted">Chọn ảnh để xóa</small>
                                     </div>
@@ -438,22 +441,28 @@
                                 <!-- Cột phải -->
                                 <div class="col-md-6">
                                     <div class="mb-3">
-                                        <label for="photos">Select Img:</label>
+                                        <label for="photos">Chọn ảnh mới:</label>
                                         <input type="file" name="photos" class="form-control" multiple accept="image/*">
                                     </div>
+
                                     <div class="mb-3">
                                         <label>Description</label>
-                                        <textarea id="edit-description"  name="description" class="form-control"></textarea>
+                                        <textarea id="edit-description" name="description" class="form-control"></textarea>
                                     </div>
+
                                     <div class="mb-3">
                                         <label>Price</label>
-                                        <input type="number" id="edit-price"  name="price" class="form-control">
+                                        <input type="number" id="edit-price" name="price" class="form-control" onblur="validateEditPrice()">
+                                        <small id="editPriceError" class="text-danger d-none">Giá phải là số dương và không được để trống.</small>
                                     </div>
+
                                     <div class="mb-3">
                                         <label>Area</label>
-                                        <input type="number" step="any" id="edit-area"  name="area" class="form-control">
+                                        <input type="number" id="edit-area" name="area" class="form-control" onblur="validateEditArea()">
+                                        <small id="editAreaError" class="text-danger d-none">Diện tích phải là số dương và không được để trống.</small>
                                     </div>
                                 </div>
+
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -495,7 +504,7 @@
                                     <div class="mb-3">
                                         <label>Room Type</label>
                                         <select name="roomTypeID" id="roomTypeID" class="form-select">
-                                            <option value="-1" >Select room type</option>
+                                            <option value="-1"  >Select room type</option>
                                             <c:forEach items="${listRoomType}" var="tmp">
                                                 <option value="${tmp.roomTypeID}">${tmp.typeName}</option>
                                             </c:forEach>
@@ -506,7 +515,7 @@
                                     <div class="mb-3">
                                         <label>Status</label>
                                         <select name="status" id="roomStatus" class="form-select">
-                                            <option value="-1">Select room status</option>
+                                            <option value="-1" >Select room status</option>
                                             <option value="Available">Available</option>
                                             <option value="Occupied">Occupied</option>
                                             <option value="Reserved">Reserved</option>
@@ -525,11 +534,14 @@
                                     </div>
                                     <div class="mb-3">
                                         <label>Price</label>
-                                        <input type="number" id="edit-price"  name="price" class="form-control" required="">
+                                        <input type="number" id="add-price" name="price" class="form-control" onblur="validateAddPrice()">
+                                        <small id="addPriceError" class="text-danger d-none"></small>
                                     </div>
+
                                     <div class="mb-3">
                                         <label>Area</label>
-                                        <input type="number" step="any" id="edit-area" name="area" class="form-control" required="">
+                                        <input type="number"  id="add-area" name="area" class="form-control"  onblur="validateAddArea()">
+                                        <small id="addAreaError" class="text-danger d-none"></small>
                                     </div>
                                     <div class="mb-3">
                                         <label>Description</label>
@@ -774,7 +786,6 @@
             function doDelete(id, name) {
                 if (!confirm("Are you sure to delete roomName: " + name))
                     return;
-                console.log(id + name);
                 fetch("roomcrud?action=delete&roomId=" + id)
                         .then(res => res.json())
                         .then(data => {
@@ -793,45 +804,13 @@
                         });
             }
 
-            let isRoomNumberValid = false;
             function preventSpace(event) {
                 if (event.key === " ") {
                     event.preventDefault();
                 }
             }
-            function checkRoomNumber() {
-                const roomNumberInput = document.getElementById("add-roomNumber");
-                const roomNumber = document.getElementById("add-roomNumber").value.trim();
-                const errorEl = document.getElementById("roomNumberError");
 
-                if (!roomNumber) {
-                    isRoomNumberValid = false;
-                    errorEl.textContent = "Tên phòng không được trống.";
-                    errorEl.classList.remove("d-none");
-                    roomNumberInput.classList.add("is-invalid");
-                    return;
-                }
-                const baseUrl = '${pageContext.request.contextPath}';
-                fetch(baseUrl + "/roomcrud?action=checkRoomNumber&roomNumber=" + roomNumber)
-                        .then(response => response.json())
-                        .then(data => {
-                            console.log(data.exists);
-                            if (data.exists) {
-                                isRoomNumberValid = false;
-                                errorEl.classList.remove("d-none");
-                                errorEl.textContent = "Tên phòng đã tồn tại.";
-                                document.getElementById("add-roomNumber").classList.add("is-invalid");
-                            } else {
-                                isRoomNumberValid = true;
-                                errorEl.classList.add("d-none");
-                                document.getElementById("add-roomNumber").classList.remove("is-invalid");
-                            }
-                        })
-                        .catch(error => {
-                            console.error("Error:", error);
-                            isRoomNumberValid = false;
-                        });
-            }
+
 //            function checkDuplicateRoomNumberEdit() {
 //                const roomNumberInput = document.getElementById("edit-roomNumber");
 //                const roomNumber = roomNumberInput.value.trim();
@@ -864,9 +843,11 @@
 //                    }
 
 
+            let tmpEditId = null;
             function openEditRoomModal(element) {
                 const baseUrl = '${pageContext.request.contextPath}';
                 const roomId = element.dataset.roomid;
+                tmpEditId = roomId;
                 fetch(baseUrl + "/showroomdetail?roomId=" + roomId)
                         .then(res => res.json())
                         .then(data => {
@@ -877,7 +858,6 @@
                             console.log(room);
                             console.log(detail);
                             console.log(type);
-
 
                             document.getElementById('edit-roomID').value = room.roomID;
                             document.getElementById('edit-roomDetail').value = detail.roomDetailID;
@@ -1056,66 +1036,290 @@
 
         <script>
             document.addEventListener("DOMContentLoaded", () => {
-                const form = document.getElementById("addRoomForm");
+                const addForm = document.getElementById("addRoomForm");
+                const editForm = document.getElementById("editRoomForm");
 
-                form.addEventListener("submit", function (event) {
-                    if (!isRoomNumberValid) {
-                        event.preventDefault();
-                        checkRoomNumber();
-                        alert("Hãy viết tên phòng hợp lệ trước khi thêm phòng!!.");
+                addForm.addEventListener("submit", async function (event) {
+                    event.preventDefault();
+
+                    const isRoomNumberValid = await checkRoomNumber();
+                    const isPriceValid = validateAddPrice();
+                    const isAreaValid = validateAddArea();
+                    const isRoomTypeValid = validateRoomType();
+                    const isRoomStatusValid = validateRoomStatus();
+
+                    if (!isRoomNumberValid || !isPriceValid || !isAreaValid || !isRoomTypeValid || !isRoomStatusValid) {
+                        alert("Nhập sai dữ liệu. Vui lòng kiểm tra lại!!");
+                        return;
+                    }
+                    addForm.submit();
+                });
+                document.getElementById("roomTypeID").addEventListener("change", function () {
+                    const roomTypeSelect = this;
+                    const errorMsg = document.getElementById("roomTypeError");
+                    if (roomTypeSelect.value !== "-1") {
+                        errorMsg.classList.add("d-none");
+                        roomTypeSelect.classList.remove("is-invalid");
                     }
                 });
+
+                document.getElementById("roomStatus").addEventListener("change", function () {
+                    const roomStatusSelect = this;
+                    const errorMsg = document.getElementById("roomStatusError");
+                    if (roomStatusSelect.value !== "-1") {
+                        errorMsg.classList.add("d-none");
+                        roomStatusSelect.classList.remove("is-invalid");
+                    }
+                });
+                editForm.addEventListener("submit", function (event) {
+                    event.preventDefault();
+
+//                    const isRoomNumberValid = await checkRoomNumber();
+                    const isPriceValid = validateEditPrice();
+                    const isAreaValid = validateEditArea();
+                    const isStatusValid = validateEditStatus();
+                    const isTypeValid = validateEditRoomType();
+                    const isDuplicateRoomNumberEdit = checkDuplicateRoomNumberEdit();
+
+                    if (!isDuplicateRoomNumberEdit || !isPriceValid || !isAreaValid || !isStatusValid || !isTypeValid) {
+                        alert("Nhập sai dữ liệu. Vui lòng kiểm tra lại!!");
+                        return;
+                    }
+                    editForm.submit();
+                });
+
+                document.getElementById("edit-roomType").addEventListener("change", function () {
+                    const roomTypeSelect = this;
+                    const errorMsg = document.getElementById("editRoomTypeError");
+                    if (roomTypeSelect.value !== "-1") {
+                        errorMsg.classList.add("d-none");
+                        roomTypeSelect.classList.remove("is-invalid");
+                    }
+                });
+
+                document.getElementById("edit-status").addEventListener("change", function () {
+                    const roomStatusSelect = this;
+                    const errorMsg = document.getElementById("editStatusError");
+                    if (roomStatusSelect.value !== "-1") {
+                        errorMsg.classList.add("d-none");
+                        roomStatusSelect.classList.remove("is-invalid");
+                    }
+                });
+
             });
-        </script>
-        <script> // Chỗ này là validate add room
-            document.getElementById("addRoomForm").addEventListener("submit", function (event) {
-                let isValid = true;
 
+            async function checkRoomNumber() {
+                const roomNumberInput = document.getElementById("add-roomNumber");
+                const roomNumber = roomNumberInput.value.trim();
+                const errorEl = document.getElementById("roomNumberError");
+                const regex = /^[a-zA-Z0-9]+$/;
+
+                errorEl.classList.add("d-none");
+                roomNumberInput.classList.remove("is-invalid");
+
+                if (!roomNumber) {
+                    errorEl.textContent = "Tên phòng không được trống.";
+                    errorEl.classList.remove("d-none");
+                    roomNumberInput.classList.add("is-invalid");
+                    return false;
+                }
+
+                if (!regex.test(roomNumber)) {
+                    errorEl.textContent = "Tên phòng chỉ được chứa chữ cái và số.";
+                    errorEl.classList.remove("d-none");
+                    roomNumberInput.classList.add("is-invalid");
+                    return false;
+                }
+
+                const baseUrl = '${pageContext.request.contextPath}';
+                try {
+                    const response = await fetch(baseUrl + "/roomcrud?action=checkRoomNumber&roomNumber=" + encodeURIComponent(roomNumber));
+                    const data = await response.json();
+                    if (data.exists) {
+                        errorEl.textContent = "Tên phòng đã tồn tại!";
+                        errorEl.classList.remove("d-none");
+                        roomNumberInput.classList.add("is-invalid");
+                        return false;
+                    }
+                } catch (error) {
+                    console.error("Error:", error);
+                    return false;
+                }
+
+                return true;
+            }
+
+            async function checkDuplicateRoomNumberEdit() {
+                const roomNumberInput = document.getElementById("edit-roomNumber");
+                const roomNumber = roomNumberInput.value.trim();
+                const errorEl = document.getElementById("editRoomNumberError");
+                const regex = /^[a-zA-Z0-9]+$/;
+
+                errorEl.classList.add("d-none");
+                roomNumberInput.classList.remove("is-invalid");
+
+                if (!roomNumber) {
+                    errorEl.textContent = "Tên phòng không được để trống.";
+                    errorEl.classList.remove("d-none");
+                    roomNumberInput.classList.add("is-invalid");
+                    return false;
+                }
+
+                if (!regex.test(roomNumber)) {
+                    errorEl.textContent = "Tên phòng chỉ được chứa chữ cái và số.";
+                    errorEl.classList.remove("d-none");
+                    roomNumberInput.classList.add("is-invalid");
+                    return false;
+                }
+
+                const baseUrl = '${pageContext.request.contextPath}';
+                try {
+                    const response = await fetch(baseUrl + "/roomcrud?action=checkRoomNumberEdit&roomNumber=" + roomNumber +"&roomId="+tmpEditId);
+                    const data = await response.json();
+
+                    if (data.exists) {
+                        errorEl.textContent = "Tên phòng đã tồn tại!";
+                        errorEl.classList.remove("d-none");
+                        roomNumberInput.classList.add("is-invalid");
+                        return false;
+                    }
+                } catch (error) {
+                    console.error("Error:", error);
+                    return false;
+                }
+
+                return true;
+            }
+
+
+            function validateAddPrice() {
+                const priceInput = document.getElementById("add-price");
+                const priceError = document.getElementById("addPriceError");
+                const price = parseFloat(priceInput.value.trim());
+
+                priceError.classList.add("d-none");
+                priceInput.classList.remove("is-invalid");
+
+                if (isNaN(price) || price <= 0) {
+                    priceError.textContent = "Giá phòng cần phải lớn hơn 0!!";
+                    priceError.classList.remove("d-none");
+                    priceInput.classList.add("is-invalid");
+                    return false;
+                }
+                return true;
+            }
+
+            function validateAddArea() {
+                const areaInput = document.getElementById("add-area");
+                const areaError = document.getElementById("addAreaError");
+                const area = parseFloat(areaInput.value.trim());
+
+                areaError.classList.add("d-none");
+                areaInput.classList.remove("is-invalid");
+
+                if (isNaN(area) || area <= 0) {
+                    areaError.textContent = "Diện tích lớn hơn 0!!!";
+                    areaError.classList.remove("d-none");
+                    areaInput.classList.add("is-invalid");
+                    return false;
+                }
+
+                return true;
+            }
+
+            function validateRoomType() {
                 const roomType = document.getElementById("roomTypeID");
-                const roomStatus = document.getElementById("roomStatus");
-
                 const roomTypeError = document.getElementById("roomTypeError");
-                const roomStatusError = document.getElementById("roomStatusError");
 
                 if (roomType.value === "-1") {
                     roomType.classList.add("is-invalid");
                     roomTypeError.classList.remove("d-none");
-                    isValid = false;
-                } else {
-                    roomType.classList.remove("is-invalid");
-                    roomTypeError.classList.add("d-none");
+                    return false;
                 }
+
+                roomType.classList.remove("is-invalid");
+                roomTypeError.classList.add("d-none");
+                return true;
+            }
+
+            function validateRoomStatus() {
+                const roomStatus = document.getElementById("roomStatus");
+                const roomStatusError = document.getElementById("roomStatusError");
 
                 if (roomStatus.value === "-1") {
                     roomStatus.classList.add("is-invalid");
                     roomStatusError.classList.remove("d-none");
-                    isValid = false;
-                } else {
-                    roomStatus.classList.remove("is-invalid");
-                    roomStatusError.classList.add("d-none");
+                    return false;
                 }
 
-                if (!isValid) {
-                    event.preventDefault();
-                }
-            });
-            document.getElementById("roomTypeID").addEventListener("change", function () {
-                const roomTypeSelect = this;
-                const errorMsg = document.getElementById("roomTypeError");
-                if (roomTypeSelect.value !== "-1") {
-                    errorMsg.classList.add("d-none");
-                    roomTypeSelect.classList.remove("is-invalid");
-                }
-            });
+                roomStatus.classList.remove("is-invalid");
+                roomStatusError.classList.add("d-none");
+                return true;
+            }
 
-            document.getElementById("roomStatus").addEventListener("change", function () {
-                const roomStatusSelect = this;
-                const errorMsg = document.getElementById("roomStatusError");
-                if (roomStatusSelect.value !== "-1") {
-                    errorMsg.classList.add("d-none");
-                    roomStatusSelect.classList.remove("is-invalid");
+            function validateEditStatus() {
+                const status = document.getElementById("edit-status");
+                const error = document.getElementById("editStatusError");
+
+                if (status.value === "-1") {
+                    error.classList.remove("d-none");
+                    status.classList.add("is-invalid");
+                    return false;
                 }
-            });
+
+                error.classList.add("d-none");
+                status.classList.remove("is-invalid");
+                return true;
+            }
+
+            function validateEditPrice() {
+                const priceInput = document.getElementById("edit-price");
+                const error = document.getElementById("editPriceError");
+                const value = priceInput.value.trim();
+
+                if (value === "" || isNaN(value) || parseFloat(value) <= 0) {
+                    error.classList.remove("d-none");
+                    priceInput.classList.add("is-invalid");
+                    return false;
+                }
+
+                error.classList.add("d-none");
+                priceInput.classList.remove("is-invalid");
+                return true;
+            }
+
+            function validateEditArea() {
+                const areaInput = document.getElementById("edit-area");
+                const error = document.getElementById("editAreaError");
+                const value = areaInput.value.trim();
+
+                if (value === "" || isNaN(value) || parseFloat(value) <= 0) {
+                    error.classList.remove("d-none");
+                    areaInput.classList.add("is-invalid");
+                    return false;
+                }
+
+                error.classList.add("d-none");
+                areaInput.classList.remove("is-invalid");
+                return true;
+            }
+
+
+
+            function validateEditRoomType() {
+                const type = document.getElementById("edit-roomType");
+                const error = document.getElementById("editRoomTypeError");
+
+                if (type.value === "-1") {
+                    error.classList.remove("d-none");
+                    type.classList.add("is-invalid");
+                    return false;
+                }
+
+                error.classList.add("d-none");
+                type.classList.remove("is-invalid");
+                return true;
+            }
         </script>
 
 

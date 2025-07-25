@@ -80,7 +80,7 @@
                                 </li>
                                 <li class="nav-item dropdown">
                                     <a class="nav-link" href="#" data-toggle="dropdown">
-                                        <img src="img/user.jpg" style="width:40px; border-radius:50%;"/>
+                                        <img src="" style="width:40px; border-radius:50%;"/>
                                         <span class="xp-user-live"></span>
                                     </a>
                                     <ul class="dropdown-menu small-menu">
@@ -141,17 +141,23 @@
                         <div class="col-md-9 ms-auto">
                             <div class="row g-2">
 
-                                <!-- Trạng thái -->
                                 <div class="col-md-3">
-                                    <label class="form-label">Trạng thái:</label>
-                                    <select class="form-select" id="statusFilter" onchange="applyFilters()">
-                                        <option value="">Tất cả trạng thái</option>
-                                        <option value="Pending" >Pending</option>
-                                        <option value="Checkin">Check-In</option>
-                                        <option value="Occupied">Occupied</option>
-                                        <option value="CheckedOut">Checked-Out</option>
+                                    <label class="form-label">Chọn để sắp xếp:</label>
+                                    <select class="form-select" id="sortByFilter" onchange="applyFilters()">
+                                        <option value="" disabled="">-- Chọn tiêu chí --</option>
+                                        <option value="price" ${sortBy == 'b.TotalAmount' ? 'selected' : ''}>Giá phòng</option>
+                                        <option value="status" ${sortBy == 'b.BookingDate' ? 'selected' : ''}>Booking date</option>
                                     </select>
                                 </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Tăng giảm dần:</label>
+                                    <select class="form-select" id="sortOrderFilter" onchange="applyFilters()">
+                                        <option value="" disabled="">-- Chọn tiêu chí --</option>
+                                        <option value="asc" ${isAsc == 'asc' ? 'selected' : ''}>Tăng dần</option>
+                                        <option value="desc" ${isAsc == 'desc' ? 'selected' : ''}>Giảm dần</option>
+                                    </select>
+                                </div>
+
 
                                 <!-- Phòng -->
                                 <div class="col-md-2">
@@ -170,11 +176,11 @@
                                     <input type="text" value="${keyword}" class="form-control" id="keywordFilter" oninput="applyFilters()" placeholder="Tìm theo tên khách">
                                 </div>
 
-                                <!-- Ngày check-in -->
-                                <div class="col-md-3">
-                                    <label class="form-label">Ngày Check-In:</label>
-                                    <input type="date" class="form-control" id="checkinFilter" onchange="applyFilters()">
-                                </div>
+                                <!--                                 Ngày check-in 
+                                                                <div class="col-md-3">
+                                                                    <label class="form-label">Ngày Check-In:</label>
+                                                                    <input type="date" class="form-control" id="checkinFilter" onchange="applyFilters()">
+                                                                </div>-->
 
                             </div>
                         </div>
@@ -182,17 +188,17 @@
                     </div>
                     <script>
                         function applyFilters() {
-                            const status = document.getElementById("statusFilter").value;
-                            const roomId = document.getElementById("roomFilter").value;
-                            const keyword = document.getElementById("keywordFilter").value;
-                            const checkin = document.getElementById("checkinFilter").value;
+                            const roomId = document.getElementById("roomFilter")?.value || "";
+                            const keyword = document.getElementById("keywordFilter")?.value || "";
+                            const sortBy = document.getElementById("sortByFilter")?.value || "";
+                            const sort = document.getElementById("sortOrderFilter")?.value || "";
 
-                            const query = "status=" + encodeURIComponent(status) +
-                                    "&roomId=" + encodeURIComponent(roomId) +
+
+                            const query = "&roomId=" + encodeURIComponent(roomId) +
                                     "&keyword=" + encodeURIComponent(keyword) +
-                                    "&checkin=" + encodeURIComponent(checkin);
-
-                            // Chuyển hướng tới URL có chứa tham số
+                                    "&sortBy=" + encodeURIComponent(sortBy) +
+                                    "&isAsc=" + encodeURIComponent(sort);
+                            console.log(query);
                             window.location.href = "bookingcrud?" + query;
 
                         }
@@ -213,7 +219,6 @@
                                 <th>Check-in</th>
                                 <th>Check-out</th>
                                 <th>Total amount</th>
-                                <th>Action</th>
                                 <th colspan="2">Status</th>
                             </tr>
                         </thead>
@@ -243,15 +248,6 @@
                                             <td>${b.checkOutDate}</td>
                                             <td>${b.totalAmount}</td>
 
-                                            <td>
-                                                <a href="#" class="edit" title="Edit"
-                                                   data-bs-toggle="modal" 
-                                                   data-bs-target="#editbooking"
-                                                   onclick="loadEditRoom('${b.bookingId})">
-                                                    <i class="material-icons">&#xE254;</i>
-                                                </a>
-                                                <a href="booking?id=${b.bookingId}" class="delete" title="Delete" onclick="return confirm('Xác nhận xóa phòng này?');"><i class="material-icons">&#xE872;</i></a>
-                                            </td>
                                             <td>
                                                 <c:choose>
                                                     <c:when test="${fn:toLowerCase(b.status) == 'pending'}">
