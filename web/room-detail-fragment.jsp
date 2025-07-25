@@ -82,6 +82,12 @@
                         <button class="btn btn-secondary" onclick="confirmSetMaintenance(${room.roomID})">
                             <i class="fas fa-edit me-1"></i> Sửa phòng
                         </button>
+                        <form action="changeRoomStatus" method="post">
+                            <input type="hidden" name="roomId" value="${room.roomID}" />
+                            <button type="submit" class="btn btn-secondary">
+                                <i class="fas fa-edit me-1"></i> Chuyển sang Đặt Trước
+                            </button>
+                        </form>
                     </c:when>
 
                     <c:when test="${room.status eq 'Occupied'}">

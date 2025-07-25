@@ -296,7 +296,7 @@
                                 </div>
                                 <div class="form-group">
                                     <label>Phone</label>
-                                    <input type="text" class="form-control" name="phone" required>
+                                    <input type="text" class="form-control" name="phone" pattern="^\d{9,11}$" title="Vui lòng nhập số điện thoại từ 9 đến 11 chữ số, chỉ nhận chữ số." required>
                                 </div>
                                 <input type="hidden" name="action" value="add">
                             </div>
@@ -345,7 +345,7 @@
                                 </div>
                                 <div class="form-group">
                                     <label>Phone</label>
-                                    <input type="text" class="form-control" id="editPhone" name="phone" required>
+                                    <input type="text" class="form-control" id="editPhone" name="phone" pattern="^\d{9,11}$" title="Vui lòng nhập số điện thoại từ 9 đến 11 chữ số, chỉ nhận chữ số." required>
                                 </div>
                                 <input type="hidden" id="editUserId" name="userId">
                                 <input type="hidden" name="action" value="update">

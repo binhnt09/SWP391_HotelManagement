@@ -564,16 +564,16 @@
                     </div>
 
                     <!-- Chat Widget -->
-                    <div class="chat-widget" onclick="openChat()">
+<!--                    <div class="chat-widget" onclick="openChat()">
                         <i class="fas fa-comments"></i>
                         Chat
                     </div>
 
-                    <!-- Support Widget -->
+                     Support Widget 
                     <div class="skyhotel-support">
                         <i class="fas fa-headset"></i>
                         Hỗ trợ Skyhotel
-                    </div>
+                    </div>-->
 
                     <!-- Room Details Modal -->
                     <div class="modal fade" id="roomModal" tabindex="-1" role="dialog" aria-labelledby="roomModalLabel" aria-hidden="true">
