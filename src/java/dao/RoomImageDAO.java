@@ -40,6 +40,10 @@ public class RoomImageDAO extends DBContext {
         }
         return list;
     }
+    
+    public static void main(String[] args) {
+        System.out.println(new dao.RoomImageDAO().getListRoomImgByDetailID(73).size());
+    }
     public RoomImage getImgByImgId(int id){
         RoomImage  img = null;
         String sql = "select * from RoomImage where imageid = ?";
