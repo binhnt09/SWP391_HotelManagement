@@ -71,6 +71,28 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 });
 
+
+//search
+const searchInput = document.querySelector("input[name='searchVoucher']");
+let timeout;
+searchInput.addEventListener("input", function () {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => {
+        document.getElementById("searchForm").submit();
+    }, 100); // Gửi sau khi dừng gõ 100ms
+});
+
+//search payment
+const searchInput1 = document.querySelector("input[name='searchPayment']");
+let timeout1;
+searchInput1.addEventListener("input", function () {
+    clearTimeout(timeout);
+    timeout1 = setTimeout(() => {
+        document.getElementById("searchFormPayment").submit();
+    }, 100); // Gửi sau khi dừng gõ 100ms
+});
+
+
 //constant valid date from and to
 const fromInputs = document.querySelectorAll(".validfrom");
 const toInputs = document.querySelectorAll(".validto");

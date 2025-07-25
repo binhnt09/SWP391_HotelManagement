@@ -809,18 +809,74 @@ footer{
     }
 }
 
+/* Nút Sort chính */
+.custom1-dropdown1 {
+    background-color: #21a117;
+    color: white !important;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
 
+.custom1-dropdown1:hover {
+    background-color: #1e7e34;
+    text-decoration: none;
+    color: white !important;
+}
 
+/* Dropdown cấp 1: Ascending / Descending */
+.custom2-dropdown1 {
+    background: #fff;
+    border-radius: 6px;
+    min-width: 180px;
+    padding: 10px 0;
+    box-shadow: 0px 6px 20px rgba(0, 0, 0, 0.1);
+}
 
+.custom2-dropdown1 .nav-item a {
+    color: #333;
+    font-weight: 500;
+    padding: 8px 20px;
+    display: block;
+    transition: background-color 0.2s, color 0.2s;
+}
 
+.custom2-dropdown1 .nav-item a:hover {
+    background-color: #f1f1f1;
+    color: #007bff;
+    border-radius: 4px;
+    text-decoration: none;
+}
 
+/* Dropdown cấp 2: Mục sắp xếp cụ thể */
+.custom2-dropdown2 {
+    position: relative;
+}
 
+.custom2-dropdown3 {
+    display: none;
+    position: absolute;
+    left: 90%;
+    top: 0;
+    background-color: #fff;
+    min-width: 180px;
+    padding: 10px 0;
+    border-radius: 6px;
+    box-shadow: 0px 6px 20px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+}
 
+.custom2-dropdown2:hover .custom2-dropdown3 {
+    display: block;
+}
 
-
-
-
-
-
+/* Mũi tên chỉ xuống (icon material) */
+.material-icons {
+    margin-left: 5px;
+    font-size: 20px;
+}
 
 

@@ -73,14 +73,13 @@ public class BookingRoom extends HttpServlet {
 
         request.getSession().setAttribute("room", room);
         request.getSession().setAttribute("roomIdBooking", roomId);
-//        request.getSession().setAttribute("checkin", checkin_raw);
-//        request.getSession().setAttribute("checkout", checkout_raw);
         request.getSession().setAttribute("checkin", checkin);
         request.getSession().setAttribute("checkout", checkout);
         request.getSession().setAttribute("numberNight", diffDays);
         request.setAttribute("nowTocheckin", nowTocheckinDays);
         request.getSession().setAttribute("totalPrice", totalPrice);
-
+        request.setAttribute("starRoom", new dao.RoomReviewDAO().getAverageRatingByRoomId(roomId));
+        request.setAttribute("numberPeopleVote", new dao.RoomReviewDAO().countNumberPeopleRateStar(roomId));
         request.getRequestDispatcher("booking.jsp").forward(request, response);
     }
 
@@ -128,17 +127,12 @@ public class BookingRoom extends HttpServlet {
     }
 
     private void updateTotalPrice(HttpServletRequest request, HttpServletResponse response) {
-//        String totalStr = request.getParameter("newTotal");
-//        double newTotal = Validation.parseStringToDouble(totalStr);
-//        request.getSession().setAttribute("totalPrice", newTotal);
+
         String totalStr = request.getParameter("newTotal");
-        System.out.println("👉 [LOG] Tham số newTotal nhận được từ request: " + totalStr);
 
         double newTotal = Validation.parseStringToDouble(totalStr);
-        System.out.println("👉 [LOG] Sau khi parse thành double: " + newTotal);
 
         request.getSession().setAttribute("totalPrice", newTotal);
-        System.out.println("✅ [LOG] Session đã lưu totalPrice: " + request.getSession().getAttribute("totalPrice"));
 
     }
 }

@@ -26,11 +26,6 @@ public class Room {
     private Timestamp deletedAt;
     private int deletedBy;
     private boolean isDeleted;
-
-    
-
-    
-
     public Room() {
     }
 

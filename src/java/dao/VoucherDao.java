@@ -252,7 +252,7 @@ public class VoucherDao extends DBContext {
         String sql = "SELECT COUNT(*) FROM Voucher WHERE IsDeleted = 0";
         boolean hasKeyword = keyword != null && !keyword.trim().isEmpty();
         if (hasKeyword) {
-            sql += " WHERE Code LIKE ? ";
+            sql += " AND Code LIKE ? ";
         }
         try (PreparedStatement stm = connection.prepareStatement(sql)) {
             String searchParam = "%" + keyword + "%";
@@ -269,6 +269,7 @@ public class VoucherDao extends DBContext {
         return -1;
     }
 
+    //seach and sort
     public List<Voucher> searchOrSortVoucher(String searchVoucher, String sortBy, boolean isDecreasing, int start) {
         List<Voucher> list = new ArrayList<>();
         boolean hasKeyword = searchVoucher != null && !searchVoucher.trim().isEmpty();
@@ -284,8 +285,14 @@ public class VoucherDao extends DBContext {
         if (sortBy != null) {
             sql.append(" ORDER BY ");
             switch (sortBy) {
+                case "Code" ->
+                    sql.append("Code");
                 case "DiscountPercentage" ->
                     sql.append("DiscountPercentage");
+                case "validFrom" ->
+                    sql.append("validFrom");
+                case "validTo" ->
+                    sql.append("validTo");
                 case "CreatedAt" ->
                     sql.append("CreatedAt");
                 default ->

@@ -89,30 +89,11 @@
                                 <form action="searchroom">
                                     <div class="booking-frame">
                                         <div class="row">
-                                        <%
-                                            String checkin = request.getParameter("checkin");
-                                            if (checkin == null || checkin.trim().isEmpty()) {
-                                                Calendar calendar = Calendar.getInstance();
-                                                calendar.add(Calendar.DAY_OF_YEAR, 1); // ngày mai
-                                                Date tomorrow = calendar.getTime();
-                                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                                                checkin = sdf.format(tomorrow);
-                                            }
-                                            String checkout = request.getParameter("checkout");
-                                            if (checkout == null || checkout.trim().isEmpty()) {
-                                                Calendar calendar = Calendar.getInstance();
-                                                calendar.add(Calendar.DAY_OF_YEAR, 2); // ngày kia
-                                                Date afterTomorrow = calendar.getTime();
-                                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                                                checkout = sdf.format(afterTomorrow);
-                                            }
-                                            request.setAttribute("checkin", checkin);
-                                            request.setAttribute("checkout", checkout);
-                                        %>
 
-                                        <div class="col-4 col-lg-4">
-                                            <label style="font-weight: 600;">Nhập check-in:</label>
-                                            <input type="date" id="checkInDate" value="${checkin}" name="checkin" required=""  placeholder="Chọn ngày đến" class="form-control time-input" />
+
+                                            <div class="col-4 col-lg-4">
+                                                <label style="font-weight: 600;">Nhập check-in:</label>
+                                                <input type="date" id="checkInDate" value="${checkin}" name="checkin" required=""  placeholder="Chọn ngày đến" class="form-control time-input" />
 
                                         </div>
                                         <div class="col-4 col-lg-4">
@@ -424,7 +405,6 @@
             });
 
             document.addEventListener("DOMContentLoaded", function () {
-                // --- RÀNG BUỘC GIÁ ---
                 const priceFrom = document.getElementById("priceFrom");
                 const priceTo = document.getElementById("priceTo");
 
@@ -451,6 +431,7 @@
                 const checkInInput = document.getElementById('checkInDate');
                 const checkOutInput = document.getElementById('checkOutDate');
 
+                // Cấu hình ngày tối thiểu và tối đa cho ngày check-in
                 const today = new Date();
                 const todayStr = today.toISOString().split('T')[0];
                 checkInInput.min = todayStr;
@@ -459,53 +440,69 @@
                 maxCheckIn.setMonth(maxCheckIn.getMonth() + 6);
                 checkInInput.max = maxCheckIn.toISOString().split('T')[0];
 
+                // Hàm hỗ trợ cộng thêm ngày
                 function getNextDay(dateStr, offset = 1) {
                     const date = new Date(dateStr);
                     date.setDate(date.getDate() + offset);
                     return date.toISOString().split('T')[0];
                 }
 
+                // Hàm kiểm tra hợp lệ ngày
                 function validateDateRange() {
-                    const today = new Date();
-                    const checkInDate = new Date(checkInInput.value);
-                    const checkOutDate = new Date(checkOutInput.value);
+                    const checkInValue = checkInInput.value;
+                    const checkOutValue = checkOutInput.value;
 
-                    // 1. Ràng buộc check-in không quá 6 tháng kể từ hôm nay
+                    // Nếu chưa nhập ngày check-in thì không cần kiểm tra gì cả
+                    if (!checkInValue)
+                        return;
+
+                    const checkInDate = new Date(checkInValue);
+                    const checkOutDate = checkOutValue ? new Date(checkOutValue) : null;
+
+                    // Giới hạn ngày check-in
                     const maxCheckIn = new Date(today);
                     maxCheckIn.setMonth(maxCheckIn.getMonth() + 6);
 
                     if (checkInDate > maxCheckIn) {
-                        alert("Ngày check-in không được quá 6 tháng kể từ hôm nay.");
+                        alert("Bạn không thể đặt phòng cách ngày hôm nay hơn 6 tháng!");
                         checkInInput.value = maxCheckIn.toISOString().split('T')[0];
                         return;
                     }
 
-                    if (checkInInput.value) {
-                        const minCheckOut = getNextDay(checkInInput.value, 1);
-                        const maxCheckOut = new Date(checkInDate);
-                        maxCheckOut.setMonth(maxCheckOut.getMonth() + 1); // Tối đa 1 tháng
+                    if (checkInDate < today) {
+                        alert("Ngày nhận phòng không thể trước hôm nay!");
+                        checkInInput.value = getNextDay(todayStr);
+                        return;
+                    }
 
-                        checkOutInput.min = minCheckOut;
-                        checkOutInput.max = maxCheckOut.toISOString().split('T')[0];
+                    const minCheckOut = getNextDay(checkInValue, 1);
+                    const maxCheckOut = new Date(checkInDate);
+                    maxCheckOut.setMonth(maxCheckOut.getMonth() + 1);
 
-                        if (
-                                checkOutDate <= checkInDate ||
-                                checkOutDate > maxCheckOut
-                                ) {
-                            alert("Bạn chỉ có thể đặt phòng tối thiểu 1 đêm và tối đa 1 tháng.");
-                            checkOutInput.value = minCheckOut;
+                    checkOutInput.min = minCheckOut;
+                    checkOutInput.max = maxCheckOut.toISOString().split('T')[0];
+
+                    if (checkOutDate) {
+                        if (checkOutDate <= checkInDate) {
+                            alert("Ngày trả phòng phải sau ngày nhận phòng!");
+                            checkOutInput.value = null;
+                        } else if (checkOutDate > maxCheckOut) {
+                            alert("Ngày trả phòng không được quá 1 tháng sau ngày nhận phòng!");
+                            checkOutInput.value = null;
                         }
                     }
                 }
 
-
-                checkInInput.addEventListener('change', validateDateRange);
-                checkOutInput.addEventListener('change', validateDateRange);
+                checkInInput.addEventListener('blur', validateDateRange);
+                checkOutInput.addEventListener('blur', validateDateRange);
 
                 if (checkInInput.value) {
                     validateDateRange();
                 }
+
+
             });
+
         </script>
     </body>
 </html>

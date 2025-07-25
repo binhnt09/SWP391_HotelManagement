@@ -88,27 +88,46 @@
 
                                     <div class="mb-3">
                                         <label class="form-label fw-semibold">Tên đầy đủ (theo Hộ chiếu/Thẻ căn cước công dân)</label>
-                                        <input type="text" class="form-control" value="${sessionScope.authLocal.user.firstName} ${sessionScope.authLocal.user.lastName}" placeholder="Ví dụ: Nguyễn Văn A">
+                                        <input type="text" id="fullName" name="fullName"
+                                               class="form-control"
+                                               value="${sessionScope.authLocal != null ? sessionScope.authLocal.user.firstName : ''} ${sessionScope.authLocal != null ? sessionScope.authLocal.user.lastName : ''}"
+                                        placeholder="Ví dụ: Nguyễn Văn A"
+                                        onblur="normalizeFullName()">
                                     <div class="form-text">Vui lòng chỉ dùng chữ cái (A-Z), không có chức danh, ký tự đặc biệt và dấu câu.</div>
+                                    <div id="nameError" class="text-danger small mt-1"></div>
                                 </div>
+                            </div>
 
-                                <div class="row">
-                                    <div class="col-md-6 mb-3">
-                                        <label class="form-label fw-semibold">E-mail</label>
-                                        <input type="email" name="email" value="${sessionScope.authLocal.user.email}" class="form-control" placeholder="email@example.com">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-semibold">E-mail</label>
+                                    <input type="email"
+                                           id="email"
+                                           name="email"
+                                           value="${sessionScope.authLocal != null ? sessionScope.authLocal.user.email : ''}"
+                                           class="form-control"
+                                           placeholder="email@example.com"
+                                           oninput="validateEmail()"
+                                           <c:if test="${sessionScope.authLocal != null}">readonly</c:if>>
+                                           <small id="emailError" class="text-danger"></small>
                                     </div>
+
+                                    <!-- PHONE -->
                                     <div class="col-md-6 mb-3">
                                         <label class="form-label fw-semibold">Số điện thoại</label>
                                         <div class="input-group">
-                                            <!--                                            <select class="form-select" style="max-width: 80px;">
-                                                                                            <option>+84</option>
-                                                                                        </select>-->
-                                            <input type="tel" value="${sessionScope.authLocal.user.phone}" class="form-control">
+                                            <input type="tel"
+                                                   id="phone"
+                                                   name="phone"
+                                                   value="${sessionScope.authLocal != null ? sessionScope.authLocal.user.phone : ''}"
+                                            class="form-control"
+                                            oninput="validatePhone()">
                                         </div>
+                                        <small id="phoneError" class="text-danger"></small>
                                     </div>
-                                </div>
 
-                                <p class="form-text">Chúng tôi sẽ gửi e-voucher tới email này. ${sessionScope.authLocal.user.email} Số điện thoại (${sessionScope.authLocal.user.phone}).</p>
+
+                                    <p class="form-text">Chúng tôi sẽ gửi e-voucher tới email này. ${sessionScope.authLocal.user.email} Số điện thoại (${sessionScope.authLocal.user.phone}).</p>
                             </div>
 
                             <h3>Dịch vụ đi kèm</h3>
@@ -147,9 +166,18 @@
                                 <small class="text-muted"><i class="fas fa-mobile-alt"></i> Bản chưa bỏ trợ đình!</small>
                             </div>
 
-                            <button class="btn btn-danger btn-lg w-100 fw-bold">
-                                <a href="payment" class="fw-bold white-color">Tiếp tục thanh toán</a>
-                            </button>
+                            <c:choose>
+                                <c:when test="${sessionScope.authLocal != null}">
+                                    <button class="btn btn-danger btn-lg w-100 fw-bold">
+                                        <a href="payment" class="fw-bold white-color text-decoration-none">Tiếp tục thanh toán</a>
+                                    </button>
+                                </c:when>
+                                <c:otherwise>
+                                    <button class="btn btn-danger btn-lg w-100 fw-bold" onclick="requireLogin()">
+                                        <span class="fw-bold white-color">Tiếp tục thanh toán</span>
+                                    </button>
+                                </c:otherwise>
+                            </c:choose>
 
                             <p class="text-center small text-muted mt-3">
                                 Bằng việc chấp nhận thanh toán, bạn đã đồng ý với 
@@ -179,7 +207,7 @@
                                     <i class="fas fa-star"></i>
                                     <i class="fas fa-star"></i>
                                 </span>
-                                <span class="badge bg-primary">8.9 (246)</span>
+                                <!--<span class="badge bg-primary">${starRoom} (${numberPeopleVote})</span>-->
                             </div>
 
                             <div class="row text-center mb-3">
@@ -250,28 +278,9 @@
                                 </c:choose>
 
 
-                            <a href="#" class="text-primary small">Xem chi tiết</a>
                         </div>
 
-                        <div class="mt-3">
-                            <div class="fw-bold small mb-2">
-                                <i class="fas fa-clipboard-list"></i> Chính sách lưu trú
-                            </div>
-                            <div class="fw-bold small mb-2">
-                                <i class="fas fa-utensils"></i> Bữa sáng
-                            </div>
-                            <div class="small text-muted mb-3">
-                                Bữa sáng tại cơ sở lưu trú được phục vụ từ 06:00 đến 10:30.
-                            </div>
 
-                            <div class="fw-bold small mb-2">
-                                <i class="fas fa-clipboard-list"></i> Chính Sách Bổ Sung
-                            </div>
-                            <div class="small text-muted mb-2">
-                                Infant 0-5 year(s) Stay for free if using existing bedding. Children 6-12 year(s) Must use an extra bed...
-                            </div>
-                            <a href="#" class="text-primary small">Xem chi tiết</a>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -282,81 +291,181 @@
     <script src="js/bootstrap/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <!-- Đảm bảo bạn đã truyền biến totalPrice từ server -->
-<c:set var="totalPrice" value="${totalPrice}" />
-<script>
-    const baseUrl = '${pageContext.request.contextPath}';
-    const roomPrice = ${totalPrice}; 
-    let servicePrice = 0;
+    <c:set var="totalPrice" value="${totalPrice}" />
+    <script>
+                                        function requireLogin() {
+                                            alert("Vui lòng đăng nhập để tiếp tục thanh toán.");
+                                        }
+                                        function validateEmail() {
+                                            const emailInput = document.getElementById("email");
+                                            const emailError = document.getElementById("emailError");
+                                            const email = emailInput.value.trim();
 
-    function formatCurrency(value) {
-        return value.toLocaleString('vi-VN') + ' VND';
-    }
+                                            // Regex chuẩn email
+                                            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-    function sendNewTotalToSession(newTotal) {
-        fetch(baseUrl + "/bookingroom", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/x-www-form-urlencoded"
-            },
-            body: "action=updateTotalPrice&newTotal=" + newTotal
-        });
-    }
+                                            if (email === "") {
+                                                emailError.textContent = "Vui lòng nhập email!";
+                                                emailInput.classList.add("is-invalid");
+                                                return false;
+                                            }
 
-    function updateTotal(servicePrice) {
-        const total = roomPrice + servicePrice;
-        document.getElementById('service-price').innerText = formatCurrency(servicePrice);
-        document.getElementById('final-price').innerText = formatCurrency(total);
-        sendNewTotalToSession(total);
-    }
+                                            if (!emailRegex.test(email)) {
+                                                emailError.textContent = "Email không hợp lệ!";
+                                                emailInput.classList.add("is-invalid");
+                                                return false;
+                                            }
 
-    fetch(baseUrl + "/bookingroom", {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: 'action=addService'
-    })
-    .then(response => response.json())
-    .then(data => {
-        const leftColumn = document.getElementById('left-column');
-        const rightColumn = document.getElementById('right-column');
-        let isLeft = true;
+                                            emailError.textContent = "";
+                                            emailInput.classList.remove("is-invalid");
+                                            return true;
+                                        }
 
-        data.forEach(service => {
-            const column = isLeft ? leftColumn : rightColumn;
+                                        function validatePhone() {
+                                            const phoneInput = document.getElementById("phone");
+                                            const phoneError = document.getElementById("phoneError");
+                                            const phone = phoneInput.value.trim();
 
-            const row = document.createElement('div');
-            row.style.marginBottom = '10px';
+                                            // Regex: bắt đầu bằng 0, sau đó 9 số (10 số tất cả)
+                                            const phoneRegex = /^0\d{9}$/;
 
-            const checkbox = document.createElement('input');
-            checkbox.type = 'checkbox';
-            checkbox.name = 'services';
-            checkbox.value = service.serviceId;
-            checkbox.dataset.price = service.price;
+                                            if (phone === "") {
+                                                phoneError.textContent = "Vui lòng nhập số điện thoại!";
+                                                phoneInput.classList.add("is-invalid");
+                                                return false;
+                                            }
 
-            checkbox.addEventListener('change', function () {
-                const price = parseFloat(this.dataset.price);
-                if (this.checked) {
-                    servicePrice += price;
-                } else {
-                    servicePrice -= price;
-                }
-                updateTotal(servicePrice);
+                                            if (!phoneRegex.test(phone)) {
+                                                phoneError.textContent = "Số điện thoại không hợp lệ (phải có 10 chữ số và bắt đầu bằng 0)!";
+                                                phoneInput.classList.add("is-invalid");
+                                                return false;
+                                            }
+
+                                            phoneError.textContent = "";
+                                            phoneInput.classList.remove("is-invalid");
+                                            return true;
+                                        }
+                                        function normalizeFullName() {
+                                            const fullNameInput = document.getElementById("fullName");
+                                            let fullName = fullNameInput.value.trim();
+
+                                            // Xoá khoảng trắng dư giữa các từ
+                                            fullName = fullName.replace(/\s+/g, ' ');
+
+                                            // Viết hoa chữ cái đầu mỗi từ (optional)
+                                            fullName = fullName.split(' ')
+                                                    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+                                                    .join(' ');
+
+                                            // Gán lại vào input
+                                            fullNameInput.value = fullName;
+
+                                            // (Optional) Gọi hàm validate nếu cần
+                                            validateFullName();
+                                        }
+
+                                        function validateFullName() {
+                                            const fullNameInput = document.getElementById("fullName");
+                                            const nameError = document.getElementById("nameError");
+                                            const fullName = fullNameInput.value;
+
+                                            const nameRegex = /^[A-Za-zÀ-ỹà-ỹ\s]+$/;
+
+                                            if (fullName === "") {
+                                                nameError.textContent = "Vui lòng nhập họ tên.";
+                                                fullNameInput.classList.add("is-invalid");
+                                                return false;
+                                            }
+
+                                            if (!nameRegex.test(fullName)) {
+                                                nameError.textContent = "Tên chỉ được chứa chữ cái và khoảng trắng (không chứa số hoặc ký tự đặc biệt).";
+                                                fullNameInput.classList.add("is-invalid");
+                                                return false;
+                                            }
+
+                                            nameError.textContent = "";
+                                            fullNameInput.classList.remove("is-invalid");
+                                            return true;
+                                        }
+
+
+
+    </script>
+    <script>
+
+        const baseUrl = '${pageContext.request.contextPath}';
+        const roomPrice = ${totalPrice};
+        let servicePrice = 0;
+
+        function formatCurrency(value) {
+            return value.toLocaleString('vi-VN') + ' VND';
+        }
+
+        function sendNewTotalToSession(newTotal) {
+            fetch(baseUrl + "/bookingroom", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                body: "action=updateTotalPrice&newTotal=" + newTotal
             });
+        }
 
-            const label = document.createElement('label');
-            label.appendChild(checkbox);
-            label.append(' ' + service.name + ' (' + formatCurrency(service.price) + ')');
+        function updateTotal(servicePrice) {
+            const total = roomPrice + servicePrice;
+            document.getElementById('service-price').innerText = formatCurrency(servicePrice);
+            document.getElementById('final-price').innerText = formatCurrency(total);
+            sendNewTotalToSession(total);
+        }
 
-            row.appendChild(label);
-            column.appendChild(row);
-            isLeft = !isLeft;
-        });
+        fetch(baseUrl + "/bookingroom", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: 'action=addService'
+        })
+                .then(response => response.json())
+                .then(data => {
+                    const leftColumn = document.getElementById('left-column');
+                    const rightColumn = document.getElementById('right-column');
+                    let isLeft = true;
 
-        // Gọi lần đầu để hiển thị ban đầu
-        updateTotal(servicePrice);
-    });
-</script>
+                    data.forEach(service => {
+                        const column = isLeft ? leftColumn : rightColumn;
+
+                        const row = document.createElement('div');
+                        row.style.marginBottom = '10px';
+
+                        const checkbox = document.createElement('input');
+                        checkbox.type = 'checkbox';
+                        checkbox.name = 'services';
+                        checkbox.value = service.serviceId;
+                        checkbox.dataset.price = service.price;
+
+                        checkbox.addEventListener('change', function () {
+                            const price = parseFloat(this.dataset.price);
+                            if (this.checked) {
+                                servicePrice += price;
+                            } else {
+                                servicePrice -= price;
+                            }
+                            updateTotal(servicePrice);
+                        });
+
+                        const label = document.createElement('label');
+                        label.appendChild(checkbox);
+                        label.append(' ' + service.name + ' (' + formatCurrency(service.price) + ')');
+
+                        row.appendChild(label);
+                        column.appendChild(row);
+                        isLeft = !isLeft;
+                    });
+
+                    // Gọi lần đầu để hiển thị ban đầu
+                    updateTotal(servicePrice);
+                });
+    </script>
 
 
 

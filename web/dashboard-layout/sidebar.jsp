@@ -112,8 +112,8 @@
 
         <!-- Payment -->
         <c:if test="${sessionScope.authLocal.user.roleName == 'Manager' || sessionScope.authLocal.user.roleName == 'Receptionist'}">            
-            <li>
-                <a href="paymentaddmin">
+            <li class="${pageContext.request.requestURI.endsWith('managepayment.jsp') ? 'active' : ''}">
+                <a href="${pageContext.request.contextPath}/managepayment">
                     <i class="material-icons">payment</i>Payment
                 </a>
             </li>
