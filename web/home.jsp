@@ -251,8 +251,6 @@
                                 <h4>Deluxe Room</h4>
                                 <p>Phòng đơn hiện đại, tiện nghi phù hợp cho khách đi công tác hoặc du lịch một mình. Bao gồm giường đơn, bàn làm việc và Wi-Fi tốc độ cao.</p>
                             </div>
-                            <!-- Book Room -->
-                            <a href="searchroom" class="book-room-btn btn palatin-btn">Book Room</a>
                         </div>
                     </div>
 
@@ -269,8 +267,6 @@
                                 <h4>Double Suite</h4>
                                 <p>Không gian sang trọng với thiết kế tinh tế, bao gồm giường lớn, minibar, tivi màn hình phẳng và ban công hướng nhìn ra thành phố.</p>
                             </div>
-                            <!-- Book Room -->
-                            <a href="searchroom" class="book-room-btn btn palatin-btn">Book Room</a>
                         </div>
                     </div>
 
@@ -287,8 +283,6 @@
                                 <h4>Single Room</h4>
                                 <p>Phù hợp cho cặp đôi hoặc gia đình nhỏ, phòng suite đôi có không gian rộng rãi, 2 giường, phòng tắm sang trọng và khu vực tiếp khách riêng.</p>
                             </div>
-                            <!-- Book Room -->
-                            <a href="searchroom" class="book-room-btn btn palatin-btn">Book Room</a>
                         </div>
                     </div>
 
