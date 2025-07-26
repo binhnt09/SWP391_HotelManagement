@@ -13,7 +13,18 @@
             <file>file:/D:/FU%20Learning/Summer%202025/SWP391/SWP_HotelManagement_V1_1/SWP391_HotelManagement_V1/web/customer-list.jsp</file>
             <file>file:/D:/FU%20Learning/Summer%202025/SWP391/SWP_HotelManagement_V1_1/SWP391_HotelManagement_V1/src/java/controller/voucher/VoucherManage.java</file>
             <file>file:/D:/FU%20Learning/Summer%202025/SWP391/SWP_HotelManagement_V1_1/SWP391_HotelManagement_V1/src/java/controller/payment/VnpayReturn.java</file>
+<<<<<<< HEAD
             <file>file:/D:/FU%20Learning/Summer%202025/SWP391/SWP_HotelManagement_V1_1/SWP391_HotelManagement_V1/src/java/controller/ChangeRoomStatusServlet.java</file>
+=======
+
+            <file>file:/D:/Project%20SWP391/SWP391_HotelManagement/web/dashboard-layout/header.jsp</file>
+            <file>file:/D:/Project%20SWP391/SWP391_HotelManagement/web/room-detail-fragment.jsp</file>
+            <file>file:/D:/Project%20SWP391/SWP391_HotelManagement/src/java/controller/BookingCrud.java</file>
+            <file>file:/D:/Project%20SWP391/SWP391_HotelManagement/web/staff-list.jsp</file>
+            <file>file:/D:/Project%20SWP391/SWP391_HotelManagement/web/authentication-list.jsp</file>
+            <file>file:/D:/Project%20SWP391/SWP391_HotelManagement/web/roommap.jsp</file>
+
+>>>>>>> 2e12fc8f98572930409182079a51e3bec96819e7
         </group>
     </open-files>
 </project-private>
