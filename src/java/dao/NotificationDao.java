@@ -56,13 +56,8 @@ public class NotificationDao extends DBContext {
         }
         return false;
     }
-    
-    public static void main(String[] args) {
-        System.out.println(new dao.NotificationDao().deleteNotificationById(1));
-    }
 
      
-
     public boolean addNotifications(int userId, String mess, String type) {
         String sql = "INSERT INTO Notifications (userid, Message, type, createdat) "
                 + "VALUES (?, ?, ?, GETDATE())";
@@ -82,7 +77,7 @@ public class NotificationDao extends DBContext {
 
             ps.setInt(1, userId);
             ps.setString(2, mess);
-            ps.setString(3, type);
+            ps.setString(3, title);
 
             return ps.executeUpdate() > 0;
         } catch (Exception e) {
@@ -105,5 +100,22 @@ public class NotificationDao extends DBContext {
         }
         return 0;
     }
+
+    public static void main(String[] args) {
+        System.out.println(new dao.NotificationDao().UpdateNotificationReadById(120));
+    }
+
+    public boolean UpdateNotificationReadById(int id) {
+        String sql = "UPDATE Notifications set IsRead = 1 where NotificationId = ?;";
+        try (PreparedStatement pre = connection.prepareStatement(sql)) {
+            pre.setInt(1, id);
+            return pre.executeUpdate() > 0;
+        } catch (SQLException ex) {
+            Logger.getLogger(NotificationDao.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
+    }
+    
+    
 
 }

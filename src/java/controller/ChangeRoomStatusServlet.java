@@ -2,10 +2,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package controller.room;
+package controller;
 
-import com.google.gson.Gson;
-import entity.Notifications;
+import dao.RoomDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -13,15 +12,13 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.List;
-import validation.Validation;
 
 /**
  *
- * @author Admin
+ * @author ASUS
  */
-@WebServlet(name = "Notification", urlPatterns = {"/notification"})
-public class Notification extends HttpServlet {
+@WebServlet(name = "ChangeRoomStatusServlet", urlPatterns = {"/changeRoomStatus"})
+public class ChangeRoomStatusServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -40,10 +37,10 @@ public class Notification extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet Notification</title>");
+            out.println("<title>Servlet ChangeRoomStatusServlet</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet Notification at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet ChangeRoomStatusServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -61,18 +58,7 @@ public class Notification extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        int userId = Validation.parseStringToInt(request.getParameter("userId"));
-        if (userId == -1) {
-            return;
-        }
-        List<Notifications> notifies = new dao.NotificationDao().getNotificationsByUserId(userId);
-
-        Gson gson = new Gson();
-
-        response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8");
-        new Gson().toJson(notifies, response.getWriter());
-
+        processRequest(request, response);
     }
 
     /**
@@ -86,17 +72,17 @@ public class Notification extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String action = request.getParameter("action");
-        switch (action) {
-            case "deleteNotify":
-                deleteNotify(request, response);
-                break;
-            case "isRead":
-                isRead(request, response);
-                break;
-            default:
-                throw new AssertionError();
+        int roomId = Integer.parseInt(request.getParameter("roomId"));
+        RoomDAO dao = new RoomDAO();
+        boolean success = dao.updateRoomStatus(roomId, "Reserved");
+        if (success) {
+            request.getSession().setAttribute("successMessage", "Cập nhật trạng thái phòng thành công!");
+            response.sendRedirect("receptionistPage");
+        } else {
+            request.getSession().setAttribute("errorMessage", "Cập nhật trạng thái phòng thất bại!");
+            response.sendRedirect("receptionistPage");
         }
+
     }
 
     /**
@@ -108,35 +94,5 @@ public class Notification extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
-
-    private void deleteNotify(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        int id = Validation.parseStringToInt(request.getParameter("id"));
-        if (id == -1) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return;
-        }
-
-        boolean success = new dao.NotificationDao().deleteNotificationById(id);
-        if (success) {
-            response.setStatus(HttpServletResponse.SC_OK);
-        } else {
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    private void isRead(HttpServletRequest request, HttpServletResponse response) {
-        int id = Validation.parseStringToInt(request.getParameter("id"));
-        if (id == -1) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return;
-        }
-        boolean success = new dao.NotificationDao().UpdateNotificationReadById(id);
-        if (success) {
-            response.setStatus(HttpServletResponse.SC_OK);
-        } else {
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-        }
-    }
 
 }

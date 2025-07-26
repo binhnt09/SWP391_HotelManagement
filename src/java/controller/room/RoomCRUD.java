@@ -8,6 +8,7 @@ import com.google.gson.Gson;
 import dao.RoomDAO;
 import dao.RoomTypeDAO;
 import entity.Amenity;
+import entity.Authentication;
 import entity.Hotel;
 import entity.Room;
 import entity.RoomDetail;
@@ -159,7 +160,6 @@ public class RoomCRUD extends HttpServlet {
                     editRoom(request, response);
                     session.setAttribute("openTab", "#managerRoom");
                     break;
-
                 case "editRoomType":
                     editRoomType(request, response);
                     session.setAttribute("openTab", "#managerRoomType");
@@ -329,12 +329,12 @@ public class RoomCRUD extends HttpServlet {
             }
         }
         boolean check = new dao.RoomDAO().addRoom(room, listImg);
-//             Authentication auth = (Authentication) request.getSession().getAttribute("authLocal");
-//         if(check){
-//             new dao.NotificationDao().addNotifications(auth.getUser().getUserId(), "Bạn đã thêm phòng thành công", "Sucsess");
-//         }else{
-//             new dao.NotificationDao().addNotifications(auth.getUser().getUserId(), "Thêm phòng không thành công", "Error");
-//         }
+        Authentication auth = (Authentication) request.getSession().getAttribute("authLocal");
+        if (check) {
+            new dao.NotificationDao().addNotifications(auth.getUser().getUserId(), "Bạn đã thêm phòng thành công", "Sucsess");
+        } else {
+            new dao.NotificationDao().addNotifications(auth.getUser().getUserId(), "Thêm phòng không thành công", "Error");
+        }
         response.sendRedirect("manageroom?page=" + totalPages);
     }
 

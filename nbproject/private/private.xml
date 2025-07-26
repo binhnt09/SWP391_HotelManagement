@@ -3,6 +3,31 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
+<<<<<<< HEAD
+=======
+            <file>file:/D:/FU%20Learning/Summer%202025/SWP391/SWP_HotelManagement_V1_1/SWP391_HotelManagement_V1/src/java/constant/MailUtil.java</file>
+            <file>file:/D:/FU%20Learning/Summer%202025/SWP391/SWP_HotelManagement_V1_1/SWP391_HotelManagement_V1/src/java/constant/Iconstant.java</file>
+            <file>file:/D:/FU%20Learning/Summer%202025/SWP391/SWP_HotelManagement_V1_1/SWP391_HotelManagement_V1/web/manageroom.jsp</file>
+            <file>file:/D:/FU%20Learning/Summer%202025/SWP391/SWP_HotelManagement_V1_1/SWP391_HotelManagement_V1/src/java/dao/VoucherDao.java</file>
+            <file>file:/D:/FU%20Learning/Summer%202025/SWP391/SWP_HotelManagement_V1_1/SWP391_HotelManagement_V1/src/java/dao/PaymentDao.java</file>
+            <file>file:/D:/FU%20Learning/Summer%202025/SWP391/SWP_HotelManagement_V1_1/SWP391_HotelManagement_V1/web/customer-list.jsp</file>
+            <file>file:/D:/FU%20Learning/Summer%202025/SWP391/SWP_HotelManagement_V1_1/SWP391_HotelManagement_V1/web/views/voucher/managevoucher.jsp</file>
+            <file>file:/D:/FU%20Learning/Summer%202025/SWP391/SWP_HotelManagement_V1_1/SWP391_HotelManagement_V1/src/java/controller/voucher/VoucherManage.java</file>
+            <file>file:/D:/FU%20Learning/Summer%202025/SWP391/SWP_HotelManagement_V1_1/SWP391_HotelManagement_V1/web/common/header.jsp</file>
+            <file>file:/D:/FU%20Learning/Summer%202025/SWP391/SWP_HotelManagement_V1_1/SWP391_HotelManagement_V1/src/java/controller/ChangeRoomStatusServlet.java</file>
+            <file>file:/D:/FU%20Learning/Summer%202025/SWP391/SWP_HotelManagement_V1_1/SWP391_HotelManagement_V1/src/java/controller/payment/PaymentServlet.java</file>
+            <file>file:/D:/FU%20Learning/Summer%202025/SWP391/SWP_HotelManagement_V1_1/SWP391_HotelManagement_V1/src/java/controller/FinishMaintenanceRoomServlet.java</file>
+            <file>file:/D:/FU%20Learning/Summer%202025/SWP391/SWP_HotelManagement_V1_1/SWP391_HotelManagement_V1/src/java/controller/payment/ManagePayment.java</file>
+            <file>file:/D:/FU%20Learning/Summer%202025/SWP391/SWP_HotelManagement_V1_1/SWP391_HotelManagement_V1/web/room-detail-fragment.jsp</file>
+            <file>file:/D:/FU%20Learning/Summer%202025/SWP391/SWP_HotelManagement_V1_1/SWP391_HotelManagement_V1/src/java/dao/MembershipDao.java</file>
+            <file>file:/D:/FU%20Learning/Summer%202025/SWP391/SWP_HotelManagement_V1_1/SWP391_HotelManagement_V1/web/roommap.jsp</file>
+            <file>file:/D:/FU%20Learning/Summer%202025/SWP391/SWP_HotelManagement_V1_1/SWP391_HotelManagement_V1/src/java/controller/payment/VietQrSepaycallback.java</file>
+            <file>file:/D:/FU%20Learning/Summer%202025/SWP391/SWP_HotelManagement_V1_1/SWP391_HotelManagement_V1/web/views/payment/managepayment.jsp</file>
+            <file>file:/D:/FU%20Learning/Summer%202025/SWP391/SWP_HotelManagement_V1_1/SWP391_HotelManagement_V1/src/java/controller/voucher/LevelMemberShip.java</file>
+            <file>file:/D:/FU%20Learning/Summer%202025/SWP391/SWP_HotelManagement_V1_1/SWP391_HotelManagement_V1/src/java/controller/payment/VnpayReturn.java</file>
+
+            <file>file:/D:/Project%20SWP391/SWP391_HotelManagement/web/dashboard-layout/header.jsp</file>
+>>>>>>> 2e12fc8f98572930409182079a51e3bec96819e7
             <file>file:/D:/Project%20SWP391/SWP391_HotelManagement/web/room-detail-fragment.jsp</file>
             <file>file:/D:/Project%20SWP391/SWP391_HotelManagement/web/customer-list.jsp</file>
             <file>file:/D:/Project%20SWP391/SWP391_HotelManagement/web/staff-list.jsp</file>
@@ -10,8 +35,12 @@
             <file>file:/D:/Project%20SWP391/SWP391_HotelManagement/src/java/controller/UserUpdateServlet.java</file>
             <file>file:/D:/Project%20SWP391/SWP391_HotelManagement/web/authentication-list.jsp</file>
             <file>file:/D:/Project%20SWP391/SWP391_HotelManagement/web/roommap.jsp</file>
+<<<<<<< HEAD
             <file>file:/D:/Project%20SWP391/SWP391_HotelManagement/web/service-manager.jsp</file>
             <file>file:/D:/Project%20SWP391/SWP391_HotelManagement/web/user-list.jsp</file>
+=======
+
+>>>>>>> 2e12fc8f98572930409182079a51e3bec96819e7
         </group>
     </open-files>
 </project-private>

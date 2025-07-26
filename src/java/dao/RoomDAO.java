@@ -61,6 +61,7 @@ public class RoomDAO extends DBContext {
         }
         return false;
     }
+    
     public boolean checkRoomNumberIsExist(String roomNumber, int excludeRoomId) {
         String sql = "SELECT COUNT(*) FROM Room WHERE roomNumber = ? AND RoomID != ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
@@ -74,6 +75,10 @@ public class RoomDAO extends DBContext {
             e.printStackTrace();
         }
         return false;
+    }
+    
+    public static void main(String[] args) {
+        System.out.println(new dao.RoomDAO().checkRoomNumberIsExist("101A", 2));
     }
 
     public List<Room> getListRoom(Date checkin, Date checkout,
@@ -1201,11 +1206,5 @@ public class RoomDAO extends DBContext {
 
     }
     
-    public static void main(String[] args) {
-        List<Room> listRoom = new dao.RoomDAO().getListRoom(null, null, 
-                0, 99999, 0, 
-                1, "", "all", "", 
-                false, 4, 6, false);
-        System.out.println(listRoom.size());
-    }
+     
 }
