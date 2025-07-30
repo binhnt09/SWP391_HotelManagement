@@ -94,6 +94,10 @@
 
             <!-- Nút về trang chủ -->
             <br/>
+            <div class="success-message" id="success_box" style="display:none;">
+                ✅ Thanh toán thành công! Bạn có thể kiểm tra booking
+                <a href="${pageContext.request.contextPath}/paymenthistory" class="success-link">tại đây </a>
+            </div>
             <button class="btn-home"
                     onclick="window.location.href = '${pageContext.request.contextPath}/loadtohome'">
                 <i class="fas fa-home"></i> Về trang chủ

@@ -11,7 +11,7 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Traveloka - Đặt vé máy bay, khách sạn, tour du lịch</title>
+        <title>Traveloka - Voucher</title>
         <link rel="icon" href="${pageContext.request.contextPath}/img/core-img/favicon.ico">
 
         <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
@@ -43,41 +43,8 @@
             <section class="hero-section">
                 <div class="container">
                     <div class="row">
-                        <div class="col-lg-6">
-                            <h1 class="hero-title">Mở giấc mơ Palatin & gặp đây chỗ dựa sao!</h1>
-                            <p class="hero-subtitle">Khám phá thế giới cùng Palatin - Đặt khách sạn, tour du lịch với giá tốt nhất</p>
-                        </div>
-                        <div class="col-lg-6">
-                            <div class="search-form">
-                                <div class="search-tabs">
-                                    <button class="search-tab active" data-tab="flight">
-                                        <i class="fas fa-plane"></i> Vé máy bay
-                                    </button>
-                                    <button class="search-tab" data-tab="hotel">
-                                        <i class="fas fa-hotel"></i> Khách sạn
-                                    </button>
-                                    <button class="search-tab" data-tab="tour">
-                                        <i class="fas fa-map-marked-alt"></i> Tour
-                                    </button>
-                                </div>
-                                <div class="tab-content">
-                                    <div class="tab-pane active" id="flight">
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label>Từ</label>
-                                                    <input type="text" class="form-control" placeholder="Thành phố khởi hành">
-                                                </div>
-                                            </div>
-                                            <div class="col-12">
-                                                <button class="btn-search">
-                                                    <i class="fas fa-search"></i> Tìm kiếm
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                        <div class="col-lg-12">
+                            <h1 class="hero-title text-center">Voucher Palatin</h1>
                         </div>
                     </div>
                 </div>
@@ -87,7 +54,7 @@
             <section class="container my-5">
             <c:if test="${sessionScope.authLocal != null}">
                 <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h2 class="section-title">🏨 Voucher</h2>
+                    <h2 class="section-title fa fa-gift"> Voucher</h2>
                 </div>
                 <div>
                     <div class="tour-container">
@@ -154,32 +121,25 @@
             <div class="container">
                 <h2 class="section-title text-center">Tại sao chọn Palatin?</h2>
                 <div class="row">
-                    <div class="col-lg-3 col-md-6">
+                    <div class="col-lg-4 col-md-6">
                         <div class="feature-item">
                             <i class="fas fa-shield-alt feature-icon"></i>
                             <h3 class="feature-title">Đảm bảo an toàn</h3>
                             <p class="feature-desc">Thanh toán an toàn với nhiều phương thức khác nhau</p>
                         </div>
                     </div>
-                    <div class="col-lg-3 col-md-6">
-                        <div class="feature-item">
-                            <i class="fas fa-clock feature-icon"></i>
-                            <h3 class="feature-title">Hỗ trợ 24/7</h3>
-                            <p class="feature-desc">Đội ngũ hỗ trợ khách hàng 24/7 bằng tiếng Việt</p>
-                        </div>
-                    </div>
-                    <div class="col-lg-3 col-md-6">
+                    <div class="col-lg-4 col-md-6">
                         <div class="feature-item">
                             <i class="fas fa-tags feature-icon"></i>
                             <h3 class="feature-title">Giá tốt nhất</h3>
                             <p class="feature-desc">Cam kết giá tốt nhất với nhiều ưu đãi hấp dẫn</p>
                         </div>
                     </div>
-                    <div class="col-lg-3 col-md-6">
+                    <div class="col-lg-4 col-md-6">
                         <div class="feature-item">
                             <i class="fas fa-mobile-alt feature-icon"></i>
                             <h3 class="feature-title">Dễ dàng sử dụng</h3>
-                            <p class="feature-desc">Giao diện thân thiện, dễ sử dụng trên mọi thiết bị</p>
+                            <p class="feature-desc">Giao diện thân thiện, dễ sử dụng</p>
                         </div>
                     </div>
                 </div>

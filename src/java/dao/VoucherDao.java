@@ -5,7 +5,7 @@
 package dao;
 
 import dal.DBContext;
-import entity.MembershipLevel;
+import entity.LevelUser;
 import entity.Voucher;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -70,7 +70,7 @@ public class VoucherDao extends DBContext {
                             AND (v.ValidFrom IS NULL OR v.ValidFrom <= GETDATE())
                             AND (v.ValidTo IS NULL OR v.ValidTo >= GETDATE()) AND v.IsDeleted = 0
                             AND NOT EXISTS (
-                                  SELECT 1 FROM GetVoucher gv
+                                  SELECT 1 FROM ClaimVoucher gv
                                   WHERE gv.VoucherID = v.VoucherID AND gv.UserID = u.UserID
                               )
                         UNION
@@ -79,7 +79,7 @@ public class VoucherDao extends DBContext {
                             AND (v.ValidFrom IS NULL OR v.ValidFrom <= GETDATE())
                             AND (v.ValidTo IS NULL OR v.ValidTo >= GETDATE()) AND v.IsDeleted = 0
                             AND NOT EXISTS (
-                                SELECT 1 FROM GetVoucher gv
+                                SELECT 1 FROM ClaimVoucher gv
                                 WHERE gv.VoucherID = v.VoucherID AND gv.UserID = ?
                             );
                     """;
@@ -101,7 +101,7 @@ public class VoucherDao extends DBContext {
         List<Voucher> list = new ArrayList<>();
         String sql = """
                         SELECT v.* FROM Voucher v
-                        	JOIN GetVoucher gv ON gv.VoucherID = v.VoucherID
+                        	JOIN ClaimVoucher gv ON gv.VoucherID = v.VoucherID
                         WHERE gv.UserID = ? AND gv.IsUsed = 0 
                             AND (v.ValidFrom IS NULL OR v.ValidFrom <= GETDATE())
                             AND (v.ValidTo IS NULL OR v.ValidTo >= GETDATE())
@@ -124,7 +124,7 @@ public class VoucherDao extends DBContext {
         List<Voucher> list = new ArrayList<>();
         String sql = """
                         SELECT v.* FROM Voucher v
-                            JOIN GetVoucher gv ON gv.VoucherID = v.VoucherID
+                            JOIN ClaimVoucher gv ON gv.VoucherID = v.VoucherID
                         WHERE gv.UserID = ?
                             AND gv.IsUsed = 1 AND v.IsDeleted = 0
                     """;
@@ -145,7 +145,7 @@ public class VoucherDao extends DBContext {
         List<Voucher> list = new ArrayList<>();
         String sql = """
                         SELECT v.* FROM Voucher v
-                            	JOIN GetVoucher gv ON gv.VoucherID = v.VoucherID
+                            	JOIN ClaimVoucher gv ON gv.VoucherID = v.VoucherID
                             WHERE gv.UserID = ?
                               AND gv.IsUsed = 0 AND v.IsDeleted = 0
                               AND v.ValidTo IS NOT NULL 
@@ -184,12 +184,12 @@ public class VoucherDao extends DBContext {
     }
 
     //tự động tính tổng tiền user sau mỗi lần thanh toán thành công trên hệ thống
-    public void updateUserMembershipLevel(int userId) {
+    public void updateUserLevelUser(int userId) {
         String sql = """
                         UPDATE [User]
                         SET LevelID = (
                             SELECT TOP 1 CL.LevelID
-                            FROM MembershipLevel CL
+                            FROM LevelUser CL
                             WHERE CL.MinTotal <= (
                                 SELECT ISNULL(SUM(p.Amount), 0)
                                 FROM Payment p
@@ -210,7 +210,7 @@ public class VoucherDao extends DBContext {
     }
 
     public void insert(int userId, int voucherId) {
-        String sql = "INSERT INTO GetVoucher (VoucherID, UserID, ClaimedAt, IsUsed) VALUES (?, ?, GETDATE(), 0)";
+        String sql = "INSERT INTO ClaimVoucher (VoucherID, UserID, ClaimedAt, IsUsed) VALUES (?, ?, GETDATE(), 0)";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, voucherId);
             ps.setInt(2, userId);
@@ -222,7 +222,7 @@ public class VoucherDao extends DBContext {
 
     //update voucher đã sử dụng với mỗi user
     public void updateIsused(int userId, int voucherId) {
-        String sql = "UPDATE GetVoucher SET IsUsed = 1 WHERE UserID = ? AND VoucherID = ?";
+        String sql = "UPDATE ClaimVoucher SET IsUsed = 1 WHERE UserID = ? AND VoucherID = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, userId);
             ps.setInt(2, voucherId);
@@ -234,7 +234,7 @@ public class VoucherDao extends DBContext {
 
     //kiểm tra voucher đã được claim chưa
     public boolean hasClaimed(int userId, int voucherId) {
-        String sql = "SELECT 1 FROM GetVoucher WHERE UserID = ? AND VoucherID = ? AND IsUsed = 1";
+        String sql = "SELECT 1 FROM ClaimVoucher WHERE UserID = ? AND VoucherID = ? AND IsUsed = 1";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, userId);
             ps.setInt(2, voucherId);
@@ -384,10 +384,10 @@ public class VoucherDao extends DBContext {
         return -1;
     }
 
-    public void insertVoucherLevels(String code, String membershipLevel) {
+    public void insertVoucherLevels(String code, String levelUser) {
         int voucherId = getVoucherIdByCode(code);
 
-        String[] levelIds = membershipLevel.split(", ");
+        String[] levelIds = levelUser.split(", ");
 
         String sql = "INSERT INTO VoucherLevel (VoucherID, LevelID) VALUES (?, ?)";
 
@@ -438,20 +438,20 @@ public class VoucherDao extends DBContext {
         return voucher;
     }
 
-    //membership
-    public MembershipLevel getMembershipByUserId(int userId) {
+    //LevelUser
+    public LevelUser getLevelUserByUserId(int userId) {
         String sql = """
                         SELECT ml.LevelID, ml.LevelName, ml.MinTotal, ml.CreatedAt, ml.UpdatedAt,
                                ml.DeletedAt, ml.DeletedBy, ml.IsDeleted
                         FROM [User] u
-                        JOIN MembershipLevel ml ON u.LevelID = ml.LevelID
+                        JOIN LevelUser ml ON u.LevelID = ml.LevelID
                         WHERE u.UserID = ? AND u.IsDeleted = 0 AND ml.IsDeleted = 0
                     """;
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, userId);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    return extractMembership(rs);
+                    return extractLevelUser(rs);
                 }
             }
         } catch (SQLException e) {
@@ -460,18 +460,18 @@ public class VoucherDao extends DBContext {
         return null;
     }
 
-    public List<MembershipLevel> getAllMembership() {
-        List<MembershipLevel> list = new ArrayList<>();
+    public List<LevelUser> getAllLevelUser() {
+        List<LevelUser> list = new ArrayList<>();
         String sql = """
                         SELECT ml.LevelID, ml.LevelName, ml.MinTotal, ml.CreatedAt, ml.UpdatedAt,
                                 ml.DeletedAt, ml.DeletedBy, ml.IsDeleted
-                        FROM MembershipLevel ml 
+                        FROM LevelUser ml 
                         WHERE ml.IsDeleted = 0
                     """;
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
-                    list.add(extractMembership(rs));
+                    list.add(extractLevelUser(rs));
                 }
             }
         } catch (SQLException e) {
@@ -480,16 +480,16 @@ public class VoucherDao extends DBContext {
         return list;
     }
 
-    private MembershipLevel extractMembership(ResultSet rs) throws SQLException {
-        MembershipLevel membership = new MembershipLevel();
-        membership.setLevelId(rs.getInt("LevelID"));
-        membership.setLevelName(rs.getString("LevelName"));
-        membership.setMinTotal(rs.getBigDecimal("MinTotal"));
-        membership.setCreatedAt(rs.getTimestamp("CreatedAt"));
-        membership.setUpdatedAt(rs.getTimestamp("UpdatedAt"));
-        membership.setDeletedAt(rs.getTimestamp("DeletedAt"));
-        membership.setDeletedBy(rs.getObject("DeletedBy") != null ? rs.getInt("DeletedBy") : null);
-        membership.setIsDeleted(rs.getBoolean("IsDeleted"));
-        return membership;
+    private LevelUser extractLevelUser(ResultSet rs) throws SQLException {
+        LevelUser levelUser = new LevelUser();
+        levelUser.setLevelId(rs.getInt("LevelID"));
+        levelUser.setLevelName(rs.getString("LevelName"));
+        levelUser.setMinTotal(rs.getBigDecimal("MinTotal"));
+        levelUser.setCreatedAt(rs.getTimestamp("CreatedAt"));
+        levelUser.setUpdatedAt(rs.getTimestamp("UpdatedAt"));
+        levelUser.setDeletedAt(rs.getTimestamp("DeletedAt"));
+        levelUser.setDeletedBy(rs.getObject("DeletedBy") != null ? rs.getInt("DeletedBy") : null);
+        levelUser.setIsDeleted(rs.getBoolean("IsDeleted"));
+        return levelUser;
     }
 }

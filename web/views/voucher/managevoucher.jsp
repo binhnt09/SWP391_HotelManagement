@@ -92,11 +92,6 @@
                                                     <li><a href="#">5 warnings in Server Console</a></li>
                                                 </ul>
                                             </li>
-                                            <li class="nav-item">
-                                                <a class="nav-link" href="#">
-                                                    <span class="material-icons">question_answer</span>
-                                                </a>
-                                            </li>
                                             <li class="nav-item dropdown">
                                                 <a class="nav-link" href="#" data-toggle="dropdown">
                                                     <img src="img/admin2.jpg" style="width:35px; border-radius:50%;"/>
@@ -134,7 +129,6 @@
                     <div class="xp-breadcrumbbar text-center">
                         <h4 class="page-title">Dashboard</h4>  
                         <ul class="breadcrumb" style="background: none;">
-                            <li class="breadcrumb-item"><a href="#">Booster</a></li>
                             <li class="breadcrumb-item active" aria-current="page">Dashboard</li>
                         </ul>                
                     </div>
@@ -319,7 +313,7 @@
 
                                             <div class="form-group" style="display: flex; gap: 10px">
                                                 <div style="flex: 1">
-                                                    <label class="form-label">Member level</label>
+                                                    <label class="form-label">Level user</label>
                                                     <ul class="nav navbar-nav menu_nav">
                                                         <li class="nav-item submenu dropdown">
                                                             <a href="#" id="memberDropdown" class="nav-link dropdown-toggle" style="background: #cccccc; color: black" 
@@ -327,20 +321,20 @@
                                                                 <span>Select Level</span>
                                                             </a>
                                                             <ul class="dropdown-menu" style="width: 100%; text-align: left">
-                                                                <c:forEach var="memberShip" items="${listMemberShip}">
+                                                                <c:forEach var="levelUser" items="${listLevelUser}">
                                                                     <li class="nav-item submenu dropdown">
                                                                         <label class="dropdown-item" style="cursor: pointer;">
                                                                             <input type="checkbox" style="width: 18px; height: 18px; margin: 5px" 
-                                                                                   class="member-checkbox" value="${memberShip.levelId}" 
-                                                                                   ${checked ? "checked" : ""} data-name="${memberShip.levelName}">
-                                                                            ${memberShip.levelName}
+                                                                                   class="member-checkbox" value="${levelUser.levelId}" 
+                                                                                   ${checked ? "checked" : ""} data-name="${levelUser.levelName}">
+                                                                            ${levelUser.levelName}
                                                                         </label>
                                                                     </li>
                                                                 </c:forEach>
                                                             </ul>
                                                         </li>
                                                     </ul>
-                                                    <input type="hidden" id="memberShipId" name="memberShipId">
+                                                    <input type="hidden" id="levelUserId" name="levelUserId">
                                                 </div>
                                             </div>
                                             <div class="modal-footer">
@@ -400,7 +394,7 @@
 
                                             <div class="form-group" style="display: flex; gap: 10px">
                                                 <div style="flex: 1">
-                                                    <label class="form-label">Member level</label>
+                                                    <label class="form-label">Level user</label>
                                                     <ul class="nav navbar-nav menu_nav">
                                                         <li class="nav-item submenu dropdown">
                                                             <a href="#" id="memberDropdownUd" class="nav-link dropdown-toggle" style="background: #cccccc; color: black" 
@@ -408,21 +402,21 @@
                                                                 <span>Select Level</span>
                                                             </a>
                                                             <ul id="levelCheckboxContainer" class="dropdown-menu">
-                                                                <c:forEach var="memberShip" items="${listMemberShip}">
+                                                                <c:forEach var="levelUser" items="${listLevelUser}">
                                                                     <c:set var="selectedLevels" value="${fn:split(levelId, ',')}"/>
                                                                     <li class="nav-item submenu dropdown">
                                                                         <label class="dropdown-item" style="cursor: pointer;">
                                                                             <input type="checkbox" class="member-checkboxUd"
-                                                                                   value="${memberShip.levelId}" data-name="${memberShip.levelName}"
-                                                                                   <c:if test="${fn:contains(levelId, memberShip.levelId)}">checked</c:if> />
-                                                                            ${memberShip.levelName}
+                                                                                   value="${levelUser.levelId}" data-name="${levelUser.levelName}"
+                                                                                   <c:if test="${fn:contains(levelId, levelUser.levelId)}">checked</c:if> />
+                                                                            ${levelUser.levelName}
                                                                         </label>
                                                                     </li>
                                                                 </c:forEach>
                                                             </ul>
                                                         </li>
                                                     </ul>
-                                                    <input type="hidden" id="memberShipIdUd" name="memberShipId">
+                                                    <input type="hidden" id="levelUserIdUd" name="levelUserId">
                                                 </div>
                                             </div>
                                             <div class="modal-footer">
@@ -481,7 +475,7 @@
                 <footer class="footer">
                     <div class="container-fluid">
                         <div class="footer-in">
-                            <p class="mb-0">&copy 2025 Palatin Hotel - Manage voucher.</p>
+                            <p class="mb-0">Palatin Hotel - Manage voucher.</p>
                         </div>
                     </div>
                 </footer>

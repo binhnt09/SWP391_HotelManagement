@@ -27,7 +27,7 @@
         <div class="list-group list-group-flush sidebar-menu">
             <div class="list-group-item ${pageContext.request.requestURI.endsWith('myvoucher.jsp') ? 'active' : ''}">
                 <a class="dropdown-item" href="${pageContext.request.contextPath}/voucherforcustomer">
-                    <i class="fas fa-bed"></i> Điểm
+                    <i class="fas fa-money-bill-wave"></i> Điểm
                 </a>
             </div>
 
@@ -39,21 +39,6 @@
             <div class="list-group-item ${pageContext.request.requestURI.endsWith('historypayment.jsp') ? 'active' : ''}">
                 <a class="dropdown-item" href="${pageContext.request.contextPath}/paymenthistory">
                     <i class="fas fa-list"></i> Danh sách giao dịch
-                </a>
-            </div>
-            <div class="list-group-item">
-                <a class="dropdown-item" href="#">
-                    <i class="fas fa-money-bill-wave"></i> Refunds
-                </a>
-            </div>
-            <div class="list-group-item">
-                <a class="dropdown-item" href="#">
-                    <i class="fas fa-users"></i> Thông tin khách đã lưu
-                </a>
-            </div>
-            <div class="list-group-item">
-                <a class="dropdown-item" href="#">
-                    <i class="fas fa-envelope"></i> Cài đặt thông báo
                 </a>
             </div>
             <div class="list-group-item ${pageContext.request.requestURI.endsWith('profile.jsp') ? 'active' : ''}">
