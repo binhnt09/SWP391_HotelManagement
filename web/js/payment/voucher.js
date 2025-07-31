@@ -79,17 +79,6 @@ searchInput.addEventListener("input", function () {
     }, 100); // Gửi sau khi dừng gõ 100ms
 });
 
-//search payment
-const searchInput1 = document.querySelector("input[name='searchPayment']");
-let timeout1;
-searchInput1.addEventListener("input", function () {
-    clearTimeout(timeout);
-    timeout1 = setTimeout(() => {
-        document.getElementById("searchFormPayment").submit();
-    }, 100); // Gửi sau khi dừng gõ 100ms
-});
-
-
 //constant valid date from and to
 const fromInputs = document.querySelectorAll(".validfrom");
 const toInputs = document.querySelectorAll(".validto");
@@ -238,7 +227,7 @@ function openEditModal(voucherId, code, discount, from, to) {
                     container.appendChild(li);
                 });
 
-                // === Sau khi render checkbox, gán lại sự kiện và cập nhật giao diện ===
+                // hiển thị name leveluser đã checked lên ô checkbox
                 const dropdownButton = document.getElementById('memberDropdownUd');
                 const checkboxes = document.querySelectorAll('.member-checkboxUd');
 
@@ -262,7 +251,6 @@ function openEditModal(voucherId, code, discount, from, to) {
                     cb.addEventListener('change', updateSelectedLevelsUd);
                 });
 
-                // Gọi cập nhật ngay lần đầu
                 updateSelectedLevelsUd();
             }).catch(err => console.error("FETCH ERROR:", err));
 }

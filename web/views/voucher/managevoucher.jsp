@@ -320,13 +320,15 @@
                                                                data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
                                                                 <span>Select Level</span>
                                                             </a>
+                                                            <c:set var="selectedLevelIds" value="${param.levelUserId}" />
                                                             <ul class="dropdown-menu" style="width: 100%; text-align: left">
                                                                 <c:forEach var="levelUser" items="${listLevelUser}">
                                                                     <li class="nav-item submenu dropdown">
                                                                         <label class="dropdown-item" style="cursor: pointer;">
                                                                             <input type="checkbox" style="width: 18px; height: 18px; margin: 5px" 
-                                                                                   class="member-checkbox" value="${levelUser.levelId}" 
-                                                                                   ${checked ? "checked" : ""} data-name="${levelUser.levelName}">
+                                                                                   class="member-checkbox" value="${levelUser.levelId}"  
+                                                                                   data-name="${levelUser.levelName}"
+                                                                                   <c:if test="${fn:contains(selectedLevelIds, levelUser.levelId)}">checked</c:if> />
                                                                             ${levelUser.levelName}
                                                                         </label>
                                                                     </li>
@@ -339,7 +341,7 @@
                                             </div>
                                             <div class="modal-footer">
                                                 <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
-                                                <input type="submit" class="btn btn-info" value="Save">
+                                                <input id="myForm" type="submit" class="btn btn-info" value="Save">
                                             </div>
                                         </div>
                                     </form>
@@ -355,6 +357,8 @@
                                 });
                             </script>
                         </c:if>
+                            
+                            
 
                         <!-- Edit Modal HTML -->
                         <div id="editVoucherModal" class="modal fade">
@@ -496,12 +500,14 @@
         <script src="${pageContext.request.contextPath}/js/managevoucher/jquery-3.3.1.min.js"></script>
 
         <script src="${pageContext.request.contextPath}/js/payment/voucher.js"></script>
-
+        
         <script>
         </script>
+        
         <script>
             const contextPath = '<%= request.getContextPath() %>';
         </script>
+        
         <script>
             <% if (request.getSession().getAttribute("success") != null) { %>
             Swal.fire({
