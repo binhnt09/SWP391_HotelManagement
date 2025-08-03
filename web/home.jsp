@@ -101,11 +101,11 @@
                                             <input type="date" id="checkOutDate" value="${checkout}" name="checkout" required=""  placeholder="Chọn ngày đến" class="form-control time-input"  />
                                         </div>
                                         <div class="col-4 col-lg-4">
-                                            <label style="font-weight: 600;">Giá mỗi đêm:</label>
+                                            <label style="font-weight: 600;">Giá mỗi đêm (VND):</label>
                                             <div class="d-flex align-items-center gap-2">
-                                                <input type="number" id="priceFrom"  name="pricefrom" value="${from}" step="100" min="0" placeholder="$From" class="form-control" style="max-width: 200px;">
+                                                <input type="number" id="priceFrom"  name="pricefrom" value="${from}" step="100" min="0" placeholder="From" class="form-control" style="max-width: 200px;">
                                                 <span>&nbsp;&mdash;&nbsp;</span>
-                                                <input type="number" id="priceTo" name="priceto" value="${to}" step="100" min="0" placeholder="$To" class="form-control" style="max-width: 200px;">
+                                                <input type="number" id="priceTo" name="priceto" value="${to}" step="100" min="0" placeholder="To" class="form-control" style="max-width: 200px;">
                                             </div>
                                         </div>
                                     </div>
@@ -301,11 +301,10 @@
                 <div class="section-heading wow fadeInUp" data-wow-delay="100ms">
                     <div class="line-"></div>
                     <h2>Contact Info</h2>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec malesuada lorem maximus mauris sceleri sque, at rutrum nulla dictum. Ut ac ligula sapien. Suspendisse cursus faucibus finibus. Lorem ipsum dolor sit amet, consectetur adipiscing.</p>
                 </div>
-                <h4 class="wow fadeInUp" data-wow-delay="300ms">Los Angeles 1481 Creekside Lane Avila Beach, CA 931</h4>
-                <h5 class="wow fadeInUp" data-wow-delay="400ms">+53 345 7953 32453</h5>
-                <h5 class="wow fadeInUp" data-wow-delay="500ms">yourmail@gmail.com</h5>
+                <h4 class="wow fadeInUp" data-wow-delay="300ms">Group 3 - SWP391</h4>
+                <h5 class="wow fadeInUp" data-wow-delay="400ms">+84 32 863 3494</h5>
+                <h5 class="wow fadeInUp" data-wow-delay="500ms">dominhdangcap2@gmail.com</h5>
                 <!-- Social Info -->
                 <div class="social-info mt-50 wow fadeInUp" data-wow-delay="600ms">
                     <a href="#"><i class="fa fa-pinterest" aria-hidden="true"></i></a>
@@ -328,37 +327,9 @@
                     <div class="col-12 col-lg-5">
                         <div class="footer-widget-area mt-50">
                             <a href="#" class="d-block mb-5"><img src="img/core-img/logo.png" alt=""></a>
-                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec malesuada lorem maximus mauris sceleri sque, at rutrum nulla dictum. Ut ac ligula sapien. Suspendisse cursus faucibus finibus. </p>
                         </div>
                     </div>
 
-                    <!-- Footer Widget Area -->
-                    <div class="col-12 col-md-6 col-lg-4">
-                        <div class="footer-widget-area mt-50">
-                            <h6 class="widget-title mb-5">Find us on the map</h6>
-                            <img src="img/bg-img/footer-map.png" alt="">
-                        </div>
-                    </div>
-
-                    <!-- Footer Widget Area -->
-                    <div class="col-12 col-md-6 col-lg-3">
-                        <div class="footer-widget-area mt-50">
-                            <h6 class="widget-title mb-5">Subscribe to our newsletter</h6>
-                            <form action="#" method="post" class="subscribe-form">
-                                <input type="email" name="subscribe-email" id="subscribeemail" placeholder="Your E-mail">
-                                <button type="submit">Subscribe</button>
-                            </form>
-                        </div>
-                    </div>
-
-                    <!-- Copywrite Text -->
-                    <div class="col-12">
-                        <div class="copywrite-text mt-30">
-                            <p><a href="#"><!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-                                    Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made with <i class="fa fa-heart-o" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a>
-                                    <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. --></p>
-                        </div>
-                    </div>
                 </div>
             </div>
         </footer>

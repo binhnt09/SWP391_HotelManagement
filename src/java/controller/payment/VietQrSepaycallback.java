@@ -130,7 +130,7 @@ public class VietQrSepaycallback extends HttpServlet {
             return;
         }
 
-        // Bóc mã booking ID từ content
+        // booking ID từ content
         int bookingId = -1;
         Matcher matcher = Pattern.compile("BOOK(\\d+)").matcher(content);
         if (matcher.find()) {
@@ -142,7 +142,7 @@ public class VietQrSepaycallback extends HttpServlet {
             return;
         }
 
-        // So khớp với booking
+        // so khớp với booking
         BigDecimal amount = new BigDecimal(amountStr);
         BookingDao dao = new BookingDao();
         Booking bookingUser = dao.findUserByBookingId(bookingId);
@@ -152,7 +152,6 @@ public class VietQrSepaycallback extends HttpServlet {
             User user = bookingUser.getUser();
             String email = user.getEmail();
 
-            // Ghi log hoặc insert vào bảng Payment nếu cần
             Payment payment = new Payment();
             payment.setBookingId(bookingId);
             payment.setAmount(amount);
@@ -182,11 +181,11 @@ public class VietQrSepaycallback extends HttpServlet {
             } catch (Exception ex) {
                 Logger.getLogger(VietQrSepaycallback.class.getName()).log(Level.SEVERE, null, ex);
             }
-            //update membership
-            voucherDao.updateUserMembershipLevel(user.getUserId());
+            //update levelUser
+            voucherDao.updateUserLevelUser(user.getUserId());
 
             Booking updateBooking = dao.getBookingById(bookingId);
-            if (updateBooking != null && "PAID".equalsIgnoreCase(updateBooking.getStatus())) {
+            if (updateBooking != null && "Confirmed".equalsIgnoreCase(updateBooking.getStatus())) {
                 HttpSession session = request.getSession();
                 session.removeAttribute("bookingId");
                 session.removeAttribute("accountName");

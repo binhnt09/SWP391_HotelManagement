@@ -164,7 +164,7 @@ public class PaymentDao extends DBContext {
         }
         return list;
     }
-    
+
     //tinh tong thanh toan user
     public BigDecimal calculateDiscountedTotal(BigDecimal baseAmount, Integer voucherId) {
         BigDecimal autoDiscount = BigDecimal.ZERO;
@@ -174,7 +174,6 @@ public class PaymentDao extends DBContext {
 //        if (baseAmount.compareTo(new BigDecimal("500000")) >= 0) {
 //            autoDiscount = baseAmount.multiply(new BigDecimal("0.10"));
 //        }
-
         // Voucher discount nếu có
         if (voucherId != null) {
             String sql = """
@@ -197,10 +196,10 @@ public class PaymentDao extends DBContext {
         }
         return baseAmount.subtract(autoDiscount).subtract(voucherDiscount);
     }
-    
+
     //Đếm số lượng voucher sau khi search theo code hoặc tính tổng sl voucher
     public int countSearchResults(String keyword) {
-        String sql = "SELECT COUNT(*) FROM Payment WHERE IsDeleted = 0";
+        String sql = "SELECT COUNT(*) FROM Payment WHERE IsDeleted = 0 ";
         boolean hasKeyword = keyword != null && !keyword.trim().isEmpty();
         if (hasKeyword) {
             sql += " AND (CAST(Amount AS CHAR) LIKE ? OR Method LIKE ? OR BankCode LIKE ?) ";
@@ -209,10 +208,12 @@ public class PaymentDao extends DBContext {
             String searchParam = "%" + keyword + "%";
             if (hasKeyword) {
                 stm.setString(1, searchParam);
+                stm.setString(2, searchParam);
+                stm.setString(3, searchParam);
             }
             ResultSet rs = stm.executeQuery();
             if (rs.next()) {
-                return rs.getInt(1); // Trả về số lượng bản ghi tìm được
+                return rs.getInt(1); // Trả về số lượng payment tìm được
             }
         } catch (SQLException ex) {
             Logger.getLogger(PaymentDao.class.getName()).log(Level.SEVERE, null, ex);
@@ -255,6 +256,8 @@ public class PaymentDao extends DBContext {
         try (PreparedStatement stm = connection.prepareStatement(sql.toString())) {
             int paramIndex = 1;
             if (hasKeyword) {
+                stm.setString(paramIndex++, "%" + searchPayment + "%");
+                stm.setString(paramIndex++, "%" + searchPayment + "%");
                 stm.setString(paramIndex++, "%" + searchPayment + "%");
             }
             int offset = Math.max((start - 1), 0) * 6;

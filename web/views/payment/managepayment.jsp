@@ -92,11 +92,6 @@
                                                     <li><a href="#">5 warnings in Server Console</a></li>
                                                 </ul>
                                             </li>
-                                            <li class="nav-item">
-                                                <a class="nav-link" href="#">
-                                                    <span class="material-icons">question_answer</span>
-                                                </a>
-                                            </li>
                                             <li class="nav-item dropdown">
                                                 <a class="nav-link" href="#" data-toggle="dropdown">
                                                     <img src="img/admin2.jpg" style="width:35px; border-radius:50%;"/>
@@ -134,7 +129,6 @@
                     <div class="xp-breadcrumbbar text-center">
                         <h4 class="page-title">Dashboard</h4>  
                         <ul class="breadcrumb" style="background: none;">
-                            <li class="breadcrumb-item"><a href="#">Booster</a></li>
                             <li class="breadcrumb-item active" aria-current="page">Dashboard</li>
                         </ul>                
                     </div>
@@ -281,7 +275,7 @@
                 <footer class="footer">
                     <div class="container-fluid">
                         <div class="footer-in">
-                            <p class="mb-0">&copy 2025 Palatin Hotel - Manage Payment.</p>
+                            <p class="mb-0">Palatin Hotel - Manage Payment.</p>
                         </div>
                     </div>
                 </footer>
@@ -301,12 +295,19 @@
         <script src="${pageContext.request.contextPath}/js/managevoucher/bootstrap.min.js"></script>
         <script src="${pageContext.request.contextPath}/js/managevoucher/jquery-3.3.1.min.js"></script>
 
-        <script src="${pageContext.request.contextPath}/js/payment/voucher.js"></script>
-
         <script>
         </script>
         <script>
             const contextPath = '<%= request.getContextPath() %>';
+            //search payment
+            const searchInput1 = document.querySelector("input[name='searchPayment']");
+            let timeout1;
+            searchInput1.addEventListener("input", function () {
+                clearTimeout(timeout);
+                timeout1 = setTimeout(() => {
+                    document.getElementById("searchFormPayment").submit();
+                }, 100); // Gửi sau khi dừng gõ 100ms
+            });
         </script>
         <script type="text/javascript">
             $(document).ready(function () {
@@ -314,7 +315,7 @@
                     $('#sidebar').toggleClass('active');
                     $('#content').toggleClass('active');
                 });
-                    $(".xp-menubar,.body-overlay").on('click', function () {
+                $(".xp-menubar,.body-overlay").on('click', function () {
                     $('#sidebar,.body-overlay').toggleClass('show-nav');
                 });
             });

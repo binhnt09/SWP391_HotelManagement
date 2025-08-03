@@ -5,7 +5,7 @@
 package dao;
 
 import dal.DBContext;
-import entity.MembershipLevel;
+import entity.LevelUser;
 import java.util.ArrayList;
 import java.util.List;
 import java.sql.PreparedStatement;
@@ -17,14 +17,14 @@ import java.util.logging.Logger;
  *
  * @author ASUS
  */
-public class MembershipDao extends DBContext {
+public class LevelUserDao extends DBContext {
 
-    public List<MembershipLevel> getUnassignedLevelsByVoucherId(int voucherId) {
-        List<MembershipLevel> levels = new ArrayList<>();
+    public List<LevelUser> getUnassignedLevelsByVoucherId(int voucherId) {
+        List<LevelUser> levels = new ArrayList<>();
 
         String sql = """
             SELECT LevelID, LevelName
-            FROM MembershipLevel
+            FROM LevelUser
             WHERE LevelID NOT IN (
                 SELECT LevelID
                 FROM VoucherLevel
@@ -36,19 +36,19 @@ public class MembershipDao extends DBContext {
             ps.setInt(1, voucherId);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
-                    MembershipLevel level = new MembershipLevel();
+                    LevelUser level = new LevelUser();
                     level.setLevelId(rs.getInt("LevelID"));
                     level.setLevelName(rs.getString("LevelName"));
                     levels.add(level);
                 }
             }
         } catch (Exception e) {
-            Logger.getLogger(MembershipDao.class.getName()).log(Level.SEVERE, null, e);
+            Logger.getLogger(LevelUserDao.class.getName()).log(Level.SEVERE, null, e);
         }
         return levels;
     }
 
-    public List<Integer> getSelectedMembershipLevels(int voucherId) {
+    public List<Integer> getSelectedLevelUser(int voucherId) {
         List<Integer> levelIds = new ArrayList<>();
         String sql = "SELECT LevelID FROM VoucherLevel WHERE VoucherID = ? AND IsDeleted = 0";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
@@ -58,7 +58,7 @@ public class MembershipDao extends DBContext {
                 levelIds.add(rs.getInt("LevelID"));
             }
         } catch (Exception e) {
-            Logger.getLogger(MembershipDao.class.getName()).log(Level.SEVERE, null, e);
+            Logger.getLogger(LevelUserDao.class.getName()).log(Level.SEVERE, null, e);
         }
         return levelIds;
     }

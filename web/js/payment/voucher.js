@@ -7,17 +7,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
     searchTabs.forEach(tab => {
         tab.addEventListener('click', function () {
-            // Remove active class from all tabs
+            // remove active class from all tabs
             searchTabs.forEach(t => t.classList.remove('active'));
 
-            // Add active class to clicked tab
+            // add active class to clicked tab
             this.classList.add('active');
-
-            // You can add more functionality here to switch tab content
         });
     });
 
-    // Smooth scrolling for anchor links
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
             e.preventDefault();
@@ -30,7 +27,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    // Add hover effect to tour cards
+    // add hover effect to tour cards
     const tourCards = document.querySelectorAll('.tour-card');
     tourCards.forEach(card => {
         card.addEventListener('mouseenter', function () {
@@ -42,14 +39,14 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    // Form validation
+    // form validation
     const searchForm = document.querySelector('.search-form');
     if (searchForm) {
         const searchButton = searchForm.querySelector('.btn-search');
         searchButton.addEventListener('click', function (e) {
             e.preventDefault();
 
-            // Basic form validation
+            // basic form validation
             const inputs = searchForm.querySelectorAll('input[type="text"], input[type="date"], select');
             let isValid = true;
 
@@ -63,7 +60,7 @@ document.addEventListener('DOMContentLoaded', function () {
             });
 
             if (isValid) {
-                alert('Tìm kiếm thành công! (Demo)');
+                alert('Tìm kiếm thành công!');
             } else {
                 alert('Vui lòng điền đầy đủ thông tin!');
             }
@@ -81,17 +78,6 @@ searchInput.addEventListener("input", function () {
         document.getElementById("searchForm").submit();
     }, 100); // Gửi sau khi dừng gõ 100ms
 });
-
-//search payment
-const searchInput1 = document.querySelector("input[name='searchPayment']");
-let timeout1;
-searchInput1.addEventListener("input", function () {
-    clearTimeout(timeout);
-    timeout1 = setTimeout(() => {
-        document.getElementById("searchFormPayment").submit();
-    }, 100); // Gửi sau khi dừng gõ 100ms
-});
-
 
 //constant valid date from and to
 const fromInputs = document.querySelectorAll(".validfrom");
@@ -119,7 +105,6 @@ fromInputs.forEach((fromInput, index) => {
                 toInput.value = today;
             }
         }
-
         filterByCustomDate();
     });
 });
@@ -144,7 +129,7 @@ toInputs.forEach((toInput, index) => {
     });
 });
 
-//memeber ship check box
+//LevelUser check box form add
 document.addEventListener("DOMContentLoaded", function () {
     const dropdownButton = document.getElementById('memberDropdown');
     const checkboxes = document.querySelectorAll('.member-checkbox');
@@ -161,7 +146,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
         dropdownButton.innerText = selectedValues.length > 0
                 ? selectedLabels.join(", ") : "Select Level";
-        document.getElementById('memberShipId').value = selectedValues.join(", ");
+        document.getElementById('levelUserId').value = selectedValues.join(", ");
     }
 
     checkboxes.forEach(cb => {
@@ -171,6 +156,7 @@ document.addEventListener("DOMContentLoaded", function () {
     updateSelectedLevels();
 });
 
+//levelUser check box form edit
 document.addEventListener("DOMContentLoaded", function () {
     const dropdownButton = document.getElementById('memberDropdownUd');
     const checkboxes = document.querySelectorAll('.member-checkboxUd');
@@ -187,7 +173,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
         dropdownButton.innerText = selectedValues.length > 0
                 ? selectedLabels.join(", ") : "Select Level";
-        document.getElementById('memberShipIdUd').value = selectedValues.join(", ");
+        document.getElementById('levelUserIdUd').value = selectedValues.join(", ");
     }
 
     checkboxes.forEach(cb => {
@@ -241,7 +227,7 @@ function openEditModal(voucherId, code, discount, from, to) {
                     container.appendChild(li);
                 });
 
-                // === Sau khi render checkbox, gán lại sự kiện và cập nhật giao diện ===
+                // hiển thị name leveluser đã checked lên ô checkbox
                 const dropdownButton = document.getElementById('memberDropdownUd');
                 const checkboxes = document.querySelectorAll('.member-checkboxUd');
 
@@ -258,14 +244,13 @@ function openEditModal(voucherId, code, discount, from, to) {
 
                     dropdownButton.innerText = selectedValues.length > 0
                             ? selectedLabels.join(", ") : "Select Level";
-                    document.getElementById('memberShipIdUd').value = selectedValues.join(", ");
+                    document.getElementById('levelUserIdUd').value = selectedValues.join(", ");
                 }
 
                 checkboxes.forEach(cb => {
                     cb.addEventListener('change', updateSelectedLevelsUd);
                 });
 
-                // Gọi cập nhật ngay lần đầu
                 updateSelectedLevelsUd();
             }).catch(err => console.error("FETCH ERROR:", err));
 }
@@ -273,14 +258,14 @@ function openEditModal(voucherId, code, discount, from, to) {
 //delete checkbox
 $(document).ready(function () {
     restoreSelection(); // Khôi phục checkbox khi tải trang
-    // Chọn/Bỏ chọn tất cả
+    // chọn/Bỏ chọn tất cả
     $("#selectAll").click(function () {
         let isChecked = this.checked;
         $(".select-item").prop("checked", isChecked);
 
         let selectedStaff = [];
         if (isChecked) {
-            // Nếu chọn tất cả, lưu toàn bộ staff ID vào mảng
+            // Nếu chọn tất cả, lưu toàn bộ voucher ID vào mảng
             $(".select-item").each(function () {
                 selectedStaff.push($(this).val());
             });
@@ -292,7 +277,7 @@ $(document).ready(function () {
     $(".select-item").click(function () {
         updateSelection($(this).val(), $(this).prop("checked"));
     });
-    // Khi nhấn "Delete" để lấy danh sách Staff ID
+    // Khi nhấn "Delete" để lấy danh sách voucher ID
     $(".btn-danger[data-toggle='modal']").click(function () {
         let selectedIDs = JSON.parse(localStorage.getItem("selectedStaff")) || [];
         if (selectedIDs.length === 0) {
@@ -302,7 +287,7 @@ $(document).ready(function () {
         // Lưu danh sách ID vào thuộc tính data
         $("#deleteVoucherBtn").data("selected-ids", selectedIDs);
     });
-    // Khi nhấn "Delete" trong modal -> gửi AJAX
+    // Khi nhấn "Delete" trong modal thì gửi AJAX
     $("#deleteVoucherBtn").click(function () {
         let bookingID = $(this).data("selected-ids");
         if (bookingID.length > 0) {
@@ -326,11 +311,12 @@ $(document).ready(function () {
         }
     });
 });
-// 🛠️ **Cập nhật trạng thái checkbox vào localStorage**
+
+// Cập nhật trạng thái checkbox vào localStorage (giữ lại status checked khi chuyển trang)
 function updateSelection(staffID, isChecked) {
     let selectedStaff = JSON.parse(localStorage.getItem("selectedStaff")) || [];
     if (isChecked) {
-        // Nếu chọn thì thêm vào danh sách nếu chưa có
+        // nếu chọn thì thêm vào danh sách (nếu chưa có)
         if (!selectedStaff.includes(staffID)) {
             selectedStaff.push(staffID);
         }
@@ -341,7 +327,7 @@ function updateSelection(staffID, isChecked) {
     localStorage.setItem("selectedStaff", JSON.stringify(selectedStaff));
 }
 
-// 🔄 **Khôi phục trạng thái checkbox khi chuyển trang**
+// Khôi phục trạng thái checkbox khi chuyển trang
 function restoreSelection() {
     let selectedStaff = JSON.parse(localStorage.getItem("selectedStaff")) || [];
 
@@ -355,8 +341,8 @@ function restoreSelection() {
 }
 
 //delete icon thung rac
-var bookingToDelete = ""; // Lưu Staff ID cần xóa
-// Khi nhấn vào nút xóa, lấy Staff ID từ `data-id`
+var bookingToDelete = ""; // Lưu voucher ID cần xóa
+// Khi nhấn vào nút xóa, lấy voucher ID từ `data-id`
 $(".delete").click(function () {
     bookingToDelete = $(this).data("id"); // Lưu ID vào biến
 });
@@ -368,11 +354,11 @@ $("#deleteVoucherBtn").click(function () {
             url: "removevoucher", // Servlet xử lý xóa
             data: {voucherId: bookingToDelete},
             success: function () {
-                $("#deleteVoucherModal").modal("hide"); // Ẩn modal sau khi xóa
+                $("#deleteVoucherModal").modal("hide"); // ẩn modal sau khi xóa
                 alert("Staff deleted successfully!");
                 setTimeout(function () {
-                    location.reload(); // Reload trang sau khi modal đóng
-                }, 500); // Chờ modal đóng rồi reload
+                    location.reload(); // reload trang sau khi modal đóng
+                }, 500); // chờ modal đóng rồi reload
             },
             error: function () {
                 alert("Error deleting staff. Please try again.");

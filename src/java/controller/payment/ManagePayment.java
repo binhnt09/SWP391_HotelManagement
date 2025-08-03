@@ -96,7 +96,6 @@ public class ManagePayment extends HttpServlet {
         listPayment = paymentDao.searchOrSortPayment(searchPayment, sortby, isDescending, index);
         count = paymentDao.countSearchResults(searchPayment);
         int endPage = (int) Math.ceil(count / 6.0);
-        //memeber ship
 
         request.setAttribute("tag", index);
         request.setAttribute("endPage", endPage);

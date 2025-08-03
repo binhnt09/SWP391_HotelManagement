@@ -138,9 +138,6 @@
                             Thanh toán & Hiện thị mã QR
                         </button>
 
-                        <div class="terms-text">
-                            Bằng cách tiếp tục thanh toán, bạn đã đồng ý <a href="#" class="link">Điều khoản & Điều kiện</a> và <a href="#" class="link">Chính sách quyền riêng tư</a>.
-                        </div>
                     </div>
                 </form>
 
@@ -171,7 +168,7 @@
 
                     <div class="room-info">
                         <div class="room-title">${room.getRoomNumber()}-${room.getRoomType().getTypeName()}</div>
-                        <div class="room-details">🏠 ${room.roomDetail.maxGuest} khách</div>
+                        <div class="room-details">🏠 ${room.roomDetail.maxGuest} khách sạn</div>
                         <div class="room-details">🍽️ Gồm bữa sáng</div>
                         <div class="room-details">📶 Without Wifi</div>
                         <div style="color: #d32f2f; font-size: 12px; margin-top: 8px;">Yêu cầu đặc biệt (nếu có)</div>
@@ -187,9 +184,9 @@
 
                     <div style="margin: 20px 0;">
                         <div style="font-weight: bold; margin-bottom: 10px;">Chi tiết người liên lạc</div>
-                        <div style="margin-bottom: 5px;">${sessionScope.authLocal.user.firstName} ${sessionScope.authLocal.user.lastName}</div>
-                        <div style="font-size: 14px; color: #666;">📞 ${sessionScope.authLocal.user.phone}</div>
-                        <div style="font-size: 14px; color: #666;">✉ ️${sessionScope.authLocal.user.email}</div>
+                        <div style="margin-bottom: 5px;">Ngo Thanh Binh</div>
+                        <div style="font-size: 14px; color: #666;">📞 032 863 3494</div>
+                        <div style="font-size: 14px; color: #666;">✉ ️dominhdangcap2@gmail.com</div>
                     </div>
 
                     <div class="contact-note">

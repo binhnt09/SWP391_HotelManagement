@@ -7,7 +7,7 @@ package controller.voucher;
 
 import dao.VoucherDao;
 import entity.Authentication;
-import entity.MembershipLevel;
+import entity.LevelUser;
 import entity.Voucher;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -65,7 +65,7 @@ public class VoucherForCustomer extends HttpServlet {
         VoucherDao voucherDao = new VoucherDao();
 
         double totalPaid = voucherDao.getTotalPaidByUser(userId);
-        MembershipLevel level = voucherDao.getMembershipByUserId(userId);
+        LevelUser level = voucherDao.getLevelUserByUserId(userId);
         
         List<Voucher> vouchers = voucherDao.getClaimedVouchers(userId);
         List<Voucher> vouchersIused = voucherDao.getClaimedVouchersIsUsed(userId);
