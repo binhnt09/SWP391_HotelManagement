@@ -101,11 +101,11 @@
                                             <input type="date" id="checkOutDate" value="${checkout}" name="checkout" required=""  placeholder="Chọn ngày đến" class="form-control time-input"  />
                                         </div>
                                         <div class="col-4 col-lg-4">
-                                            <label style="font-weight: 600;">Giá mỗi đêm:</label>
+                                            <label style="font-weight: 600;">Giá mỗi đêm (VND):</label>
                                             <div class="d-flex align-items-center gap-2">
-                                                <input type="number" id="priceFrom"  name="pricefrom" value="${from}" step="100" min="0" placeholder="$From" class="form-control" style="max-width: 200px;">
+                                                <input type="number" id="priceFrom"  name="pricefrom" value="${from}" step="100" min="0" placeholder="From" class="form-control" style="max-width: 200px;">
                                                 <span>&nbsp;&mdash;&nbsp;</span>
-                                                <input type="number" id="priceTo" name="priceto" value="${to}" step="100" min="0" placeholder="$To" class="form-control" style="max-width: 200px;">
+                                                <input type="number" id="priceTo" name="priceto" value="${to}" step="100" min="0" placeholder="To" class="form-control" style="max-width: 200px;">
                                             </div>
                                         </div>
                                     </div>
