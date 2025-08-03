@@ -227,7 +227,7 @@ public class BookingDao extends DBContext {
                 sql.append(" AND b.IsDeleted = ?");
             }
 
-            if (userRoleId == 5) { // giả sử roleId=3 là guest
+            if (userRoleId == 5) {
                 sql.append(" AND b.UserID = ?");
             }
 
@@ -502,14 +502,14 @@ public class BookingDao extends DBContext {
         String sql = "INSERT INTO Booking (UserID, CheckInDate, CheckOutDate, TotalAmount, Status, actualcheckin) VALUES (?, ?, ?, ?, ?, getdate())";
         try (PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setInt(1, booking.getUserId());
-            ps.setTimestamp(2, Timestamp.valueOf(booking.getCheckInDate().toString() + " 14:00:00")); // Check-in: 14:00
-            ps.setTimestamp(3, Timestamp.valueOf(booking.getCheckOutDate().toString() + " 12:00:00")); // Check-out: 12:00
+            ps.setTimestamp(2, Timestamp.valueOf(booking.getCheckInDate().toString() + " 14:00:00"));
+            ps.setTimestamp(3, Timestamp.valueOf(booking.getCheckOutDate().toString() + " 12:00:00"));
             ps.setBigDecimal(4, booking.getTotalAmount());
             ps.setString(5, booking.getStatus());
             ps.executeUpdate();
             try (ResultSet rs = ps.getGeneratedKeys()) {
                 if (rs.next()) {
-                    return rs.getInt(1); // Trả về BookingID vừa insert
+                    return rs.getInt(1); 
                 }
             }
         } catch (Exception e) {
@@ -521,16 +521,14 @@ public class BookingDao extends DBContext {
     public boolean checkoutBooking(int bookingId, int roomId, int staffId) {
         PreparedStatement ps = null;
         try {
-            connection.setAutoCommit(false); // Bắt đầu transaction
+            connection.setAutoCommit(false); 
 
-            // 1. Cập nhật trạng thái phòng
             String sqlRoom = "UPDATE Room SET Status = 'Checkout', UpdatedAt = GETDATE() WHERE RoomID = ?";
             ps = connection.prepareStatement(sqlRoom);
             ps.setInt(1, roomId);
             ps.executeUpdate();
             ps.close();
 
-            // 2. Cập nhật trạng thái Booking
             String sqlBooking = """
             UPDATE Booking
             SET Status = 'Checked-out',
@@ -548,7 +546,7 @@ public class BookingDao extends DBContext {
         } catch (SQLException e) {
             Logger.getLogger(BookingDao.class.getName()).log(Level.SEVERE, null, e);
             try {
-                connection.rollback(); // rollback nếu có lỗi
+                connection.rollback(); 
             } catch (SQLException ex) {
                 Logger.getLogger(BookingDao.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -558,7 +556,7 @@ public class BookingDao extends DBContext {
                 if (ps != null) {
                     ps.close();
                 }
-                connection.setAutoCommit(true); // reset lại auto commit sau khi xong
+                connection.setAutoCommit(true);
             } catch (SQLException e) {
                 Logger.getLogger(BookingDao.class.getName()).log(Level.SEVERE, null, e);
             }
@@ -569,7 +567,6 @@ public class BookingDao extends DBContext {
         String updateBooking = "UPDATE Booking SET Status = 'Cancelled', UpdatedAt = GETDATE() "
                 + "WHERE BookingID = ? AND IsDeleted = 0";
 
-        // Kiểm tra còn booking hợp lệ nào khác không (trừ cái vừa hủy)
         String checkOtherBookings = """
                     SELECT COUNT(*) FROM BookingDetail bd
                     JOIN Booking b ON bd.BookingID = b.BookingID

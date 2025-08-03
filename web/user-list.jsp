@@ -376,7 +376,7 @@
 
     <script>
         $('#createAccountModal').on('show.bs.modal', function (event) {
-            var button = $(event.relatedTarget); // Button that triggered the modal
+            var button = $(event.relatedTarget);
             var userId = button.data('userid');
             var username = button.data('username');
             var userEmail = button.data('useremail');
