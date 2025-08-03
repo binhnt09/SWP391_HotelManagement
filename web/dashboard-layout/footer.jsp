@@ -4,7 +4,6 @@
     Author     : viet7
 --%>
 
-<!---footer---->
 
 <!----------html code complete----------->
 

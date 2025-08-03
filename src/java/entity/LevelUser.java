@@ -11,7 +11,7 @@ import java.sql.Timestamp;
  *
  * @author ASUS
  */
-public class MembershipLevel {
+public class LevelUser {
 
     private int levelId;
     private String levelName;
@@ -22,7 +22,7 @@ public class MembershipLevel {
     private Integer deletedBy;
     private boolean isDeleted;
 
-    public MembershipLevel() {
+    public LevelUser() {
     }
 
     public int getLevelId() {
@@ -91,7 +91,7 @@ public class MembershipLevel {
 
     @Override
     public String toString() {
-        return "MembershipLevel{" + "levelId=" + levelId + ", levelName=" + levelName + ", minTotal=" + minTotal + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + ", deletedAt=" + deletedAt + ", deletedBy=" + deletedBy + ", isDeleted=" + isDeleted + '}';
+        return "LevelUser{" + "levelId=" + levelId + ", levelName=" + levelName + ", minTotal=" + minTotal + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + ", deletedAt=" + deletedAt + ", deletedBy=" + deletedBy + ", isDeleted=" + isDeleted + '}';
     }
 
 }

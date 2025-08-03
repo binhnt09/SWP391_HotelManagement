@@ -80,23 +80,6 @@
                                 <div class="xp-profilebar text-right">
                                     <nav class="navbar p-0">
                                         <ul class="nav navbar-nav flex-row ml-auto">   
-                                            <li class="dropdown nav-item active">
-                                                <a href="#" class="nav-link" data-toggle="dropdown">
-                                                    <span class="material-icons">notifications</span>
-                                                    <span class="notification">4</span>
-                                                </a>
-                                                <ul class="dropdown-menu">
-                                                    <li><a href="#">You have 5 new messages</a></li>
-                                                    <li><a href="#">You're now friend with Mike</a></li>
-                                                    <li><a href="#">Wish Mary on her birthday!</a></li>
-                                                    <li><a href="#">5 warnings in Server Console</a></li>
-                                                </ul>
-                                            </li>
-                                            <li class="nav-item">
-                                                <a class="nav-link" href="#">
-                                                    <span class="material-icons">question_answer</span>
-                                                </a>
-                                            </li>
                                             <li class="nav-item dropdown">
                                                 <a class="nav-link" href="#" data-toggle="dropdown">
                                                     <img src="img/admin2.jpg" style="width:35px; border-radius:50%;"/>
@@ -134,7 +117,6 @@
                     <div class="xp-breadcrumbbar text-center">
                         <h4 class="page-title">Dashboard</h4>  
                         <ul class="breadcrumb" style="background: none;">
-                            <li class="breadcrumb-item"><a href="#">Booster</a></li>
                             <li class="breadcrumb-item active" aria-current="page">Dashboard</li>
                         </ul>                
                     </div>
@@ -319,33 +301,35 @@
 
                                             <div class="form-group" style="display: flex; gap: 10px">
                                                 <div style="flex: 1">
-                                                    <label class="form-label">Member level</label>
+                                                    <label class="form-label">Level user</label>
                                                     <ul class="nav navbar-nav menu_nav">
                                                         <li class="nav-item submenu dropdown">
                                                             <a href="#" id="memberDropdown" class="nav-link dropdown-toggle" style="background: #cccccc; color: black" 
                                                                data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
                                                                 <span>Select Level</span>
                                                             </a>
+                                                            <c:set var="selectedLevelIds" value="${param.levelUserId}" />
                                                             <ul class="dropdown-menu" style="width: 100%; text-align: left">
-                                                                <c:forEach var="memberShip" items="${listMemberShip}">
+                                                                <c:forEach var="levelUser" items="${listLevelUser}">
                                                                     <li class="nav-item submenu dropdown">
                                                                         <label class="dropdown-item" style="cursor: pointer;">
                                                                             <input type="checkbox" style="width: 18px; height: 18px; margin: 5px" 
-                                                                                   class="member-checkbox" value="${memberShip.levelId}" 
-                                                                                   ${checked ? "checked" : ""} data-name="${memberShip.levelName}">
-                                                                            ${memberShip.levelName}
+                                                                                   class="member-checkbox" value="${levelUser.levelId}"  
+                                                                                   data-name="${levelUser.levelName}"
+                                                                                   <c:if test="${fn:contains(selectedLevelIds, levelUser.levelId)}">checked</c:if> />
+                                                                            ${levelUser.levelName}
                                                                         </label>
                                                                     </li>
                                                                 </c:forEach>
                                                             </ul>
                                                         </li>
                                                     </ul>
-                                                    <input type="hidden" id="memberShipId" name="memberShipId">
+                                                    <input type="hidden" id="levelUserId" name="levelUserId">
                                                 </div>
                                             </div>
                                             <div class="modal-footer">
                                                 <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
-                                                <input type="submit" class="btn btn-info" value="Save">
+                                                <input id="myForm" type="submit" class="btn btn-info" value="Save">
                                             </div>
                                         </div>
                                     </form>
@@ -361,6 +345,8 @@
                                 });
                             </script>
                         </c:if>
+                            
+                            
 
                         <!-- Edit Modal HTML -->
                         <div id="editVoucherModal" class="modal fade">
@@ -400,7 +386,7 @@
 
                                             <div class="form-group" style="display: flex; gap: 10px">
                                                 <div style="flex: 1">
-                                                    <label class="form-label">Member level</label>
+                                                    <label class="form-label">Level user</label>
                                                     <ul class="nav navbar-nav menu_nav">
                                                         <li class="nav-item submenu dropdown">
                                                             <a href="#" id="memberDropdownUd" class="nav-link dropdown-toggle" style="background: #cccccc; color: black" 
@@ -408,21 +394,21 @@
                                                                 <span>Select Level</span>
                                                             </a>
                                                             <ul id="levelCheckboxContainer" class="dropdown-menu">
-                                                                <c:forEach var="memberShip" items="${listMemberShip}">
+                                                                <c:forEach var="levelUser" items="${listLevelUser}">
                                                                     <c:set var="selectedLevels" value="${fn:split(levelId, ',')}"/>
                                                                     <li class="nav-item submenu dropdown">
                                                                         <label class="dropdown-item" style="cursor: pointer;">
                                                                             <input type="checkbox" class="member-checkboxUd"
-                                                                                   value="${memberShip.levelId}" data-name="${memberShip.levelName}"
-                                                                                   <c:if test="${fn:contains(levelId, memberShip.levelId)}">checked</c:if> />
-                                                                            ${memberShip.levelName}
+                                                                                   value="${levelUser.levelId}" data-name="${levelUser.levelName}"
+                                                                                   <c:if test="${fn:contains(levelId, levelUser.levelId)}">checked</c:if> />
+                                                                            ${levelUser.levelName}
                                                                         </label>
                                                                     </li>
                                                                 </c:forEach>
                                                             </ul>
                                                         </li>
                                                     </ul>
-                                                    <input type="hidden" id="memberShipIdUd" name="memberShipId">
+                                                    <input type="hidden" id="levelUserIdUd" name="levelUserId">
                                                 </div>
                                             </div>
                                             <div class="modal-footer">
@@ -481,7 +467,7 @@
                 <footer class="footer">
                     <div class="container-fluid">
                         <div class="footer-in">
-                            <p class="mb-0">&copy 2025 Palatin Hotel - Manage voucher.</p>
+                            <p class="mb-0">Palatin Hotel - Manage voucher.</p>
                         </div>
                     </div>
                 </footer>
@@ -502,12 +488,14 @@
         <script src="${pageContext.request.contextPath}/js/managevoucher/jquery-3.3.1.min.js"></script>
 
         <script src="${pageContext.request.contextPath}/js/payment/voucher.js"></script>
-
+        
         <script>
         </script>
+        
         <script>
             const contextPath = '<%= request.getContextPath() %>';
         </script>
+        
         <script>
             <% if (request.getSession().getAttribute("success") != null) { %>
             Swal.fire({

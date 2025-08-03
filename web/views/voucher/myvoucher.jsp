@@ -13,7 +13,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        <title>The Palatin - Giao dịch của tôi</title>
+        <title>The Palatin - Điểm, voucher của tôi</title>
         <link rel="icon" href="${pageContext.request.contextPath}/img/core-img/favicon.ico">
 
         <link rel="stylesheet" href="${pageContext.request.contextPath}/css/profile.css">
@@ -36,19 +36,35 @@
 
                     <!-- Main Content -->
                     <div class="col-lg-9 col-md-8">
-
                         <div class="content-point">
                             <div class="point-summary">
                                 <div class="point-title">Tổng chi tiêu của bạn</div>
-                                <div class="point-value">₫${sessionScope.totalPaidAmount}</div>
-                            <a href="#" class="btn-info">Thông tin chi tiết</a>
+                                <div class="point-value">
+                                <fmt:formatNumber value="${sessionScope.totalPaidAmount}" type="number" groupingUsed="true" maxFractionDigits="0" /> VND
+                            </div>
+                            <span>
+                                <i class="fas fa-money-bill-wave"></i>
+                                <fmt:formatNumber value="${sessionScope.totalPaidAmount / 1000}" type="number" maxFractionDigits="0" /> điểm
+                            </span>
+                            <a href="${pageContext.request.contextPath}/paymenthistory" class="btn-info">Thông tin chi tiết</a>
                         </div>
 
                         <!-- Nút tìm hiểu -->
                         <div class="learn-more-box">
-                            <p><strong>Tìm hiểu thêm về lợi ích khách hàng</strong><br>
-                                Nhiều quyền lợi hơn khi bạn chi tiêu nhiều hơn!</p>
-                            <a href="#" class="btn-learn">Tìm hiểu ngay</a>
+                            <p><strong>Số điểm tương ứng với Level khách hàng</strong></p>
+                            <c:if test="${sessionScope.levelUser.levelId == 1}">
+                                <p><strong>🥉 BRONZE: 0 – 499 Điểm</strong></p>
+                            </c:if>
+                            <c:if test="${sessionScope.levelUser.levelId == 2}">
+                                <p><strong>🥈 SILVER: 500 – 999 Điểm</strong></p>
+                            </c:if>
+                            <c:if test="${sessionScope.levelUser.levelId == 3}">
+                                <p><strong>🥇 GOLD: 1,000 – 4,999 Điểm</strong></p>
+                            </c:if>
+                            <c:if test="${sessionScope.levelUser.levelId == 4}">
+                                <p><strong>👑 VIP: 5,000 Điểm trở lên</strong></p>
+                            </c:if>
+                            <span><i class="fas fa-money-bill-wave"></i> 1.000 VND = 1 point</span>
                         </div>
                     </div>
 
@@ -144,8 +160,8 @@
                                             </div>
                                         </c:forEach>
                                     </div>
-                                        
-                                        
+
+
                                     <!-- Danh sách voucher đã sử dụng -->
                                     <div class="voucher-container tab-pane fade ${openTab == '#voucher-used' ? 'show active' : ''}" id="voucher-used" role="tabpanel">
                                         <c:forEach var="used" items="${vouchersIused}">
