@@ -63,7 +63,7 @@ public class ManageRoom extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String pageParam = request.getParameter("page");
-        String keyword = request.getParameter("keyWord");  
+        String keyword = request.getParameter("keyWord");
         String sortBy = request.getParameter("sortBy");
         String roomType = request.getParameter("roomType");
         String sort = request.getParameter("sort");
@@ -76,7 +76,7 @@ public class ManageRoom extends HttpServlet {
         } else {
             isDeleted = false;
         }
-        
+
         int typeId = validation.Validation.parseStringToInt(roomType);
         int pageIndex = 1;
         if (pageParam != null) {
@@ -93,11 +93,11 @@ public class ManageRoom extends HttpServlet {
         int totalRooms = 0;
         List<Room> listRoom = null;
 
-            listRoom = dao.searchRoomsByPage(keyword, typeId, sortBy, check, isDeleted, (pageIndex - 1) * pageSize, pageSize);
-            totalRooms = dao.countSearchRooms(keyword, typeId, isDeleted);
+        listRoom = dao.searchRoomsByPage(keyword, typeId, sortBy, check, isDeleted, (pageIndex - 1) * pageSize, pageSize);
+        totalRooms = dao.countSearchRooms(keyword, typeId, isDeleted);
 
         int totalPages = (int) Math.ceil((double) totalRooms / pageSize);
-        
+
         request.setAttribute("listRoom", listRoom);
         request.setAttribute("currentPage", pageIndex);
         request.setAttribute("totalPages", totalPages);

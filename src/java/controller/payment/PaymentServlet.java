@@ -20,6 +20,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.URLEncoder;
@@ -46,24 +47,44 @@ public class PaymentServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        Authentication auth = (Authentication) request.getSession().getAttribute("authLocal");
-        int userId = auth.getUser().getUserId();
+        String action = request.getParameter("action");
 
-        VoucherDao voucherDAO = new VoucherDao();
-
-        List<Voucher> vouchers = voucherDAO.getClaimedVouchers(userId);
-
-        String servicesParam = request.getParameter("services");  // lấy danh sách serviceId vừa mới chọn ở trang booking nha bình theo cái kiểu 1,2,3
-        String[] serviceIds = servicesParam.split(",");
-        
-//        String roomIdRaw = request.getParameter("roomId");
-        
         List<Service> listService = new ArrayList<>();
-        if (serviceIds.length > 0) {
-            for (String serviceId : serviceIds) {
-                int tmp = validation.Validation.parseStringToInt(serviceId);
-                if (tmp != -1) {
-                    listService.add(new dao.ServiceDAO().getServiceById(tmp));
+        List<Voucher> vouchers = new ArrayList<>();
+
+        if (action != null && action.equalsIgnoreCase("continuePayment")) {
+            String numberNight = request.getParameter("numberNight");
+            int bookingId = Validation.parseStringToInt(request.getParameter("bookingId"));
+            Booking booking = new dao.BookingDao().getBookingById(bookingId);
+            BookingDetails bookDetail = new dao.BookingDetailDAO().getBookingDetailByBookingId(bookingId);
+            Room room = bookDetail.getRoom();
+            HttpSession session = request.getSession();
+         
+            session.setAttribute("room", room);
+            session.setAttribute("roomIdBooking", bookDetail.getRoomId());
+            session.setAttribute("roomId", bookDetail.getRoomId());
+            session.setAttribute("checkin", booking.getCheckInDate());
+            session.setAttribute("checkout", booking.getCheckOutDate());
+            session.setAttribute("numberNight", numberNight);
+            session.setAttribute("totalPrice", booking.getTotalAmount());
+        } else {
+            Authentication auth = (Authentication) request.getSession().getAttribute("authLocal");
+            int userId = auth.getUser().getUserId();
+
+            VoucherDao voucherDAO = new VoucherDao();
+
+            vouchers = voucherDAO.getClaimedVouchers(userId);
+
+            String servicesParam = request.getParameter("services");  // lấy danh sách serviceId vừa mới chọn ở trang booking nha bình theo cái kiểu 1,2,3
+            String[] serviceIds = servicesParam.split(",");
+//        String roomIdRaw = request.getParameter("roomId");
+            listService = new ArrayList<>();
+            if (serviceIds.length > 0) {
+                for (String serviceId : serviceIds) {
+                    int tmp = validation.Validation.parseStringToInt(serviceId);
+                    if (tmp != -1) {
+                        listService.add(new dao.ServiceDAO().getServiceById(tmp));
+                    }
                 }
             }
         }
@@ -108,8 +129,6 @@ public class PaymentServlet extends HttpServlet {
         if (totalBillStr == null || bookingIdStr == null) {
             throw new IllegalArgumentException("Số tiền không hợp lệ: rỗng");
         }
-
-        // Làm sạch dữ liệu số tiền
         totalBillStr = totalBillStr.replaceAll("[^\\d.]", "");
 
         int userId = userIdStr.getUser().getUserId();
@@ -225,7 +244,6 @@ public class PaymentServlet extends HttpServlet {
         detail.setPrice(amountDouble);
         detail.setNights(nights);
         bookingDAO.insertBookingDetail(detail);
-
         long amount = amountDouble
                 .multiply(BigDecimal.valueOf(100))
                 .setScale(0, RoundingMode.DOWN) // đảm bảo không thập phân

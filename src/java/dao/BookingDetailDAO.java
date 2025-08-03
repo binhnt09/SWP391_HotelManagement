@@ -51,6 +51,30 @@ public class BookingDetailDAO extends DBContext {
         return detail;
     }
 
+    public static void main(String[] args) {
+        BookingDetailDAO dao = new BookingDetailDAO();
+        int testBookingId = 1; // thay bằng ID đang có trong DB
+
+        BookingDetails detail = dao.getBookingDetailByBookingId(testBookingId);
+
+        if (detail != null) {
+            System.out.println("✅ BookingDetail loaded:");
+            System.out.println("- Booking ID: " + detail.getBook().getBookingId());
+            System.out.println("- Room ID: " + detail.getRoom().getRoomID());
+
+            if (detail.getRoom().getRoomDetail() != null) {
+                System.out.println("➡️ RoomDetail:");
+                System.out.println("  - Max Guest: " + detail.getRoom().getRoomDetail().getMaxGuest());
+                System.out.println("  - Bed Type: " + detail.getRoom().getRoomDetail().getBedType());
+                System.out.println("  - Area: " + detail.getRoom().getRoomDetail().getArea());
+            } else {
+                System.out.println("❌ RoomDetail is null!");
+            }
+        } else {
+            System.out.println("❌ Không tìm thấy booking detail với ID: " + testBookingId);
+        }
+    }
+
     public BookingDetails getDetailByBookingId(int id) {
         String sql = """
                      select bd.bookingdetailid, bd.bookingid , bd.roomid, bd.price, bd.nights, bd.createdat, 

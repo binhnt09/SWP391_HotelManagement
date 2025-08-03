@@ -104,13 +104,11 @@ public class RoomCRUD extends HttpServlet {
                     break;
                 case "deleteRoomType":
                     deleteRoomType(request, response);
+                    request.getSession().setAttribute("openTab", "#managerRoomType");
                     break;
                 case "checkBookingStatus":
                     checkBookingStatus(request, response);
                     break;
-//                case "filterRoom":
-//                    filter(request, response);
-//                    break;
                 case "getImages":
                     getRoomImg(request, response);
                     break;
@@ -120,9 +118,6 @@ public class RoomCRUD extends HttpServlet {
                 case "checkRoomNumberEdit":
                     checkRoomNumberEdit(request, response);
                     break;
-//                case "checkRoomTypeName":
-//                    checkRoomTypeName(request, response);
-//                    break;
                 case "getAllAmenity":
                     getAllAmenity(request, response);
                     break;
@@ -217,11 +212,9 @@ public class RoomCRUD extends HttpServlet {
                 String originalFileName = Paths.get(part.getSubmittedFileName()).getFileName().toString();
                 String extension = originalFileName.substring(originalFileName.lastIndexOf('.'));
 
-//                String uploadPath = getServletContext().getRealPath("/") + "img";
                 String uniqueId = UUID.randomUUID().toString();
                 String newFileName = "room_" + roomNumber + "_" + uniqueId + extension;
 
-//                String uploadPath = getServletContext().getRealPath("/");
                 String uploadPath = getServletContext().getRealPath("/") + "img";
                 File uploadDir = new File(uploadPath);
                 if (!uploadDir.exists()) {
@@ -352,14 +345,12 @@ public class RoomCRUD extends HttpServlet {
         } else {
             responseJson.put("status", "fail");
         }
-
         response.setContentType("application/json");
         try {
             response.getWriter().write(responseJson.toString());
         } catch (IOException ex) {
             Logger.getLogger(RoomCRUD.class.getName()).log(Level.SEVERE, null, ex);
         }
-
     }
 
     //CHƯA CHECK
@@ -397,40 +388,6 @@ public class RoomCRUD extends HttpServlet {
         }
         response.sendRedirect("manageroom?page=" + currentPage + "&presentDeleted=1");
     }
-
-//    private void filter(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-//        String keyWorld = request.getParameter("keyWorld");
-//        String roomType = request.getParameter("roomType");
-//        String sortBy = request.getParameter("sortBy");
-//        String sort = request.getParameter("sort");
-//        boolean check = sort.equalsIgnoreCase("asc");
-//        String viewDeleted = request.getParameter("presentDeleted");
-//        Boolean isDeleted = true;
-//        if ("1".equalsIgnoreCase(viewDeleted)) {
-//            isDeleted = null;
-//        } else {
-//            isDeleted = false;
-//        }
-//
-//        List<Room> listRoom = new dao.RoomDAO().getListRoom(null, null,
-//                0, 100000, 0, Validation.parseStringToInt(roomType),
-//                keyWorld, "all", sortBy, check,
-//                4, 6, isDeleted);
-//
-//        HttpSession session = request.getSession();
-//
-//        session.setAttribute("listRoom", listRoom);
-//        session.setAttribute("numberRoom", listRoom.size());
-//        session.setAttribute("listRoomType", new dao.RoomTypeDAO().getListRoomType());
-//
-//        session.setAttribute("keyWorld", keyWorld);
-//        session.setAttribute("roomType", roomType);
-//        session.setAttribute("sortBy", sortBy);
-//        session.setAttribute("sort", sort);
-//        session.setAttribute("presentDeleted", viewDeleted);
-//
-//        request.getRequestDispatcher("manageroom.jsp").forward(request, response);
-//    }
     private void addRoomType(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String typeName = request.getParameter("typeName");
         String description = request.getParameter("description");
@@ -570,19 +527,6 @@ public class RoomCRUD extends HttpServlet {
             Logger.getLogger(RoomCRUD.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-//    private void checkRoomTypeName(HttpServletRequest request, HttpServletResponse response) {
-//        String roomNumber = request.getParameter("typeName");
-//        String roomTypeID = request.getParameter("roomTypeID");
-//        boolean exists = new dao.RoomTypeDAO().isRoomTypeNameExists(roomNumber,Validation.parseStringToInt(roomTypeID));
-//        response.setContentType("application/json");
-//        response.setCharacterEncoding("UTF-8");
-//        try {
-//            response.getWriter().write("{\"exists\": " + exists + "}");
-//            System.out.println("{\"exists\": " + exists + "}");
-//        } catch (IOException ex) {
-//            Logger.getLogger(RoomCRUD.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-//    }
 
     private void getAllAmenity(HttpServletRequest request, HttpServletResponse response) {
         response.setContentType("application/json");
@@ -636,7 +580,6 @@ public class RoomCRUD extends HttpServlet {
 
     private void deleteRoomType(HttpServletRequest request, HttpServletResponse response) {
         String roomTypeID = request.getParameter("roomTypeID");
-
         RoomTypeDAO dao = new RoomTypeDAO();
         int typeId = Validation.parseStringToInt(roomTypeID);
         RoomType type = dao.getRoomTypeById(typeId);

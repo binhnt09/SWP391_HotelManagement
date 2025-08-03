@@ -123,6 +123,7 @@ public class VnpayReturn extends HttpServlet {
 
                 request.getSession().setAttribute(TRANS_RESULT, transSuccess);
                 responseToPaymentResult(request, response);
+                request.getSession().removeAttribute("room");
             } else {
                 Logger.getLogger(VnpayReturn.class.getName()).info("Giao dịch không hợp lệ (invalid signature)");
                 request.getSession().setAttribute(TRANS_RESULT, false);
