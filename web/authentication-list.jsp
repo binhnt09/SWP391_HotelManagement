@@ -147,12 +147,7 @@
                     <table class="table table-striped table-hover table-bordered">
                         <thead>
                             <tr>
-                                <th>
-                                    <span class="custom-checkbox">
-                                        <input type="checkbox" id="selectAll">
-                                        <label for="selectAll"></label>
-                                    </span>
-                                </th>
+                                <th></th>
                                 <th>User ID</th>
                                 <th>Role</th>
                                 <th>Email</th>
@@ -168,12 +163,7 @@
                                 <c:when test="${not empty authList}">
                                     <c:forEach var="a" items="${authList}" varStatus="status">
                                         <tr>
-                                            <td>
-                                                <span class="custom-checkbox">
-                                                    <input type="checkbox" id="checkbox${status.index}" name="option[]" value="${a.authenticationID}">
-                                                    <label for="checkbox${status.index}"></label>
-                                                </span>
-                                            </td>
+                                            <td>${status.index + 1}</td>
                                             <td>${a.user.userId}</td>
                                             <td>${a.roleName}</td>
                                             <td>${a.user.email}</td>                                    
@@ -385,33 +375,6 @@
             });
         });
 
-        document.getElementById("createAccountForm").addEventListener("submit", function (e) {
-            const firstName = document.querySelector('[name="firstName"]').value;
-            const lastName = document.querySelector('[name="lastName"]').value;
-            const email = document.querySelector('[name="email"]').value;
-            const password = document.getElementById("password").value;
-
-            let errors = [];
-
-            if (firstName.trim() === "")
-                errors.push("First Name is required.");
-            if (lastName.trim() === "")
-                errors.push("Last Name is required.");
-
-            const emailRegex = /^\S+@\S+\.\S+$/;
-            if (!emailRegex.test(email.trim()))
-                errors.push("Invalid email format.");
-
-            const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[^A-Za-z0-9]).{6,}$/;
-            if (!passwordRegex.test(password)) {
-                errors.push("Password must be at least 6 characters, contain letters, numbers, and special characters.");
-            }
-
-            if (errors.length > 0) {
-                e.preventDefault();
-                alert(errors.join("\n"));
-            }
-        });
     </script>
 
 

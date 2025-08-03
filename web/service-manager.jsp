@@ -23,7 +23,6 @@
                 <div class="col-md-5 col-lg-3 order-3 order-md-2">
                     <div class="xp-searchbar">
                         <form method="get" action="serviceList">
-                            <!-- Giữ lại filter đang có -->
                             <input type="hidden" name="category" value="${param.category}" />
                             <input type="hidden" name="status" value="${param.status}" />
                             <input type="hidden" name="sortField" value="${param.sortField}" />
@@ -65,7 +64,7 @@
                             <form method="get" action="serviceList">
                                 <div class="form-row align-items-end">
 
-                                    <!-- Keyword (ẩn) -->
+                                    <!-- Keyword) -->
                                     <input type="hidden" name="keyword" value="${param.keyword}" />
 
                                     <!-- Category Filter -->
@@ -76,7 +75,6 @@
                                             <option value="Spa" ${param.category == 'Spa' ? 'selected' : ''}>Spa</option>
                                             <option value="Food" ${param.category == 'Food' ? 'selected' : ''}>Food</option>
                                             <option value="Transport" ${param.category == 'Transport' ? 'selected' : ''}>Transport</option>
-                                            <!-- Thêm category khác nếu cần -->
                                         </select>
                                     </div>
 
@@ -155,7 +153,7 @@
                     <table class="table table-striped table-hover table-bordered">
                         <thead>
                             <tr>
-                                <th><input type="checkbox" id="selectAll"></th>
+                                <th></th>
                                 <th>Image</th>
                                 <th>Name</th>
                                 <th>Category</th>
@@ -169,11 +167,9 @@
                         <tbody>
                             <c:choose>
                                 <c:when test="${not empty serviceList}">
-                                    <c:forEach var="s" items="${serviceList}">
+                                    <c:forEach var="s" items="${serviceList}" varStatus="status">
                                         <tr>
-                                            <td>
-                                                <input type="checkbox" name="serviceCheckbox" value="${s.serviceId}">
-                                            </td>
+                                            <td>${status.index + 1}</td>
                                             <td>
                                                 <img src="${s.imageUrl}" alt="${s.name}" style="width: 60px; height: 60px; object-fit: cover; border-radius: 6px;" />
                                             </td>

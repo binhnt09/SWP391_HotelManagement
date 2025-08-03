@@ -8,9 +8,9 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
-<div class="row g-4 d-4"> <!-- g-4 tạo khoảng cách giữa 2 cột -->
+<div class="row g-4 d-4"> 
 
-    <!-- Cột trái: Thông tin phòng + Khách đang ở -->
+    <!-- cột bên trái: Thông tin phòng + Khách đang ở -->
     <div class="col-md-12">
         <div class="border rounded p-4 shadow-sm bg-light h-100">
             <div class="row">
@@ -72,7 +72,7 @@
                 </div>
             </div>
 
-            <!-- Nút thao tác -->
+            <!-- nút thao tác -->
             <div class="d-flex flex-wrap gap-2 mt-4">
                 <c:choose>
                     <c:when test="${room.status eq 'Available'}">
@@ -94,9 +94,9 @@
                         <button class="btn btn-warning" onclick="confirmCheckOut(${room.roomID}, ${currentStay.bookingID}, '${currentStay.checkOutDate}')">
                             <i class="fas fa-sign-out-alt me-1"></i> Check-out
                         </button>
-                        <button class="btn btn-primary" onclick="printInvoice(${room.roomID})">
+<!--                        <button class="btn btn-primary" onclick="printInvoice(${room.roomID})">
                             <i class="fas fa-receipt me-1"></i> In hóa đơn
-                        </button>
+                        </button>-->
                         <button class="btn btn-secondary" data-toggle="modal" data-target="#modal-${currentStay.bookingID}">
                             Dịch vụ
                         </button>
@@ -146,7 +146,7 @@
     </div>
 
 
-    <!-- Cột phải: Danh sách đặt phòng -->
+    <!-- cột bên phải: Danh sách đặt phòng -->
     <div class="col-md-12">
         <div class="border rounded p-3 shadow-sm h-100">
             <h6 class="mb-3">
@@ -388,7 +388,7 @@
     </div>
 </div>
 
-<!-- Modal -->
+<!-- Modal dịch vụ -->
 <div class="modal fade" id="modal-${currentStay.bookingID}" tabindex="-1" role="dialog" aria-labelledby="modalLabel-${currentStay.bookingID}" aria-hidden="true">
     <div class="modal-dialog custom-modal-lg modal-dialog-scrollable" role="document">
         <div class="modal-content">
@@ -478,7 +478,6 @@
                     </button>
                 </form>
             </div>
-
         </div>
     </div>
 </div>
