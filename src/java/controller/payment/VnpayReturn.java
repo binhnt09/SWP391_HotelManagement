@@ -122,8 +122,13 @@ public class VnpayReturn extends HttpServlet {
                 }
 
                 request.getSession().setAttribute(TRANS_RESULT, transSuccess);
+                
+                //remove session bookingid
                 responseToPaymentResult(request, response);
                 request.getSession().removeAttribute("room");
+                request.getSession().removeAttribute("bookingIdPending");
+                request.getSession().removeAttribute("serviceIds");
+                request.getSession().removeAttribute("listBookingService");
             } else {
                 Logger.getLogger(VnpayReturn.class.getName()).info("Giao dịch không hợp lệ (invalid signature)");
                 request.getSession().setAttribute(TRANS_RESULT, false);

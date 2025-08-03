@@ -112,16 +112,16 @@ public class InvoiceDao extends DBContext {
         try {
             connection.setAutoCommit(false);
 
-            // 1. Tạo đối tượng Invoice
+            // 1. tạo đối tượng Invoice
             Invoice invoice = buildInvoiceObject(bookingId);
 
-            // 2. Insert invoice vào DB
+            // 2. insert invoice vào DB
             invoiceId = insertInvoice(invoice);
 
-            // 3. Tạo & insert danh sách dịch vụ vào bảng InvoiceServiceDetail
+            // 3. tạo va insert list service vào bảng InvoiceServiceDetail
             insertServiceDetailsForInvoice(invoiceId, bookingId);
 
-            // 4. Tạo file PDF & cập nhật đường dẫn PDF
+            // 4. tạo file PDF và cập nhật đường dẫn PDF
             generateInvoicePdfFile(invoiceId);
 
             connection.commit();
@@ -198,19 +198,18 @@ public class InvoiceDao extends DBContext {
     }
 
     private void insertServiceDetailsForInvoice(int invoiceId, int bookingId) throws Exception {
-        List<BookingServices> bookingServices = new PaymentDao().getBookingServiceByBookingId(bookingId);
+        List<Service> bookingServices = new PaymentDao().getServicesByBookingId(bookingId);
         List<InvoiceServiceDetail> serviceDetails = new ArrayList<>();
 
-        for (BookingServices bs : bookingServices) {
+        for (Service bs : bookingServices) {
             Service s = new ServiceDAO().getServiceById(bs.getServiceId());
 
             InvoiceServiceDetail detail = new InvoiceServiceDetail();
             detail.setInvoiceId(invoiceId);
             detail.setServiceName(s.getName());
-            detail.setPriceAtUse(bs.getPriceAtUse());
-            detail.setQuantity(bs.getQuantity());
-            detail.setUsedAt(bs.getUsedAt());
-
+            detail.setPrice(s.getPrice());
+            detail.setQuantity(1);
+                
             serviceDetails.add(detail);
         }
 

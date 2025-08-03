@@ -74,42 +74,42 @@
     }
 
     .stat-item.tong {
-        background-color: #4caf50; /* Xanh lá - giống room-card.available */
+        background-color: #4caf50; /* Xanh lá */
         color: white;
     }
 
     .stat-item.dang-o {
-        background-color: #e53935; /* Đỏ đậm - giống room-card.occupied */
+        background-color: #e53935; /* Đỏ đậm */
         color: white;
     }
 
     .stat-item.kich-hoat {
-        background-color: #42a5f5; /* Xanh dương sáng - giống room-card.reserved */
+        background-color: #42a5f5; /* Xanh dương sáng */
         color: white;
     }
 
     .stat-item.den-han {
-        background-color: #ffc107; /* 🟡 Vàng - Đến hạn trả phòng */
-        color: #000; /* Chữ đen dễ đọc trên nền vàng */
+        background-color: #ffc107; /* 🟡 Vàng */
+        color: #000; 
     }
 
     .stat-item.qua-han {
-        background-color: #8e24aa; /* 🟣 Tím đậm - Quá hạn chưa trả phòng */
+        background-color: #8e24aa; /* 🟣 Tím đậm */
         color: white;
     }
 
     .stat-item.cho-khach {
-        background-color: #0d47a1; /* Xanh dương sáng - giống room-card.reserved */
+        background-color: #0d47a1; /* Xanh dương sáng */
         color: white;
     }
 
     .stat-item.chua-don {
-        background-color: #fb8c00; /* Cam đậm - giống room-card.cleaning */
+        background-color: #fb8c00; /* Cam đậm */
         color: white;
     }
 
     .stat-item.khong-kha-dung {
-        background-color: #616161; /* Xám đen - giống room-card.non-available */
+        background-color: #616161; /* Xám đen */
         color: white;
     }
 
@@ -174,37 +174,37 @@
     }
 
     .room-card.available {
-        background-color: #4caf50; /* Xanh lá - Trống */
+        background-color: #4caf50; /* Xanh lá  */
         color: white;
     }
 
     .room-card.occupied {
-        background-color: #e53935; /* Đỏ đậm - Có khách */
+        background-color: #e53935; /* Đỏ đậm  */
         color: white;
     }
 
     .room-card.reserved {
-        background-color: #42a5f5; /* Xanh dương sáng - Đặt trước */
+        background-color: #42a5f5; /* Xanh dương sáng */
         color: white;
     }
 
     .room-card.cleaning {
-        background-color: #fb8c00; /* Cam đậm - Dọn phòng */
+        background-color: #fb8c00; /* Cam đậm */
         color: white;
     }
 
     .room-card.non-available {
-        background-color: #616161; /* Xám đen - Không khả dụng */
+        background-color: #616161; /* Xám đen  */
         color: white;
     }
 
     .room-card.checkout {
-        background-color: #ba68c8; /* Tím nhạt - Trả phòng hôm nay */
+        background-color: #ba68c8; /* Tím nhạt  */
         color: white;
     }
 
     .room-card.overdue {
-        background-color:  #8e24aa; /* Tím - Quá hạn */
+        background-color:  #8e24aa; /* Tím */
         color: white;
     }
 
@@ -492,7 +492,6 @@
                                 <!-- Header -->
                                 <div class="modal-header">
                                     <h5 class="modal-title" id="roomModalLabel">Chi tiết phòng</h5>
-                                    <!-- Nút đóng đúng chuẩn Bootstrap 4 -->
                                     <button type="button" class="close" data-dismiss="modal" aria-label="Đóng">
                                         <span aria-hidden="true">&times;</span>
                                     </button>
@@ -501,7 +500,6 @@
                                 <!-- Body -->
                                 <div class="modal-body" >
                                     <div id="roomDetailsContent">
-                                        <!-- Nội dung chi tiết phòng sẽ được load ở đây -->
                                     </div>
                                 </div>
 

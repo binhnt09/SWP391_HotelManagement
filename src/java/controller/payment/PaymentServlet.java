@@ -48,10 +48,9 @@ public class PaymentServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String action = request.getParameter("action");
-
         List<Service> listService = new ArrayList<>();
         List<Voucher> vouchers = new ArrayList<>();
-
+        String[] serviceIds = null;
         if (action != null && action.equalsIgnoreCase("continuePayment")) {
             String numberNight = request.getParameter("numberNight");
             int bookingId = Validation.parseStringToInt(request.getParameter("bookingId"));
@@ -59,7 +58,7 @@ public class PaymentServlet extends HttpServlet {
             BookingDetails bookDetail = new dao.BookingDetailDAO().getBookingDetailByBookingId(bookingId);
             Room room = bookDetail.getRoom();
             HttpSession session = request.getSession();
-         
+
             session.setAttribute("room", room);
             session.setAttribute("roomIdBooking", bookDetail.getRoomId());
             session.setAttribute("roomId", bookDetail.getRoomId());
@@ -76,7 +75,7 @@ public class PaymentServlet extends HttpServlet {
             vouchers = voucherDAO.getClaimedVouchers(userId);
 
             String servicesParam = request.getParameter("services");  // lấy danh sách serviceId vừa mới chọn ở trang booking nha bình theo cái kiểu 1,2,3
-            String[] serviceIds = servicesParam.split(",");
+            serviceIds = servicesParam.split(",");
 //        String roomIdRaw = request.getParameter("roomId");
             listService = new ArrayList<>();
             if (serviceIds.length > 0) {
@@ -88,6 +87,9 @@ public class PaymentServlet extends HttpServlet {
                 }
             }
         }
+
+        request.getSession().setAttribute("serviceIds", serviceIds);
+        request.getSession().setAttribute("listBookingService", listService);
 
         request.setAttribute("vouchers", vouchers);
         request.setAttribute("listService", listService);
@@ -138,32 +140,45 @@ public class PaymentServlet extends HttpServlet {
         BigDecimal amountDouble = Validation.validateBigDecimal(totalBillStr, BigDecimal.ONE, new BigDecimal("999999999"));
 
         PaymentDao PaymentDao = new PaymentDao();
-        BigDecimal discountedTotal = PaymentDao.calculateDiscountedTotal(amountDouble, voucherId);
+//        BigDecimal discountedTotal = PaymentDao.calculateDiscountedTotal(amountDouble, voucherId);
 
         // Tạo booking
         Booking booking = new Booking();
         booking.setUserId(userId);
         booking.setVoucherId(voucherId);
-        booking.setTotalAmount(discountedTotal);
+        booking.setTotalAmount(amountDouble);
         booking.setStatus("PENDING");
         booking.setCheckInDate(checkin);
         booking.setCheckOutDate(checkout);
 
         BookingDao bookingDAO = new BookingDao();
-        bookingId = bookingDAO.insertBooking(booking);
+        Integer existingBookingId = (Integer) request.getSession().getAttribute("bookingIdPending");
+        if (existingBookingId == null) {
+            bookingId = bookingDAO.insertBooking(booking);
+            if (bookingId < 1) {
+                response.sendRedirect("booking.jsp");
+                return;
+            }
 
-        if (bookingId < 1) {
-            response.sendRedirect("booking.jsp");
-            return;
+            // lưu bookingId vào session để tránh tạo lại
+            request.getSession().setAttribute("bookingIdPending", bookingId);
+
+            BookingDetails detail = new BookingDetails();
+            detail.setBookingId(bookingId);
+            detail.setRoomId(roomId);
+            detail.setPrice(amountDouble);
+            detail.setNights(nights);
+            bookingDAO.insertBookingDetail(detail);
+            String[] serviceIds = (String[]) request.getSession().getAttribute("serviceIds");
+            List<Service> listService = (List<Service>) request.getSession().getAttribute("listBookingService");
+
+            if (serviceIds != null && serviceIds.length > 0 && listService != null && !listService.isEmpty()) {
+                PaymentDao paymentDao = new PaymentDao();
+                paymentDao.insertBookingServices(bookingId, listService);
+            }
+        } else {
+            bookingId = existingBookingId;
         }
-
-        // Chi tiết booking
-        BookingDetails detail = new BookingDetails();
-        detail.setBookingId(bookingId);
-        detail.setRoomId(roomId);
-        detail.setPrice(amountDouble);
-        detail.setNights(nights);
-        bookingDAO.insertBookingDetail(detail);
 
         // Tạo QR code để hiển thị
         String bank = "MB";
@@ -221,29 +236,43 @@ public class PaymentServlet extends HttpServlet {
         BigDecimal amountDouble = Validation.validateBigDecimal(totalBillStr, BigDecimal.ONE, new BigDecimal("999999999"));
 
         PaymentDao PaymentDao = new PaymentDao();
-        BigDecimal discountedTotal = PaymentDao.calculateDiscountedTotal(amountDouble, voucherId);
+//        BigDecimal discountedTotal = PaymentDao.calculateDiscountedTotal(amountDouble, voucherId);
 
         Booking booking = new Booking();
         booking.setUserId(userId);
         booking.setVoucherId(voucherId);
-        booking.setTotalAmount(discountedTotal);
+        booking.setTotalAmount(amountDouble);
         booking.setStatus("PENDING");
         booking.setCheckInDate(checkin);
         booking.setCheckOutDate(checkout);
 
         BookingDao bookingDAO = new BookingDao();
-        bookingId = bookingDAO.insertBooking(booking);
-        if (bookingId < 1) {
-            response.sendRedirect("booking.jsp");
-            return;
-        }
+        Integer existingBookingId = (Integer) request.getSession().getAttribute("bookingIdPending");
+        if (existingBookingId == null) {
+            bookingId = bookingDAO.insertBooking(booking);
+            if (bookingId < 1) {
+                response.sendRedirect("booking.jsp");
+                return;
+            }
+            // lưu bookingId vào session để tránh tạo lại
+            request.getSession().setAttribute("bookingIdPending", bookingId);
 
-        BookingDetails detail = new BookingDetails();
-        detail.setBookingId(bookingId);
-        detail.setRoomId(roomId);
-        detail.setPrice(amountDouble);
-        detail.setNights(nights);
-        bookingDAO.insertBookingDetail(detail);
+            BookingDetails detail = new BookingDetails();
+            detail.setBookingId(bookingId);
+            detail.setRoomId(roomId);
+            detail.setPrice(amountDouble);
+            detail.setNights(nights);
+            bookingDAO.insertBookingDetail(detail);
+            String[] serviceIds = (String[]) request.getSession().getAttribute("serviceIds");
+            List<Service> listService = (List<Service>) request.getSession().getAttribute("listBookingService");
+
+            if (serviceIds != null && serviceIds.length > 0 && listService != null && !listService.isEmpty()) {
+                PaymentDao paymentDao = new PaymentDao();
+                paymentDao.insertBookingServices(bookingId, listService);
+            }
+        } else {
+            bookingId = existingBookingId;
+        }
         long amount = amountDouble
                 .multiply(BigDecimal.valueOf(100))
                 .setScale(0, RoundingMode.DOWN) // đảm bảo không thập phân

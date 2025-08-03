@@ -571,7 +571,7 @@
                         </div>
                         <div class="modal-body">
                             <input type="hidden" name="action" id="modal-action" value="addRoomType">
-                            <input type="text" name="roomTypeID" id="roomTypeIDToEditRoomType">
+                            <input type="hidden" name="roomTypeID" id="roomTypeIDToEditRoomType">
                             <div class="mb-3">
                                 <label>Type Name</label>
                                 <input type="text" name="typeName" id="typeName" class="form-control" required>
