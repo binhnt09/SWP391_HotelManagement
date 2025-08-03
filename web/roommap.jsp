@@ -563,12 +563,6 @@
                         </c:forEach>
                     </div>
 
-                     Support Widget 
-                    <div class="skyhotel-support">
-                        <i class="fas fa-headset"></i>
-                        Hỗ trợ Skyhotel
-                    </div>-->
-
                     <!-- Room Details Modal -->
                     <div class="modal fade" id="roomModal" tabindex="-1" role="dialog" aria-labelledby="roomModalLabel" aria-hidden="true">
                         <div class="modal-dialog custom-modal-lg" role="document">
@@ -679,10 +673,6 @@
 
                             const modal = new bootstrap.Modal(document.getElementById('requestCleaningModal'));
                             modal.show();
-                        }
-
-                        function openChat() {
-                            alert('Chức năng chat đang được phát triển');
                         }
 
                         setInterval(function () {
