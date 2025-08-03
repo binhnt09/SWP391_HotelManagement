@@ -113,7 +113,9 @@ public class BookingRoom extends HttpServlet {
     }// </editor-fold>
 
     private void addService(HttpServletRequest request, HttpServletResponse response) {
-        List<Service> services = new ServiceDAO().getListService();
+        String roomIdRaw = request.getParameter("roomId");
+        int roomId = Validation.parseStringToInt(roomIdRaw);
+        List<Service> services = new ServiceDAO().getAvailableServicesNotInRoomType(new dao.RoomDAO().getRoomByRoomID(roomId).getRoomType().getRoomTypeID());
         Gson gson = new Gson();
         String json = gson.toJson(services);
 

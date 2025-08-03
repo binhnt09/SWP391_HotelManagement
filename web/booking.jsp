@@ -72,18 +72,8 @@
                             <div class="card-body p-4">
                                 <h2 class="card-title fw-bold mb-2">Đặt phòng của bạn</h2>
 
-                                <!-- Promo Banner -->
-                                <div class="alert promo-banner text-white d-flex align-items-center mb-4">
-                                    <i class="fas fa-gift fs-3 me-3"></i>
-                                    <div>
-                                        <strong>Nhận ưu đãi độc quyền và tận hưởng nhiều lợi ích hơn khi bạn đăng nhập.</strong>
-                                        <a href="#" class="text-white text-decoration-underline">Đăng nhập hoặc Đăng ký</a>
-                                    </div>
-                                </div>
-
-                                <!-- Contact Information -->
                                 <div class="mb-4">
-                                    <h5 class="fw-bold mb-3">Thông tin liên hệ (dùng với E-voucher)</h5>
+                                    <h5 class="fw-bold mb-3">Thông tin liên hệ </h5>
                                     <p class="text-muted small mb-3">Hãy điền chính xác tất cả thông tin để đảm bảo bạn nhận được Phiếu xác nhận đặt phòng (E-voucher) qua email của mình.</p>
 
                                     <div class="mb-3">
@@ -122,12 +112,9 @@
                                                    value="${sessionScope.authLocal != null ? sessionScope.authLocal.user.phone : ''}"
                                             class="form-control"
                                             oninput="validatePhone()">
-                                        </div>
-                                        <small id="phoneError" class="text-danger"></small>
                                     </div>
-
-
-                                    <p class="form-text">Chúng tôi sẽ gửi e-voucher tới email này. ${sessionScope.authLocal.user.email} Số điện thoại (${sessionScope.authLocal.user.phone}).</p>
+                                    <small id="phoneError" class="text-danger"></small>
+                                </div>
                             </div>
 
                             <h3>Dịch vụ đi kèm</h3>
@@ -161,15 +148,25 @@
                                     </div>
                                 </div>
                             </div>
-
-                            <div class="text-center mb-3">
-                                <small class="text-muted"><i class="fas fa-mobile-alt"></i> Bản chưa bỏ trợ đình!</small>
-                            </div>
-
+                            <input type="hidden" id="room-ida" value="${room.roomID}" />
                             <c:choose>
                                 <c:when test="${sessionScope.authLocal != null}">
                                     <button class="btn btn-danger btn-lg w-100 fw-bold">
-                                        <a href="payment" class="fw-bold white-color text-decoration-none">Tiếp tục thanh toán</a>
+                                        <a id="payment-link" class="fw-bold white-color text-decoration-none" href="#">Tiếp tục thanh toán</a>
+                                        <script>
+                                            document.getElementById('payment-link').addEventListener('click', function (e) {
+                                                e.preventDefault();
+                                                const roomId = document.getElementById('room-ida').value;
+
+                                                const selectedServices = Array.from(document.querySelectorAll('input[name="services"]:checked'))
+                                                        .map(cb => cb.value);
+                                                const contextPath = '${pageContext.request.contextPath}';
+
+                                                const url = contextPath + '/payment?roomId=' + roomId + '&services=' + encodeURIComponent(selectedServices.join(','));
+
+                                                window.location.href = url;
+                                            });
+                                        </script>
                                     </button>
                                 </c:when>
                                 <c:otherwise>
@@ -178,13 +175,6 @@
                                     </button>
                                 </c:otherwise>
                             </c:choose>
-
-                            <p class="text-center small text-muted mt-3">
-                                Bằng việc chấp nhận thanh toán, bạn đã đồng ý với 
-                                <a href="#" class="text-primary">Điều khoản & Điều kiện</a>, 
-                                <a href="#" class="text-primary">Chính sách quyền riêng tư</a> và 
-                                <a href="#" class="text-primary">Quy trình hoàn tiền</a> của Traveloka.
-                            </p>
                         </div>
                     </div>
                 </div>
@@ -196,20 +186,14 @@
                             <i class="fas fa-hotel fs-1"></i>
                         </div>
                         <div class="card-body">
-                            <div class="alert alert-primary py-2 px-3 mb-3">
-                                <small><i class="fas fa-bolt"></i> Đang khuyến mãi chỉ còn 2 giây! Chỉ còn 5 phòng có giá tốt nhất này!</small>
-                            </div>
-
-                            <h5 class="card-title fw-bold">${room.getHotel().getName()}</h5>
                             <div class="d-flex align-items-center mb-3">
                                 <span class="text-warning me-2">
                                     <i class="fas fa-star"></i>
                                     <i class="fas fa-star"></i>
                                     <i class="fas fa-star"></i>
                                 </span>
-                                <!--<span class="badge bg-primary">${starRoom} (${numberPeopleVote})</span>-->
+                                <span class="badge bg-primary">${starRoom} (${numberPeopleVote})</span>
                             </div>
-
                             <div class="row text-center mb-3">
                                 <div class="col-5">
                                     <strong>${checkin}</strong>
@@ -235,14 +219,11 @@
                             <div class="small text-muted mb-3">
                                 <i class="fas fa-coffee"></i> ${room.roomDetail.description}
                             </div>
-
                             <hr>
                             <div class="d-flex justify-content-between align-items-center mb-2">
                                 <strong>Tổng Giá Phòng</strong>
                                 <div class="text-end">
-                                    <div class="text-decoration-line-through text-muted small">9.866.665 VND</div>
-
-                                    <div class="fw-bold price-highlight fs-5">${totalPrice} VND</div>
+                                    <div class="fw-bold price-highlight fs-5" id="total-price-description">${totalPrice} VND</div>
                                 </div>
                             </div>
                             <div class="small text-muted mb-3">1 phòng, ${numberNight} đêm</div>
@@ -290,7 +271,6 @@
     <script src="js/active.js"></script>
     <script src="js/bootstrap/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-    <!-- Đảm bảo bạn đã truyền biến totalPrice từ server -->
     <c:set var="totalPrice" value="${totalPrice}" />
     <script>
                                         function requireLogin() {
@@ -301,7 +281,6 @@
                                             const emailError = document.getElementById("emailError");
                                             const email = emailInput.value.trim();
 
-                                            // Regex chuẩn email
                                             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
                                             if (email === "") {
@@ -326,7 +305,6 @@
                                             const phoneError = document.getElementById("phoneError");
                                             const phone = phoneInput.value.trim();
 
-                                            // Regex: bắt đầu bằng 0, sau đó 9 số (10 số tất cả)
                                             const phoneRegex = /^0\d{9}$/;
 
                                             if (phone === "") {
@@ -349,18 +327,14 @@
                                             const fullNameInput = document.getElementById("fullName");
                                             let fullName = fullNameInput.value.trim();
 
-                                            // Xoá khoảng trắng dư giữa các từ
                                             fullName = fullName.replace(/\s+/g, ' ');
 
-                                            // Viết hoa chữ cái đầu mỗi từ (optional)
                                             fullName = fullName.split(' ')
                                                     .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
                                                     .join(' ');
 
-                                            // Gán lại vào input
                                             fullNameInput.value = fullName;
 
-                                            // (Optional) Gọi hàm validate nếu cần
                                             validateFullName();
                                         }
 
@@ -368,9 +342,7 @@
                                             const fullNameInput = document.getElementById("fullName");
                                             const nameError = document.getElementById("nameError");
                                             const fullName = fullNameInput.value;
-
                                             const nameRegex = /^[A-Za-zÀ-ỹà-ỹ\s]+$/;
-
                                             if (fullName === "") {
                                                 nameError.textContent = "Vui lòng nhập họ tên.";
                                                 fullNameInput.classList.add("is-invalid");
@@ -382,14 +354,10 @@
                                                 fullNameInput.classList.add("is-invalid");
                                                 return false;
                                             }
-
                                             nameError.textContent = "";
                                             fullNameInput.classList.remove("is-invalid");
                                             return true;
                                         }
-
-
-
     </script>
     <script>
 
@@ -415,15 +383,16 @@
             const total = roomPrice + servicePrice;
             document.getElementById('service-price').innerText = formatCurrency(servicePrice);
             document.getElementById('final-price').innerText = formatCurrency(total);
+            document.getElementById('total-price-description').innerText = formatCurrency(total);
             sendNewTotalToSession(total);
         }
-
+        const roomId = ${room.roomID};
         fetch(baseUrl + "/bookingroom", {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded'
             },
-            body: 'action=addService'
+            body: 'action=addService&roomId='+roomId
         })
                 .then(response => response.json())
                 .then(data => {
@@ -461,9 +430,6 @@
                         column.appendChild(row);
                         isLeft = !isLeft;
                     });
-
-                    // Gọi lần đầu để hiển thị ban đầu
-                    updateTotal(servicePrice);
                 });
     </script>
 

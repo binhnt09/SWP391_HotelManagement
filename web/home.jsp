@@ -57,9 +57,8 @@
                                 <!-- Slide Content -->
                                 <div class="hero-slides-content"  >
                                     <div class="line" ></div>
-                                    <h2 data-animation="fadeInUp">The Vacation Heaven</h2>
-                                    <p data-animation="fadeInUp">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec malesuada lorem maximus mauris sceleri sque, at rutrum nulla dictum. Ut ac ligula sapien. Suspendisse cursus faucibus finibus.</p>
-                                    <a href="#" class="btn palatin-btn mt-50" data-animation="fadeInUp" data-delay="900ms">Read More</a>
+                                    <h2 data-animation="fadeInUp">The Palatin Hotel </h2>
+                                    <p class=" palatin-btn mt-50" data-animation="fadeInUp" data-delay="900ms">Hãy đặt phòng với tôi</p>
                                 </div>
                             </div>
                         </div>
@@ -135,9 +134,6 @@
                 </div>
             </div>
         </div>
-        <!-- ##### Book Now Area End ##### -->
-
-        <!-- ##### About Us Area Start ##### -->
         <section class="about-us-area">
             <div class="container">
                 <div class="row align-items-center">
@@ -153,23 +149,19 @@
                                 . Dù là chuyến công tác hay kỳ nghỉ dưỡng, chúng tôi cam kết mang đến trải nghiệm đáng nhớ nhất.</p>
                             <div class="about-key-text">
                                 <h6><span class="fa fa-check"></span> Không gian tiện nghi, hiện đại và ấm cúng</h6>
-                                <h6><span class="fa fa-check"></span> Dịch vụ tận tâm, hỗ trợ 24/7</h6>
                             </div>
-                            <a href="#" class="btn palatin-btn mt-50">Read More</a>
+<!--                            <a href="#" class="btn palatin-btn mt-50">Read More</a>-->
                         </div>
                     </div>
 
                     <div class="col-12 col-lg-6">
                         <div class="about-thumbnail homepage mb-100">
-                            <!-- First Img -->
                             <div class="first-img wow fadeInUp" data-wow-delay="100ms">
                                 <img src="img/bg-img/5.jpg" alt="">
                             </div>
-                            <!-- Second Img -->
                             <div class="second-img wow fadeInUp" data-wow-delay="300ms">
                                 <img src="img/bg-img/6.jpg" alt="">
                             </div>
-                            <!-- Third Img-->
                             <div class="third-img wow fadeInUp" data-wow-delay="500ms">
                                 <img src="img/bg-img/7.jpg" alt="">
                             </div>
@@ -178,52 +170,6 @@
                 </div>
             </div>
         </section>
-        <!-- ##### About Us Area End ##### -->
-
-        <!-- ##### Pool Area Start ##### -->
-        <section class="pool-area section-padding-100 bg-img bg-fixed" style="background-image: url(img/bg-img/4.png);">
-            <div class="container">
-                <div class="row justify-content-end">
-                    <div class="col-12 col-lg-7">
-                        <div class="pool-content text-center wow fadeInUp" data-wow-delay="300ms">
-                            <div class="section-heading text-center white">
-                                <div class="line-"></div>
-                                <h2>Infinity Pool</h2>
-                                <p>Trải nghiệm cảm giác thư giãn tuyệt đối tại hồ bơi vô cực với tầm nhìn toàn cảnh tuyệt đẹp. 
-                                    Không chỉ là nơi để bơi lội, đây còn là không gian lý tưởng để nghỉ ngơi, tận hưởng hoàng hôn và lưu giữ những khoảnh khắc đáng nhớ. 
-                                    Hãy đắm mình trong làn nước mát lạnh và để mọi muộn phiền tan biến.</p>
-                            </div>
-
-                            <div class="row">
-                                <div class="col-12 col-sm-4">
-                                    <div class="pool-feature">
-                                        <i class="icon-cocktail-1"></i>
-                                        <p>Pool Beachbar</p>
-                                    </div>
-                                </div>
-                                <div class="col-12 col-sm-4">
-                                    <div class="pool-feature">
-                                        <i class="icon-swimming-pool"></i>
-                                        <p>Infinity Pool</p>
-                                    </div>
-                                </div>
-                                <div class="col-12 col-sm-4">
-                                    <div class="pool-feature">
-                                        <i class="icon-beach"></i>
-                                        <p>Sunbeds</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- Button -->
-                            <a href="#" class="btn palatin-btn mt-50">Read More</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-        <!-- ##### Pool Area End ##### -->
-
-        <!-- ##### Rooms Area Start ##### -->
         <section class="rooms-area section-padding-100-0">
             <div class="container">
                 <div class="row justify-content-center">
@@ -244,7 +190,7 @@
                             <!-- Thumbnail -->
                             <div class="bg-thumbnail bg-img" style="background-image: url(img/bg-img/1.jpg);"></div>
                             <!-- Price -->
-                            <p class="price-from">From $150/night</p>
+                            <p class="price-from">From 150VND/night</p>
                             <!-- Rooms Text -->
                             <div class="rooms-text">
                                 <div class="line"></div>
@@ -260,7 +206,7 @@
                             <!-- Thumbnail -->
                             <div class="bg-thumbnail bg-img" style="background-image: url(img/bg-img/8.jpg);"></div>
                             <!-- Price -->
-                            <p class="price-from">From $150/night</p>
+                            <p class="price-from">From 150VND/night</p>
                             <!-- Rooms Text -->
                             <div class="rooms-text">
                                 <div class="line"></div>
@@ -276,7 +222,7 @@
                             <!-- Thumbnail -->
                             <div class="bg-thumbnail bg-img" style="background-image: url(img/bg-img/9.jpg);"></div>
                             <!-- Price -->
-                            <p class="price-from">From $100/night</p>
+                            <p class="price-from">From 100VND/night</p>
                             <!-- Rooms Text -->
                             <div class="rooms-text">
                                 <div class="line"></div>

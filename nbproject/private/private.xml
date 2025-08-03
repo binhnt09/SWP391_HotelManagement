@@ -5,6 +5,9 @@
 <<<<<<< HEAD
         <group/>
 =======
+<<<<<<< HEAD
+        <group/>
+=======
         <group>
             <file>file:/D:/FU%20Learning/Summer%202025/SWP391/SWP_HotelManagement_V1_1/SWP391_HotelManagement_V1/web/booking.jsp</file>
             <file>file:/D:/FU%20Learning/Summer%202025/SWP391/SWP_HotelManagement_V1_1/SWP391_HotelManagement_V1/web/views/voucher/myvoucher.jsp</file>
@@ -20,5 +23,6 @@
             <file>file:/D:/FU%20Learning/Summer%202025/SWP391/SWP_HotelManagement_V1_1/SWP391_HotelManagement_V1/web/views/payment/payment.jsp</file>
         </group>
 >>>>>>> 22473e81c971a6c9c7f4bdfd7a43b8e68e0c7875
+>>>>>>> 06567b15e109a566388588854804f40975316f33
     </open-files>
 </project-private>

@@ -85,6 +85,7 @@ public class SearchRoom extends HttpServlet {
                 priceFrom, priceTo, numberPeople, 
                 roomType, "", "all", "", 
                 false, 0, 0, false , 0);
+        
         request.setAttribute("listRoom", listRoom);
         request.setAttribute("listRoomType", new dao.RoomTypeDAO().getListRoomType());
         request.getRequestDispatcher("rooms.jsp").forward(request, response);

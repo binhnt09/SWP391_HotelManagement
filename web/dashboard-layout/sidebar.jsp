@@ -67,12 +67,10 @@
                     <i class="material-icons">room_service</i>Service
                 </a>
             </li>
-        </c:if>
-        <!-- Review Management -->
-        
+        </c:if>        
 
         <!-- Receptionist page -->
-        <c:if test="${sessionScope.authLocal.user.roleName == 'Manager' || sessionScope.authLocal.user.roleName == 'Receptionist'}"> 
+        <c:if test="${sessionScope.authLocal.user.roleName == 'Receptionist'}"> 
             <li class="${pageContext.request.requestURI.endsWith('roommap.jsp') ? 'active' : ''}">
                 <a href="receptionistPage">
                     <i class="material-icons">square</i>Room Map
@@ -96,7 +94,7 @@
         </li>
         </c:if>
         <!-- Booking -->
-        <c:if test="${sessionScope.authLocal.user.roleName == 'Manager' || sessionScope.authLocal.user.roleName == 'Receptionist'}"> 
+        <c:if test="${sessionScope.authLocal.user.roleName == 'Receptionist'}"> 
             <li>
                 <a href="bookingcrud">
                     <i class="material-icons">touch_app</i>Booking
@@ -105,7 +103,7 @@
         </c:if>
 
         <!-- Payment -->
-        <c:if test="${sessionScope.authLocal.user.roleName == 'Manager' || sessionScope.authLocal.user.roleName == 'Receptionist'}">            
+        <c:if test="${sessionScope.authLocal.user.roleName == 'Receptionist'}">            
             <li class="${pageContext.request.requestURI.endsWith('managepayment.jsp') ? 'active' : ''}">
                 <a href="${pageContext.request.contextPath}/managepayment">
                     <i class="material-icons">payment</i>Payment

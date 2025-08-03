@@ -11,6 +11,8 @@ import dao.VoucherDao;
 import entity.Authentication;
 import entity.Booking;
 import entity.BookingDetails;
+import entity.Room;
+import entity.Service;
 import entity.Voucher;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
@@ -46,12 +48,28 @@ public class PaymentServlet extends HttpServlet {
             throws ServletException, IOException {
         Authentication auth = (Authentication) request.getSession().getAttribute("authLocal");
         int userId = auth.getUser().getUserId();
-        
+
         VoucherDao voucherDAO = new VoucherDao();
 
         List<Voucher> vouchers = voucherDAO.getClaimedVouchers(userId);
 
+        String servicesParam = request.getParameter("services");  // lấy danh sách serviceId vừa mới chọn ở trang booking nha bình theo cái kiểu 1,2,3
+        String[] serviceIds = servicesParam.split(",");
+        
+//        String roomIdRaw = request.getParameter("roomId");
+        
+        List<Service> listService = new ArrayList<>();
+        if (serviceIds.length > 0) {
+            for (String serviceId : serviceIds) {
+                int tmp = validation.Validation.parseStringToInt(serviceId);
+                if (tmp != -1) {
+                    listService.add(new dao.ServiceDAO().getServiceById(tmp));
+                }
+            }
+        }
+
         request.setAttribute("vouchers", vouchers);
+        request.setAttribute("listService", listService);
         request.getRequestDispatcher("/views/payment/payment.jsp").forward(request, response);
     }
 
@@ -102,7 +120,7 @@ public class PaymentServlet extends HttpServlet {
 
         PaymentDao PaymentDao = new PaymentDao();
         BigDecimal discountedTotal = PaymentDao.calculateDiscountedTotal(amountDouble, voucherId);
-        
+
         // Tạo booking
         Booking booking = new Booking();
         booking.setUserId(userId);
@@ -185,7 +203,7 @@ public class PaymentServlet extends HttpServlet {
 
         PaymentDao PaymentDao = new PaymentDao();
         BigDecimal discountedTotal = PaymentDao.calculateDiscountedTotal(amountDouble, voucherId);
-        
+
         Booking booking = new Booking();
         booking.setUserId(userId);
         booking.setVoucherId(voucherId);

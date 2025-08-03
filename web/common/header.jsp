@@ -93,7 +93,7 @@
                                             <li class="${pageContext.request.requestURI.endsWith('managerDashboard.jsp') ? 'active' : ''}"><a href="${pageContext.request.contextPath}/managerDashboard.jsp">Manage</a></li>
                                             </c:if>
                                         
-                                        <li><a href="${pageContext.request.contextPath}/searchroom">Rooms</a></li>
+<!--                                        <li><a href="${pageContext.request.contextPath}/searchroom">Rooms</a></li>-->
 
                                         <li class="${pageContext.request.requestURI.endsWith('voucher.jsp') ? 'active' : ''}"><a href="${pageContext.request.contextPath}/voucher">Voucher</a></li>
                                     </ul>
