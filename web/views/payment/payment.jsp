@@ -172,6 +172,7 @@
                         <div class="col-6"><i class="fas fa-bed"></i> ${room.roomDetail.bedType}</div>
                         <div class="col-6"><i class="fa-duotone fa-solid fa-chart-area"></i>  ${room.roomDetail.area} m²</div>
                         <div class="col-6"><i class="fas fa-wifi"></i> WiFi</div>
+
                         <div style="color: #d32f2f; font-size: 12px; margin-top: 8px;">Yêu cầu đặc biệt (nếu có)</div>
 
                         <ul>
@@ -191,9 +192,9 @@
 
                     <div style="margin: 20px 0;">
                         <div style="font-weight: bold; margin-bottom: 10px;">Chi tiết người liên lạc</div>
-                        <div style="margin-bottom: 5px;">${sessionScope.authLocal.user.firstName} ${sessionScope.authLocal.user.lastName}</div>
-                        <div style="font-size: 14px; color: #666;">📞 ${sessionScope.authLocal.user.phone}</div>
-                        <div style="font-size: 14px; color: #666;">✉ ️${sessionScope.authLocal.user.email}</div>
+                        <div style="margin-bottom: 5px;">Ngo Thanh Binh</div>
+                        <div style="font-size: 14px; color: #666;">📞 032 863 3494</div>
+                        <div style="font-size: 14px; color: #666;">✉ ️dominhdangcap2@gmail.com</div>
                     </div>
 
                     <div class="contact-note">

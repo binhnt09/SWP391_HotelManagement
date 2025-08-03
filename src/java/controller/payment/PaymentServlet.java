@@ -56,10 +56,9 @@ public class PaymentServlet extends HttpServlet {
         String servicesParam = request.getParameter("services");  // lấy danh sách serviceId vừa mới chọn ở trang booking nha bình theo cái kiểu 1,2,3
         String[] serviceIds = servicesParam.split(",");
         
-        String roomIdRaw = request.getParameter("roomId");
-        Room room = new dao.RoomDAO().getRoomByRoomID(Validation.parseStringToInt(roomIdRaw));
+//        String roomIdRaw = request.getParameter("roomId");
         
-        List<Service> listService = new dao.RoomTypeDAO().getServicesByRoomTypeId(room.getRoomType().getRoomTypeID());
+        List<Service> listService = new ArrayList<>();
         if (serviceIds.length > 0) {
             for (String serviceId : serviceIds) {
                 int tmp = validation.Validation.parseStringToInt(serviceId);

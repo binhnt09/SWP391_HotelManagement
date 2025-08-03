@@ -4,16 +4,6 @@
     Author     : viet7
 --%>
 
-<!---footer---->
-<footer class="footer">
-    <div class="container-fluid">
-        <div class="footer-in">
-            <p class="mb-0">&copy <%= java.util.Calendar.getInstance().get(java.util.Calendar.YEAR) %> Vishweb design - All Rights Reserved.</p>
-        </div>
-    </div>
-</footer>
-</div>
-</div>
 
 <!----------html code complete----------->
 

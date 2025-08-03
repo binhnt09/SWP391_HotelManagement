@@ -112,7 +112,6 @@ public class CreateAccountForUserServlet extends HttpServlet {
 
         boolean created = authDAO.createAuthForAdmin(userId,username, hashedPassword);
         if (created) {
-            authDAO.logCreateUser(userId, admin.getUserId(), "");
             session.setAttribute("successMessage", "Tạo tài khoản thành công!");
         } else {
             session.setAttribute("errorMessage", "Tạo tài khoản thất bại!");

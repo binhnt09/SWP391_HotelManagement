@@ -12,12 +12,14 @@ import java.util.List;
  * @author Admin
  */
 public class Room {
+
     private int roomID;
-    private String roomNumber ; // Tên phòng: VD 101 ,...
+    private String roomNumber; // Tên phòng: VD 101 ,...
     private RoomDetail roomDetail;
     private RoomType roomType;
     private String status;
-    private double price;   
+    private double price;
+    private int floorID;
 
     private Hotel hotel;
 
@@ -26,6 +28,7 @@ public class Room {
     private Timestamp deletedAt;
     private int deletedBy;
     private boolean isDeleted;
+
     public Room() {
     }
 
@@ -38,7 +41,6 @@ public class Room {
         this.hotel = hotel;
     }
 
-
     public Room(int roomID, String roomNumber, RoomDetail roomDetail, RoomType roomType, String status, double price) {
         this.roomID = roomID;
         this.roomNumber = roomNumber;
@@ -47,7 +49,6 @@ public class Room {
         this.status = status;
         this.price = price;
     }
-
 
     public Room(int roomID, String roomNumber, RoomDetail roomDetail, String status, double price, Hotel hotel, Timestamp createdAt, Timestamp updatedAt, Timestamp deletedAt, int deletedBy, boolean isDeleted) {
         this.roomID = roomID;
@@ -62,7 +63,6 @@ public class Room {
         this.deletedBy = deletedBy;
         this.isDeleted = isDeleted;
     }
-
 
     public Room(int roomID, String roomNumber, RoomDetail roomDetail, RoomType roomType, String status, double price, Hotel hotel, Timestamp createdAt, Timestamp updatedAt, Timestamp deletedAt, int deletedBy, boolean isDeleted) {
         this.roomID = roomID;
@@ -102,7 +102,6 @@ public class Room {
     public void setRoomDetail(RoomDetail roomDetail) {
         this.roomDetail = roomDetail;
     }
-
 
     public String getStatus() {
         return status;
@@ -175,7 +174,13 @@ public class Room {
     public void setRoomType(RoomType roomType) {
         this.roomType = roomType;
     }
-    
 
+    public int getFloorID() {
+        return floorID;
+    }
+
+    public void setFloorID(int floorID) {
+        this.floorID = floorID;
+    }
 
 }

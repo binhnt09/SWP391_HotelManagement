@@ -5,10 +5,9 @@
 package controller.voucher;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import dao.MembershipDao;
+import dao.LevelUserDao;
 import dao.VoucherDao;
-import entity.MembershipLevel;
+import entity.LevelUser;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -24,8 +23,8 @@ import java.util.Map;
  *
  * @author ASUS
  */
-@WebServlet(name = "LevelMemberShip", urlPatterns = {"/getLevels"})
-public class LevelMemberShip extends HttpServlet {
+@WebServlet(name = "LevelUserServlet", urlPatterns = {"/getLevels"})
+public class LevelUserServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -44,10 +43,10 @@ public class LevelMemberShip extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet LevelMemberShip</title>");
+            out.println("<title>Servlet LevelUserServlet</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet LevelMemberShip at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet LevelUserServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -66,14 +65,14 @@ public class LevelMemberShip extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        MembershipDao dao = new MembershipDao();
+        LevelUserDao dao = new LevelUserDao();
         VoucherDao voucherDao = new VoucherDao();
         
         String voucherIdStr = request.getParameter("voucherId");
         int voucherId = validation.Validation.parseStringToInt(voucherIdStr);
 
-        List<MembershipLevel> allLevels = voucherDao.getAllMembership();
-        List<Integer> selectedLevelIds = dao.getSelectedMembershipLevels(voucherId);
+        List<LevelUser> allLevels = voucherDao.getAllLevelUser();
+        List<Integer> selectedLevelIds = dao.getSelectedLevelUser(voucherId);
 
         Map<String, Object> json = new HashMap<>();
         json.put("selectedLevelIds", selectedLevelIds);

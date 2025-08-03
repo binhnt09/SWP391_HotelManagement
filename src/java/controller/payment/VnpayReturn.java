@@ -54,7 +54,7 @@ public class VnpayReturn extends HttpServlet {
         try {
             Map<String, String> fields = new HashMap<>();
             for (Enumeration<String> params = request.getParameterNames(); params.hasMoreElements();) {
-                String paramName = params.nextElement(); // KHÔNG encode ở đây
+                String paramName = params.nextElement(); // ko encode ở đây
                 String paramValue = request.getParameter(paramName);
                 if (paramValue != null && paramValue.length() > 0) {
                     fields.put(paramName, URLEncoder.encode(paramValue, StandardCharsets.US_ASCII.toString()));
@@ -117,8 +117,8 @@ public class VnpayReturn extends HttpServlet {
                     Invoice invoice = invoiceDao.getInvoice(invoiceId);
                     MailUtil.sendInvoice(email, invoice);
 
-                    //update membership
-                    voucherDao.updateUserMembershipLevel(authLocal.getUser().getUserId());
+                    //update levelUser
+                    voucherDao.updateUserLevelUser(authLocal.getUser().getUserId());
                 }
 
                 request.getSession().setAttribute(TRANS_RESULT, transSuccess);

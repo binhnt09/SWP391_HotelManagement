@@ -80,7 +80,7 @@
 
             const intervalId = setInterval(() => {
                 $.post(contextPath + '/check-payment-status', {bookingId: bookingId}, function (data) {
-                    if (data.payment_status === "PAID") {
+                    if (data.payment_status === "Confirmed") {
                         $('#checkout_box').hide();
                         $('#success_box').show();
                         clearInterval(intervalId);

@@ -26,23 +26,6 @@
                     <span class="me-3"><img src="${pageContext.request.contextPath}/img/vietnam.svg.webp" alt="Google logo" width="20"> VI | VND</span>
                     <a class="nav-link" href="${pageContext.request.contextPath}/voucher"><i class="fa fa-gift mr-2 text-primary"></i> Khuyến mãi</a>
 
-                    <div class="nav-item dropdown menu-btn user-info ">
-                        <a class="nav-link" style="color: white" href="#" id="userDropdown" role="button"
-                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <i class="fa fa-headset mr-2 text-primary"></i> Hỗ trợ
-                        </a>
-                        <div class="dropdown-menu dropdown-menu-right shadow border-0" aria-labelledby="userDropdown" style="min-width: 250px; margin-top: 18px">
-                            <a class="dropdown-item" href="#">
-                                <i class="fa fa-question-circle mr-2 text-primary"></i> Trợ giúp
-                            </a>
-                            <a class="dropdown-item" href="#">
-                                <i class="fa fa-envelope mr-2 text-primary"></i> Liên hệ chúng tôi
-                            </a>
-                            <a class="dropdown-item" href="#">
-                                <i class="fa fa-inbox mr-2 text-primary"></i> Hộp thư của tôi
-                            </a>
-                        </div>
-                    </div>
 
                     <div class="user-avatar dropdown">
                         <a class="nav-link" style="color: white" href="#" id="userDropdown" role="button"
@@ -66,10 +49,7 @@
                                 </div>
                             </div>
                             <a class="dropdown-item" href="${pageContext.request.contextPath}/voucherforcustomer">
-                                <i class="fas fa-bed mr-2 text-primary"></i> Điểm
-                            </a>
-                            <a class="dropdown-item" href="${pageContext.request.contextPath}/updateprofile">
-                                <i class="fa fa-user mr-2 text-primary"></i> Tài khoản của tôi
+                                <i class="fas fa-money-bill-wave mr-2 text-primary"></i> Điểm
                             </a>
                             <a class="dropdown-item" href="${pageContext.request.contextPath}/updateprofile">
                                 <i class="fa fa-user-edit mr-2 text-primary"></i> Cập nhật hồ sơ

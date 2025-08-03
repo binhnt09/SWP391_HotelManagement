@@ -16,6 +16,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
         <title>CRUD dashboard</title>
+        <link rel="icon" href="${pageContext.request.contextPath}/img/core-img/favicon.ico">
 
         <!-- Bootstrap CSS -->
         <link rel="stylesheet" href="css/bootstrap.min.css">

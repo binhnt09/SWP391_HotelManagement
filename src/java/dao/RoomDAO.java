@@ -61,7 +61,7 @@ public class RoomDAO extends DBContext {
         }
         return false;
     }
-    
+
     public boolean checkRoomNumberIsExist(String roomNumber, int excludeRoomId) {
         String sql = "SELECT COUNT(*) FROM Room WHERE roomNumber = ? AND RoomID != ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
@@ -76,9 +76,38 @@ public class RoomDAO extends DBContext {
         }
         return false;
     }
-    
+
     public static void main(String[] args) {
-        System.out.println(new dao.RoomDAO().checkRoomNumberIsExist("101A", 2));
+        RoomDAO dao = new RoomDAO();
+
+        // Thông số test
+        Date checkin = Date.valueOf("2025-08-10");
+        Date checkout = Date.valueOf("2025-08-15");
+        double from = 100.0;
+        double to = 1500.0;
+        int numberPeople = 2;
+        int roomTypeId = -1; // -1 nghĩa là bỏ qua lọc RoomType
+        String keyword =null; // tìm kiếm theo RoomID, RoomNumber, BedType, Description
+        String status = null; // hoặc "all" nếu muốn bỏ qua lọc trạng thái
+        String sortBy = null;
+        boolean isAsc = true;
+        int pageIndex = 1;
+        int pageSize = 10;
+        Boolean isDeleted = false;
+
+        List<Room> rooms = dao.getListRoom(checkin, checkout, from, to,
+                numberPeople, roomTypeId, keyword, status, sortBy, isAsc, pageIndex, pageSize, isDeleted);
+
+        for (Room room : rooms) {
+            System.out.println("Room ID: " + room.getRoomID());
+            System.out.println("Room Number: " + room.getRoomNumber());
+            System.out.println("Price: " + room.getPrice());
+            System.out.println("floor: " + room.getFloorID());
+            System.out.println("Status: " + room.getStatus());
+            System.out.println("Room Type: " + room.getRoomType().getAmenity());
+            System.out.println("Hotel Name: " + room.getHotel().getName());
+            System.out.println("---------------------------");
+        }
     }
 
     public List<Room> getListRoom(Date checkin, Date checkout,
@@ -91,7 +120,7 @@ public class RoomDAO extends DBContext {
     ) {
         List<Room> list = new ArrayList();
         String sql = """
-                     select r.RoomID , r.RoomNumber , r.RoomDetailID, r.RoomTypeID , r.Status , r.Price, r.HotelID , r.CreatedAt , r.UpdatedAt,r.DeletedAt , r.DeletedBy,r.IsDeleted
+                     select r.RoomID , r.RoomNumber ,r.floorid, r.RoomDetailID, r.RoomTypeID , r.Status , r.Price, r.HotelID , r.CreatedAt , r.UpdatedAt,r.DeletedAt , r.DeletedBy,r.IsDeleted
                      from Room r
                         inner join roomtype rt on rt.RoomTypeID = r.RoomTypeID
                         inner join RoomDetail rd on rd.RoomDetailID = r.RoomDetailID
@@ -197,7 +226,7 @@ public class RoomDAO extends DBContext {
                 RoomDetail roomDetail = new dao.RoomDetailDAO().getRoomDetailByID(rs.getInt("RoomDetailID"));
                 RoomType roomType = new dao.RoomTypeDAO().getRoomTypeById(rs.getInt("roomtypeid"));
 
-                list.add(new Room(rs.getInt("roomID"),
+                Room room = new Room(rs.getInt("roomID"),
                         rs.getString("roomNumber"),
                         roomDetail, roomType,
                         rs.getString("status"),
@@ -206,7 +235,9 @@ public class RoomDAO extends DBContext {
                         rs.getTimestamp("UpdatedAt"),
                         rs.getTimestamp("DeletedAt"),
                         rs.getInt("DeletedBy"),
-                        rs.getBoolean("IsDeleted")));
+                        rs.getBoolean("IsDeleted"));
+                room.setFloorID(rs.getInt("floorid"));
+                list.add(room);
             }
         } catch (SQLException e) {
             Logger.getLogger(RoomDAO.class.getName()).log(Level.SEVERE, null, e);
@@ -214,18 +245,18 @@ public class RoomDAO extends DBContext {
 
         return list;
     }
-    
+
     public List<Room> getListRoom(Date checkin, Date checkout,
             double from, double to,
             int numberPeople, int roomTypeId,
             String keyword, String status,
             String sortBy, boolean isAsc,
             int pageIndex, int pageSize,
-            Boolean isDeleted,int paging
+            Boolean isDeleted, int paging
     ) {
         List<Room> list = new ArrayList();
         String sql = """
-                     select r.RoomID , r.RoomNumber , r.RoomDetailID, r.RoomTypeID , r.Status , r.Price, r.HotelID , r.CreatedAt , r.UpdatedAt,r.DeletedAt , r.DeletedBy,r.IsDeleted
+                     select r.RoomID , r.RoomNumber,r.floorid , r.RoomDetailID, r.RoomTypeID , r.Status , r.Price, r.HotelID , r.CreatedAt , r.UpdatedAt,r.DeletedAt , r.DeletedBy,r.IsDeleted
                      from Room r
                         inner join roomtype rt on rt.RoomTypeID = r.RoomTypeID
                         inner join RoomDetail rd on rd.RoomDetailID = r.RoomDetailID
@@ -331,7 +362,7 @@ public class RoomDAO extends DBContext {
                 RoomDetail roomDetail = new dao.RoomDetailDAO().getRoomDetailByID(rs.getInt("RoomDetailID"));
                 RoomType roomType = new dao.RoomTypeDAO().getRoomTypeById(rs.getInt("roomtypeid"));
 
-                list.add(new Room(rs.getInt("roomID"),
+                 Room room = new Room(rs.getInt("roomID"),
                         rs.getString("roomNumber"),
                         roomDetail, roomType,
                         rs.getString("status"),
@@ -340,7 +371,9 @@ public class RoomDAO extends DBContext {
                         rs.getTimestamp("UpdatedAt"),
                         rs.getTimestamp("DeletedAt"),
                         rs.getInt("DeletedBy"),
-                        rs.getBoolean("IsDeleted")));
+                        rs.getBoolean("IsDeleted"));
+                room.setFloorID(rs.getInt("floorid"));
+                list.add(room);
             }
         } catch (SQLException e) {
             Logger.getLogger(RoomDAO.class.getName()).log(Level.SEVERE, null, e);
@@ -594,6 +627,7 @@ public class RoomDAO extends DBContext {
                 room.setStatus(rs.getString("status"));
                 room.setPrice(rs.getDouble("price"));
                 room.setHotel(hotel);
+                room.setFloorID(rs.getInt("Floorid"));
 
                 return room;
             }
@@ -763,7 +797,6 @@ public class RoomDAO extends DBContext {
         return false;
     }
 
-    
     public boolean addRoom(Room room, List<RoomImage> listImg) {
         String insertRoomDetailSQL = "INSERT INTO RoomDetail (BedType, Area, MaxGuest, Description, CreatedAt) "
                 + "VALUES (?, ?, ?, ?, GETDATE())";
@@ -1102,7 +1135,7 @@ public class RoomDAO extends DBContext {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return BigDecimal.ZERO; 
+        return BigDecimal.ZERO;
     }
 
     public RoomStats getRoomStats() {
@@ -1205,6 +1238,5 @@ public class RoomDAO extends DBContext {
         return r;
 
     }
-    
-     
+
 }

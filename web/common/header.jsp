@@ -88,33 +88,14 @@
                                     <ul>
                                         <li class="${pageContext.request.requestURI.endsWith('home.jsp') ? 'active' : ''}"><a href="${pageContext.request.contextPath}/loadtohome">Home</a></li>
                                         <!--<li class="${pageContext.request.requestURI.endsWith('rooms.jsp') ? 'active' : ''}"><a href="${pageContext.request.contextPath}/searchroom">Room</a></li>-->
-                                        <li><a href="#">More</a>
-                                            <ul class="dropdown">
-                                                <li><a href="${pageContext.request.contextPath}/loadtohome">Home</a></li>
-                                                <li><a href="${pageContext.request.contextPath}/about-us.jsp">About Us</a></li>
-                                                    <c:if test="${sessionScope.authLocal.user.roleName == 'Manager' }"> 
-                                                    <li class="${pageContext.request.requestURI.endsWith('manageroom.jsp') ? 'active' : ''}"><a href="${pageContext.request.contextPath}/manageroom">Manage Room</a></li>
-                                                    </c:if>
-                                                <li class="${pageContext.request.requestURI.endsWith('managerDashboard.jsp') ? 'active' : ''}"><a href="${pageContext.request.contextPath}/managerDashboard.jsp">Manage</a></li>
-                                                <li><a href="services.jsp">Services</a></li>
-                                                <li><a class="dropdown-item" href="${pageContext.request.contextPath}/bookingcrud">
-                                                        Đặt chỗ của tôi
-                                                    </a></li>
-                                                <li><a href="${pageContext.request.contextPath}/searchroom">Rooms</a></li>
-                                                <li><a href="${pageContext.request.contextPath}/blog.jsp">News</a></li>
-                                                <li><a href="${pageContext.request.contextPath}/contact.jsp">Contact</a></li>
-                                                <li><a href="${pageContext.request.contextPath}/elements.jsp">Elements</a>
-                                                </li>
-                                                <c:if test="${sessionScope.authLocal.user.userRoleId == 2}">
-                                                    <li>
-                                                        <a href="${pageContext.request.contextPath}/vouchermanage">ManageVoucher</a>
-                                                    </li>
-                                                </c:if>
-                                            </ul>
-                                        </li>
+
+                                            <c:if test="${sessionScope.authLocal.user.userRoleId <5}">
+                                            <li class="${pageContext.request.requestURI.endsWith('managerDashboard.jsp') ? 'active' : ''}"><a href="${pageContext.request.contextPath}/managerDashboard.jsp">Manage</a></li>
+                                            </c:if>
+                                        
+<!--                                        <li><a href="${pageContext.request.contextPath}/searchroom">Rooms</a></li>-->
+
                                         <li class="${pageContext.request.requestURI.endsWith('voucher.jsp') ? 'active' : ''}"><a href="${pageContext.request.contextPath}/voucher">Voucher</a></li>
-                                        <li class="${pageContext.request.requestURI.endsWith('services.jsp') ? 'active' : ''}"><a href="${pageContext.request.contextPath}/services.jsp">Services</a></li>
-                                        <li class="${pageContext.request.requestURI.endsWith('contact.jsp') ? 'active' : ''}"><a href="${pageContext.request.contextPath}/contact.jsp">Contact</a></li>
                                     </ul>
 
                                     <!-- Button -->
@@ -147,7 +128,7 @@
                                                                         </ul>
                                                                     </div>
                                                                     <div class="copyright-text">
-                                                                        <p class="m-0 yellow-color" >©2025 <a href="#!" class="yellow-color">Palatin.com</a> all right reserved </p>
+                                                                        <p class="m-0 yellow-color" > <a href="#!" class="yellow-color">Palatin.com</a></p>
                                                                     </div>
                                                                 </div>
                                                                 <!-- leftside-content - end -->
@@ -418,10 +399,17 @@
                                                         </a>
                                                         <div class="dropdown-menu dropdown-menu-right shadow border-0" aria-labelledby="userDropdown" style="min-width: 250px;">
                                                             <div class="px-3 py-2 border-bottom">
-                                                                <div class="font-weight-bold text-dark">🥉 Bronze Priority</div>
-                                                                <div class="text-muted small">0 Điểm</div>
+                                                                <c:if test="${sessionScope.levelUser.levelId == 1}">
+                                                                    <div class="font-weight-bold text-dark">🥉 Bronze Priority</div>
+                                                                </c:if>
+                                                                <c:if test="${sessionScope.levelUser.levelId == 2}">
+                                                                    <div class="font-weight-bold text-dark">🥈 Silver Priority</div>
+                                                                </c:if>
+                                                                <c:if test="${sessionScope.levelUser.levelId == 3}">
+                                                                    <div class="font-weight-bold text-dark">🥇 Gold Priority</div>
+                                                                </c:if>
                                                             </div>
-                                                            <a class="dropdown-item" href="${pageContext.request.contextPath}/voucherforcustomer" style="color: black"><i class="fa fa-user mr-2 text-primary"></i> Điểm</a>
+                                                            <a class="dropdown-item" href="${pageContext.request.contextPath}/voucherforcustomer" style="color: black"><i class="fa fa-money-bill-wave mr-2 text-primary"></i> Điểm</a>
                                                             <a class="dropdown-item" href="${pageContext.request.contextPath}/updateprofile" style="color: black"><i class="fa fa-user mr-2 text-primary"></i> Chỉnh sửa hồ sơ</a>
                                                             <a class="dropdown-item" href="${pageContext.request.contextPath}/paymenthistory" style="color: black"><i class="fas fa-list mr-2 text-primary"></i> Danh sách giao dịch</a>
                                                             <a class="dropdown-item" href="${pageContext.request.contextPath}/bookingroomcustomer" style="color: black"><i class="fas fa-bed mr-2 text-primary"></i> Đặt chỗ của tôi</a>
@@ -459,7 +447,7 @@
                                                                 </ul>
                                                             </div>
                                                             <div class="copyright-text">
-                                                                <p class="m-0 yellow-color">©2025 <a href="#!">Palatin.com</a> all right reserved </p>
+                                                                <p class="m-0 yellow-color"> <a href="#!">Palatin.com</a></p>
                                                             </div>
                                                         </div>
                                                         <!-- leftside-content - end -->
@@ -534,7 +522,7 @@
                                                                 </ul>
                                                             </div>
                                                             <div class="copyright-text">
-                                                                <p class="m-0 yellow-color">©2025 <a href="#!">Palatin.com</a> all right reserved </p>
+                                                                <p class="m-0 yellow-color"> <a href="#!">Palatin.com</a> </p>
                                                             </div>
                                                         </div>
                                                         <!-- leftside-content - end -->
@@ -626,7 +614,7 @@
                                                                 </ul>
                                                             </div>
                                                             <div class="copyright-text">
-                                                                <p class="m-0 yellow-color">©2025 <a href="#!">Palatin.com</a> all right reserved </p>
+                                                                <p class="m-0 yellow-color"> <a href="#!">Palatin.com</a> </p>
                                                             </div>
                                                         </div>
                                                         <!-- leftside-content - end -->
@@ -692,7 +680,7 @@
                                                                 </ul>
                                                             </div>
                                                             <div class="copyright-text">
-                                                                <p class="m-0 yellow-color">©2025 <a href="#!">Palatin.com</a> all right reserved </p>
+                                                                <p class="m-0 yellow-color"> <a href="#!">Palatin.com</a> </p>
                                                             </div>
                                                         </div>
                                                         <!-- leftside-content - end -->
@@ -783,7 +771,7 @@
                                                                 </ul>
                                                             </div>
                                                             <div class="copyright-text">
-                                                                <p class="m-0 yellow-color">©2025 <a href="#!" class="yellow-color">Palatin.com</a> all right reserved</p>
+                                                                <p class="m-0 yellow-color"> <a href="#!" class="yellow-color">Palatin.com</a> </p>
                                                             </div>
                                                         </div>
                                                         <!-- Right side - Forgot password -->
@@ -840,7 +828,7 @@
                                                                 </ul>
                                                             </div>
                                                             <div class="copyright-text">
-                                                                <p class="m-0 yellow-color">©2025 <a href="#!" class="yellow-color">Palatin.com</a> all right reserved</p>
+                                                                <p class="m-0 yellow-color"> <a href="#!" class="yellow-color">Palatin.com</a> </p>
                                                             </div>
                                                         </div>
                                                         <!-- Right side - Forgot password -->
@@ -900,7 +888,7 @@
                                                                 </ul>
                                                             </div>
                                                             <div class="copyright-text">
-                                                                <p class="m-0 yellow-color">©2025 <a href="#!" class="yellow-color">Palatin.com</a> all right reserved</p>
+                                                                <p class="m-0 yellow-color"> <a href="#!" class="yellow-color">Palatin.com</a> </p>
                                                             </div>
                                                         </div>
 

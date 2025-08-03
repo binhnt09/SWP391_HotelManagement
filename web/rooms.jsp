@@ -140,7 +140,6 @@
                         <div class="section-heading text-center">
                             <div class="line-"></div>
                             <h2>Choose a room</h2>
-                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec malesuada lorem maximus mauris sceleri sque, at rutrum nulla dictum. Ut ac ligula sapien.</p>
                         </div>
                     </div>
                 </div>
@@ -190,7 +189,7 @@
                                     <p class="price-from text-start mb-2" style="font-weight: bold; color: white;">
                                         From <fmt:formatNumber value="${i.price}" type="number" groupingUsed="true" />VND/night
                                     </p>
-                                    <h5 class="card-title">${i.getRoomNumber()} - ${i.getRoomType().getTypeName()}<div id="avgRatingStars_${i.getRoomID()}" class="mb-2 text-warning d-inline-block"></div></h5>
+                                    <h5 class="card-title">${i.getRoomNumber()} - Tầng ${i.getFloorID()} - ${i.getRoomType().getTypeName()}<div id="avgRatingStars_${i.getRoomID()}" class="mb-2 text-warning d-inline-block"></div></h5>
                                     <p class="card-text">${i.getRoomDetail().getDescription()}</p>
                                     <ul class="list-unstyled text-muted fs-6 mt-2 row">
                                         <c:choose>
@@ -268,35 +267,8 @@
                     <div class="col-12 col-lg-5">
                         <div class="footer-widget-area mt-50">
                             <a href="#" class="d-block mb-5"><img src="img/core-img/logo.png" alt=""></a>
-                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec malesuada lorem maximus mauris sceleri sque, at rutrum nulla dictum. Ut ac ligula sapien. Suspendisse cursus faucibus finibus. </p>
                         </div>
-                    </div>
-
-                    <!-- Footer Widget Area -->
-                    <div class="col-12 col-md-6 col-lg-4">
-                        <div class="footer-widget-area mt-50">
-                            <h6 class="widget-title mb-5">Find us on the map</h6>
-                            <img src="img/bg-img/footer-map.png" alt="">
-                        </div>
-                    </div>
-                    <!-- Footer Widget Area -->
-                    <div class="col-12 col-md-6 col-lg-3">
-                        <div class="footer-widget-area mt-50">
-                            <h6 class="widget-title mb-5">Subscribe to our newsletter</h6>
-                            <form action="#" method="post" class="subscribe-form">
-                                <input type="email" name="subscribe-email" id="subscribeemail" placeholder="Your E-mail">
-                                <button type="submit">Subscribe</button>
-                            </form>
-                        </div>
-                    </div>
-                    <!-- Copywrite Text -->
-                    <div class="col-12">
-                        <div class="copywrite-text mt-30">
-                            <p><a href="#"><!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-                                    Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made with <i class="fa fa-heart-o" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a>
-                                    <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. --></p>
-                        </div>
-                    </div>
+                    </div>                    
                 </div>
             </div>
         </footer>
@@ -758,8 +730,8 @@
                                                         document.getElementById("numberPeople").innerHTML = '<i class="fa-solid fa-people-group"></i> Số thành viên: ' + detail.maxGuest;
                                                         document.getElementById("roomDetailDescription").innerText = detail.description;
                                                         document.getElementById("detailPrice").innerText = room.price + "VNĐ/Đêm";
-                                                        document.getElementById("roomModalLabel").innerText = room.roomNumber + "-" + type.typeName;
-
+                                                        document.getElementById("roomModalLabel").innerText = room.roomNumber+" - Tầng"+room.floorID + " - " + type.typeName;
+                                                        
 
                                                         const checkin = element.getAttribute('data-checkin');
                                                         const checkout = element.getAttribute('data-checkout');

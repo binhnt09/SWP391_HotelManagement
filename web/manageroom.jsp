@@ -606,213 +606,203 @@
             </div>
         </div>
 
-
-        <script>
-            document.addEventListener("DOMContentLoaded", function () {
-                const container = document.getElementById("amenity-container");
-                container.innerHTML = "";
-                const baseUrl = '${pageContext.request.contextPath}';
-
-                fetch(baseUrl + "/roomcrud?action=getAllAmenity")
-                        .then(response => response.json())
-                        .then(data => {
-                            for (const category in data) {
-                                const groupDiv = document.createElement("div");
-                                groupDiv.classList.add("mb-3");
-
-                                const title = document.createElement("strong");
-                                title.textContent = category;
-                                groupDiv.appendChild(title);
-
-                                const rowDiv = document.createElement("div");
-                                rowDiv.classList.add("row", "mt-2");
-
-                                data[category].forEach((item, index) => {
-                                    const colDiv = document.createElement("div");
-                                    colDiv.classList.add("col-md-6");
-
-                                    const checkboxDiv = document.createElement("div");
-                                    checkboxDiv.classList.add("form-check");
-
-                                    const checkbox = document.createElement("input");
-                                    checkbox.type = "checkbox";
-                                    checkbox.className = "form-check-input amenity-checkbox";
-                                    checkbox.id = "amenity-" + item.amenityId;
-                                    checkbox.value = item.amenityId;
-                                    checkbox.dataset.name = item.name;
-
-                                    const label = document.createElement("label");
-                                    label.className = "form-check-label";
-                                    label.htmlFor = checkbox.id;
-                                    label.textContent = item.name;
-
-                                    checkboxDiv.appendChild(checkbox);
-                                    checkboxDiv.appendChild(label);
-                                    colDiv.appendChild(checkboxDiv);
-                                    rowDiv.appendChild(colDiv);
-                                });
-
-                                groupDiv.appendChild(rowDiv);
-                                container.appendChild(groupDiv);
-                            }
-                            container.addEventListener("change", () => {
-                                const checkedBoxes = container.querySelectorAll(".amenity-checkbox:checked");
-                                const selectedIds = Array.from(checkedBoxes).map(cb => cb.value);
-                                document.getElementById("amenityIds").value = selectedIds.join(",");
-                            });
-                        });
-                fetch(baseUrl + "/roomcrud?action=getAllService")
-                        .then(res => res.json())
-                        .then(data => {
-                            console.log("Dữ liệu trả về:", data);
-
-                            const container = document.getElementById("service-container");
-                            container.innerHTML = "";
-
-                            const groupDiv = document.createElement("div");
-                            groupDiv.classList.add("mb-3");
-
-                            const title = document.createElement("strong");
-                            title.textContent = "Available Services";
-                            groupDiv.appendChild(title);
-
-                            const rowDiv = document.createElement("div");
-                            rowDiv.classList.add("row", "mt-2");
-
-                            data.forEach(service => {
-                                const colDiv = document.createElement("div");
-                                colDiv.classList.add("col-md-6");
-
-                                const checkboxDiv = document.createElement("div");
-                                checkboxDiv.classList.add("form-check");
-
-                                const checkbox = document.createElement("input");
-                                checkbox.type = "checkbox";
-                                checkbox.className = "form-check-input service-checkbox";
-                                checkbox.id = "service-" + service.serviceId;
-                                checkbox.value = service.serviceId;
-                                checkbox.dataset.name = service.name;
-
-                                const label = document.createElement("label");
-                                label.className = "form-check-label";
-                                label.htmlFor = checkbox.id;
-                                label.textContent = service.name;
-
-                                checkboxDiv.appendChild(checkbox);
-                                checkboxDiv.appendChild(label);
-                                colDiv.appendChild(checkboxDiv);
-                                rowDiv.appendChild(colDiv);
-                            });
-
-                            groupDiv.appendChild(rowDiv);
-                            container.appendChild(groupDiv);
-
-                            container.addEventListener("change", () => {
-                                const checkedBoxes = container.querySelectorAll(".service-checkbox:checked");
-                                const selectedIds = Array.from(checkedBoxes).map(cb => cb.value);
-                                document.getElementById("serviceIds").value = selectedIds.join(",");
-                            });
-                        })
-                        .catch(error => {
-                            console.error("Lỗi khi tải danh sách dịch vụ:", error);
-                        });
-            });
-        </script>
+        <script src="${pageContext.request.contextPath}/js/jquery/jquery-2.2.4.min.js"></script>
+        <!--Popper js--> 
+        <script src="${pageContext.request.contextPath}/js/bootstrap/popper.min.js"></script>
+        <!--Bootstrap js--> 
+        <script src="${pageContext.request.contextPath}/js/bootstrap/bootstrap.min.js"></script>
+        <!--All Plugins js--> 
+        <script src="${pageContext.request.contextPath}/js/plugins/plugins.js"></script>
+        <!--Active js--> 
+        <script src="${pageContext.request.contextPath}/js/active.js"></script>
+        <!----login js---->
+        <script src="${pageContext.request.contextPath}/js/authentication.js">
+            <script>
+                document.addEventListener("DOMContentLoaded", function () {
+                                                    const container = document.getElementById("amenity-container");
+                                            container.innerHTML = "";
+                                            const baseUrl = '${pageContext.request.contextPath}';
+                                            fetch(baseUrl + "/roomcrud?action=getAllAmenity")
+                                                    .then(response => response.json())
+                                                    .then(data => {
+                                                    for (const category in data) {
+                                                    const groupDiv = document.createElement("div");
+                                                    groupDiv.classList.add("mb-3");
+                                                    const title = document.createElement("strong");
+                                                    title.textContent = category;
+                                                    groupDiv.appendChild(title);
+                                                    const rowDiv = document.createElement("div");
+                                                    rowDiv.classList.add("row", "mt-2");
+                                                    data[category].forEach((item, index) => {
+                                                    const colDiv = document.createElement("div");
+                                                    colDiv.classList.add("col-md-6");
+                                                    const checkboxDiv = document.createElement("div");
+                                                    checkboxDiv.classList.add("form-check");
+                                                    const checkbox = document.createElement("input");
+                                                    checkbox.type = "checkbox";
+                                                    checkbox.className = "form-check-input amenity-checkbox";
+                                                    checkbox.id = "amenity-" + item.amenityId;
+                                                    checkbox.value = item.amenityId;
+                                                    checkbox.dataset.name = item.name;
+                                                    const label = document.createElement("label");
+                                                    label.className = "form-check-label";
+                                                    label.htmlFor = checkbox.id;
+                                                    label.textContent = item.name;
+                                                    checkboxDiv.appendChild(checkbox);
+                                                    checkboxDiv.appendChild(label);
+                                                    colDiv.appendChild(checkboxDiv);
+                                                    rowDiv.appendChild(colDiv);
+                                                    });
+                                                    groupDiv.appendChild(rowDiv);
+                                                    container.appendChild(groupDiv);
+                                                    }
+                                                    container.addEventListener("change", () => {
+                                                    const checkedBoxes = container.querySelectorAll(".amenity-checkbox:checked");
+                                                    const selectedIds = Array.from(checkedBoxes).map(cb => cb.value);
+                                                    document.getElementById("amenityIds").value = selectedIds.join(",");
+                                                    });
+                                                    });
+                                            fetch(baseUrl + "/roomcrud?action=getAllService")
+                                                    .then(res => res.json())
+                                                    .then(data => {
+                                                    console.log("Dữ liệu trả về:", data);
+                                                    const container = document.getElementById("service-container");
+                                                    container.innerHTML = "";
+                                                    const groupDiv = document.createElement("div");
+                                                    groupDiv.classList.add("mb-3");
+                                                    const title = document.createElement("strong");
+                                                    title.textContent = "Available Services";
+                                                    groupDiv.appendChild(title);
+                                                    const rowDiv = document.createElement("div");
+                                                    rowDiv.classList.add("row", "mt-2");
+                                                    data.forEach(service => {
+                                                    const colDiv = document.createElement("div");
+                                                    colDiv.classList.add("col-md-6");
+                                                    const checkboxDiv = document.createElement("div");
+                                                    checkboxDiv.classList.add("form-check");
+                                                    const checkbox = document.createElement("input");
+                                                    checkbox.type = "checkbox";
+                                                    checkbox.className = "form-check-input service-checkbox";
+                                                    checkbox.id = "service-" + service.serviceId;
+                                            checkbox.value = service.serviceId;
+                                                    checkbox.dataset.name = service.name;
+                                                    const label = document.createElement("label");
+                                                    label.className = "form-check-label";
+                                                    label.htmlFor = checkbox.id;
+                                                    label.textContent = service.name;
+                                                    checkboxDiv.appendChild(checkbox);
+                                                    checkboxDiv.appendChild(label);
+                                                    colDiv.appendChild(checkboxDiv);
+                                                    rowDiv.appendChild(colDiv);
+                                                    });
+                                                groupDiv.appendChild(rowDiv);
+                                                    container.appendChild(groupDiv);
+                                                    container.addEventListener("change", () => {
+                                                const checkedBoxes = container.querySelectorAll(".service-checkbox:checked");
+                                                    const selectedIds = Array.from(checkedBoxes).map(cb => cb.value);
+                                                    document.getElementById("serviceIds").value = selectedIds.join(",");
+                                                    });
+                                                    })
+                                                    .catch(error => {
+                                                    console.error("Lỗi khi tải danh sách dịch vụ:", error);
+                                                    });
+                                        });
+                                        </script>
 
 
 
 
         <div id="imageModal" style="
-             display: none;
-             position: fixed;
-             z-index: 9999;
-             left: 0;
-             top: 0;
-             width: 100%;
-             height: 100%;
-             overflow: auto;
-             background-color: rgba(0,0,0,0.8);
-             align-items: center;
-             justify-content: center;
+            display: none;
+            position: fixed;
+            z-index: 9999;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.8);
+            align-items: center;
+            justify-content: center;
              ">
             <span id="closeModal" style="
-                  position: absolute;
-                  top: 20px;
-                  right: 30px;
-                  color: white;
-                  font-size: 30px;
-                  font-weight: bold;
-                  cursor: pointer;
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            color: white;
+            font-size: 30px;
+            font-weight: bold;
+            cursor: pointer;
                   ">&times;</span>
 
             <img id="modalImage" class="img-fluid" style="max-width: 100%; max-height: 90vh; object-fit: contain; margin: auto; display: block;">
         </div>
 
-        <c:if test="${not empty openTab}">
-            <script>
-                document.addEventListener("DOMContentLoaded", function () {
-                    const el = document.querySelector(`button[data-bs-target='${openTab}']`);
-                    if (el)
-                        new bootstrap.Tab(el).show();
+                <c:if test="${not empty openTab}">
+                    <script>
+                    document.addEventListener("DOMContentLoaded", function () {
+                                const el = document.querySelector(`button[data-bs-target='${openTab}']`);
+                        if (el)
+                                new bootstrap.Tab(el).show();
                 });
-            </script>
-        </c:if>
+                </script>
+            </c:if>
 
-        <script>
-            document.querySelectorAll('.delete-btn').forEach(btn => {
-                btn.addEventListener('click', function () {
-                    const roomTypeID = this.getAttribute('data-id');
-                    console.log("Clicked ID:", roomTypeID);
-                    if (confirm('Bạn có chắc chắn xóa loại phòng này?')) {
-                        const baseUrl = '${pageContext.request.contextPath}';
-                        fetch(baseUrl + "/roomcrud?action=deleteRoomType&roomTypeID=" + roomTypeID)
-                                .then(response => response.json())
-                                .then(result => {
-                                    if (result.success) {
-                                        alert(result.message);
-                                        window.location.reload();
-                                    } else {
-                                        alert(result.message);
-                                    }
-                                })
-                                .catch(error => {
-                                    console.error('Error:', error);
-                                    alert('Error deleting room type');
-                                });
-                    }
-                });
-            });
-
-
-            function doDelete(id, name) {
-                if (!confirm("Are you sure to delete roomName: " + name))
-                    return;
-                fetch("roomcrud?action=delete&roomId=" + id)
-                        .then(res => res.json())
-                        .then(data => {
-                            if (data.status === "success") {
-                                alert("Bạn đã xóa thành công phòng " + name);
-                                window.location.reload();
-                            } else if (data.status === "booked") {
-                                alert("Phòng" + name + " hiện tại đang được đặt nên không thể xóa!.");
-                            } else {
-                                alert(data.status);
-                            }
-                        })
-                        .catch(err => {
-                            console.error("Delete error:", err);
-                            alert("Something went wrong.");
-                        });
-            }
-
-            function preventSpace(event) {
-                if (event.key === " ") {
-                    event.preventDefault();
-                }
-            }
-
-
-//            function checkDuplicateRoomNumberEdit() {
+                <script>
+                document.querySelectorAll('.delete-btn').forEach(btn => {
+                    btn.addEventListener('click', function () {
+                         const roomTypeID = this.getAttribute('data-id');
+                         console.log("Clicked ID:", roomTypeID);
+                         if (confirm('Bạn có chắc chắn xóa loại phòng này?')) {
+                         const baseUrl = '${pageContext.request.contextPath}';
+                         fetch(baseUrl + "/roomcrud?action=deleteRoomType&roomTypeID=" + roomTypeID)
+                                 .then(response => response.json())
+                                 .then(result => {
+                                 if (result.success) {
+                                 alert(result.message);
+                                 window.location.reload();
+                                 } else {
+                                 alert(result.message);
+                                 }
+                                 })
+                                 .catch(error => {
+                                 console.error('Error:', error);
+                                 alert('Error deleting room type');
+                                 });
+                         }
+                         });
+ });
+                            
+                                
+     function doDelete(id, name) {
+                         if (!confirm("Are you sure to delete roomName: " + name))
+                         return;
+                 fetch("roomcrud?action=delete&roomId=" + id)
+                         .then(res => res.json())
+                         .then(data => {
+                         if (data.status === "success") {
+                         alert("Bạn đã xóa thành công phòng " + name);
+                         window.location.reload();
+                         } else if (data.status === "booked") {
+                         alert("Phòng" + name + " hiện tại đang được đặt nên không thể xóa!.");
+                         } else {
+                         alert(data.status);
+                         }
+                         })
+                         .catch(err => {
+                         console.error("Delete error:", err);
+                         alert("Something went wrong.");
+                         });
+                           }
+                                                      
+                               function preventSpace(event) {
+                         if (event.key === " ") {
+                 event.preventDefault();
+                 }
+                               }
+                                                      
+                                                      
+                           //            function checkDuplicateRoomNumberEdit() {
 //                const roomNumberInput = document.getElementById("edit-roomNumber");
 //                const roomNumber = roomNumberInput.value.trim();
 //                const roomId = document.getElementById("edit-roomId11").value;
@@ -844,487 +834,447 @@
 //                    }
 
 
-            let tmpEditId = null;
-            function openEditRoomModal(element) {
-                const baseUrl = '${pageContext.request.contextPath}';
-                const roomId = element.dataset.roomid;
-                tmpEditId = roomId;
-                fetch(baseUrl + "/showroomdetail?roomId=" + roomId)
-                        .then(res => res.json())
-                        .then(data => {
-                            const room = data.room;
-                            const detail = data.roomdetail;
-                            const type = data.roomtype;
-
-                            console.log(room);
-                            console.log(detail);
-                            console.log(type);
-
-                            document.getElementById('edit-roomID').value = room.roomID;
-                            document.getElementById('edit-roomDetail').value = detail.roomDetailID;
-                            document.getElementById('edit-roomNumber').value = room.roomNumber;
-                            document.getElementById('edit-roomType').value = type.roomTypeID;
-                            document.getElementById('edit-status').value = room.status;
+                         let tmpEditId = null;
+                 function openEditRoomModal(element) {
+                 const baseUrl = '${pageContext.request.contextPath}';
+                 const roomId = element.dataset.roomid;
+                 tmpEditId = roomId;
+                 fetch(baseUrl + "/showroomdetail?roomId=" + roomId)
+                         .then(res => res.json())
+                         .then(data => {
+                         const room = data.room;
+                         const detail = data.roomdetail;
+                         const type = data.roomtype;
+                         console.log(room);
+                         console.log(detail);
+                         console.log(type);
+                         document.getElementById('edit-roomID').value = room.roomID;
+                         document.getElementById('edit-roomDetail').value = detail.roomDetailID;
+                         document.getElementById('edit-roomNumber').value = room.roomNumber;
+                         document.getElementById('edit-roomType').value = type.roomTypeID;
+                         document.getElementById('edit-status').value = room.status;
 //                            document.getElementById('edit-bedType').value = detail.bedType;
-                            document.getElementById('edit-description').value = detail.description;
-                            document.getElementById('edit-price').value = room.price;
-                            document.getElementById('edit-area').value = detail.area;
+                         document.getElementById('edit-description').value = detail.description;
+                         document.getElementById('edit-price').value = room.price;
+                         document.getElementById('edit-area').value = detail.area;
+                         return fetch(baseUrl + "/roomcrud?action=getImages&roomDetailId=" + data.roomdetail.roomDetailID);
+                         })
+                         .then(res => res.json())
+                         .then(images => {
+                         const container = document.getElementById('edit-room-images');
+                         container.innerHTML = '';
+                         if (images.length === 0) {
+                         container.innerHTML = "<p class='text-muted'>Không có ảnh nào.</p>";
+                         return;
+                         }
 
-                            return fetch(baseUrl + "/roomcrud?action=getImages&roomDetailId=" + data.roomdetail.roomDetailID);
-                        })
-                        .then(res => res.json())
-                        .then(images => {
-                            const container = document.getElementById('edit-room-images');
-                            container.innerHTML = '';
-                            if (images.length === 0) {
-                                container.innerHTML = "<p class='text-muted'>Không có ảnh nào.</p>";
-                                return;
-                            }
-
-                            images.forEach(img => {
-                                const div = document.createElement('div');
-                                div.style.position = 'relative';
-                                const image = document.createElement('img');
-                                image.src = img.imageURL;
-                                console.log(img.imageURL);
-                                image.style.width = '100px';
-                                image.style.height = '70px';
-                                image.style.objectFit = 'cover';
-
-                                image.addEventListener("click", () => {
-                                    const modal = document.getElementById("imageModal");
-                                    const modalImg = document.getElementById("modalImage");
-                                    modalImg.src = image.src;
-                                    modal.style.display = "flex";
-                                });
-
-                                const checkbox = document.createElement('input');
-                                checkbox.type = 'checkbox';
-                                checkbox.name = 'imagesToDelete';
-                                checkbox.value = img.imageID;
-                                checkbox.style.position = 'absolute';
-                                checkbox.style.top = '0';
-                                checkbox.style.right = '0';
-
-                                div.appendChild(image);
-                                div.appendChild(checkbox);
-                                container.appendChild(div);
-                            });
-                        })
-                        .catch(err => {
-                            console.error("Lỗi khi tải dữ liệu phòng:", err);
-                            document.getElementById('edit-room-images').innerHTML = "<p class='text-danger'>Lỗi khi tải ảnh.</p>";
-                        });
-            }
+                         images.forEach(img => {
+                         const div = document.createElement('div');
+                         div.style.position = 'relative';
+                         const image = document.createElement('img');
+                         image.src = img.imageURL;
+                         console.log(img.imageURL);
+                         image.style.width = '100px';
+                         image.style.height = '70px';
+                         image.style.objectFit = 'cover';
+                         image.addEventListener("click", () => {
+                         const modal = document.getElementById("imageModal");
+                         const modalImg = document.getElementById("modalImage");
+                         modalImg.src = image.src;
+                         modal.style.display = "flex";
+                         });
+                         const checkbox = document.createElement('input');
+                         checkbox.type = 'checkbox';
+                         checkbox.name = 'imagesToDelete';
+                         checkbox.value = img.imageID;
+                         checkbox.style.position = 'absolute';
+                         checkbox.style.top = '0';
+                         checkbox.style.right = '0';
+                         div.appendChild(image);
+                         div.appendChild(checkbox);
+                         container.appendChild(div);
+                         });
+                         })
+                         .catch(err => {
+                         console.error("Lỗi khi tải dữ liệu phòng:", err);
+                         document.getElementById('edit-room-images').innerHTML = "<p class='text-danger'>Lỗi khi tải ảnh.</p>";
+                         });
+                 }
 
 
-            async function confirmRestoreSelected() {
-                const selected = document.querySelectorAll('.room-checkbox:checked');
-                if (selected.length === 0) {
-                    alert("Please select at least one room to restore.");
-                    return;
-                }
+                 async function confirmRestoreSelected() {
+                 const selected = document.querySelectorAll('.room-checkbox:checked');
+                 if (selected.length === 0) {
+                 alert("Please select at least one room to restore.");
+                 return;
+                 }
 
-                const ids = Array.from(selected).map(cb => cb.value);
-                const restoreQuery = ids.map(id => "roomIds=" + encodeURIComponent(id)).join("&");
-                console.log(restoreQuery);
-                if (!confirm(`Bạn có muốn khôi phục room(s) ?`)) {
-                    return;
-                }
+                 const ids = Array.from(selected).map(cb => cb.value);
+                 const restoreQuery = ids.map(id => "roomIds=" + encodeURIComponent(id)).join("&");
+                 console.log(restoreQuery);
+                 if (!confirm(`Bạn có muốn khôi phục room(s) ?`)) {
+                 return;
+                 }
 
-                window.location = "roomcrud?currentPage=" + currentPage + "&action=restoreMultiple&" + restoreQuery;
-            }
+                 window.location = "roomcrud?currentPage=" + currentPage + "&action=restoreMultiple&" + restoreQuery;
+                 }
 
-            async function confirmDeleteSelected() {
-                const selected = document.querySelectorAll('.room-checkbox:checked');
-                if (selected.length === 0) {
-                    alert("Please select at least one room to delete.");
-                    return;
-                }
+                 async function confirmDeleteSelected() {
+                 const selected = document.querySelectorAll('.room-checkbox:checked');
+                 if (selected.length === 0) {
+                 alert("Please select at least one room to delete.");
+                 return;
+                 }
 
-                const ids = Array.from(selected).map(cb => cb.value);
-                const queryString = ids.map(id => "roomIds=" + encodeURIComponent(id)).join("&");
+                 const ids = Array.from(selected).map(cb => cb.value);
+                 const queryString = ids.map(id => "roomIds=" + encodeURIComponent(id)).join("&");
+                 try {
+                 const response = await fetch("roomcrud?action=checkBookingStatus&" + queryString);
+                 const result = await response.json();
+                 if (result.status === "error") {
+                 alert("Không thể xóa, vì những phòng này đang được đặt: " + result.bookedRoomIds.join(", "));
+                 return;
+                 }
 
-                try {
-                    const response = await fetch("roomcrud?action=checkBookingStatus&" + queryString);
-                    const result = await response.json();
+                 if (!confirm(`Are you sure to delete ${ids.length} room(s)?`)) {
+                 return;
+                 }
 
-                    if (result.status === "error") {
-                        alert("Không thể xóa, vì những phòng này đang được đặt: " + result.bookedRoomIds.join(", "));
-                        return;
-                    }
+                 const deleteQuery = ids.map(id => "roomIds=" + encodeURIComponent(id)).join("&");
+                 window.location = "roomcrud?action=deleteMultiple&" + deleteQuery;
+                 } catch (error) {
+                 console.error("Error checking booking status:", error);
+                 alert("Error checking booking status. Please try again.");
+                 }
+                 }
 
-                    if (!confirm(`Are you sure to delete ${ids.length} room(s)?`)) {
-                        return;
-                    }
+                 document.querySelector('thead input[type="checkbox"]').addEventListener('change', function () {
+                 const checkboxes = document.querySelectorAll('tbody input[type="checkbox"]');
+                 checkboxes.forEach(checkbox => {
+                 checkbox.checked = this.checked;
+                 if (this.checked) {
+                 checkbox.closest('tr').classList.add('table-primary');
+                 } else {
+                 checkbox.closest('tr').classList.remove('table-primary');
+                 }
+                 });
+                 });
+                 document.querySelectorAll('tbody input[type="checkbox"]').forEach(checkbox => {
+                 checkbox.addEventListener('change', function () {
+                 if (this.checked) {
+                 this.closest('tr').classList.add('table-primary');
+                 } else {
+                 this.closest('tr').classList.remove('table-primary');
+                 }
+                 });
+                 });
+                 document.querySelectorAll('.edit-btn').forEach(btn => {
+                 btn.addEventListener('click', function () {
+                 const id = this.dataset.id;
+                 const name = this.dataset.name;
+                 const desc = this.dataset.desc;
+                 const number = this.dataset.num;
+                 const amenity = this.dataset.amenity;
+                 openRoomTypeModal('edit', id, name, desc, number, amenity);
+                 });
+                 });
+                 function openRoomTypeModal(mode, id = '', name = '', desc = '', number = '', amenity = '') {
+                 if (mode === 'add') {
+                 $('#modalTitle').text('Add Room Type');
+                 $('#modal-action').val('addRoomType');
+                 $('#roomTypeID').val('');
+                 $('#typeName').val('');
+                 $('#description').val('');
+                 $('#numberPeople').val('');
+                 $('#amenity').val('');
+                 $('#modalSubmitBtn').text('Add');
+                 } else {
+                 $('#modalTitle').text('Edit Room Type');
+                 $('#modal-action').val('editRoomType');
+                 $('#roomTypeID').val(id);
+                 $('#typeName').val(name);
+                 $('#description').val(desc);
+                 $('#numberPeople').val(number);
+                 $('#amenity').val(amenity);
+                 $('#modalSubmitBtn').text('Update');
+                 }
+                 }
+                 document.getElementById("closeModal").addEventListener("click", () => {
+                 document.getElementById("imageModal").style.display = "none";
+                 });
+                 document.getElementById("imageModal").addEventListener("click", (e) => {
+                 const modalImage = document.getElementById("modalImage");
+                 if (!modalImage.contains(e.target)) {
+                 document.getElementById("imageModal").style.display = "none";
+                 }
+                 });
+                </script>
 
-                    const deleteQuery = ids.map(id => "roomIds=" + encodeURIComponent(id)).join("&");
-                    window.location = "roomcrud?action=deleteMultiple&" + deleteQuery;
-
-                } catch (error) {
-                    console.error("Error checking booking status:", error);
-                    alert("Error checking booking status. Please try again.");
-                }
-            }
-
-            document.querySelector('thead input[type="checkbox"]').addEventListener('change', function () {
-                const checkboxes = document.querySelectorAll('tbody input[type="checkbox"]');
-                checkboxes.forEach(checkbox => {
-                    checkbox.checked = this.checked;
-                    if (this.checked) {
-                        checkbox.closest('tr').classList.add('table-primary');
-                    } else {
-                        checkbox.closest('tr').classList.remove('table-primary');
-                    }
-                });
-            });
-
-            document.querySelectorAll('tbody input[type="checkbox"]').forEach(checkbox => {
-                checkbox.addEventListener('change', function () {
-                    if (this.checked) {
-                        this.closest('tr').classList.add('table-primary');
-                    } else {
-                        this.closest('tr').classList.remove('table-primary');
-                    }
-                });
-            });
-
-            document.querySelectorAll('.edit-btn').forEach(btn => {
-                btn.addEventListener('click', function () {
-                    const id = this.dataset.id;
-                    const name = this.dataset.name;
-                    const desc = this.dataset.desc;
-                    const number = this.dataset.num;
-                    const amenity = this.dataset.amenity;
-
-                    openRoomTypeModal('edit', id, name, desc, number, amenity);
-                });
-            });
-            function openRoomTypeModal(mode, id = '', name = '', desc = '', number = '', amenity = '') {
-                if (mode === 'add') {
-                    $('#modalTitle').text('Add Room Type');
-                    $('#modal-action').val('addRoomType');
-                    $('#roomTypeID').val('');
-                    $('#typeName').val('');
-                    $('#description').val('');
-                    $('#numberPeople').val('');
-                    $('#amenity').val('');
-                    $('#modalSubmitBtn').text('Add');
-                } else {
-                    $('#modalTitle').text('Edit Room Type');
-                    $('#modal-action').val('editRoomType');
-                    $('#roomTypeID').val(id);
-                    $('#typeName').val(name);
-                    $('#description').val(desc);
-                    $('#numberPeople').val(number);
-                    $('#amenity').val(amenity);
-                    $('#modalSubmitBtn').text('Update');
-            }
-            }
-            document.getElementById("closeModal").addEventListener("click", () => {
-                document.getElementById("imageModal").style.display = "none";
-            });
-
-            document.getElementById("imageModal").addEventListener("click", (e) => {
-                const modalImage = document.getElementById("modalImage");
-                if (!modalImage.contains(e.target)) {
-                    document.getElementById("imageModal").style.display = "none";
-                }
-            });
-
-
-        </script>
-
-        <script>
-            document.addEventListener("DOMContentLoaded", () => {
-                const addForm = document.getElementById("addRoomForm");
-                const editForm = document.getElementById("editRoomForm");
-
-                addForm.addEventListener("submit", async function (event) {
+                <script>
+                    document.addEventListener("DOMContentLoaded", () => {
+                    const addForm = document.getElementById("addRoomForm");
+                    const editForm = document.getElementById("editRoomForm");
+                    addForm.addEventListener("submit", async function (event) {
                     event.preventDefault();
-
                     const isRoomNumberValid = await checkRoomNumber();
                     const isPriceValid = validateAddPrice();
                     const isAreaValid = validateAddArea();
                     const isRoomTypeValid = validateRoomType();
                     const isRoomStatusValid = validateRoomStatus();
-
                     if (!isRoomNumberValid || !isPriceValid || !isAreaValid || !isRoomTypeValid || !isRoomStatusValid) {
-                        alert("Nhập sai dữ liệu. Vui lòng kiểm tra lại!!");
-                        return;
+                    alert("Nhập sai dữ liệu. Vui lòng kiểm tra lại!!");
+                    return;
                     }
                     addForm.submit();
-                });
-                document.getElementById("roomTypeID").addEventListener("change", function () {
+                    });
+                    document.getElementById("roomTypeID").addEventListener("change", function () {
                     const roomTypeSelect = this;
                     const errorMsg = document.getElementById("roomTypeError");
                     if (roomTypeSelect.value !== "-1") {
-                        errorMsg.classList.add("d-none");
-                        roomTypeSelect.classList.remove("is-invalid");
+                    errorMsg.classList.add("d-none");
+                    roomTypeSelect.classList.remove("is-invalid");
                     }
-                });
-
-                document.getElementById("roomStatus").addEventListener("change", function () {
+                    });
+                    document.getElementById("roomStatus").addEventListener("change", function () {
                     const roomStatusSelect = this;
                     const errorMsg = document.getElementById("roomStatusError");
                     if (roomStatusSelect.value !== "-1") {
-                        errorMsg.classList.add("d-none");
-                        roomStatusSelect.classList.remove("is-invalid");
+                    errorMsg.classList.add("d-none");
+                    roomStatusSelect.classList.remove("is-invalid");
                     }
-                });
-                editForm.addEventListener("submit", function (event) {
+                    });
+                    editForm.addEventListener("submit", function (event) {
                     event.preventDefault();
-
-//                    const isRoomNumberValid = await checkRoomNumber();
+        //                    const isRoomNumberValid = await checkRoomNumber();
                     const isPriceValid = validateEditPrice();
                     const isAreaValid = validateEditArea();
                     const isStatusValid = validateEditStatus();
                     const isTypeValid = validateEditRoomType();
                     const isDuplicateRoomNumberEdit = checkDuplicateRoomNumberEdit();
-
                     if (!isDuplicateRoomNumberEdit || !isPriceValid || !isAreaValid || !isStatusValid || !isTypeValid) {
-                        alert("Nhập sai dữ liệu. Vui lòng kiểm tra lại!!");
-                        return;
+                    alert("Nhập sai dữ liệu. Vui lòng kiểm tra lại!!");
+                    return;
                     }
                     editForm.submit();
-                });
-
-                document.getElementById("edit-roomType").addEventListener("change", function () {
+                    });
+                    document.getElementById("edit-roomType").addEventListener("change", function () {
                     const roomTypeSelect = this;
                     const errorMsg = document.getElementById("editRoomTypeError");
                     if (roomTypeSelect.value !== "-1") {
-                        errorMsg.classList.add("d-none");
-                        roomTypeSelect.classList.remove("is-invalid");
+                    errorMsg.classList.add("d-none");
+                    roomTypeSelect.classList.remove("is-invalid");
                     }
-                });
-
-                document.getElementById("edit-status").addEventListener("change", function () {
+                    });
+                    document.getElementById("edit-status").addEventListener("change", function () {
                     const roomStatusSelect = this;
                     const errorMsg = document.getElementById("editStatusError");
                     if (roomStatusSelect.value !== "-1") {
-                        errorMsg.classList.add("d-none");
-                        roomStatusSelect.classList.remove("is-invalid");
+                    errorMsg.classList.add("d-none");
+                    roomStatusSelect.classList.remove("is-invalid");
                     }
-                });
-
-            });
-
-            async function checkRoomNumber() {
-                const roomNumberInput = document.getElementById("add-roomNumber");
-                const roomNumber = roomNumberInput.value.trim();
-                const errorEl = document.getElementById("roomNumberError");
-                const regex = /^[a-zA-Z0-9]+$/;
-
-                errorEl.classList.add("d-none");
-                roomNumberInput.classList.remove("is-invalid");
-
-                if (!roomNumber) {
+                    });
+                    });
+                    async function checkRoomNumber() {
+                    const roomNumberInput = document.getElementById("add-roomNumber");
+                    const roomNumber = roomNumberInput.value.trim();
+                    const errorEl = document.getElementById("roomNumberError");
+                    const regex = /^[a-zA-Z0-9]+$/;
+                    errorEl.classList.add("d-none");
+                    roomNumberInput.classList.remove("is-invalid");
+                    if (!roomNumber) {
                     errorEl.textContent = "Tên phòng không được trống.";
                     errorEl.classList.remove("d-none");
                     roomNumberInput.classList.add("is-invalid");
                     return false;
-                }
+                    }
 
-                if (!regex.test(roomNumber)) {
+                    if (!regex.test(roomNumber)) {
                     errorEl.textContent = "Tên phòng chỉ được chứa chữ cái và số.";
                     errorEl.classList.remove("d-none");
                     roomNumberInput.classList.add("is-invalid");
                     return false;
-                }
+                    }
 
-                const baseUrl = '${pageContext.request.contextPath}';
-                try {
+                    const baseUrl = '${pageContext.request.contextPath}';
+                    try {
                     const response = await fetch(baseUrl + "/roomcrud?action=checkRoomNumber&roomNumber=" + encodeURIComponent(roomNumber));
                     const data = await response.json();
                     if (data.exists) {
-                        errorEl.textContent = "Tên phòng đã tồn tại!";
-                        errorEl.classList.remove("d-none");
-                        roomNumberInput.classList.add("is-invalid");
-                        return false;
+                    errorEl.textContent = "Tên phòng đã tồn tại!";
+                    errorEl.classList.remove("d-none");
+                    roomNumberInput.classList.add("is-invalid");
+                    return false;
                     }
-                } catch (error) {
+                    } catch (error) {
                     console.error("Error:", error);
                     return false;
-                }
+                    }
 
-                return true;
-            }
+                    return true;
+                    }
 
-            async function checkDuplicateRoomNumberEdit() {
-                const roomNumberInput = document.getElementById("edit-roomNumber");
-                const roomNumber = roomNumberInput.value.trim();
-                const errorEl = document.getElementById("editRoomNumberError");
-                const regex = /^[a-zA-Z0-9]+$/;
-
-                errorEl.classList.add("d-none");
-                roomNumberInput.classList.remove("is-invalid");
-
-                if (!roomNumber) {
+                    async function checkDuplicateRoomNumberEdit() {
+                    const roomNumberInput = document.getElementById("edit-roomNumber");
+                    const roomNumber = roomNumberInput.value.trim();
+                    const errorEl = document.getElementById("editRoomNumberError");
+                    const regex = /^[a-zA-Z0-9]+$/;
+                    errorEl.classList.add("d-none");
+                    roomNumberInput.classList.remove("is-invalid");
+                    if (!roomNumber) {
                     errorEl.textContent = "Tên phòng không được để trống.";
                     errorEl.classList.remove("d-none");
                     roomNumberInput.classList.add("is-invalid");
                     return false;
-                }
+                    }
 
-                if (!regex.test(roomNumber)) {
+                    if (!regex.test(roomNumber)) {
                     errorEl.textContent = "Tên phòng chỉ được chứa chữ cái và số.";
                     errorEl.classList.remove("d-none");
                     roomNumberInput.classList.add("is-invalid");
                     return false;
-                }
-
-                const baseUrl = '${pageContext.request.contextPath}';
-                try {
-                    const response = await fetch(baseUrl + "/roomcrud?action=checkRoomNumberEdit&roomNumber=" + roomNumber +"&roomId="+tmpEditId);
-                    const data = await response.json();
-
-                    if (data.exists) {
-                        errorEl.textContent = "Tên phòng đã tồn tại!";
-                        errorEl.classList.remove("d-none");
-                        roomNumberInput.classList.add("is-invalid");
-                        return false;
                     }
-                } catch (error) {
+
+                    const baseUrl = '${pageContext.request.contextPath}';
+                    try {
+                    const response = await fetch(baseUrl + "/roomcrud?action=checkRoomNumberEdit&roomNumber=" + roomNumber + "&roomId=" + tmpEditId);
+                    const data = await response.json();
+                    if (data.exists) {
+                    errorEl.textContent = "Tên phòng đã tồn tại!";
+                    errorEl.classList.remove("d-none");
+                    roomNumberInput.classList.add("is-invalid");
+                    return false;
+                    }
+                    } catch (error) {
                     console.error("Error:", error);
                     return false;
-                }
+                    }
 
-                return true;
-            }
+                    return true;
+                    }
 
 
-            function validateAddPrice() {
-                const priceInput = document.getElementById("add-price");
-                const priceError = document.getElementById("addPriceError");
-                const price = parseFloat(priceInput.value.trim());
-
-                priceError.classList.add("d-none");
-                priceInput.classList.remove("is-invalid");
-
-                if (isNaN(price) || price <= 0) {
+                    function validateAddPrice() {
+                    const priceInput = document.getElementById("add-price");
+                    const priceError = document.getElementById("addPriceError");
+                    const price = parseFloat(priceInput.value.trim());
+                    priceError.classList.add("d-none");
+                    priceInput.classList.remove("is-invalid");
+                    if (isNaN(price) || price <= 0) {
                     priceError.textContent = "Giá phòng cần phải lớn hơn 0!!";
                     priceError.classList.remove("d-none");
                     priceInput.classList.add("is-invalid");
                     return false;
-                }
-                return true;
-            }
+                    }
+                    return true;
+                    }
 
-            function validateAddArea() {
-                const areaInput = document.getElementById("add-area");
-                const areaError = document.getElementById("addAreaError");
-                const area = parseFloat(areaInput.value.trim());
-
-                areaError.classList.add("d-none");
-                areaInput.classList.remove("is-invalid");
-
-                if (isNaN(area) || area <= 0) {
+                    function validateAddArea() {
+                    const areaInput = document.getElementById("add-area");
+                    const areaError = document.getElementById("addAreaError");
+                    const area = parseFloat(areaInput.value.trim());
+                    areaError.classList.add("d-none");
+                    areaInput.classList.remove("is-invalid");
+                    if (isNaN(area) || area <= 0) {
                     areaError.textContent = "Diện tích lớn hơn 0!!!";
                     areaError.classList.remove("d-none");
                     areaInput.classList.add("is-invalid");
                     return false;
-                }
+                    }
 
-                return true;
-            }
+                    return true;
+                    }
 
-            function validateRoomType() {
-                const roomType = document.getElementById("roomTypeID");
-                const roomTypeError = document.getElementById("roomTypeError");
-
-                if (roomType.value === "-1") {
+                    function validateRoomType() {
+                    const roomType = document.getElementById("roomTypeID");
+                    const roomTypeError = document.getElementById("roomTypeError");
+                    if (roomType.value === "-1") {
                     roomType.classList.add("is-invalid");
                     roomTypeError.classList.remove("d-none");
                     return false;
-                }
+                    }
 
-                roomType.classList.remove("is-invalid");
-                roomTypeError.classList.add("d-none");
-                return true;
-            }
+                    roomType.classList.remove("is-invalid");
+                    roomTypeError.classList.add("d-none");
+                    return true;
+                    }
 
-            function validateRoomStatus() {
-                const roomStatus = document.getElementById("roomStatus");
-                const roomStatusError = document.getElementById("roomStatusError");
-
-                if (roomStatus.value === "-1") {
+                    function validateRoomStatus() {
+                    const roomStatus = document.getElementById("roomStatus");
+                    const roomStatusError = document.getElementById("roomStatusError");
+                    if (roomStatus.value === "-1") {
                     roomStatus.classList.add("is-invalid");
                     roomStatusError.classList.remove("d-none");
                     return false;
-                }
+                    }
 
-                roomStatus.classList.remove("is-invalid");
-                roomStatusError.classList.add("d-none");
-                return true;
-            }
+                    roomStatus.classList.remove("is-invalid");
+                    roomStatusError.classList.add("d-none");
+                    return true;
+                    }
 
-            function validateEditStatus() {
-                const status = document.getElementById("edit-status");
-                const error = document.getElementById("editStatusError");
-
-                if (status.value === "-1") {
+                    function validateEditStatus() {
+                    const status = document.getElementById("edit-status");
+                    const error = document.getElementById("editStatusError");
+                    if (status.value === "-1") {
                     error.classList.remove("d-none");
                     status.classList.add("is-invalid");
                     return false;
-                }
+                    }
 
-                error.classList.add("d-none");
-                status.classList.remove("is-invalid");
-                return true;
-            }
+                    error.classList.add("d-none");
+                    status.classList.remove("is-invalid");
+                    return true;
+                    }
 
-            function validateEditPrice() {
-                const priceInput = document.getElementById("edit-price");
-                const error = document.getElementById("editPriceError");
-                const value = priceInput.value.trim();
-
-                if (value === "" || isNaN(value) || parseFloat(value) <= 0) {
+                    function validateEditPrice() {
+                    const priceInput = document.getElementById("edit-price");
+                    const error = document.getElementById("editPriceError");
+                    const value = priceInput.value.trim();
+                    if (value === "" || isNaN(value) || parseFloat(value) <= 0) {
                     error.classList.remove("d-none");
                     priceInput.classList.add("is-invalid");
                     return false;
-                }
+                    }
 
-                error.classList.add("d-none");
-                priceInput.classList.remove("is-invalid");
-                return true;
-            }
+                    error.classList.add("d-none");
+                    priceInput.classList.remove("is-invalid");
+                    return true;
+                    }
 
-            function validateEditArea() {
-                const areaInput = document.getElementById("edit-area");
-                const error = document.getElementById("editAreaError");
-                const value = areaInput.value.trim();
-
-                if (value === "" || isNaN(value) || parseFloat(value) <= 0) {
+                    function validateEditArea() {
+                    const areaInput = document.getElementById("edit-area");
+                    const error = document.getElementById("editAreaError");
+                    const value = areaInput.value.trim();
+                    if (value === "" || isNaN(value) || parseFloat(value) <= 0) {
                     error.classList.remove("d-none");
                     areaInput.classList.add("is-invalid");
                     return false;
-                }
+                    }
 
-                error.classList.add("d-none");
-                areaInput.classList.remove("is-invalid");
-                return true;
-            }
+                    error.classList.add("d-none");
+                    areaInput.classList.remove("is-invalid");
+                    return true;
+                    }
 
 
 
-            function validateEditRoomType() {
-                const type = document.getElementById("edit-roomType");
-                const error = document.getElementById("editRoomTypeError");
-
-                if (type.value === "-1") {
+                    function validateEditRoomType() {
+                    const type = document.getElementById("edit-roomType");
+                    const error = document.getElementById("editRoomTypeError");
+                    if (type.value === "-1") {
                     error.classList.remove("d-none");
                     type.classList.add("is-invalid");
                     return false;
-                }
+                    }
 
-                error.classList.add("d-none");
-                type.classList.remove("is-invalid");
-                return true;
-            }
-        </script>
-
-
+                    error.classList.add("d-none");
+                    type.classList.remove("is-invalid");
+                    return true;
+                    }
+                </script>
 
 
-    </body>
-</html>
+
+
+            </body>
+        </html>
