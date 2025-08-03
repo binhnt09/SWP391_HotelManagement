@@ -193,6 +193,10 @@ public class VietQrSepaycallback extends HttpServlet {
                 session.removeAttribute("amount");
                 session.removeAttribute("description");
                 session.removeAttribute("qrUrl");
+                
+                session.removeAttribute("bookingIdPending");
+                session.removeAttribute("serviceIds");
+                session.removeAttribute("listBookingService");
             }
             out.write("{\"success\": true, \"message\": \"Booking updated to PAID\"}");
         } else {

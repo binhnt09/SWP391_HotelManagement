@@ -137,20 +137,20 @@ if (countdown) {
 document.addEventListener("DOMContentLoaded", function () {
     const originalPrice = parseFloat(document.getElementById("total-price-data").value);
 
-    // Bắt sự kiện chọn radio voucher
+    // bắt sự kiện chọn radio voucher
     document.querySelectorAll('input[name="voucherId"]').forEach(radio => {
         radio.addEventListener("change", function () {
             const discount = parseFloat(this.getAttribute("data-discount")) || 0;
             const discountAmount = originalPrice * discount / 100;
             const newPrice = originalPrice - discountAmount;
 
-            // Cập nhật vào HTML
+            // cập nhật vào HTML
             document.getElementById("total-price-text").innerText = newPrice.toLocaleString("vi-VN") + " VND";
-            document.getElementById("totalbill-hidden").value = newPrice.toFixed(0); // Gửi về backend
+            document.getElementById("totalbill-hidden").value = newPrice.toFixed(0); // gửi về backend
         });
     });
 
-    // Nhập mã tay rồi click nút "Áp dụng"
+    // nhập mã tay rồi click nút "Áp dụng"
     document.getElementById("apply-coupon").addEventListener("click", function (e) {
         e.preventDefault();
         const inputCode = document.getElementById("coupon-input").value.trim().toUpperCase();

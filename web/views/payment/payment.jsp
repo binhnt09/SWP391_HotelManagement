@@ -177,8 +177,10 @@
 
                         <ul>
                             <c:forEach var="service" items="${listService}">
-                                <li>${service.name}</li> 
-                                </c:forEach>
+                                <li>
+                                    ${service.name}
+                                </li> 
+                            </c:forEach>
                         </ul>
                     </div>
 
