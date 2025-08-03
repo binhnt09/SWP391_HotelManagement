@@ -9,7 +9,6 @@
 <%@ include file="/dashboard-layout/sidebar.jsp" %>
 
 <div id="content">
-
     <!----------------top-navbar---------------->
     <div class="top-navbar">
         <div class="xp-topbar">
@@ -110,10 +109,7 @@
                                     <c:forEach var="c" items="${customers}" varStatus="status">
                                         <tr>
                                             <td>
-                                                <span class="custom-checkbox">
-                                                    <input type="checkbox" id="checkbox${status.index}" name="option[]" value="${c.userId}">
-                                                    <label for="checkbox${status.index}"></label>
-                                                </span>
+                                                ${status.index + 1}
                                             </td>
                                             <td>${c.userId}</td>
                                             <td>${c.firstName}</td>
@@ -229,7 +225,6 @@
                     </form>
                 </div>
             </div>
-
             <!----edit-modal end--------->
 
 

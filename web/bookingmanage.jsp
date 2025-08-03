@@ -1,7 +1,6 @@
 <%-- 
     Document   : room-list
     Created on : Jun 8, 2025, 9:56:55 PM
-    Author     : viet7
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
