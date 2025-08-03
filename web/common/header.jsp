@@ -88,31 +88,14 @@
                                     <ul>
                                         <li class="${pageContext.request.requestURI.endsWith('home.jsp') ? 'active' : ''}"><a href="${pageContext.request.contextPath}/loadtohome">Home</a></li>
                                         <!--<li class="${pageContext.request.requestURI.endsWith('rooms.jsp') ? 'active' : ''}"><a href="${pageContext.request.contextPath}/searchroom">Room</a></li>-->
-                                        <li><a href="#">More</a>
-                                            <ul class="dropdown">
-                                                <li><a href="${pageContext.request.contextPath}/loadtohome">Home</a></li>
-                                                    <c:if test="${sessionScope.authLocal.user.roleName == 'Manager' }"> 
-                                                    <li class="${pageContext.request.requestURI.endsWith('manageroom.jsp') ? 'active' : ''}"><a href="${pageContext.request.contextPath}/manageroom">Manage Room</a></li>
-                                                    </c:if>
-                                                <li class="${pageContext.request.requestURI.endsWith('managerDashboard.jsp') ? 'active' : ''}"><a href="${pageContext.request.contextPath}/managerDashboard.jsp">Manage</a></li>
-                                                <li><a href="services.jsp">Services</a></li>
-                                                <li><a class="dropdown-item" href="${pageContext.request.contextPath}/bookingcrud">
-                                                        Đặt chỗ của tôi
-                                                    </a></li>
-                                                <li><a href="${pageContext.request.contextPath}/searchroom">Rooms</a></li>
-                                                <li><a href="${pageContext.request.contextPath}/blog.jsp">News</a></li>
-                                                <li><a href="${pageContext.request.contextPath}/contact.jsp">Contact</a></li>
-                                        </li>
-                                        <c:if test="${sessionScope.authLocal.user.userRoleId == 2}">
-                                            <li>
-                                                <a href="${pageContext.request.contextPath}/vouchermanage">ManageVoucher</a>
-                                            </li>
-                                        </c:if>
-                                    </ul>
-                                    </li>
-                                    <li class="${pageContext.request.requestURI.endsWith('voucher.jsp') ? 'active' : ''}"><a href="${pageContext.request.contextPath}/voucher">Voucher</a></li>
-                                    <li class="${pageContext.request.requestURI.endsWith('services.jsp') ? 'active' : ''}"><a href="${pageContext.request.contextPath}/services.jsp">Services</a></li>
-                                    <li class="${pageContext.request.requestURI.endsWith('contact.jsp') ? 'active' : ''}"><a href="${pageContext.request.contextPath}/contact.jsp">Contact</a></li>
+
+                                            <c:if test="${sessionScope.authLocal.user.userRoleId <5}">
+                                            <li class="${pageContext.request.requestURI.endsWith('managerDashboard.jsp') ? 'active' : ''}"><a href="${pageContext.request.contextPath}/managerDashboard.jsp">Manage</a></li>
+                                            </c:if>
+                                        
+                                        <li><a href="${pageContext.request.contextPath}/searchroom">Rooms</a></li>
+
+                                        <li class="${pageContext.request.requestURI.endsWith('voucher.jsp') ? 'active' : ''}"><a href="${pageContext.request.contextPath}/voucher">Voucher</a></li>
                                     </ul>
 
                                     <!-- Button -->

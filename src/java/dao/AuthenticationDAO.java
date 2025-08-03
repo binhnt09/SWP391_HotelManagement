@@ -592,20 +592,6 @@ public class AuthenticationDAO extends DBContext {
         }
         return false;
     }
-
-    public void logCreateUser(int targetUserId, int createdByUserId, String roleName) {
-        String sql = "INSERT INTO AccountAuditLog (Action, TargetUserID, CreatedByUserID, Details) "
-                + "VALUES (?, ?, ?, ?)";
-        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setString(1, "CREATE_ACCOUNT");
-            stmt.setInt(2, targetUserId);
-            stmt.setInt(3, createdByUserId);
-            stmt.setString(4, "{\"role\": \"" + roleName + "\"}");
-            stmt.executeUpdate();
-        } catch (SQLException e) {
-            Logger.getLogger(AuthenticationDAO.class.getName()).log(Level.SEVERE, null, e);
-        }
-    }
     
     public boolean usernameExists(String username) {
     String sql = "SELECT 1 FROM Authentication WHERE Username = ?";

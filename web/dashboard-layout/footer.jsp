@@ -4,15 +4,6 @@
     Author     : viet7
 --%>
 
-<!---footer---->
-<footer class="footer">
-    <div class="container-fluid">
-        <div class="footer-in">
-        </div>
-    </div>
-</footer>
-</div>
-</div>
 
 <!----------html code complete----------->
 
