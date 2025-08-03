@@ -103,9 +103,9 @@
                                         <div class="col-4 col-lg-4">
                                             <label style="font-weight: 600;">Giá mỗi đêm:</label>
                                             <div class="d-flex align-items-center gap-2">
-                                                <input type="number" id="priceFrom"  name="pricefrom" value="${from}" step="100" min="0" placeholder="$From" class="form-control" style="max-width: 200px;">
+                                                <input type="number" id="priceFrom"  name="pricefrom" value="${from}" min="0" placeholder="$From" class="form-control" style="max-width: 200px;">
                                                 <span>&nbsp;&mdash;&nbsp;</span>
-                                                <input type="number" id="priceTo" name="priceto" value="${to}" step="100" min="0" placeholder="$To" class="form-control" style="max-width: 200px;">
+                                                <input type="number" id="priceTo" name="priceto" value="${to}"  min="0" placeholder="$To" class="form-control" style="max-width: 200px;">
                                             </div>
                                         </div>
                                     </div>

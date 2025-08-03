@@ -441,9 +441,9 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </div> <!-- end right col -->
-                                        </div> <!-- end row -->
-                                    </div> <!-- end card -->
+                                            </div> 
+                                        </div> 
+                                    </div> 
                                 </div>
                             </div>
                         </div>

@@ -15,6 +15,8 @@
         <title>The palatin - Payment</title>
         <link rel="icon" href="${pageContext.request.contextPath}/img/core-img/favicon.ico">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/css/payment.css">
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     </head>
     <body>
         <div class="container">
@@ -88,23 +90,23 @@
                                                         </div>-->
                         </div>
 
-<!--                        <div class="payment-method" onclick="selectPayment(this)" data-method="banktransfer">
-                            <div class="payment-method-header">
-                                <div class="radio-btn"></div>
-                                <div style="font-weight: bold;">ATM Cards/Mobile Banking</div>
-                                <div class="payment-icons">
-                                    <div class="payment-icon" style="background: #004C97;">TP</div>
-                                    <div class="payment-icon" style="background: #1E3A8A;">IB</div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="payment-method" onclick="selectPayment(this)" data-method="cash">
-                            <div class="payment-method-header">
-                                <div class="radio-btn"></div>
-                                <div style="font-weight: bold;">Cash</div>
-                            </div>
-                        </div>-->
+                        <!--                        <div class="payment-method" onclick="selectPayment(this)" data-method="banktransfer">
+                                                    <div class="payment-method-header">
+                                                        <div class="radio-btn"></div>
+                                                        <div style="font-weight: bold;">ATM Cards/Mobile Banking</div>
+                                                        <div class="payment-icons">
+                                                            <div class="payment-icon" style="background: #004C97;">TP</div>
+                                                            <div class="payment-icon" style="background: #1E3A8A;">IB</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                        
+                                                <div class="payment-method" onclick="selectPayment(this)" data-method="cash">
+                                                    <div class="payment-method-header">
+                                                        <div class="radio-btn"></div>
+                                                        <div style="font-weight: bold;">Cash</div>
+                                                    </div>
+                                                </div>-->
 
                         <!--<input type="hidden" class="coupon-input">-->
                         <div class="coupon-section">
@@ -138,15 +140,11 @@
                             Thanh toán & Hiện thị mã QR
                         </button>
 
-                        <div class="terms-text">
-                            Bằng cách tiếp tục thanh toán, bạn đã đồng ý <a href="#" class="link">Điều khoản & Điều kiện</a> và <a href="#" class="link">Chính sách quyền riêng tư</a>.
-                        </div>
                     </div>
                 </form>
 
                 <div class="booking-summary">
                     <h3 style="font-size: 18px; margin-bottom: 15px;">Tóm tắt khách sạn</h3>
-                    <div style="font-size: 12px; color: #666; margin-bottom: 15px;">Mã đặt chỗ: 1255776672</div>
 
                     <div class="hotel-info">
                         <div class="hotel-name">The Palatin Hotel</div>
@@ -170,11 +168,17 @@
                     </div>
 
                     <div class="room-info">
-                        <div class="room-title">${room.getRoomNumber()}-${room.getRoomType().getTypeName()}</div>
-                        <div class="room-details">🏠 ${room.roomDetail.maxGuest} khách</div>
-                        <div class="room-details">🍽️ Gồm bữa sáng</div>
-                        <div class="room-details">📶 Without Wifi</div>
+                        <div class="col-6"><i class="fas fa-users"></i> ${room.roomDetail.maxGuest} khách</div>
+                        <div class="col-6"><i class="fas fa-bed"></i> ${room.roomDetail.bedType}</div>
+                        <div class="col-6"><i class="fa-duotone fa-solid fa-chart-area"></i>  ${room.roomDetail.area} m²</div>
+                        <div class="col-6"><i class="fas fa-wifi"></i> WiFi</div>
                         <div style="color: #d32f2f; font-size: 12px; margin-top: 8px;">Yêu cầu đặc biệt (nếu có)</div>
+
+                        <ul>
+                            <c:forEach var="service" items="${listService}">
+                                <li>${service.name}</li> 
+                                </c:forEach>
+                        </ul>
                     </div>
 
                     <div class="guest-info">
