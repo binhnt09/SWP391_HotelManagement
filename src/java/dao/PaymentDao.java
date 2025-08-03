@@ -7,6 +7,7 @@ package dao;
 import dal.DBContext;
 import entity.BookingServices;
 import entity.Payment;
+import entity.Service;
 import java.math.BigDecimal;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -135,9 +136,10 @@ public class PaymentDao extends DBContext {
 
     public List<BookingServices> getBookingServiceByBookingId(int bookingId) {
         List<BookingServices> list = new ArrayList<>();
-        String sql = "SELECT BookingServiceID, BookingID, ServiceID, Quantity, PriceAtUse, UsedAt, "
-                + " IsPreOrdered, CreatedAt, UpdatedAt, DeletedAt, DeletedBy, IsDeleted"
-                + " FROM BookingService WHERE BookingID = ? AND IsDeleted = 0";
+        var sql = """
+                  SELECT BookingServiceID, BookingID, ServiceID, Quantity, PriceAtUse, UsedAt, 
+                   IsPreOrdered, CreatedAt, UpdatedAt, DeletedAt, DeletedBy, IsDeleted 
+                  FROM BookingService WHERE BookingID = ? AND IsDeleted = 0""";
 
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, bookingId);
@@ -163,6 +165,59 @@ public class PaymentDao extends DBContext {
             Logger.getLogger(PaymentDao.class.getName()).log(Level.SEVERE, null, e);
         }
         return list;
+    }
+
+    public List<Service> getServicesByBookingId(int bookingId) {
+        List<Service> services = new ArrayList<>();
+
+        String sql = """
+                    SELECT 
+                        s.ServiceID, s.Name, s.Description, s.Price,
+                        s.Category, s.ImageURL, s.Status
+                    FROM BookingService bs
+                    JOIN Service s ON bs.ServiceID = s.ServiceID
+                    WHERE bs.BookingID = ? AND bs.IsDeleted = 0 AND s.IsDeleted = 0
+                """;
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, bookingId);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                Service s = new Service();
+                s.setServiceId(rs.getInt("ServiceID"));
+                s.setName(rs.getString("Name"));
+                s.setDescription(rs.getString("Description"));
+                s.setPrice(rs.getBigDecimal("Price"));
+                s.setCategory(rs.getString("Category"));
+                s.setImageUrl(rs.getString("ImageURL"));
+                s.setStatus(rs.getBoolean("Status"));
+
+                services.add(s);
+            }
+        } catch (Exception e) {
+            Logger.getLogger(PaymentDao.class.getName()).log(Level.SEVERE, null, e);
+        }
+
+        return services;
+    }
+
+    public void insertBookingServices(int bookingId, List<Service> listService) {
+        String sql = "INSERT INTO BookingService (BookingId, ServiceId, Quantity, PriceAtUse) VALUES (?, ?, ?, ?)";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+
+            for (Service service : listService) {
+                ps.setInt(1, bookingId);
+                ps.setInt(2, service.getServiceId());
+                ps.setInt(3, 1);
+                ps.setBigDecimal(4, service.getPrice());
+                ps.addBatch();
+            }
+            ps.executeBatch();
+        } catch (Exception e) {
+            Logger.getLogger(PaymentDao.class.getName()).log(Level.SEVERE, null, e);
+        }
     }
 
     //tinh tong thanh toan user
