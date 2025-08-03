@@ -46,12 +46,10 @@
                         <h2 class="section-title">Bạn muốn thanh toán thế nào?</h2>
 
                         <div class="payment-method selected" onclick="selectPayment(this)" data-method="vietqr">
-                            <!--<input type="hidden" name="method" value="Vnpay" />-->
                             <input type="hidden" id="paymentMethod" name="method" value="vietqr" />
                             <div class="payment-method-header">
                                 <div class="radio-btn checked"></div>
                                 <div>
-                                    <!--<div class="payment-badge">Ưu đãi giảm giá</div>-->
                                     <div style="font-weight: bold;">VietQR</div>
                                     <div style="font-size: 12px; color: #666;">Ưu đãi dành giá | Thanh toán dễ dàng bằng ứng dụng ngân hàng điện tử bằng cách quét mã QR</div>
                                 </div>
@@ -177,8 +175,10 @@
 
                         <ul>
                             <c:forEach var="service" items="${listService}">
-                                <li>${service.name}</li> 
-                                </c:forEach>
+                                <li>
+                                    ${service.name}
+                                </li> 
+                            </c:forEach>
                         </ul>
                     </div>
 

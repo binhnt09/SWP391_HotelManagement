@@ -195,16 +195,14 @@ public class MailUtil {
         if (invoice.getListService() != null && !invoice.getListService().isEmpty()) {
             sb.append("<h3>🛎️ Dịch vụ đã sử dụng</h3>")
                     .append("<table><thead><tr>")
-                    .append("<th>Tên dịch vụ</th><th>Giá</th><th>Số lượng</th><th>Giá lúc sử dụng</th><th>Thời gian sử dụng</th>")
+                    .append("<th>Tên dịch vụ</th><th>Số lượng</th><th>Giá</th>")
                     .append("</tr></thead><tbody>");
 
             for (InvoiceServiceDetail bs : invoice.getListService()) {
                 sb.append("<tr>")
                         .append("<td>").append(bs.getServiceName()).append("</td>")
-                        .append("<td>").append(bs.getPrice()).append("</td>")
                         .append("<td>").append(bs.getQuantity()).append("</td>")
-                        .append("<td>").append(bs.getPriceAtUse()).append("</td>")
-                        .append("<td>").append(bs.getUsedAt()).append("</td>")
+                        .append("<td>").append(bs.getPrice()).append("</td>")
                         .append("</tr>");
             }
 
