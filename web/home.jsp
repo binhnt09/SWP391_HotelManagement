@@ -6,6 +6,8 @@
 
 <%@ page import="java.util.*, java.text.SimpleDateFormat" %>
 <%@ page import="java.util.List" %>
+<%@ page import="dao.HotelDAO" %>
+<%@ page import="entity.Hotel" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%><!DOCTYPE html>
 <html lang="en">
@@ -144,13 +146,16 @@
                                 <div class="line-"></div>
                                 <h2>A place to remember</h2>
                             </div>
-                            <p>Kỳ nghỉ hoàn hảo đang chờ đón bạn tại khách sạn của chúng tôi
-                                . Hãy tận hưởng không gian sang trọng, dịch vụ chuyên nghiệp và sự tiện nghi hiện đại
-                                . Dù là chuyến công tác hay kỳ nghỉ dưỡng, chúng tôi cam kết mang đến trải nghiệm đáng nhớ nhất.</p>
+                            <%
+                                HotelDAO dao = new HotelDAO();               
+                                Hotel hotel = dao.getHotelByID(1);           
+                                request.setAttribute("hotel", hotel);        
+                            %>
+                            <p>${hotel.description}.</p>
                             <div class="about-key-text">
                                 <h6><span class="fa fa-check"></span> Không gian tiện nghi, hiện đại và ấm cúng</h6>
                             </div>
-<!--                            <a href="#" class="btn palatin-btn mt-50">Read More</a>-->
+                            <!--                            <a href="#" class="btn palatin-btn mt-50">Read More</a>-->
                         </div>
                     </div>
 
@@ -170,78 +175,13 @@
                 </div>
             </div>
         </section>
-        <section class="rooms-area section-padding-100-0">
-            <div class="container">
-                <div class="row justify-content-center">
-                    <div class="col-12 col-lg-6">
-                        <div class="section-heading text-center">
-                            <div class="line-"></div>
-                            <h2>Choose a room</h2>
-                            <p>Hãy lựa chọn phòng nghỉ lý tưởng cho kỳ nghỉ của bạn. Từ không gian sang trọng đến tiện nghi hiện đại, mỗi phòng đều được thiết kế để mang lại sự thoải mái tối đa và trải nghiệm tuyệt vời nhất cho bạn.</p>
-                        </div>
-                    </div>
-                </div>
 
-                <div class="row justify-content-center">
-
-                    <!-- Single Rooms Area -->
-                    <div class="col-12 col-md-6 col-lg-4">
-                        <div class="single-rooms-area wow fadeInUp" data-wow-delay="100ms">
-                            <!-- Thumbnail -->
-                            <div class="bg-thumbnail bg-img" style="background-image: url(img/bg-img/1.jpg);"></div>
-                            <!-- Price -->
-                            <p class="price-from">From 150VND/night</p>
-                            <!-- Rooms Text -->
-                            <div class="rooms-text">
-                                <div class="line"></div>
-                                <h4>Deluxe Room</h4>
-                                <p>Phòng đơn hiện đại, tiện nghi phù hợp cho khách đi công tác hoặc du lịch một mình. Bao gồm giường đơn, bàn làm việc và Wi-Fi tốc độ cao.</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Single Rooms Area -->
-                    <div class="col-12 col-md-6 col-lg-4">
-                        <div class="single-rooms-area wow fadeInUp" data-wow-delay="300ms">
-                            <!-- Thumbnail -->
-                            <div class="bg-thumbnail bg-img" style="background-image: url(img/bg-img/8.jpg);"></div>
-                            <!-- Price -->
-                            <p class="price-from">From 150VND/night</p>
-                            <!-- Rooms Text -->
-                            <div class="rooms-text">
-                                <div class="line"></div>
-                                <h4>Double Suite</h4>
-                                <p>Không gian sang trọng với thiết kế tinh tế, bao gồm giường lớn, minibar, tivi màn hình phẳng và ban công hướng nhìn ra thành phố.</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Single Rooms Area -->
-                    <div class="col-12 col-md-6 col-lg-4">
-                        <div class="single-rooms-area wow fadeInUp" data-wow-delay="500ms">
-                            <!-- Thumbnail -->
-                            <div class="bg-thumbnail bg-img" style="background-image: url(img/bg-img/9.jpg);"></div>
-                            <!-- Price -->
-                            <p class="price-from">From 100VND/night</p>
-                            <!-- Rooms Text -->
-                            <div class="rooms-text">
-                                <div class="line"></div>
-                                <h4>Single Room</h4>
-                                <p>Phù hợp cho cặp đôi hoặc gia đình nhỏ, phòng suite đôi có không gian rộng rãi, 2 giường, phòng tắm sang trọng và khu vực tiếp khách riêng.</p>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-        </section>
         <!-- ##### Rooms Area End ##### -->
 
         <!-- ##### Contact Area Start ##### -->
         <section class="contact-area d-flex flex-wrap align-items-center">
             <div class="home-map-area">
-                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d22236.40558254599!2d-118.25292394686001!3d34.057682914027104!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x80c2c75ddc27da13%3A0xe22fdf6f254608f4!2z4Kay4Ka4IOCmj-CmnuCnjeCmnOCnh-CmsuCnh-CmuCwg4KaV4KeN4Kav4Ka-4Kay4Ka_4Kar4KeL4Kaw4KeN4Kao4Ka_4Kav4Ka84Ka-LCDgpq7gpr7gprDgp43gppXgpr_gpqgg4Kav4KeB4KaV4KeN4Kak4Kaw4Ka-4Ka34KeN4Kaf4KeN4Kaw!5e0!3m2!1sbn!2sbd!4v1532328708137" allowfullscreen></iframe>
-            </div>
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1862.2472218121568!2d105.52364820648101!3d21.012893195137924!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3135abc60e7d3f19%3A0x2be9d7d0b5abcbf4!2zVHLGsOG7nW5nIMSQ4bqhaSBo4buNYyBGUFQgSMOgIE7hu5lp!5e0!3m2!1svi!2s!4v1754225321883!5m2!1svi!2s" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>            </div>
             <!-- Contact Info -->
             <div class="contact-info">
                 <div class="section-heading wow fadeInUp" data-wow-delay="100ms">

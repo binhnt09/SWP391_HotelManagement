@@ -281,13 +281,13 @@
                                                                 <div>
                                                                     <div class="info-label">Thời gian lưu trú</div>
                                                                     <div class="info-value">
-                                                                        ${numberNight} ngày 
+                                                                        
                                                                         <c:choose>
                                                                             <c:when test="${numberNight < 2}">
-                                                                                1 đêm
+                                                                               ${numberNight+1} ngày  1 đêm
                                                                             </c:when>
                                                                             <c:otherwise>
-                                                                                ${numberNight - 1} đêm
+                                                                               ${numberNight+1} ngày  ${numberNight} đêm
                                                                             </c:otherwise>
                                                                         </c:choose>
                                                                     </div>
@@ -306,14 +306,6 @@
 
                                                     <!-- Special Requests & Buttons -->
                                                     <div class="row mt-2 align-items-end">
-                                                        <div class="col-md-6">
-                                                            <!--                                                            <div class="info-label mb-2">
-                                                                                                                            <i class="fas fa-comment-dots me-2"></i>Yêu cầu đặc biệt
-                                                                                                                        </div>
-                                                                                                                        <div class="info-value">
-                                                                                                                            <small class="text-muted">Phòng tầng cao, view biển. Chuẩn bị bánh sinh nhật cho trẻ em.</small>
-                                                                                                                        </div>-->
-                                                        </div>
                                                         <%
                                                             long soNgay = diffDays;
                                                             String soDem = (soNgay <= 1) ? "1 đêm" : (soNgay - 1) + " đêm";
@@ -341,6 +333,11 @@
                                                             <button class="btn btn-outline-danger btn-cancel-booking" data-booking-id="${i.bookingId}">
                                                                 <i class="fas fa-times"></i>
                                                             </button>
+                                                            <c:if test="${i.status == 'PENDING'}">
+                                                                <a href="payment?action=continuePayment&bookingId=${i.bookingId}&numberNight=${numberNight}" class="btn btn-outline-danger">
+                                                                    Thanh toán
+                                                                </a>
+                                                            </c:if>
                                                             <button class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modal-${i.bookingId}">
                                                                 Dịch vụ
                                                             </button>
@@ -399,8 +396,6 @@
                                                                                     </table>
                                                                                 </c:otherwise>
                                                                             </c:choose>
-
-                                                                            <!-- Form thêm dịch vụ -->
                                                                             <hr class="my-4" />
                                                                             <h6 class="fw-bold mb-3">Thêm dịch vụ mới</h6>
                                                                             <form action="addBookingService" method="post"
@@ -530,76 +525,76 @@
         <script src="${pageContext.request.contextPath}/js/authentication.js"></script>
         <script>
 
-            $(document).on('click', '[data-bs-toggle="modal"]', function () {
-                const button = $(this);
-                $('#bookRoomId').val(button.data('roomid'));
-                $('#bookingId').val(button.data('bookingid'));
-                $('#bookRoomDetail').val(button.data('roomdetail'));
-                $('#bookRoomNumber').val(button.data('roomnumber'));
-                $('#bookStatus').val(button.data('status'));
-                $('#bookPricePerNight').val(button.data('pricepernight'));
-                $('#bookMaxGuest').val(button.data('maxguest'));
-                $('#bookCheckin').val(button.data('checkin'));
-                $('#bookCheckout').val(button.data('checkout'));
-                $('#bookNumberNight').val(button.data('numbernight'));
-                $('#bookTextNumberNight').val(button.data('textnumbernight'));
-            });
-            document.querySelectorAll('.star-rating:not(.readonly) label').forEach(star => {
-                star.addEventListener('click', function () {
-                    this.style.transform = 'scale(1.2)';
-                    setTimeout(() => {
-                        this.style.transform = 'scale(1)';
-                    }, 200);
-                });
-            });
-            document.addEventListener("DOMContentLoaded", () => {
-                document.querySelectorAll(".star-rating input[type='radio']").forEach(input => {
-                    input.addEventListener("change", function () {
-                        const rating = this.value;
-                        const bookingId = this.name.split("_")[1];
-                        const roomId = this.closest(".rating-card").dataset.roomid;
-                        const userId = this.closest(".rating-card").dataset.userid;
-                        console.log(rating);
-                        console.log(bookingId);
-                        console.log(roomId);
-                        console.log(userId);
-                        const baseUrl = '${pageContext.request.contextPath}';
-                        fetch(baseUrl + "/roomreview?roomId=" + roomId + "&userId=" + userId + "&rating=" + rating + "&bookingId=" + bookingId, {
-                            method: "POST"
-                        })
-                                .then(res => res.json())
-                                .then(data => {
-                                    if (data.success) {
-                                        alert("Cảm ơn bạn đã đánh giá!");
-                                    } else {
-                                        alert("Không thể gửi đánh giá: " + data.message);
-                                    }
-                                });
-                    });
-                });
-            });
-            $(document).on('click', '.btn-cancel-booking', function () {
-                const bookingId = $(this).data('booking-id');
-                const baseUrl = '${pageContext.request.contextPath}';
+                                                                                      $(document).on('click', '[data-bs-toggle="modal"]', function () {
+                                                                                          const button = $(this);
+                                                                                          $('#bookRoomId').val(button.data('roomid'));
+                                                                                          $('#bookingId').val(button.data('bookingid'));
+                                                                                          $('#bookRoomDetail').val(button.data('roomdetail'));
+                                                                                          $('#bookRoomNumber').val(button.data('roomnumber'));
+                                                                                          $('#bookStatus').val(button.data('status'));
+                                                                                          $('#bookPricePerNight').val(button.data('pricepernight'));
+                                                                                          $('#bookMaxGuest').val(button.data('maxguest'));
+                                                                                          $('#bookCheckin').val(button.data('checkin'));
+                                                                                          $('#bookCheckout').val(button.data('checkout'));
+                                                                                          $('#bookNumberNight').val(button.data('numbernight'));
+                                                                                          $('#bookTextNumberNight').val(button.data('textnumbernight'));
+                                                                                      });
+                                                                                      document.querySelectorAll('.star-rating:not(.readonly) label').forEach(star => {
+                                                                                          star.addEventListener('click', function () {
+                                                                                              this.style.transform = 'scale(1.2)';
+                                                                                              setTimeout(() => {
+                                                                                                  this.style.transform = 'scale(1)';
+                                                                                              }, 200);
+                                                                                          });
+                                                                                      });
+                                                                                      document.addEventListener("DOMContentLoaded", () => {
+                                                                                          document.querySelectorAll(".star-rating input[type='radio']").forEach(input => {
+                                                                                              input.addEventListener("change", function () {
+                                                                                                  const rating = this.value;
+                                                                                                  const bookingId = this.name.split("_")[1];
+                                                                                                  const roomId = this.closest(".rating-card").dataset.roomid;
+                                                                                                  const userId = this.closest(".rating-card").dataset.userid;
+                                                                                                  console.log(rating);
+                                                                                                  console.log(bookingId);
+                                                                                                  console.log(roomId);
+                                                                                                  console.log(userId);
+                                                                                                  const baseUrl = '${pageContext.request.contextPath}';
+                                                                                                  fetch(baseUrl + "/roomreview?roomId=" + roomId + "&userId=" + userId + "&rating=" + rating + "&bookingId=" + bookingId, {
+                                                                                                      method: "POST"
+                                                                                                  })
+                                                                                                          .then(res => res.json())
+                                                                                                          .then(data => {
+                                                                                                              if (data.success) {
+                                                                                                                  alert("Cảm ơn bạn đã đánh giá!");
+                                                                                                              } else {
+                                                                                                                  alert("Không thể gửi đánh giá: " + data.message);
+                                                                                                              }
+                                                                                                          });
+                                                                                              });
+                                                                                          });
+                                                                                      });
+                                                                                      $(document).on('click', '.btn-cancel-booking', function () {
+                                                                                          const bookingId = $(this).data('booking-id');
+                                                                                          const baseUrl = '${pageContext.request.contextPath}';
 
-                fetch(baseUrl + "/bookingroomcustomer?action=checkCancel&bookingId=" + bookingId)
-                        .then(res => res.json())
-                        .then(data => {
-                            if (data.allowCancel) {
-                                const confirmCancel = confirm("Bạn có chắc chắn muốn hủy phòng?");
-                                if (confirmCancel) {
-                                    fetch(baseUrl + "/bookingroomcustomer?action=cancelBooking&bookingId=" + bookingId, {
-                                        method: 'GET'
-                                    }).then(() => {
-                                        alert("Đã hủy thành công");
-                                        location.reload();
-                                    });
-                                }
-                            } else {
-                                alert("Bạn không thể hủy vì đã quá hạn cho phép (trước ngày check-in 7 ngày).");
-                            }
-                        });
-            });
+                                                                                          fetch(baseUrl + "/bookingroomcustomer?action=checkCancel&bookingId=" + bookingId)
+                                                                                                  .then(res => res.json())
+                                                                                                  .then(data => {
+                                                                                                      if (data.allowCancel) {
+                                                                                                          const confirmCancel = confirm("Bạn có chắc chắn muốn hủy phòng?");
+                                                                                                          if (confirmCancel) {
+                                                                                                              fetch(baseUrl + "/bookingroomcustomer?action=cancelBooking&bookingId=" + bookingId, {
+                                                                                                                  method: 'GET'
+                                                                                                              }).then(() => {
+                                                                                                                  alert("Đã hủy thành công");
+                                                                                                                  location.reload();
+                                                                                                              });
+                                                                                                          }
+                                                                                                      } else {
+                                                                                                          alert("Bạn không thể hủy vì đã quá hạn cho phép (trước ngày check-in 7 ngày).");
+                                                                                                      }
+                                                                                                  });
+                                                                                      });
         </script>
 
 

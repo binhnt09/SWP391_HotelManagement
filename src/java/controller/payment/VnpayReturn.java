@@ -125,6 +125,7 @@ public class VnpayReturn extends HttpServlet {
                 
                 //remove session bookingid
                 responseToPaymentResult(request, response);
+                request.getSession().removeAttribute("room");
                 request.getSession().removeAttribute("bookingIdPending");
                 request.getSession().removeAttribute("serviceIds");
                 request.getSession().removeAttribute("listBookingService");

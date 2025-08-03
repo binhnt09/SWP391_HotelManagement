@@ -3,10 +3,14 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/FU%20Learning/Summer%202025/SWP391/SWP_HotelManagement_V1_1/SWP391_HotelManagement_V1/src/java/controller/payment/PaymentServlet.java</file>
-            <file>file:/D:/FU%20Learning/Summer%202025/SWP391/SWP_HotelManagement_V1_1/SWP391_HotelManagement_V1/web/manageroom.jsp</file>
-            <file>file:/D:/FU%20Learning/Summer%202025/SWP391/SWP_HotelManagement_V1_1/SWP391_HotelManagement_V1/web/js/payment/voucher.js</file>
-            <file>file:/D:/FU%20Learning/Summer%202025/SWP391/SWP_HotelManagement_V1_1/SWP391_HotelManagement_V1/web/views/payment/payment.jsp</file>
+            <file>file:/D:/kì/ki5/SWP/project/SWP391_HotelManagement/src/java/dao/BookingDetailDAO.java</file>
+            <file>file:/D:/kì/ki5/SWP/project/SWP391_HotelManagement/web/views/profile/historybooking.jsp</file>
+            <file>file:/D:/kì/ki5/SWP/project/SWP391_HotelManagement/src/java/controller/payment/PaymentServlet.java</file>
+            <file>file:/D:/kì/ki5/SWP/project/SWP391_HotelManagement/src/java/controller/BookingRoom.java</file>
+            <file>file:/D:/kì/ki5/SWP/project/SWP391_HotelManagement/src/java/controller/payment/VietQrSepaycallback.java</file>
+            <file>file:/D:/kì/ki5/SWP/project/SWP391_HotelManagement/web/views/payment/payment.jsp</file>
+            <file>file:/D:/kì/ki5/SWP/project/SWP391_HotelManagement/src/java/controller/payment/VnpayReturn.java</file>
+            <file>file:/D:/kì/ki5/SWP/project/SWP391_HotelManagement/web/manageroom.jsp</file>
         </group>
     </open-files>
 </project-private>

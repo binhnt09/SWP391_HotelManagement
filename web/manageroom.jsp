@@ -362,7 +362,6 @@
                                                         Delete
                                                     </button>
                                                 </div>
-
                                             </td>
                                         </tr>
                                     </c:forEach>
@@ -572,7 +571,7 @@
                         </div>
                         <div class="modal-body">
                             <input type="hidden" name="action" id="modal-action" value="addRoomType">
-                            <input type="hidden" name="roomTypeID" id="roomTypeID">
+                            <input type="hidden" name="roomTypeID" id="roomTypeIDToEditRoomType">
                             <div class="mb-3">
                                 <label>Type Name</label>
                                 <input type="text" name="typeName" id="typeName" class="form-control" required>
@@ -605,7 +604,6 @@
                 </form>
             </div>
         </div>
-
         <script src="${pageContext.request.contextPath}/js/jquery/jquery-2.2.4.min.js"></script>
         <!--Popper js--> 
         <script src="${pageContext.request.contextPath}/js/bootstrap/popper.min.js"></script>
@@ -618,43 +616,53 @@
         <!----login js---->
         <script src="${pageContext.request.contextPath}/js/authentication.js"></script>
         <script>
+
         </script>
         <script>
             document.addEventListener("DOMContentLoaded", function () {
                 const container = document.getElementById("amenity-container");
                 container.innerHTML = "";
                 const baseUrl = '${pageContext.request.contextPath}';
+
                 fetch(baseUrl + "/roomcrud?action=getAllAmenity")
                         .then(response => response.json())
                         .then(data => {
                             for (const category in data) {
                                 const groupDiv = document.createElement("div");
                                 groupDiv.classList.add("mb-3");
+
                                 const title = document.createElement("strong");
                                 title.textContent = category;
                                 groupDiv.appendChild(title);
+
                                 const rowDiv = document.createElement("div");
                                 rowDiv.classList.add("row", "mt-2");
+
                                 data[category].forEach((item, index) => {
                                     const colDiv = document.createElement("div");
                                     colDiv.classList.add("col-md-6");
+
                                     const checkboxDiv = document.createElement("div");
                                     checkboxDiv.classList.add("form-check");
+
                                     const checkbox = document.createElement("input");
                                     checkbox.type = "checkbox";
                                     checkbox.className = "form-check-input amenity-checkbox";
                                     checkbox.id = "amenity-" + item.amenityId;
                                     checkbox.value = item.amenityId;
                                     checkbox.dataset.name = item.name;
+
                                     const label = document.createElement("label");
                                     label.className = "form-check-label";
                                     label.htmlFor = checkbox.id;
                                     label.textContent = item.name;
+
                                     checkboxDiv.appendChild(checkbox);
                                     checkboxDiv.appendChild(label);
                                     colDiv.appendChild(checkboxDiv);
                                     rowDiv.appendChild(colDiv);
                                 });
+
                                 groupDiv.appendChild(rowDiv);
                                 container.appendChild(groupDiv);
                             }
@@ -668,37 +676,48 @@
                         .then(res => res.json())
                         .then(data => {
                             console.log("Dữ liệu trả về:", data);
+
                             const container = document.getElementById("service-container");
                             container.innerHTML = "";
+
                             const groupDiv = document.createElement("div");
                             groupDiv.classList.add("mb-3");
+
                             const title = document.createElement("strong");
                             title.textContent = "Available Services";
                             groupDiv.appendChild(title);
+
                             const rowDiv = document.createElement("div");
                             rowDiv.classList.add("row", "mt-2");
+
                             data.forEach(service => {
                                 const colDiv = document.createElement("div");
                                 colDiv.classList.add("col-md-6");
+
                                 const checkboxDiv = document.createElement("div");
                                 checkboxDiv.classList.add("form-check");
+
                                 const checkbox = document.createElement("input");
                                 checkbox.type = "checkbox";
                                 checkbox.className = "form-check-input service-checkbox";
                                 checkbox.id = "service-" + service.serviceId;
                                 checkbox.value = service.serviceId;
                                 checkbox.dataset.name = service.name;
+
                                 const label = document.createElement("label");
                                 label.className = "form-check-label";
                                 label.htmlFor = checkbox.id;
                                 label.textContent = service.name;
+
                                 checkboxDiv.appendChild(checkbox);
                                 checkboxDiv.appendChild(label);
                                 colDiv.appendChild(checkboxDiv);
                                 rowDiv.appendChild(colDiv);
                             });
+
                             groupDiv.appendChild(rowDiv);
                             container.appendChild(groupDiv);
+
                             container.addEventListener("change", () => {
                                 const checkedBoxes = container.querySelectorAll(".service-checkbox:checked");
                                 const selectedIds = Array.from(checkedBoxes).map(cb => cb.value);
@@ -710,6 +729,9 @@
                         });
             });
         </script>
+
+
+
 
         <div id="imageModal" style="
              display: none;
@@ -801,7 +823,7 @@
             }
 
 
-            //            function checkDuplicateRoomNumberEdit() {
+//            function checkDuplicateRoomNumberEdit() {
 //                const roomNumberInput = document.getElementById("edit-roomNumber");
 //                const roomNumber = roomNumberInput.value.trim();
 //                const roomId = document.getElementById("edit-roomId11").value;
@@ -844,9 +866,7 @@
                             const room = data.room;
                             const detail = data.roomdetail;
                             const type = data.roomtype;
-                            console.log(room);
-                            console.log(detail);
-                            console.log(type);
+
                             document.getElementById('edit-roomID').value = room.roomID;
                             document.getElementById('edit-roomDetail').value = detail.roomDetailID;
                             document.getElementById('edit-roomNumber').value = room.roomNumber;
@@ -856,6 +876,7 @@
                             document.getElementById('edit-description').value = detail.description;
                             document.getElementById('edit-price').value = room.price;
                             document.getElementById('edit-area').value = detail.area;
+
                             return fetch(baseUrl + "/roomcrud?action=getImages&roomDetailId=" + data.roomdetail.roomDetailID);
                         })
                         .then(res => res.json())
@@ -876,12 +897,14 @@
                                 image.style.width = '100px';
                                 image.style.height = '70px';
                                 image.style.objectFit = 'cover';
+
                                 image.addEventListener("click", () => {
                                     const modal = document.getElementById("imageModal");
                                     const modalImg = document.getElementById("modalImage");
                                     modalImg.src = image.src;
                                     modal.style.display = "flex";
                                 });
+
                                 const checkbox = document.createElement('input');
                                 checkbox.type = 'checkbox';
                                 checkbox.name = 'imagesToDelete';
@@ -889,6 +912,7 @@
                                 checkbox.style.position = 'absolute';
                                 checkbox.style.top = '0';
                                 checkbox.style.right = '0';
+
                                 div.appendChild(image);
                                 div.appendChild(checkbox);
                                 container.appendChild(div);
@@ -927,9 +951,11 @@
 
                 const ids = Array.from(selected).map(cb => cb.value);
                 const queryString = ids.map(id => "roomIds=" + encodeURIComponent(id)).join("&");
+
                 try {
                     const response = await fetch("roomcrud?action=checkBookingStatus&" + queryString);
                     const result = await response.json();
+
                     if (result.status === "error") {
                         alert("Không thể xóa, vì những phòng này đang được đặt: " + result.bookedRoomIds.join(", "));
                         return;
@@ -941,6 +967,7 @@
 
                     const deleteQuery = ids.map(id => "roomIds=" + encodeURIComponent(id)).join("&");
                     window.location = "roomcrud?action=deleteMultiple&" + deleteQuery;
+
                 } catch (error) {
                     console.error("Error checking booking status:", error);
                     alert("Error checking booking status. Please try again.");
@@ -958,6 +985,7 @@
                     }
                 });
             });
+
             document.querySelectorAll('tbody input[type="checkbox"]').forEach(checkbox => {
                 checkbox.addEventListener('change', function () {
                     if (this.checked) {
@@ -967,21 +995,24 @@
                     }
                 });
             });
+
             document.querySelectorAll('.edit-btn').forEach(btn => {
                 btn.addEventListener('click', function () {
-                    const id = this.dataset.id;
+                    const id1 = this.dataset.id;
                     const name = this.dataset.name;
                     const desc = this.dataset.desc;
                     const number = this.dataset.num;
                     const amenity = this.dataset.amenity;
-                    openRoomTypeModal('edit', id, name, desc, number, amenity);
+
+                    console.log(id1 + "id");
+                    openRoomTypeModal('edit', id1, name, desc, number, amenity);
                 });
             });
             function openRoomTypeModal(mode, id = '', name = '', desc = '', number = '', amenity = '') {
                 if (mode === 'add') {
                     $('#modalTitle').text('Add Room Type');
                     $('#modal-action').val('addRoomType');
-                    $('#roomTypeID').val('');
+                    $('#roomTypeIDToEditRoomType').val('');
                     $('#typeName').val('');
                     $('#description').val('');
                     $('#numberPeople').val('');
@@ -990,36 +1021,43 @@
                 } else {
                     $('#modalTitle').text('Edit Room Type');
                     $('#modal-action').val('editRoomType');
-                    $('#roomTypeID').val(id);
+                    $('#roomTypeIDToEditRoomType').val(id);
                     $('#typeName').val(name);
                     $('#description').val(desc);
                     $('#numberPeople').val(number);
                     $('#amenity').val(amenity);
                     $('#modalSubmitBtn').text('Update');
+                    
             }
             }
             document.getElementById("closeModal").addEventListener("click", () => {
                 document.getElementById("imageModal").style.display = "none";
             });
+
             document.getElementById("imageModal").addEventListener("click", (e) => {
                 const modalImage = document.getElementById("modalImage");
                 if (!modalImage.contains(e.target)) {
                     document.getElementById("imageModal").style.display = "none";
                 }
             });
+
+
         </script>
 
         <script>
             document.addEventListener("DOMContentLoaded", () => {
                 const addForm = document.getElementById("addRoomForm");
                 const editForm = document.getElementById("editRoomForm");
+
                 addForm.addEventListener("submit", async function (event) {
                     event.preventDefault();
+
                     const isRoomNumberValid = await checkRoomNumber();
                     const isPriceValid = validateAddPrice();
                     const isAreaValid = validateAddArea();
                     const isRoomTypeValid = validateRoomType();
                     const isRoomStatusValid = validateRoomStatus();
+
                     if (!isRoomNumberValid || !isPriceValid || !isAreaValid || !isRoomTypeValid || !isRoomStatusValid) {
                         alert("Nhập sai dữ liệu. Vui lòng kiểm tra lại!!");
                         return;
@@ -1034,6 +1072,7 @@
                         roomTypeSelect.classList.remove("is-invalid");
                     }
                 });
+
                 document.getElementById("roomStatus").addEventListener("change", function () {
                     const roomStatusSelect = this;
                     const errorMsg = document.getElementById("roomStatusError");
@@ -1044,18 +1083,21 @@
                 });
                 editForm.addEventListener("submit", function (event) {
                     event.preventDefault();
-                    //                    const isRoomNumberValid = await checkRoomNumber();
+
+//                    const isRoomNumberValid = await checkRoomNumber();
                     const isPriceValid = validateEditPrice();
                     const isAreaValid = validateEditArea();
                     const isStatusValid = validateEditStatus();
                     const isTypeValid = validateEditRoomType();
                     const isDuplicateRoomNumberEdit = checkDuplicateRoomNumberEdit();
+
                     if (!isDuplicateRoomNumberEdit || !isPriceValid || !isAreaValid || !isStatusValid || !isTypeValid) {
                         alert("Nhập sai dữ liệu. Vui lòng kiểm tra lại!!");
                         return;
                     }
                     editForm.submit();
                 });
+
                 document.getElementById("edit-roomType").addEventListener("change", function () {
                     const roomTypeSelect = this;
                     const errorMsg = document.getElementById("editRoomTypeError");
@@ -1064,6 +1106,7 @@
                         roomTypeSelect.classList.remove("is-invalid");
                     }
                 });
+
                 document.getElementById("edit-status").addEventListener("change", function () {
                     const roomStatusSelect = this;
                     const errorMsg = document.getElementById("editStatusError");
@@ -1072,14 +1115,18 @@
                         roomStatusSelect.classList.remove("is-invalid");
                     }
                 });
+
             });
+
             async function checkRoomNumber() {
                 const roomNumberInput = document.getElementById("add-roomNumber");
                 const roomNumber = roomNumberInput.value.trim();
                 const errorEl = document.getElementById("roomNumberError");
                 const regex = /^[a-zA-Z0-9]+$/;
+
                 errorEl.classList.add("d-none");
                 roomNumberInput.classList.remove("is-invalid");
+
                 if (!roomNumber) {
                     errorEl.textContent = "Tên phòng không được trống.";
                     errorEl.classList.remove("d-none");
@@ -1117,8 +1164,10 @@
                 const roomNumber = roomNumberInput.value.trim();
                 const errorEl = document.getElementById("editRoomNumberError");
                 const regex = /^[a-zA-Z0-9]+$/;
+
                 errorEl.classList.add("d-none");
                 roomNumberInput.classList.remove("is-invalid");
+
                 if (!roomNumber) {
                     errorEl.textContent = "Tên phòng không được để trống.";
                     errorEl.classList.remove("d-none");
@@ -1137,6 +1186,7 @@
                 try {
                     const response = await fetch(baseUrl + "/roomcrud?action=checkRoomNumberEdit&roomNumber=" + roomNumber + "&roomId=" + tmpEditId);
                     const data = await response.json();
+
                     if (data.exists) {
                         errorEl.textContent = "Tên phòng đã tồn tại!";
                         errorEl.classList.remove("d-none");
@@ -1156,8 +1206,10 @@
                 const priceInput = document.getElementById("add-price");
                 const priceError = document.getElementById("addPriceError");
                 const price = parseFloat(priceInput.value.trim());
+
                 priceError.classList.add("d-none");
                 priceInput.classList.remove("is-invalid");
+
                 if (isNaN(price) || price <= 0) {
                     priceError.textContent = "Giá phòng cần phải lớn hơn 0!!";
                     priceError.classList.remove("d-none");
@@ -1171,8 +1223,10 @@
                 const areaInput = document.getElementById("add-area");
                 const areaError = document.getElementById("addAreaError");
                 const area = parseFloat(areaInput.value.trim());
+
                 areaError.classList.add("d-none");
                 areaInput.classList.remove("is-invalid");
+
                 if (isNaN(area) || area <= 0) {
                     areaError.textContent = "Diện tích lớn hơn 0!!!";
                     areaError.classList.remove("d-none");
@@ -1186,6 +1240,7 @@
             function validateRoomType() {
                 const roomType = document.getElementById("roomTypeID");
                 const roomTypeError = document.getElementById("roomTypeError");
+
                 if (roomType.value === "-1") {
                     roomType.classList.add("is-invalid");
                     roomTypeError.classList.remove("d-none");
@@ -1200,6 +1255,7 @@
             function validateRoomStatus() {
                 const roomStatus = document.getElementById("roomStatus");
                 const roomStatusError = document.getElementById("roomStatusError");
+
                 if (roomStatus.value === "-1") {
                     roomStatus.classList.add("is-invalid");
                     roomStatusError.classList.remove("d-none");
@@ -1214,6 +1270,7 @@
             function validateEditStatus() {
                 const status = document.getElementById("edit-status");
                 const error = document.getElementById("editStatusError");
+
                 if (status.value === "-1") {
                     error.classList.remove("d-none");
                     status.classList.add("is-invalid");
@@ -1229,6 +1286,7 @@
                 const priceInput = document.getElementById("edit-price");
                 const error = document.getElementById("editPriceError");
                 const value = priceInput.value.trim();
+
                 if (value === "" || isNaN(value) || parseFloat(value) <= 0) {
                     error.classList.remove("d-none");
                     priceInput.classList.add("is-invalid");
@@ -1244,6 +1302,7 @@
                 const areaInput = document.getElementById("edit-area");
                 const error = document.getElementById("editAreaError");
                 const value = areaInput.value.trim();
+
                 if (value === "" || isNaN(value) || parseFloat(value) <= 0) {
                     error.classList.remove("d-none");
                     areaInput.classList.add("is-invalid");
@@ -1260,6 +1319,7 @@
             function validateEditRoomType() {
                 const type = document.getElementById("edit-roomType");
                 const error = document.getElementById("editRoomTypeError");
+
                 if (type.value === "-1") {
                     error.classList.remove("d-none");
                     type.classList.add("is-invalid");
